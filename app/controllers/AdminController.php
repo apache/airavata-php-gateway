@@ -28,6 +28,8 @@ class AdminController extends BaseController {
 	}
 
 	public function dashboard(){
+
+		//Session::put("scigap_admin", true);
 		$idStore = $this->idStore;
 		//$ti = $idStore->createTenant( Input::all() );
 		//print_r( $ti); exit;
@@ -35,11 +37,15 @@ class AdminController extends BaseController {
 		foreach ($roles as $key => $role) {
 			//$gatewayAdmins = $idStore->getUserListOfRole
 		}
+		$crData = CRUtilities::getEditCRData();
 		$gateways = CRUtilities::getAllGatewayProfilesData();
 		//var_dump( $gatewayProfiles[0]); exit;
    		//return View::make("admin/manage-admin", array( "roles" => $roles, "gatewayProfiles" => $gatewayProfiles));
 		
-		return View::make("admin/manage-admin1", array( "gateways" => $gateways));
+		return View::make("admin/manage-gateway", array( 
+														"gateways" => $gateways, 
+														"computeResources" => CRUtilities::getAllCRObjects(),
+														"crData" => $crData));
 	}
 
 	public function addAdminSubmit(){
@@ -51,17 +57,21 @@ class AdminController extends BaseController {
 
 	public function usersView(){
 		$idStore = $this->idStore;
-	    $users = $idStore->listUsers();
+		if( Input::has("role"))
+		{
+			$users = $idStore->getUserListOfRole( Input::get("role"));
+			if( isset( $users->return))
+		    	$users = $users->return;
+		    else
+		    	$users = array();
+		}
+		else
+	    	$users = $idStore->listUsers();
+	    
+	    $roles = $idStore->getRoleNames();
 
-	    return View::make("admin/manage-users", array("users" => $users));
+	    return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 
-	}
-
-	public function addRole(){
-		$idStore = $this->idStore;
-
-		$idStore->addRole( Input::get("role") );
-		return Redirect::to("manage/admins")->with("Admin has been added.");
 	}
 
 	public function addGatewayAdminSubmit(){
@@ -97,5 +107,20 @@ class AdminController extends BaseController {
 		$roles = $idStore->getRoleNames();
 
 		return View::make("admin/manage-roles", array("roles" => $roles));
+	}
+
+	public function addRole(){
+		$idStore = $this->idStore;
+
+		$idStore->addRole( Input::get("role") );
+		return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been added.");
+	}
+
+	public function deleteRole(){
+		$idStore = $this->idStore;
+
+		$idStore->deleteRole( Input::get("role") );
+		return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been deleted.");
+
 	}
 }

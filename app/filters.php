@@ -106,7 +106,9 @@ Route::filter('verifyadmin', function()
 	if( Utilities::verify_login() )
 	{
 		if( !Session::has("admin"))
+		{
 			return Redirect::to("home")->with("admin-alert", true);
+		}
 	} 
 	else
 		return Redirect::to("home")->with("login-alert", true);

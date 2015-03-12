@@ -211,10 +211,25 @@ class WSISUtilities implements IdUtilities{
         try{
             return $this->wsis_client->add_role( $roleName);
         } catch (Exception $ex) {
-            var_dump($ex); exit;
             throw new Exception("Unable to add role.", 0, $ex);
         }        
     }
+
+    /**
+     * Function to delete existing role
+     * 
+     * @param string $roleName
+     * @return void
+     * @throws Exception
+     */
+    public function deleteRole($roleName) {
+        try {
+            $this->wsis_client->delete_role($roleName);
+        } catch (Exception $ex) {
+            throw new Exception("Unable to delete role", 0, $ex);
+        }
+    }
+
     /**
      * Function to get the entire list of roles in the application
      *
@@ -254,7 +269,12 @@ class WSISUtilities implements IdUtilities{
      */
     public function getUserListOfRole($role)
     {
-        // TODO: Implement getUserListOfRole() method.
+        try{
+            return $this->wsis_client->get_userlist_of_role( $role);
+        } catch (Exception $ex) {
+            var_dump( $ex); exit;
+            throw new Exception("Unable to get users.", 0, NULL);
+        }
     }
 
     /**

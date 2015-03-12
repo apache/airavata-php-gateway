@@ -51,3 +51,7 @@ body{
 .navbar-inverse{
 	background: #2c3e50;
 }
+
+.glyphicon{
+	cursor: pointer;
+}

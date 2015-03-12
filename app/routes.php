@@ -157,6 +157,8 @@ Route::post("admin/addgatewayadmin", "AdminController@addGatewayAdminSubmit");
 
 Route::post("admin/addrole", "AdminController@addRole");
 
+Route::post("admin/deleterole", "AdminController@deleteRole");
+
 //Airavata Server Check
 Route::get("airavata/down", function(){
 	return View::make("server-down");

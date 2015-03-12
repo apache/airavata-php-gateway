@@ -236,3 +236,4 @@ ul.alert-dropdown {
     background-color: #000;
     color: #fff;
 }
+.add-role, .add-tenant{ display: none;}

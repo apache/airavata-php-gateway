@@ -132,30 +132,30 @@
 </div>
 
 <div class="modal fade" id="delete-app-interface-block" tabindex="-1" role="dialog" aria-labelledby="add-modal" aria-hidden="true">
-	    <div class="modal-dialog">
+    <div class="modal-dialog">
 
-			<form action="{{URL::to('/')}}/app/interface-delete" method="POST">
-		        <div class="modal-content">
-		            <div class="modal-header">
-		              	<h3 class="text-center">Delete Confirmation Application Interface</h3>
-		            </div>
-		            <div class="modal-body">
-						<input type="hidden" class="form-control delete-interfaceid" name="appInterfaceId"/>
-				 		Do you really want to delete the Application Interface - <span class="delete-interface-name"></span>
-					</div>
-					<div class="modal-footer">
-						<div class="form-group">
-							<input type="submit" class="btn btn-danger" value="Delete"/>
-							<input type="button" class="btn btn-default" data-dismiss="modal" value ="Cancel"/>
-						</div>
+		<form action="{{URL::to('/')}}/app/interface-delete" method="POST">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	              	<h3 class="text-center">Delete Confirmation Application Interface</h3>
+	            </div>
+	            <div class="modal-body">
+					<input type="hidden" class="form-control delete-interfaceid" name="appInterfaceId"/>
+			 		Do you really want to delete the Application Interface - <span class="delete-interface-name"></span>
+				</div>
+				<div class="modal-footer">
+					<div class="form-group">
+						<input type="submit" class="btn btn-danger" value="Delete"/>
+						<input type="button" class="btn btn-default" data-dismiss="modal" value ="Cancel"/>
 					</div>
 				</div>
+			</div>
 
-			</form>
+		</form>
 
 
-		</div>
 	</div>
+</div>
 
 @stop
 

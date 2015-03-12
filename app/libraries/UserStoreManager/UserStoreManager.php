@@ -168,10 +168,10 @@ class UserStoreManager {
      * @param GetUserListOfRole $parameters
      * @return GetUserListOfRoleResponse
      */
-    public function getUserListOfRole( $role){
+    public function getUserListOfRole( $roleName){
         $parameters = new GetUserListOfRole();
-        $paramerters->roleName = $role;
-        return $this->serviceStub->getUserListOfRole( $paramerters)->return;
+        $parameters->roleName = $roleName;
+        return $this->serviceStub->getUserListOfRole( $parameters);
     }
     
     /**

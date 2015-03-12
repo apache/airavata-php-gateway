@@ -162,6 +162,23 @@ class WSISClient {
             throw new Exception("Unable to add this role", 0, $ex);
         }
     }
+
+    /**
+     * Function to delete existing role
+     * 
+     * @param string $roleName
+     * @return void
+     * @throws Exception
+     */
+    public function delete_role($roleName) {
+        try {
+            $this->userStoreManager->deleteRole($roleName);
+        } catch (Exception $ex) {
+                        var_dump( $ex); exit;
+
+            throw new Exception("Unable to delete role", 0, $ex);
+        }
+    }
     
     /**
     * Function to get the list of all existing roles
@@ -197,8 +214,9 @@ class WSISClient {
      */
     public function get_userlist_of_role( $role){
         try {
-            return $this->userStoreManager->getRoleListOfUser( $role);
+            return $this->userStoreManager->getUserListOfRole( $role);
         } catch (Exception $ex) {
+            var_dump( $ex); exit;
             throw new Exception("Unable to get user list of roles.", 0, $ex);
         }   
     }
