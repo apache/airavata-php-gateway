@@ -28,7 +28,7 @@ class AdminController extends BaseController {
 	}
 
 	public function dashboard(){
-
+		//only for super admin
 		//Session::put("scigap_admin", true);
 		$idStore = $this->idStore;
 		//$ti = $idStore->createTenant( Input::all() );

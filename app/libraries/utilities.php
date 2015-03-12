@@ -19,9 +19,9 @@ use Airavata\Model\AppCatalog\AppInterface\InputDataObjectType;
 use Airavata\Model\Workspace\Experiment\UserConfigurationData;
 use Airavata\Model\Workspace\Experiment\AdvancedOutputDataHandling;
 use Airavata\Model\Workspace\Experiment\Experiment;
+use Airavata\Model\Workspace\Experiment\ExperimentState;
 use Airavata\Model\AppCatalog\AppInterface\DataType;
 use Airavata\Model\Workspace\Project;
-use Airavata\Model\Workspace\Experiment\ExperimentState;
 use Airavata\Model\Workspace\Experiment\JobState;
 use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionInterface;
 use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
@@ -841,6 +841,8 @@ public static function process_inputs($applicationInputs, $experimentInputs)
                 Utilities::$experimentPath = base_path() . Constant::EXPERIMENT_DATA_ROOT . str_replace(' ', '', Session::get('username') ) . md5(rand() * time()) . '/';
             }
             while (is_dir( Utilities::$experimentPath)); // if dir already exists, try again
+
+            //var_dump( Utilities::$experimentPath ); exit;
             // create upload directory
             if (!mkdir( Utilities::$experimentPath))
             {
@@ -1822,27 +1824,32 @@ public static function create_experiment()
  *
 */
 
-public static function list_output_files($experiment)
+public static function list_output_files($experiment, $expStatus)
 {
-    $utility = new Utilities();
-    $experimentOutputs = $experiment->experimentOutputs;
-    foreach ($experimentOutputs as $output)
+    if($expStatus == ExperimentState::COMPLETED )
     {
-        if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR )
+        $utility = new Utilities();
+        $experimentOutputs = $experiment->experimentOutputs;
+        foreach ((array)$experimentOutputs as $output)
         {
-            //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
-            $outputPath = str_replace(Utilities::$experimentDataPathAbsolute, Constant::EXPERIMENT_DATA_ROOT, $output->value);
-            $outputPathArray = explode("/", $outputPath);
+            if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR )
+            {
+                //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
+                $outputPath = str_replace(Utilities::$experimentDataPathAbsolute, Constant::EXPERIMENT_DATA_ROOT, $output->value);
+                $outputPathArray = explode("/", $outputPath);
 
-            echo '<p>' . $output->name  . ' : ' . '<a target="_blank"
-                        href="' . str_replace(Utilities::$experimentDataPathAbsolute, Constant::EXPERIMENT_DATA_ROOT, $output->value) . '">' . 
-                        $outputPathArray[ sizeof( $outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
-        }
-        elseif ($output->type == DataType::STRING)
-        {
-            echo '<p>' . $output->value . '</p>';
+                echo '<p>' . $output->name  . ' : ' . '<a target="_blank"
+                            href="' . str_replace(Utilities::$experimentDataPathAbsolute, Constant::EXPERIMENT_DATA_ROOT, $output->value) . '">' . 
+                            $outputPathArray[ sizeof( $outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+            }
+            elseif ($output->type == DataType::STRING)
+            {
+                echo '<p>' . $output->value . '</p>';
+            }
         }
     }
+    else
+        echo "Experiment hasn't completed. Experiment Status is : " . $expStatus;
 }
 
 public static function get_experiment_values( $experiment, $project, $forSearch = false)
@@ -1930,10 +1937,10 @@ public static function get_projsearch_results( $searchKey, $searchValue)
         switch ( $searchKey)
         {
             case 'project-name':
-                $projects = $airavataclient->searchProjectsByProjectName( Session::get("username"), $searchValue);
+                $projects = $airavataclient->searchProjectsByProjectName( Session::get("gateway_id"), Session::get("username"), $searchValue);
                 break;
             case 'project-description':
-                $projects = $airavataclient->searchProjectsByProjectDesc(Session::get("username"), $searchValue);
+                $projects = $airavataclient->searchProjectsByProjectDesc( Session::get("gateway_id"), Session::get("username"), $searchValue);
                 break;
         }
     }

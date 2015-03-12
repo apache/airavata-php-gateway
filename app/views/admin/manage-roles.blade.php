@@ -28,7 +28,8 @@
 
                     <table class="table table-striped table-condensed">
                         <tr>
-                            <th>Role</th>
+                            <th>
+                                Role</th>
                             <th>Actions</th>
                         </tr>
                         @foreach( $roles as $role)

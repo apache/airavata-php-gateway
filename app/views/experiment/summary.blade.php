@@ -60,7 +60,7 @@
         </tr>
         <tr>
             <td><strong>Outputs</strong></td>
-            <td><?php if ($expVal["experimentStatusString"] == 'COMPLETED') Utilities::list_output_files($experiment); ?></td>
+            <td><?php Utilities::list_output_files($experiment, $expVal["experimentStatusString"]); ?></td>
         </tr>
         @if( $expVal["experimentStatusString"] == "FAILED")
         <tr>
