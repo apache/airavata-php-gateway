@@ -1841,7 +1841,6 @@ public static function list_output_files($experiment, $expStatus)
                 echo '<p>' . $output->name  . ' : ' . '<a target="_blank"
                             href="' . str_replace(Utilities::$experimentDataPathAbsolute, Constant::EXPERIMENT_DATA_ROOT, $output->value) . '">' . 
                             $outputPathArray[ sizeof( $outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
-            }
             elseif ($output->type == DataType::STRING)
             {
                 echo '<p>' . $output->value . '</p>';
