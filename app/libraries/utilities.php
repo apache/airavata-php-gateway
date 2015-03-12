@@ -284,7 +284,7 @@ public static function launch_experiment($expId)
         Utilities::print_success_message('Experiment launched using ' . $tokenString . ' allocation!');
         */
 
-        $hardCodedToken = '2c308fa9-99f8-4baa-92e4-d062e311483c';
+        $hardCodedToken = 'bdc612fe-401e-4684-88e9-317f99409c45';
         $airavataclient->launchExperiment($expId, $hardCodedToken);
 
         /*
