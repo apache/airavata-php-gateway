@@ -114,7 +114,7 @@ class AppUtilities{
 		if( $update)
 			$airavataclient->updateApplicationInterface( $appInterfaceValues["app-interface-id"], $appInterface);
 		else
-			$airavataclient->getApplicationInterface($airavataclient->registerApplicationInterface( Session::get("gateway_id", $appInterface) );
+			$airavataclient->getApplicationInterface($airavataclient->registerApplicationInterface( Session::get("gateway_id"), $appInterface) );
 
 		//print_r( "App interface has been created.");
 	}
