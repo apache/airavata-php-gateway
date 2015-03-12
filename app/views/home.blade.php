@@ -109,12 +109,6 @@
         ?>
 
 
-
-
-
-
-
-
     </div>
 </div>
 
@@ -165,7 +159,7 @@
         </div>
         <div class="<?php echo $columnClass; ?>">
             <div class="thumbnail" style="border:none">
-                <img src="assets/PoweredbyAiravata_Small.png" alt="SciGaP">
+                <img src="assets/PoweredbyAiravata_Small.png" alt="Apache Airavata">
                 <div class="caption">
                     <p>
                         Apache Airavata is a software framework which is dominantly used to build Web-based science
