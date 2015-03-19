@@ -34,7 +34,6 @@ class AdminController extends BaseController {
 
 		$crData = CRUtilities::getEditCRData();
 		$gateways = CRUtilities::getAllGatewayProfilesData();
-		
 		return View::make("admin/manage-gateway", array( 
 														"gateways" => $gateways, 
 														"computeResources" => CRUtilities::getAllCRObjects(),
