@@ -396,11 +396,19 @@ public static function create_or_update_gateway_profile( $inputs, $update = fals
 public static function getAllGatewayProfilesData(){
     $airavataclient = Session::get("airavataClient");
 
-    $gateways = $airavataclient->getAllGateways();
+    if( Session::has("scigap_admin") )
+        $gateways = $airavataclient->getAllGateways();
+    else
+    {
+        $app_config = Utilities::read_config();
+        $gateways[0] = $airavataclient->getGateway( $app_config["gateway-id"]);
+    }
+
     $gatewayProfiles = $airavataclient->getAllGatewayComputeResources();
     //$gatewayProfileIds = array("GatewayTest3_57726e98-313f-4e7c-87a5-18e69928afb5", "GatewayTest4_4fd9fb28-4ced-4149-bdbd-1f276077dad8");
     foreach( $gateways as $key => $gw)
     {
+        $gateways[$key]->profile = array();
         foreach( (array)$gatewayProfiles as $index => $gp)
         {
 

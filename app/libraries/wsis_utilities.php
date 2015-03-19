@@ -71,7 +71,7 @@ class WSISUtilities implements IdUtilities{
             //$this->wsis_client = new WSISClient( $username);
             return $this->wsis_client->username_exists($username);
         } catch (Exception $ex) {
-            print_r( $ex); exit;
+            print_r( $ex);
             throw new Exception("Unable to check whether username exists", 0, NULL);
         }
         
@@ -87,7 +87,7 @@ class WSISUtilities implements IdUtilities{
         try{
             return $this->wsis_client->authenticate($username, $password);
         } catch (Exception $ex) {
-            var_dump( $ex); exit;
+            var_dump( $ex);
             throw new Exception("Unable to authenticate user", 0, NULL);
         }        
     }
@@ -197,7 +197,7 @@ class WSISUtilities implements IdUtilities{
         try{
             return $this->wsis_client->is_existing_role( $roleName);
         } catch (Exception $ex) {
-            var_dump($ex); exit;
+            var_dump($ex);
             throw new Exception("Unable to check if role exists.", 0, $ex);
         }    
     }
@@ -211,6 +211,7 @@ class WSISUtilities implements IdUtilities{
         try{
             return $this->wsis_client->add_role( $roleName);
         } catch (Exception $ex) {
+            var_dump( $ex);
             throw new Exception("Unable to add role.", 0, $ex);
         }        
     }

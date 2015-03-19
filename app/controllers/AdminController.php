@@ -31,16 +31,9 @@ class AdminController extends BaseController {
 		//only for super admin
 		//Session::put("scigap_admin", true);
 		$idStore = $this->idStore;
-		//$ti = $idStore->createTenant( Input::all() );
-		//print_r( $ti); exit;
-		$roles = $idStore->getRoleNames();
-		foreach ($roles as $key => $role) {
-			//$gatewayAdmins = $idStore->getUserListOfRole
-		}
+
 		$crData = CRUtilities::getEditCRData();
 		$gateways = CRUtilities::getAllGatewayProfilesData();
-		//var_dump( $gatewayProfiles[0]); exit;
-   		//return View::make("admin/manage-admin", array( "roles" => $roles, "gatewayProfiles" => $gatewayProfiles));
 		
 		return View::make("admin/manage-gateway", array( 
 														"gateways" => $gateways, 
