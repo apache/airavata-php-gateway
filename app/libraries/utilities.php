@@ -1828,8 +1828,8 @@ public static function list_output_files($experiment, $expStatus)
                 $outputPathArray = explode("/", $outputPath);
 
                 echo '<p>' . $output->name  . ' : ' . '<a target="_blank"
-                            href="' . URL::to("/") . "/.." . Constant::EXPERIMENT_DATA_ROOT . $explode[sizeof($explode)-2] . '/' . $explode[sizeof($explode)-1] . '">' .
-                $explode[sizeof($explode)-1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                            href="' . str_replace(Utilities::$experimentDataPathAbsolute, Constant::EXPERIMENT_DATA_ROOT, $output->value) . '">' . 
+                        $outputPathArray[ sizeof( $outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
             }
             elseif ($output->type == DataType::STRING)
             {
