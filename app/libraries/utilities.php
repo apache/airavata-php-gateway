@@ -746,6 +746,7 @@ public static function assemble_experiment()
 {
     $utility = new Utilities();
     $experimentInputs = array();
+    $app_config = Utilities::read_config();
 
     $scheduling = new ComputationalResourceScheduling();
     $scheduling->totalCPUCount = $_POST['cpu-count'];
@@ -763,31 +764,14 @@ public static function assemble_experiment()
     $experimentInputs = Utilities::process_inputs($applicationInputs, $experimentInputs);
     //var_dump($experimentInputs);
 
-    if( Utilities::$experimentPath != null){
-        $advHandling = new AdvancedOutputDataHandling();
-
-        $advHandling->outputDataDir = str_replace( base_path() . Constant::EXPERIMENT_DATA_ROOT, Utilities::$pathConstant , Utilities::$experimentPath);
-        $userConfigData->advanceOutputDataHandling = $advHandling;
+    if( Utilities::$experimentPath == null){
+        Utilities::create_experiment_folder_path();
     }
 
+    $advHandling = new AdvancedOutputDataHandling();
 
-
-
-
-    /*
-    $applicationOutputs = get_application_outputs($_POST['application']);
-    $experimentOutputs = array();
-
-    foreach ($applicationOutputs as $applicationOutput)
-    {
-        $experimentOutput = new DataObjectType();
-        $experimentOutput->key = $applicationOutput->name;
-        $experimentOutput->type = $applicationOutput->type;
-        $experimentOutput->value = '';
-
-        $experimentOutputs[] = $experimentOutput;
-    }
-    */
+    $advHandling->outputDataDir = str_replace( base_path() . Constant::EXPERIMENT_DATA_ROOT, Utilities::$pathConstant , Utilities::$experimentPath);
+    $userConfigData->advanceOutputDataHandling = $advHandling;
 
     //TODO: replace constructor with a call to airvata to get a prepopulated experiment template
     $experiment = new Experiment();
@@ -836,20 +820,7 @@ public static function process_inputs($applicationInputs, $experimentInputs)
         if (Utilities::file_upload_successful())
         {
             // construct unique path
-            do
-            {
-                Utilities::$experimentPath = base_path() . Constant::EXPERIMENT_DATA_ROOT . str_replace(' ', '', Session::get('username') ) . md5(rand() * time()) . '/';
-            }
-            while (is_dir( Utilities::$experimentPath)); // if dir already exists, try again
-
-            //var_dump( Utilities::$experimentPath ); exit;
-            // create upload directory
-            if (!mkdir( Utilities::$experimentPath))
-            {
-                Utilities::print_error_message('<p>Error creating upload directory!
-                    Please try again later or report a bug using the link in the Help menu.</p>');
-                $experimentAssemblySuccessful = false;
-            }
+            Utilities::create_experiment_folder_path();
         }
         else
         {
@@ -1014,6 +985,22 @@ public static function process_inputs($applicationInputs, $experimentInputs)
 
 }
 
+
+public static function create_experiment_folder_path()
+{
+    do
+    {
+        Utilities::$experimentPath = base_path() . Constant::EXPERIMENT_DATA_ROOT . str_replace(' ', '', Session::get('username') ) . md5(rand() * time()) . '/';
+    }
+    while (is_dir( Utilities::$experimentPath)); // if dir already exists, try again
+    // create upload directory
+    if (!mkdir( Utilities::$experimentPath))
+    {
+        Utilities::print_error_message('<p>Error creating upload directory!
+            Please try again later or report a bug using the link in the Help menu.</p>');
+        $experimentAssemblySuccessful = false;
+    }
+}
 
 /**
  * Check the uploaded files for errors
@@ -1830,17 +1817,19 @@ public static function list_output_files($experiment, $expStatus)
     {
         $utility = new Utilities();
         $experimentOutputs = $experiment->experimentOutputs;
+
         foreach ((array)$experimentOutputs as $output)
-        {
+        {   
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR )
             {
+                $explode = explode('/', $output->value);
                 //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
                 $outputPath = str_replace(Utilities::$experimentDataPathAbsolute, Constant::EXPERIMENT_DATA_ROOT, $output->value);
                 $outputPathArray = explode("/", $outputPath);
 
                 echo '<p>' . $output->name  . ' : ' . '<a target="_blank"
-                            href="' . str_replace(Utilities::$experimentDataPathAbsolute, Constant::EXPERIMENT_DATA_ROOT, $output->value) . '">' . 
-                            $outputPathArray[ sizeof( $outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                            href="' . URL::to("/") . "/.." . Constant::EXPERIMENT_DATA_ROOT . $explode[sizeof($explode)-2] . '/' . $explode[sizeof($explode)-1] . '">' .
+                $explode[sizeof($explode)-1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
             }
             elseif ($output->type == DataType::STRING)
             {

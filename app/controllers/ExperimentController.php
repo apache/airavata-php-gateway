@@ -67,28 +67,33 @@ class ExperimentController extends BaseController {
 	public function summary()
 	{
 		$experiment = Utilities::get_experiment($_GET['expId']);
-		$project = Utilities::get_project($experiment->projectID);
-		$expVal = Utilities::get_experiment_values( $experiment, $project);
-		// User should not clone or edit a failed experiment. Only create clones of it.
-		if( $expVal["experimentStatusString"] == "FAILED")
-			$expVal["editable"] = false;
-
-		if( Request::ajax() )
+		if( $experiment != null)
 		{
-			return json_encode( $experiment);
+			$project = Utilities::get_project($experiment->projectID);
+			$expVal = Utilities::get_experiment_values( $experiment, $project);
+			// User should not clone or edit a failed experiment. Only create clones of it.
+			if( $expVal["experimentStatusString"] == "FAILED")
+				$expVal["editable"] = false;
+
+			if( Request::ajax() )
+			{
+				return json_encode( $experiment);
+			}
+			else
+			{
+				return View::make( "experiment/summary", 
+									array(
+										"expId" => Input::get("expId"),
+										"experiment" => $experiment,
+										"project" => $project,
+										"expVal" => $expVal
+
+									)
+								);
+			}
 		}
 		else
-		{
-			return View::make( "experiment/summary", 
-								array(
-									"expId" => Input::get("expId"),
-									"experiment" => $experiment,
-									"project" => $project,
-									"expVal" => $expVal
-
-								)
-							);
-		}
+			return View::make( "experiment/summary", array("invalidExperimentId" => 1));
 	}
 
 	public function expChange()

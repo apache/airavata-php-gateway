@@ -7,12 +7,19 @@
 @section('content')
 
 <div class="container" style="max-width: 750px;">
-<h1>
-    Experiment Summary
-    <small><a href="{{ URL::to('/') }}/experiment/summary?expId={{ $experiment->experimentID }}"
-              title="Refresh"><span class="glyphicon glyphicon-refresh refresh-exp"></span></a></small>
-</h1>
 
+    @if(isset( $invalidExperimentId ) )
+        <div class="alert alert-danger">
+            The Experiment ID does not exist. Please go to correct experiment.
+        </div>
+    @else
+    <h1>
+        Experiment Summary
+        <small><a href="{{ URL::to('/') }}/experiment/summary?expId={{ $experiment->experimentID }}"
+                  title="Refresh"><span class="glyphicon glyphicon-refresh refresh-exp"></span></a></small>
+    </h1>
+    
+    
     <table class="table">
         <tr>
             <td><strong>Name</strong></td>
@@ -100,6 +107,9 @@
         </div>
     </form>
     <input type="hidden" id="expObj" value="{{ htmlentities( json_encode( $experiment)) }}"/>
+
+    <!-- check of correct experiment Id ends here -->
+    @endif
 </div>
 
 @stop
