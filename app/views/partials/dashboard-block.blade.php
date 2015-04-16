@@ -10,7 +10,13 @@
                         <a href="{{ URL::to('/')}}/admin/dashboard/roles"><i class="fa fa-fw fa-table"></i>Roles</a>
                     </li>
                     <li>
-                        <a href="tables.html"><i class="fa fa-fw fa-table"></i> Resources</a>
+                        <a href="{{ URL::to('/')}}/admin/dashboard/credential-store"><i class="fa fa-fw fa-table"></i>Credential Store</a>
+                    </li>
+                    <li>
+                        <a href="tables.html"><i class="fa fa-fw fa-table"></i>Resources</a>
+                    </li>
+                    <li>
+                        <a href="{{ URL::to('/')}}/admin/dashboard/experiments"><i class="fa fa-fw fa-experiments"></i>Experiments</a>
                     </li>
                     <li>
                         <a href="forms.html"><i class="fa fa-fw fa-edit"></i> Settings</a>

@@ -11,7 +11,17 @@
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
             @include( 'partials/dashboard-block')
         <div id="page-wrapper">
-
+            <div class="col-md-12">
+            @if( Session::has("message"))
+                <div class="row">
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        {{ Session::get("message") }}
+                    </div>
+                </div>
+                {{ Session::forget("message") }}
+            @endif
+            </div>
             <div class="container-fluid">
 
                     <div class="row">
@@ -100,6 +110,7 @@
                                                         <input name="add" type="submit" class="btn btn-primary" value="Add Admin"/>
                                                     </div>   
                                                 </form>
+                                                -->
                                             </div>
                                         </div>
                                     </div>

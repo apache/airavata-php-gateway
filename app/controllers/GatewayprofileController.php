@@ -42,7 +42,7 @@ class GatewayprofileController extends BaseController {
 	{
 		if( CRUtilities::add_or_update_CRP( Input::all()) )
 		{
-			return Redirect::to("gp/browse")->with("message","Compute Resource Preference for the desired Gateway has been set.");
+			return Redirect::to("admin/dashboard/gateway")->with("message","Compute Resource Preference for the desired Gateway has been set.");
 		}
 	}
 
@@ -53,14 +53,14 @@ class GatewayprofileController extends BaseController {
 		if( Input::has("del-gpId")) // if Gateway has to be deleted
 		{
 			if( CRUtilities::deleteGP( Input::get("del-gpId")) )
-				return Redirect::to("gp/browse")->with("message","Gateway Profile has been deleted.");
+				return Redirect::to("admin/dashboard/gateway")->with("message","Gateway Profile has been deleted.");
 			else
 				$error = true;
 		}
 		else if( Input::has("rem-crId")) // if Compute Resource has to be removed from Gateway
 		{
 			if(CRUtilities::deleteCR( Input::all()) )
-				return Redirect::to("gp/browse")->with("message", "The selected Compute Resource has been successfully removed");
+				return Redirect::to("admin/dashboard/gateway")->with("message", "The selected Compute Resource has been successfully removed");
 			else
 				$error = true;
 		}
@@ -70,7 +70,7 @@ class GatewayprofileController extends BaseController {
 
 		if( $error)
 		{
-			return Redirect::to("gp/browse")->with("message","An error has occurred. Please try again later or report a bug using the link in the Help menu");
+			return Redirect::to("admin/dashboard/gateway")->with("message","An error has occurred. Please try again later or report a bug using the link in the Help menu");
 		}
 	}
 

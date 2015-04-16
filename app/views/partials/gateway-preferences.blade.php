@@ -11,11 +11,17 @@
 		</div>
 	</div><br/>
 	<div class="form-group">
+		<label class="control-label col-md-3">Login Username</label>
+		<div class="col-md-9">
+			<input type="text" name="loginUserName" class="form-control" value="@if( isset( $preferences) ){{$preferences->loginUserName}}@endif" />
+		</div>
+	</div>
+	<div class="form-group">
 		<label class="control-label col-md-3">Preferred Job Submission Protocol</label>
 		<div class="col-md-9">
 			<select name="preferredJobSubmissionProtocol" class="form-control">
 			@foreach( (array)$computeResource->jobSubmissionInterfaces as $index => $jsi)
-				<option value="{{ $jsi->jobSubmissionInterfaceId}}" @if( isset( $preferences) )  @if( $preferences->preferredJobSubmissionProtocol == $jsi->jobSubmissionProtocol) selected @endif @endif>{{ $crData["jobSubmissionProtocols"][$jsi->jobSubmissionProtocol] }}</option>
+				<option value="{{$jsi->jobSubmissionProtocol}}" @if( isset( $preferences) )  @if( $preferences->preferredJobSubmissionProtocol == $jsi->jobSubmissionProtocol) selected @endif @endif>{{ $crData["jobSubmissionProtocols"][$jsi->jobSubmissionProtocol] }}</option>
 			@endforeach
 			</select>
 
@@ -27,7 +33,7 @@
 		<div class="col-md-9">
 			<select name="preferredDataMovementProtocol" class="form-control">
 			@foreach( (array)$computeResource->dataMovementInterfaces as $index => $dmi)
-				<option value="{{ $dmi->dataMovementInterfaceId}}"  @if( isset( $preferences) )  @if( $preferences->preferredDataMovementProtocol == $dmi->dataMovementProtocol) selected @endif @endif>{{ $crData["dataMovementProtocols"][$dmi->dataMovementProtocol] }}</option>
+				<option value="{{ $dmi->dataMovementProtocol}}"  @if( isset( $preferences) )  @if( $preferences->preferredDataMovementProtocol == $dmi->dataMovementProtocol) selected @endif @endif>{{ $crData["dataMovementProtocols"][$dmi->dataMovementProtocol] }}</option>
 			@endforeach
 			</select>
 		</div>
@@ -48,6 +54,7 @@
 			<input type="text" name="scratchLocation" class="form-control" value="@if( isset( $preferences) ){{$preferences->scratchLocation}}@endif" />
 		</div>
 	</div>
+
 	<div class="form-group">
 		<label class="control-label col-md-3">Allocation Project Number</label>
 		<div class="col-md-9">

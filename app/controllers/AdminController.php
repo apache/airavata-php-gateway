@@ -71,21 +71,11 @@ class AdminController extends BaseController {
 		//check if username exists
 		if( $idStore->username_exists( Input::get("username")) )
 		{
-			//first add if this role does not exist
-			$gatewayName = str_replace(" ", "_", Input::get("gateway_name"));
+			//add user to admin role
 			$app_config = Utilities::read_config();
-			$role = $app_config["gateway-role-prepend"] . $gatewayName . $app_config["gateway-role-admin-append"];
-			//var_dump( $role); //exit;
-			//$role = "gateway_default_b8a153f1-6291_admin";
-			if( ! $idStore->isExistingRole( $role) )
-			{
-				$idStore->addRole( $role );
-			}
+			$idStore->updateRoleListOfUser( Input::get("username"), array( "new"=>array( $app_config["admin-role-name"]), "deleted"=>array() ) );
 
-			//add user to gateway_admin role
-			$idStore->updateRoleListOfUser( Input::get("username"), array( "new"=>array( $role), "deleted"=>array() ) );
-
-			return Redirect::to("manage/admins")->with("Gateway Admin has been added.");
+			return Redirect::to("admin/dashboard/users?role=" . $app_config["admin-role-name"])->with("Gateway Admin has been added.");
 
 		}
 		else
@@ -101,11 +91,24 @@ class AdminController extends BaseController {
 		return View::make("admin/manage-roles", array("roles" => $roles));
 	}
 
+	public function experimentsView(){
+		$idStore = $this->idStore;
+		//$roles = $idStore->getExperiments();
+
+		return View::make("admin/manage-experiments" );
+	}
+
 	public function addRole(){
 		$idStore = $this->idStore;
 
 		$idStore->addRole( Input::get("role") );
 		return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been added.");
+	}
+
+	public function getRoles(){
+		$idStore = $this->idStore;
+
+		return json_encode( (array)$idStore->getRoleListOfUser( Input::get("username") ) );
 	}
 
 	public function deleteRole(){
@@ -114,5 +117,11 @@ class AdminController extends BaseController {
 		$idStore->deleteRole( Input::get("role") );
 		return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been deleted.");
 
+	}
+
+	public function credentialStoreView(){
+		$idStore = $this->idStore;
+
+		return View::make("admin/manage-credentials", array("tokens" => array()) );
 	}
 }

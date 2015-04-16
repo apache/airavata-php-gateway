@@ -89,7 +89,12 @@
                    class="btn btn-success"
                    value="Launch"
                    title="Launch the experiment" <?php if(!$expVal["editable"] ) echo 'disabled'  ?>>
-            <!--<input name="cancel" type="submit" class="btn btn-warning" value="Cancel" <?php //if(!$cancelable) echo 'disabled';  ?>>-->
+            <a href="{{URL::to('/') }}/experiment/cancel?expId={{ $experiment->experimentID }}"
+               class="btn btn-default"
+               role="button"
+               title="Edit the experiment's settings" <?php if(!$expVal["cancelable"] ) echo 'disabled'  ?>>
+                <input name="cancel" type="submit" class="btn btn-warning" value="Cancel" <?php if(!$expVal["cancelable"]) echo 'disabled';  ?> >
+            </a>
             <input name="clone"
                    type="submit"
                    class="btn btn-primary"

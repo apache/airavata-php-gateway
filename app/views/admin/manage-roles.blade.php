@@ -133,6 +133,6 @@
             var roleName = $(this).parent().parent().find(".role-name").html();
             $(".delete-role-name").html(roleName);
             $(".delete-roleName").val(roleName);
-        })
+        });
     </script>
 @stop

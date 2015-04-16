@@ -70,6 +70,8 @@ Route::get("experiment/edit", "ExperimentController@editView");
 
 Route::post("experiment/edit", "ExperimentController@editSubmit");
 
+Route::post("experiment/cancel", "ExperimentController@expCancel");
+
 /*
  * Compute Resources Routes
 */
@@ -142,12 +144,15 @@ Route::post("gp/update-crp", "GatewayprofileController@modifyCRP");
 
 Route::get("admin/console", "AdminController@console");
 
-Route::get("admin/dashboard/gateway", "AdminController@dashboard");
 Route::get("admin/dashboard", "AdminController@dashboard");
+
+Route::get("admin/dashboard/gateway", "AdminController@dashboard");
 
 Route::get("admin/dashboard/users", "AdminController@usersView");
 
 Route::get("admin/dashboard/roles", "AdminController@rolesView");
+
+Route::get("admin/dashboard/credential-store", "AdminController@credentialStoreView");
 
 Route::get("manage/users", "AdminController@usersView");
 
@@ -156,6 +161,8 @@ Route::post("admin/adduser", "AdminController@addAdminSubmit");
 Route::post("admin/addgatewayadmin", "AdminController@addGatewayAdminSubmit");
 
 Route::post("admin/addrole", "AdminController@addRole");
+
+Route::post("admin/checkroles", "AdminController@getRoles");
 
 Route::post("admin/deleterole", "AdminController@deleteRole");
 

@@ -284,7 +284,8 @@ public static function launch_experiment($expId)
         Utilities::print_success_message('Experiment launched using ' . $tokenString . ' allocation!');
         */
 
-        $hardCodedToken = 'bdc612fe-401e-4684-88e9-317f99409c45';
+        $app_config = Utilities::read_config();
+        $hardCodedToken = $app_config['credential-store-token'];
         $airavataclient->launchExperiment($expId, $hardCodedToken);
 
         /*
@@ -565,7 +566,7 @@ public static function list_input_files($experiment)
         {
             $explode = explode('/', $input->value);
             echo '<p><a target="_blank"
-                        href="' . URL::to("/") . "/../.." . Constant::EXPERIMENT_DATA_ROOT . $explode[sizeof($explode)-2] . '/' . $explode[sizeof($explode)-1] . '">' .
+                        href="' . URL::to("/") . "/../../" . Constant::EXPERIMENT_DATA_ROOT . $explode[sizeof($explode)-2] . '/' . $explode[sizeof($explode)-1] . '">' .
                 $explode[sizeof($explode)-1] . '
                 <span class="glyphicon glyphicon-new-window"></span></a></p>';
         }
@@ -751,10 +752,9 @@ public static function assemble_experiment()
     $scheduling = new ComputationalResourceScheduling();
     $scheduling->totalCPUCount = $_POST['cpu-count'];
     $scheduling->nodeCount = $_POST['node-count'];
-    //$scheduling->numberOfThreads = $_POST['threads'];
-    $scheduling->queueName = 'normal';
-    $scheduling->wallTimeLimit = $_POST['wall-time'];
-    //$scheduling->totalPhysicalMemory = $_POST['memory'];
+    $scheduling->queueName = $_POST['queue-name'];
+    $scheduling->wallTimeLimit = $_POST['wall-time'];    
+    $scheduling->totalPhysicalMemory = $_POST['total-physical-memory'];
     $scheduling->resourceHostId = $_POST['compute-resource'];
 
     $userConfigData = new UserConfigurationData();
@@ -762,7 +762,6 @@ public static function assemble_experiment()
 
     $applicationInputs = Utilities::get_application_inputs($_POST['application']);
     $experimentInputs = Utilities::process_inputs($applicationInputs, $experimentInputs);
-    //var_dump($experimentInputs);
 
     if( Utilities::$experimentPath == null){
         Utilities::create_experiment_folder_path();
@@ -1542,68 +1541,6 @@ public static function create_http_header()
 }
 
 /**
- * Create head tag
- * Used for all pages
- */
-/*
- *
- * NOW USED DIRECTLY IN BASIC BLADE
- *
- *
-public static function create_html_head() 
-{
-    echo'
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <title>PHP Reference Gateway</title>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="icon" href="resources/assets/favicon.ico" type="image/x-icon">
-            <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-            <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-
-            <!-- Jira Issue Collector - Report Issue -->
-            <script type="text/javascript"
-                    src="https://gateways.atlassian.net/s/31280375aecc888d5140f63e1dc78a93-T/en_USmlc07/6328/46/1.4.13/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=b1572922"></script>
-
-            <!-- Jira Issue Collector - Request Feature -->
-            <script type="text/javascript"
-                src="https://gateways.atlassian.net/s/31280375aecc888d5140f63e1dc78a93-T/en_USmlc07/6328/46/1.4.13/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=674243b0"></script>
-
-
-            <script type="text/javascript">
-                window.ATL_JQ_PAGE_PROPS = $.extend(window.ATL_JQ_PAGE_PROPS, {
-                    "b1572922":
-                    {
-                        "triggerFunction": function(showCollectorDialog) {
-                            //Requries that jQuery is available!
-                            jQuery("#report-issue").click(function(e) {
-                                e.preventDefault();
-                                showCollectorDialog();
-                            });
-                        }
-                    },
-                    "674243b0":
-                    {
-                        "triggerFunction": function(showCollectorDialog) {
-                            //Requries that jQuery is available!
-                            jQuery("#request-feature").click(function(e) {
-                                e.preventDefault();
-                                showCollectorDialog();
-                            });
-                        }
-                    }
-                });
-            </script>
-
-        </head>
-    ';
-}
-*/
-
-/**
  * Open the XML file containing the community token
  * @param $tokenFilePath
  * @throws Exception
@@ -1812,8 +1749,11 @@ public static function create_experiment()
 */
 
 public static function list_output_files($experiment, $expStatus)
-{
-    if($expStatus == ExperimentState::COMPLETED )
+{   
+
+    $expStatusVal = array_search($expStatus, ExperimentState::$__names);
+
+    if($expStatusVal == ExperimentState::COMPLETED )
     {
         $utility = new Utilities();
         $experimentOutputs = $experiment->experimentOutputs;
@@ -2076,6 +2016,7 @@ public static function apply_changes_to_experiment($experiment, $input)
 
     $schedulingUpdated->resourceHostId = $input['compute-resource'];
     $schedulingUpdated->nodeCount = $input['node-count'];
+    $schedulingUpdated->queueName = $_POST['queue-name'];
     $schedulingUpdated->totalCPUCount = $input['cpu-count'];
     //$schedulingUpdated->numberOfThreads = $input['threads'];
     $schedulingUpdated->wallTimeLimit = $input['wall-time'];
