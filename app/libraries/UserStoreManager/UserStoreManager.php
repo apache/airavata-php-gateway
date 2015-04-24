@@ -6,7 +6,7 @@ require_once 'UserStoreManager.stub.php';
  * UsersStoreManager class
  * 
  * This class provide an easy to use interface for
- * WSO2 IS 4.6.0 RemoteUserStoreManager service.
+ * WSO2 IS 5.0.0 RemoteUserStoreManager service.
  */
 class UserStoreManager {
     /**
