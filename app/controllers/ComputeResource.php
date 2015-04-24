@@ -75,7 +75,7 @@ class ComputeResource extends BaseController{
 			$data["dataMovementInterfaces"] = $dataMovementInterfaces;
 			$data["addedJSP"] = $addedJSP;
 			$data["addedDMI"] = $addedDMI;
-
+			//var_dump($data["jobSubmissionInterfaces"]); exit;
 			return View::make("resource/edit", $data);
 		}
 		else

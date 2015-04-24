@@ -23,6 +23,7 @@ use Airavata\Model\AppCatalog\ComputeResource\SCPDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\GridFTPDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\LOCALDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\UnicoreDataMovement;
+use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
 
 
 //Gateway Classes
@@ -85,6 +86,7 @@ public static function getEditCRData(){
     $sp = new SecurityProtocol();
     $dmp = new DataMovementProtocol();
     $jmc = new JobManagerCommand();
+    $mm = new MonitorMode();
     return array(
                     "fileSystemsObject" => $files,
                     "fileSystems" => $files::$__names,
@@ -96,7 +98,8 @@ public static function getEditCRData(){
                     "securityProtocols" => $sp::$__names,
                     "dataMovementProtocolsObject" => $dmp,
                     "dataMovementProtocols" => $dmp::$__names,
-                    "jobManagerCommands" => $jmc::$__names
+                    "jobManagerCommands" => $jmc::$__names,
+                    "monitorModes" => $mm::$__names
                 );
 }
 
@@ -172,9 +175,11 @@ public static function create_or_update_JSIObject( $inputs, $update = false){
                                                         "securityProtocol" => intval( $inputs["securityProtocol"]),
                                                         "resourceJobManager" => $resourceManager,
                                                         "alternativeSSHHostName" => $inputs["alternativeSSHHostName"],
-                                                        "sshPort" => intval( $inputs["sshPort"] )
+                                                        "sshPort" => intval( $inputs["sshPort"] ),
+                                                        "monitorMode" => intval( $inputs["monitorMode"] )
                                                     )
                                                 );
+        //var_dump( $sshJobSubmission); exit;
         if( $update) //update Local JSP
         {
             $jsiObject = $airavataclient->getSSHJobSubmission( $jsiId);
@@ -187,6 +192,7 @@ public static function create_or_update_JSIObject( $inputs, $update = false){
             $jsiObject->securityProtocol = intval( $inputs["securityProtocol"] );
             $jsiObject->alternativeSSHHostName = $inputs["alternativeSSHHostName"];
             $jsiObject->sshPort = intval( $inputs["sshPort"] );
+            $jsiObject->monitorMode = intval( $inputs["monitorMode"] );
             $jsiObject->resourceJobManager = $airavataclient->getresourceJobManager( $rmjId);
             //var_dump( $jsiObject); exit;
             //add updated resource job manager to ssh job submission object.

@@ -235,6 +235,15 @@
 						                <input class='form-control' name='sshPort' value="{{ $JSI->sshPort }}"/>
 						            </div>
 
+						            <div class="form-group required">
+										<label class="control-label">Select Monitoring Mode</label>
+						            	<select name="monitorMode" required>
+						            		@foreach( $monitorModes as $index => $mode)
+						            			<option value="{{ $index }}" @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
+						            		@endforeach
+						            	</select>
+						            </div>
+
 									<div class="form-group">
 										<div class="select-resource-manager-type">
 											<div class="form-group required">
@@ -254,15 +263,15 @@
 												<input type="text" class="form-control" name="jobManagerBinPath" value="{{ $JSI->resourceJobManager->jobManagerBinPath }}"/>
 											</div>
 											<div class="form-group">
-											<h3>Job Manager Commands</h3>
-											@foreach( $jobManagerCommands as $index => $jmc)
-												<label class="control-label">{{ $jmc }}</label>
-												<input class="form-control" name="jobManagerCommands[{{ $index }}]" placeholder="{{ $jmc }}" value="@if( isset( $JSI->resourceJobManager->jobManagerCommands[$index] ) ) {{ $JSI->resourceJobManager->jobManagerCommands[$index] }} @endif"/>
-											@endforeach
-											</select>
-										</div>
+												<h3>Job Manager Commands</h3>
+												@foreach( $jobManagerCommands as $index => $jmc)
+													<label class="control-label">{{ $jmc }}</label>
+													<input class="form-control" name="jobManagerCommands[{{ $index }}]" placeholder="{{ $jmc }}" value="@if( isset( $JSI->resourceJobManager->jobManagerCommands[$index] ) ) {{ $JSI->resourceJobManager->jobManagerCommands[$index] }} @endif"/>
+												@endforeach
+											</div>
 										</div>
 									</div>
+						            
 								@elseif(  $selectedJspIndex == $jobSubmissionProtocolsObject::UNICORE)
 									<div class="form-group required">		
 										<label class="control-label">Select Security Protocol</label>
@@ -470,13 +479,22 @@
 
 		<div class="ssh-block hide">
 			<div class="form-group required">		
-				<label class="control-label">Select Security Protocol</label>
+				<label class="control-label">Select Security Protocol  </label>
 				<select name="securityProtocol" required>
 				@foreach( $securityProtocols as $index => $sp)
 					<option value="{{ $index }}">{{ $sp }}</option>
 				@endforeach
 				</select>
 			</div>
+
+	        <div class="form-group required">
+				<label class="control-label">Select Monitoring Mode  </label>
+	        	<select name="monitorMode" required>
+	        		@foreach( $monitorModes as $index => $mode)
+	        		<option value="{{ $index }}">{{ $mode}}</option>
+	        		@endforeach
+	        	</select>
+	        </div>
 
 			<div class="form-group addedScpValue hide">
 				<label class="control-label">Alternate SSH Host Name</label>

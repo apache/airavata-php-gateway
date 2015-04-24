@@ -17,7 +17,7 @@
         
         @include('partials/experiment-inputs', array("expInputs" => $expInputs) )
 
-        <div class="btn-toolbar">
+        <div class="form-group btn-toolbar">
             <div class="btn-group">
                 <button name="save" type="submit" class="btn btn-primary" value="Save">Save</button>
                 <button name="launch" type="submit" class="btn btn-success" id="expLaunch" value="Save and launch">Save and launch</button>
