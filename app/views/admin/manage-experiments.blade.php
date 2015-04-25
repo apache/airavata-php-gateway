@@ -17,12 +17,23 @@
             <div class="container-fluid">
 
                 <div class="row">
+                    <!--
+                        <div class="well col-md-2 text-center">
+                            Total 500
+                        </div>
+                    -->
 
+                    <div class="well form-group form-horizontal col-md-12">
+                        <label class="col-md-3">Enter Experiment Id to View Summary :</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control experimentId"/>
+                        </div>
+                        <button class="col-md-3 btn btn-primary get-experiment">Get</button>
+                        <div class="loading-img hide text-center"><img src="{{URL::to('/')}}/assets/ajax-loader.gif"/></div>
 
-                    <div class="well col-md-2 text-center">
-                        Total 500
+                        <div class="experiment-info col-md-12">
+                        </div>
                     </div>
-
                 </div>
 
                 <div class="row">
@@ -136,6 +147,23 @@
                 }
                 e.stopPropagation();
             });
+
+            $(".get-experiment").click( function(){
+                $(".loading-img").removeClass("hide");
+                $.ajax({
+                    url:'experiment/summary?expId=' + $(".experimentId").val(),
+                    type: 'get',
+                    success:function( data){
+                        $(".experiment-info").html( data);
+
+                    }
+                }).complete( function(){
+                    $(".loading-img").addClass("hide");
+                });
+            });
+
+            //Experiment stages are under development.
+            $(".tree").parent().addClass("hide");
         });
     </script>
 @stop

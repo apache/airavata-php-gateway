@@ -25,7 +25,7 @@ class ExperimentController extends BaseController {
 		if( isset( $_POST['continue'] ))
 		{
 			Session::put( 'exp_create_continue', true);
-
+			
 			$app_config = Utilities::read_config();
 			$experimentInputs = array( 
 								"disabled" => ' disabled',
@@ -39,7 +39,8 @@ class ExperimentController extends BaseController {
 						        "queueName" => $app_config["queue-name"],
 						        "nodeCount" => $app_config["node-count"],
 						        "cpuCount" => $app_config["total-cpu-count"],
-						        "wallTimeLimit" => $app_config["wall-time-limit"]
+						        "wallTimeLimit" => $app_config["wall-time-limit"],
+						        "advancedOptions" => $app_config["advanced-experiment-options"]
 					        );
 			return View::make( "experiment/create-complete", array( "expInputs" => $experimentInputs) );
 		}
@@ -81,25 +82,36 @@ class ExperimentController extends BaseController {
 			if( $expVal["experimentStatusString"] == "LAUNCHED" || $expVal["experimentStatusString"] == "EXECUTING" )
 				$expVal["cancelable"] = true;
 
-			if( Request::ajax() )
-			{
-				return json_encode( $experiment);
-			}
-			else
-			{
-				return View::make( "experiment/summary", 
-									array(
+			$data = array(
 										"expId" => Input::get("expId"),
 										"experiment" => $experiment,
 										"project" => $project,
 										"expVal" => $expVal
+						);
 
-									)
-								);
+			if( Request::ajax() )
+			{
+				//admin wants to see an experiment summary
+				if( Input::has("dashboard"))
+				{
+					$data["dashboard"] = true;
+					return View::make("partials/experiment-info", $data);
+				}
+				else
+					return json_encode( $experiment);
+			}
+			else
+			{
+				return View::make( "experiment/summary", $data);
 			}
 		}
 		else
-			return View::make( "experiment/summary", array("invalidExperimentId" => 1));
+		{
+			if( Input::has("dashboard"))
+				return View::make( "partials/experiment-info", array("invalidExperimentId" => 1)); 
+			else
+				return View::make( "experiment/summary", array("invalidExperimentId" => 1));
+		}
 	}
 
 	public function expCancel()

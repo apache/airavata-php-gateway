@@ -759,6 +759,8 @@ public static function assemble_experiment()
 
     $userConfigData = new UserConfigurationData();
     $userConfigData->computationalResourceScheduling = $scheduling;
+    if( isset( $_POST["userDN"]) )
+        $userConfigData->userDN = $_POST["userDN"];
 
     $applicationInputs = Utilities::get_application_inputs($_POST['application']);
     $experimentInputs = Utilities::process_inputs($applicationInputs, $experimentInputs);
@@ -785,9 +787,9 @@ public static function assemble_experiment()
     $experiment->applicationId = $_POST['application'];
     $experiment->userConfigurationData = $userConfigData;
     $experiment->experimentInputs = $experimentInputs;
-    if( isset( $_POST["emailNotification"]))
+    if( isset( $_POST["enableEmailNotification"]))
     {
-        $experiment->emailNotification = intval( $_POST["emailNotification"] );
+        $experiment->enableEmailNotification = intval( $_POST["enableEmailNotification"] );
         $experiment->emailAddresses = array_unique( array_filter( $_POST["emailAddresses"], "trim") );
     }
 
@@ -1504,15 +1506,15 @@ public static function create_nav_bar()
             if( "user-console" == Session::get("nav-active"))
                 $active = " active ";
         }
-        echo '<li class="dropdown ' . $active . '">
-
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">' . Session::get("username") . ' <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">';
-
         if( Session::has("admin"))
-            echo '<li><a href="' . URL::to("/") . '/admin/console"><span class="glyphicon glyphicon-user"></span> Dashboard</a></li>';
+            echo '<li><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span> Dashboard</a></li>';
         else
             echo '<li><a href="' . URL::to("/") . '/user/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>';
+
+        echo '<li class="dropdown ' . $active . '">
+
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">' . Session::get("username") . ' <span class="caret"></span></a>';
+        echo '<ul class="dropdown-menu" role="menu">';
 
         echo '<li><a href="' . URL::to('/') . '/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>';
         echo    '</ul></li></ul>';
@@ -1705,7 +1707,6 @@ public static function create_experiment()
     $airavataclient = Session::get("airavataClient");
 
     $experiment = Utilities::assemble_experiment();
-    //var_dump($experiment); exit;
     $expId = null;
 
     try
@@ -2038,10 +2039,10 @@ public static function apply_changes_to_experiment($experiment, $input)
     */
 
     $userConfigDataUpdated->computationalResourceScheduling = $schedulingUpdated;
+    if( isset( $input["userDN"]) )
+        $userConfigDataUpdated->userDN = $input["userDN"];
+
     $experiment->userConfigurationData = $userConfigDataUpdated;
-
-
-
 
     $applicationInputs = Utilities::get_application_inputs($experiment->applicationId);
 
