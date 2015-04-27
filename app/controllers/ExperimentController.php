@@ -176,7 +176,8 @@ class ExperimentController extends BaseController {
 								'experiment' => $experiment,
 								'project' => $project,
 								'expVal' => $expVal,
-								'cloning' => true
+								'cloning' => true,
+						        'advancedOptions' => $app_config["advanced-experiment-options"]
 								);
 		return View::make("experiment/edit", array("expInputs" => $experimentInputs) );
 	}
