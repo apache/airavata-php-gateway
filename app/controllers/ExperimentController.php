@@ -74,6 +74,9 @@ class ExperimentController extends BaseController {
 		{
 			$project = Utilities::get_project($experiment->projectID);
 			$expVal = Utilities::get_experiment_values( $experiment, $project);
+			$jobDetails = Utilities::get_job_details( $experiment->experimentID);
+			$transferDetails = Utilities::get_transfer_details( $experiment->experimentID);
+			//var_dump( $jobDetails); exit;
 			// User should not clone or edit a failed experiment. Only create clones of it.
 			if( $expVal["experimentStatusString"] == "FAILED")
 				$expVal["editable"] = false;
@@ -86,6 +89,7 @@ class ExperimentController extends BaseController {
 										"expId" => Input::get("expId"),
 										"experiment" => $experiment,
 										"project" => $project,
+										"jobDetails" => $jobDetails,
 										"expVal" => $expVal
 						);
 

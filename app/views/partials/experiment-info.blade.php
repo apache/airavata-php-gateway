@@ -47,6 +47,28 @@
         </tr>
         ';
         ?>
+
+        @if( isset($dashboard))
+        <tr>
+            <td><strong>Working Dir</strong></td>
+
+            <?php
+            foreach($jobDetails as $job) echo '
+                <td>' . $job->workingDir . '</td>
+            ';
+            ?>
+        </tr>
+         <tr>
+            <td><strong>Job Description</strong></td>
+
+            <?php
+            foreach($jobDetails as $job) echo '
+                <td>' . $job->jobDescription . '</td>
+            ';
+            ?>
+        </tr>
+        @endif
+
         <tr>
             <td><strong>Creation time</strong></td>
             <td><?php echo $expVal["experimentCreationTime"]; ?></td>

@@ -1147,10 +1147,13 @@ public static function clone_experiment($expId)
 public static function cancel_experiment($expId)
 {
     $airavataclient = Session::get("airavataClient");
+    $app_config = Utilities::read_config();
+
+
 
     try
     {
-        $airavataclient->terminateExperiment($expId);
+        $airavataclient->terminateExperiment($expId, $app_config["credential-store-token"]);
 
         Utilities::print_success_message("Experiment canceled!");
     }
@@ -2092,6 +2095,17 @@ public static function read_config( $fileName = null){
     return $wsis_config;
 
 }
+
+public static function get_job_details( $experimentId){
+    $airavataclient = Session::get("airavataClient");
+    return $airavataclient->getJobDetails( $experimentId);
+}
+
+public static function get_transfer_details( $experimentId){
+    $airavataclient = Session::get("airavataClient");
+    return $airavataclient->getDataTransferDetails( $experimentId);
+}
+
 }
 
 ?>
