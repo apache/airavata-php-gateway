@@ -1265,27 +1265,7 @@ public static function create_application_select($id = null, $editable = true)
  */
 public static function create_compute_resources_select($applicationId, $resourceHostId)
 {
-    $computeResources = Utilities::get_available_app_interface_compute_resources($applicationId);
-    
-    if( count( $computeResources) > 0)
-    {
-    	echo '<select class="form-control" name="compute-resource" id="compute-resource">';
-	    foreach ($computeResources as $id => $name)
-	    {
-	        $selected = ($resourceHostId == $id)? ' selected' : '';
-
-	        echo '<option value="' . $id . '"' . $selected . '>' .
-	                $name . '</option>';
-
-	    }
-
-    	echo '</select>';
-    }
-    else
-    {
-    	echo "<h4>No Compute Resources exist at the moment.";
-    }
-
+    return Utilities::get_available_app_interface_compute_resources($applicationId);
 }
 
 
@@ -2104,6 +2084,13 @@ public static function get_job_details( $experimentId){
 public static function get_transfer_details( $experimentId){
     $airavataclient = Session::get("airavataClient");
     return $airavataclient->getDataTransferDetails( $experimentId);
+}
+
+public static function getQueueDatafromResourceId( $crId){
+    $airavataclient = Session::get("airavataClient");
+    $resourceObject = $airavataclient->getComputeResource( $crId);
+
+    return $resourceObject->batchQueues;
 }
 
 }

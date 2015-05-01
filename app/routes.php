@@ -27,6 +27,10 @@ Route::post("login", "AccountController@loginSubmit");
 Route::get("logout", "AccountController@logout");
 
 Route::get("forgot-password", "AccountController@forgotPassword");
+
+Route::get("setUserTimezone", function(){
+	Session::set("user_timezone", Input::get("timezone"));
+});
 /*
  * The following routes will not work without logging in.
  *
@@ -72,6 +76,8 @@ Route::post("experiment/edit", "ExperimentController@editSubmit");
 
 Route::post("experiment/cancel", "ExperimentController@expCancel");
 
+Route::get("experiment/getQueueView", "ExperimentController@getQueueView");
+
 /*
  * Compute Resources Routes
 */
@@ -80,21 +86,21 @@ Route::get("cr/create", function(){
 	return Redirect::to("cr/create/step1");
 });
 
-Route::get("cr/create", "ComputeResource@createView"); 
+Route::get("cr/create", "ResourceController@createView"); 
 
-Route::post("cr/create", "ComputeResource@createSubmit");
+Route::post("cr/create", "ResourceController@createSubmit");
 
-Route::get("cr/edit", "ComputeResource@editView"); 
+Route::get("cr/edit", "ResourceController@editView"); 
 
-Route::post("cr/edit", "ComputeResource@editSubmit"); 
+Route::post("cr/edit", "ResourceController@editSubmit"); 
 
-Route::get("cr/browse", "ComputeResource@browseView");
+Route::get("cr/browse", "ResourceController@browseView");
 
-Route::post("cr/delete-jsi", "ComputeResource@deleteActions");
+Route::post("cr/delete-jsi", "ResourceController@deleteActions");
 
-Route::post("cr/delete-dmi", "ComputeResource@deleteActions");
+Route::post("cr/delete-dmi", "ResourceController@deleteActions");
 
-Route::post("cr/delete-cr", "ComputeResource@deleteActions");
+Route::post("cr/delete-cr", "ResourceController@deleteActions");
 
 /*
  * Application Catalog Routes

@@ -1,6 +1,6 @@
 <?php
 
-class ComputeResource extends BaseController{
+class ResourceController extends BaseController{
 	
 	/**
 	*    Instantiate a new Compute Resource Controller Instance

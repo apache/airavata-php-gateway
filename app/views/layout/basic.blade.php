@@ -95,6 +95,20 @@
             $(this).val( $.trim( $(this).val() ) );
         });
 
+        //find users' current time.
+        if("{{ Session::get('user_time') }}".length==0){
+            var visitortime = new Date();
+            var visitortimezone = visitortime.getTimezoneOffset()/60;
+            $.ajax({
+                type: "GET",
+                url: "../setUserTimezone",
+                data: 'timezone='+ visitortimezone,
+                success: function(){
+                    //location.reload();
+                }
+            });
+        }
+
     </script>
 
 @show
