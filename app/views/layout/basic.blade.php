@@ -94,7 +94,7 @@
         $("body").on( "blur", ".form-control", function(){
             $(this).val( $.trim( $(this).val() ) );
         });
-
+        
         //find users' current time.
         if("{{ Session::get('user_time') }}".length==0){
             var visitortime = new Date();
@@ -108,7 +108,6 @@
                 }
             });
         }
-
     </script>
 
 @show

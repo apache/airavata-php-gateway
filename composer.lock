@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git-wip-us.apache.org/repos/asf/thrift.git",
-                "reference": "dc799ca078627a8e400cfcdbb965acf6abf86eef"
+                "reference": "1e723d931e92652e4ccb1385709258759ae5bc54"
             },
             "require": {
                 "php": ">=5.3.0"
@@ -41,7 +41,7 @@
             ],
             "description": "Apache Thrift RPC system",
             "homepage": "http://thrift.apache.org/",
-            "time": "2015-04-27 21:02:05"
+            "time": "2015-05-01 04:09:00"
         },
         {
             "name": "classpreloader/classpreloader",

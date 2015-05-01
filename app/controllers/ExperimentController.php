@@ -48,7 +48,8 @@ class ExperimentController extends BaseController {
 						        "queueDefaults" => $queueDefaults,
 						        "advancedOptions" => $app_config["advanced-experiment-options"],
 						        "computeResources" => $computeResources,
-						        "resourceHostId" => null
+						        "resourceHostId" => null,
+						        "advancedOptions" => $app_config["advanced-experiment-options"]
 					        );
 			return View::make( "experiment/create-complete", array( "expInputs" => $experimentInputs) );
 		}
@@ -185,6 +186,7 @@ class ExperimentController extends BaseController {
 
 		$expVal = Utilities::get_experiment_values( $experiment, $project);
 		$computeResources = Utilities::create_compute_resources_select($experiment->applicationId, $expVal['scheduling']->resourceHostId);
+
 		$experimentInputs = array(	
 								"disabled" => ' ',
 						        "experimentName" => $experiment->name,
@@ -198,7 +200,11 @@ class ExperimentController extends BaseController {
 								'cloning' => true,
 						        'advancedOptions' => $app_config["advanced-experiment-options"],
 						        'computeResources' => $computeResources,
-						        "resourceHostId" => $expVal['scheduling']->resourceHostId
+						        "resourceHostId" => $expVal['scheduling']->resourceHostId,
+								'project' => $project,
+								'expVal' => $expVal,
+								'cloning' => true,
+						        'advancedOptions' => $app_config["advanced-experiment-options"]
 								);
 		return View::make("experiment/edit", array("expInputs" => $experimentInputs) );
 	}
@@ -255,7 +261,6 @@ class ExperimentController extends BaseController {
 							);
 		return View::make("partials/experiment-queue-block", array( "queues" => $queues, "queueDefaults" => $queueDefaults) );
 	}
-
 }
 
 ?>

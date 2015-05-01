@@ -14,7 +14,7 @@
         <input type="hidden" name="experiment-description" value="{{$expInputs['experimentDescription']}}">
         <input type="hidden" name="project" value="{{$expInputs['project']}}">
         <input type="hidden" name="application" value="{{$expInputs['application']}}">
-        
+
         @include('partials/experiment-inputs', array("expInputs" => $expInputs, "queueDefaults" => $expInputs['queueDefaults']) )
 
         <div class="form-group btn-toolbar">
@@ -80,6 +80,5 @@
             }
         });
     });
-
     </script>
 @stop

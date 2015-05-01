@@ -61,7 +61,6 @@
                 @if(isset($expInputs['expVal']) )
                     @include( 'partials/experiment-queue-block', array('expVal' => $expVal) )
                 @endif
-            </div>
         </div>
     </div>
 </div>

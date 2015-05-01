@@ -86,22 +86,21 @@ Route::get("cr/create", function(){
 	return Redirect::to("cr/create/step1");
 });
 
-Route::get("cr/create", "ResourceController@createView"); 
+Route::get("cr/create", "ComputeResource@createView"); 
 
-Route::post("cr/create", "ResourceController@createSubmit");
+Route::post("cr/create", "ComputeResource@createSubmit");
 
-Route::get("cr/edit", "ResourceController@editView"); 
+Route::get("cr/edit", "ComputeResource@editView"); 
 
-Route::post("cr/edit", "ResourceController@editSubmit"); 
+Route::post("cr/edit", "ComputeResource@editSubmit"); 
 
-Route::get("cr/browse", "ResourceController@browseView");
+Route::get("cr/browse", "ComputeResource@browseView");
 
-Route::post("cr/delete-jsi", "ResourceController@deleteActions");
+Route::post("cr/delete-jsi", "ComputeResource@deleteActions");
 
-Route::post("cr/delete-dmi", "ResourceController@deleteActions");
+Route::post("cr/delete-dmi", "ComputeResource@deleteActions");
 
-Route::post("cr/delete-cr", "ResourceController@deleteActions");
-
+Route::post("cr/delete-cr", "ComputeResource@deleteActions");
 /*
  * Application Catalog Routes
 */
