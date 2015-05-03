@@ -14,8 +14,8 @@
         <input type="hidden" name="experiment-description" value="{{$expInputs['experimentDescription']}}">
         <input type="hidden" name="project" value="{{$expInputs['project']}}">
         <input type="hidden" name="application" value="{{$expInputs['application']}}">
-        
-        @include('partials/experiment-inputs', array("expInputs" => $expInputs) )
+
+        @include('partials/experiment-inputs', array("expInputs" => $expInputs, "queueDefaults" => $expInputs['queueDefaults']) )
 
         <div class="form-group btn-toolbar">
             <div class="btn-group">
@@ -65,6 +65,20 @@
     $(".addEmail").click( function(){
         var emailInput = $(this).parent().find("#emailAddresses").clone();
         emailInput.removeAttr("id").removeAttr("required").val("").appendTo(".emailAddresses");
+    });
+
+    $("#compute-resource").change( function(){
+        var crId = $(this).val();
+        $(".loading-img ").removeClass("hide");
+        $.ajax({
+            url: '../experiment/getQueueView',
+            type: 'get',
+            data: {crId: crId},
+            success: function(data) {
+                $(".queue-view").html( data);
+                $(".loading-img ").addClass("hide");
+            }
+        });
     });
     </script>
 @stop

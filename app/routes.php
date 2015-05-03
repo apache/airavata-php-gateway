@@ -27,6 +27,10 @@ Route::post("login", "AccountController@loginSubmit");
 Route::get("logout", "AccountController@logout");
 
 Route::get("forgot-password", "AccountController@forgotPassword");
+
+Route::get("setUserTimezone", function(){
+	Session::set("user_timezone", Input::get("timezone"));
+});
 /*
  * The following routes will not work without logging in.
  *
@@ -72,6 +76,8 @@ Route::post("experiment/edit", "ExperimentController@editSubmit");
 
 Route::post("experiment/cancel", "ExperimentController@expCancel");
 
+Route::get("experiment/getQueueView", "ExperimentController@getQueueView");
+
 /*
  * Compute Resources Routes
 */
@@ -95,7 +101,6 @@ Route::post("cr/delete-jsi", "ComputeResource@deleteActions");
 Route::post("cr/delete-dmi", "ComputeResource@deleteActions");
 
 Route::post("cr/delete-cr", "ComputeResource@deleteActions");
-
 /*
  * Application Catalog Routes
 */

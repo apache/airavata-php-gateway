@@ -42,48 +42,25 @@
         </div>
         <div class="form-group">
             <label for="compute-resource">Compute Resource</label>
-            @if( isset( $expInputs['cloning']))
-                {{ Utilities::create_compute_resources_select($expInputs['experiment']->applicationId, $expInputs['expVal']['scheduling']->resourceHostId) }}
+            @if( count( $expInputs['computeResources']) > 0)
+                <select class="form-control" name="compute-resource" id="compute-resource">
+                @foreach ($expInputs['computeResources'] as $id => $name)
+                    <option value="{{$id}}" {{ ($expInputs['resourceHostId'] == $id)? ' selected' : '' }}>{{$name}}</option>
+                @endforeach
+                </select>
             @else
-                {{ Utilities::create_compute_resources_select($expInputs['application'], null) }}
+                <h4>No Compute Resources exist at the moment
             @endif
         </div>
-
-        <div class="form-group">
-            <label for="node-count">Queue Name</label>
-            <input type="text" class="form-control" name="queue-name" id="queue-name" 
-            value="@if(isset($expInputs['expVal']) ){{ $expInputs['expVal']['scheduling']->queueName }}  @else{{$expInputs['queueName']}} @endif"
-            @if(isset($expInputs['expVal']) ) @if(!$expInputs['expVal']['editable']){{ disabled }} @endif @endif>
-        </div>
-        <div class="form-group">
-            <label for="node-count">Node Count</label>
-            <input type="number" class="form-control" name="node-count" id="node-count" min="1"
-            value="@if(isset($expInputs['expVal']) ){{ $expInputs['expVal']['scheduling']->nodeCount }}@else{{$expInputs['nodeCount']}}@endif"
-            @if(isset($expInputs['expVal']) ) @if(!$expInputs['expVal']['editable']){{disabled}} @endif @endif>
-        </div>
-        <div class="form-group">
-            <label for="cpu-count">Total Core Count</label>
-            <input type="number" class="form-control" name="cpu-count" id="cpu-count" min="1"
-            value="@if(isset($expInputs['expVal']) ){{ $expInputs['expVal']['scheduling']->totalCPUCount }}@else{{$expInputs['cpuCount']}}@endif"
-            @if(isset($expInputs['expVal'])) @if(!$expInputs['expVal']['editable']){{disabled}} @endif @endif>
-        </div>
-        <div class="form-group">
-            <label for="wall-time">Wall Time Limit</label>
-            <div class="input-group">
-                <input type="number" class="form-control" name="wall-time" id="wall-time" min="0"
-                value="@if(isset($expInputs['expVal']) ){{ $expInputs['expVal']['scheduling']->wallTimeLimit }}@else{{$expInputs['wallTimeLimit']}}@endif"
-                @if(isset($expInputs['expVal'])) @if(!$expInputs['expVal']['editable']){{disabled}} @endif @endif>
-                <span class="input-group-addon">minutes</span>
+        <div class="queue-block">
+            <div class="loading-img text-center hide">
+                <img src="../assets/ajax-loader.gif"/>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="wall-time">Total Physical Memory</label>
-            <div class="input-group">
-                <input type="number" class="form-control" name="total-physical-memory" id="wall-time" min="0"
-                value="@if(isset($expInputs['expVal']) ){{ $expInputs['expVal']['scheduling']->totalPhysicalMemory }}@endif"
-                @if(isset($expInputs['expVal'])) @if(!$expInputs['expVal']['editable']){{disabled}} @endif @endif>
-                <span class="input-group-addon">MB</span>
-            </div>
+            <input type="hidden" name="selected-queue" value="@if(isset($expInputs['expVal']) ){{ $expInputs['expVal']['scheduling']->queueName }} @endif"/>
+            <div class="queue-view">
+                @if(isset($expInputs['expVal']) )
+                    @include( 'partials/experiment-queue-block', array('expVal' => $expVal) )
+                @endif
         </div>
     </div>
 </div>

@@ -26,7 +26,16 @@ class ExperimentController extends BaseController {
 		{
 			Session::put( 'exp_create_continue', true);
 			
+			$computeResources = Utilities::create_compute_resources_select($_POST['application'], null);
+
 			$app_config = Utilities::read_config();
+
+			$queueDefaults = array( "queueName" => $app_config["queue-name"],
+						        	"nodeCount" => $app_config["node-count"],
+						        	"cpuCount" => $app_config["total-cpu-count"],
+						        	"wallTimeLimit" => $app_config["wall-time-limit"]
+							);
+
 			$experimentInputs = array( 
 								"disabled" => ' disabled',
 						        "experimentName" => $_POST['experiment-name'],
@@ -36,10 +45,10 @@ class ExperimentController extends BaseController {
 						        "allowedFileSize" => $app_config["server-allowed-file-size"],
 						        "echo" => ($_POST['application'] == 'Echo')? ' selected' : '',
 						        "wrf" => ($_POST['application'] == 'WRF')? ' selected' : '',
-						        "queueName" => $app_config["queue-name"],
-						        "nodeCount" => $app_config["node-count"],
-						        "cpuCount" => $app_config["total-cpu-count"],
-						        "wallTimeLimit" => $app_config["wall-time-limit"],
+						        "queueDefaults" => $queueDefaults,
+						        "advancedOptions" => $app_config["advanced-experiment-options"],
+						        "computeResources" => $computeResources,
+						        "resourceHostId" => null,
 						        "advancedOptions" => $app_config["advanced-experiment-options"]
 					        );
 			return View::make( "experiment/create-complete", array( "expInputs" => $experimentInputs) );
@@ -166,10 +175,17 @@ class ExperimentController extends BaseController {
 	public function editView()
 	{
 		$app_config = Utilities::read_config();
+		$queueDefaults = array( "queueName" => $app_config["queue-name"],
+						        "nodeCount" => $app_config["node-count"],
+						        "cpuCount" => $app_config["total-cpu-count"],
+						        "wallTimeLimit" => $app_config["wall-time-limit"]
+							);
+
 		$experiment = Utilities::get_experiment($_GET['expId']);
 		$project = Utilities::get_project($experiment->projectID);
 
 		$expVal = Utilities::get_experiment_values( $experiment, $project);
+		$computeResources = Utilities::create_compute_resources_select($experiment->applicationId, $expVal['scheduling']->resourceHostId);
 
 		$experimentInputs = array(	
 								"disabled" => ' ',
@@ -178,6 +194,13 @@ class ExperimentController extends BaseController {
 						        "application" => $experiment->applicationId,
 						      	"allowedFileSize" => $app_config["server-allowed-file-size"],
 								'experiment' => $experiment,
+								"queueDefaults" => $queueDefaults,
+								'project' => $project,
+								'expVal' => $expVal,
+								'cloning' => true,
+						        'advancedOptions' => $app_config["advanced-experiment-options"],
+						        'computeResources' => $computeResources,
+						        "resourceHostId" => $expVal['scheduling']->resourceHostId,
 								'project' => $project,
 								'expVal' => $expVal,
 								'cloning' => true,
@@ -227,6 +250,17 @@ class ExperimentController extends BaseController {
 												));
 	}
 
+	public function getQueueView()
+	{
+		$queues = Utilities::getQueueDatafromResourceId( Input::get("crId"));
+		$app_config = Utilities::read_config();
+		$queueDefaults = array( "queueName" => $app_config["queue-name"],
+						        "nodeCount" => $app_config["node-count"],
+						        "cpuCount" => $app_config["total-cpu-count"],
+						        "wallTimeLimit" => $app_config["wall-time-limit"]
+							);
+		return View::make("partials/experiment-queue-block", array( "queues" => $queues, "queueDefaults" => $queueDefaults) );
+	}
 }
 
 ?>
