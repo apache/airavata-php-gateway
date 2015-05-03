@@ -1,6 +1,7 @@
 <?php
+namespace Airavata\Wsis\Stubs;
 
-require_once 'TenantMgtAdmin.stub.php';
+use Airavata\Wsis\Stubs\TenantMgtAdminStub;
 
 /**
  * TenantManager class

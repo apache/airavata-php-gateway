@@ -80,8 +80,7 @@ class AccountController extends BaseController {
                 	
                     Utilities::store_id_in_session($username);
                     Utilities::print_success_message('Login successful! You will be redirected to your home page shortly.');
-                	$app_config = Utilities::read_config();
-                	Session::put("gateway_id", $app_config["gateway-id"]);
+                	Session::put("gateway_id", Config::get('wsis::gateway-id'));
                 	//TODO::If this option is not safe, have to find a better method to send credentials to identity server on every connection.
                 	Session::put("password", $_POST["password"]);
                 	

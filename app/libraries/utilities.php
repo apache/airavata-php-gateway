@@ -207,9 +207,6 @@ public static function connect_to_id_store()
         case 'XML':
             $idStore = new XmlIdUtilities(); // XML user database
             break;
-        case 'USER_API':
-            $idStore = new UserAPIUtilities(); // Airavata UserAPI
-            break;
     }
 
     try

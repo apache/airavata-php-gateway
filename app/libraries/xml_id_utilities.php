@@ -249,4 +249,46 @@ class XmlIdUtilities implements IdUtilities
     {
         // TODO: Implement removeUserFromRole() method.
     }
+
+    /**
+     * Function to get the entire list of roles in the application
+     *
+     * @return mixed
+     */
+    public function getRoleNames()
+    {
+        // TODO: Implement getRoleNames() method.
+    }
+
+    /**
+     * Function to check whether a role is existing
+     *
+     * @param string $roleName
+     * @return IsExistingRoleResponse
+     */
+    public function isExistingRole($roleName)
+    {
+        // TODO: Implement isExistingRole() method.
+    }
+
+    /**
+     * Function to add new role by providing the role name.
+     *
+     * @param string $roleName
+     */
+    public function addRole($roleName)
+    {
+        // TODO: Implement addRole() method.
+    }
+
+    /**
+     * Function to update role list of user
+     *
+     * @param UpdateRoleListOfUser $parameters
+     * @return void
+     */
+    public function updateRoleListOfUser($username, $roles)
+    {
+        // TODO: Implement updateRoleListOfUser() method.
+    }
 }

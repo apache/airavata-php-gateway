@@ -73,9 +73,9 @@ class AdminController extends BaseController {
 		{
 			//add user to admin role
 			$app_config = Utilities::read_config();
-			$idStore->updateRoleListOfUser( Input::get("username"), array( "new"=>array( $app_config["admin-role-name"]), "deleted"=>array() ) );
+			$idStore->updateRoleListOfUser( Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );
 
-			return Redirect::to("admin/dashboard/users?role=" . $app_config["admin-role-name"])->with("Gateway Admin has been added.");
+			return Redirect::to("admin/dashboard/users?role=" . Config::get('wsis::admin-role-name'))->with("Gateway Admin has been added.");
 
 		}
 		else

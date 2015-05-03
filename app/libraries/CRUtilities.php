@@ -406,8 +406,7 @@ public static function getAllGatewayProfilesData(){
         $gateways = $airavataclient->getAllGateways();
     else
     {
-        $app_config = Utilities::read_config();
-        $gateways[0] = $airavataclient->getGateway( $app_config["gateway-id"]);
+        $gateways[0] = $airavataclient->getGateway( Config::get('wsis::gateway-id'));
     }
 
     $gatewayProfiles = $airavataclient->getAllGatewayComputeResources();

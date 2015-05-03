@@ -1,6 +1,7 @@
 <?php
+namespace Airavata\Wsis\Stubs;
 
-require_once 'UserStoreManager.stub.php';
+use Airavata\Wsis\Stubs\UserStoreManagerStub;
 
 /**
  * UsersStoreManager class
