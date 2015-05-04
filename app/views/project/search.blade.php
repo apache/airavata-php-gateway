@@ -46,7 +46,7 @@
                 </div>
                 <div class="pull-left">
                     <?php if (sizeof($projects) != 0) echo 'Showing results from ' . strval(($pageNo-1)*$limit + 1)
-                        . ' to ' . strval($pageNo*$limit); ?>
+                        . ' to ' . strval(min($pageNo*$limit, ($pageNo-1)*$limit + sizeof($projects))); ?>
                 </div>
                 <input type="hidden" name="pageNo" value="<?php echo($pageNo) ?>"/>
                 <div style="clear: both"></div>
