@@ -54,6 +54,10 @@ Route::get("project/edit", "ProjectController@editView");
 
 Route::post("project/edit", "ProjectController@editSubmit");
 
+Route::get("project/browse", "ProjectController@browseView");
+
+Route::post("project/browse", "ProjectController@browseView");
+
 /*
  * Experiment Routes
 */
@@ -78,6 +82,9 @@ Route::post("experiment/cancel", "ExperimentController@expCancel");
 
 Route::get("experiment/getQueueView", "ExperimentController@getQueueView");
 
+Route::get("experiment/browse", "ExperimentController@browseView");
+
+Route::post("experiment/browse", "ExperimentController@browseView");
 /*
  * Compute Resources Routes
 */

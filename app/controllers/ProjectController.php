@@ -2,6 +2,12 @@
 
 class ProjectController extends BaseController {
 
+    /**
+     * Limit used in fetching paginated results
+     * @var int
+     */
+    var $limit = 1;
+
 	/**
 	*    Instantiate a new ProjectController Instance
 	**/
@@ -77,9 +83,53 @@ class ProjectController extends BaseController {
 
 	public function searchSubmit()
 	{
-        $projects = Utilities::get_projsearch_results( Input::get("search-key"), Input::get("search-value"));
-		return View::make( 'project/search', array('projects' => $projects));
+        $search = Input::get('search');
+        if(isset($search)){
+            $pageNo = 1;
+        }else{
+            $pageNo = Input::get('pageNo');
+            $prev = Input::get('prev');
+            if(empty($pageNo)){
+                $pageNo = 1;
+            }else{
+                if(isset($prev)){
+                    $pageNo -= 1;
+                }else{
+                    $pageNo += 1;
+                }
+            }
+        }
+
+        $projects = Utilities::get_projsearch_results_with_pagination( Input::get("search-key"),
+            Input::get("search-value"), $this->limit, ($pageNo-1)*$this->limit);
+		return View::make( 'project/search', array(
+            'pageNo' => $pageNo,
+            'limit' => $this->limit,
+            'projects' => $projects)
+        );
 	}
+
+    public function browseView()
+    {
+        $pageNo = Input::get('pageNo');
+        $prev = Input::get('prev');
+        if(empty($pageNo)){
+            $pageNo = 1;
+        }else{
+            if(isset($prev)){
+                $pageNo -= 1;
+            }else{
+                $pageNo += 1;
+            }
+        }
+
+        $projects = Utilities::get_all_user_projects_with_pagination( $this->limit, ($pageNo-1)*$this->limit);
+        return View::make('project/browse', array(
+            'pageNo' => $pageNo,
+            'limit' => $this->limit,
+            'projects' => $projects
+        ));
+    }
 
 }
 
