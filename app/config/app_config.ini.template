@@ -1,34 +1,3 @@
-;--------------------------------------- Identity Server Constants ----------------------
-
-;Admin Role Name
-admin-role-name = "admin"
-;Gateway User Role
-gateway-admin = "Internal/everyone"
-
-;Tenant admin's username
-admin-username = “$username”
-
-;Tenant admin's password
-admin-password = “$password”
-
-;Identity server domain
-server = "idp.scigap.org"
-
-;Identity server web services endpoint
-service-url = "https://idp.scigap.org:7443/services/"
-
-;Gateway Domain Name 
-gateway-id = “$gatewayname”
-
-;Path the to server certificate file
-cafile-path = "/resources/security/idp_scigap_org.pem"
-
-;Enable HTTPS server verification
-verify-peer = true
-
-;Allow self signed server certificates
-allow-self-signed = false
-
 ;--------------------------------------- Airavata Constants ----------------------
 
 
@@ -45,7 +14,7 @@ experiment-data-root = '/../experimentData/'
 ssh-user = 'root'
 data-path = 'file://home/pga/production/experimentData/'
 experiment-data-root-absolute = '/var/www/experimentData/'
-;USER_STORE = 'WSO2','XML','USER_API'
+;USER_STORE = 'WSO2','XML'
 user-store = "WSO2"
 admin-role = "admin"
 gateway-admin-role = "gateway_admin"

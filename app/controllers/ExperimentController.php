@@ -2,6 +2,12 @@
 
 class ExperimentController extends BaseController {
 
+    /**
+     * Limit used in fetching paginated results
+     * @var int
+     */
+    var $limit = 10;
+
 	/**
 	*    Instantiate a new ExperimentController Instance
 	**/
@@ -242,10 +248,30 @@ class ExperimentController extends BaseController {
 
 	public function searchSubmit()
 	{
-		$expContainer = Utilities::get_expsearch_results( Input::all() );
+        $search = Input::get('search');
+        if(isset($search)){
+            $pageNo = 1;
+        }else{
+            $pageNo = Input::get('pageNo');
+            $prev = Input::get('prev');
+            if(empty($pageNo)){
+                $pageNo = 1;
+            }else{
+                if(isset($prev)){
+                    $pageNo -= 1;
+                }else{
+                    $pageNo += 1;
+                }
+            }
+        }
+
+        $expContainer = Utilities::get_expsearch_results_with_pagination( Input::all(), $this->limit,
+            ($pageNo-1)*$this->limit);
 
 		$experimentStates = Utilities::getExpStates();
 		return View::make('experiment/search', array(
+                                                    'pageNo' => $pageNo,
+                                                    'limit' => $this->limit,
 													'expStates' => $experimentStates,
 													'expContainer' => $expContainer 
 												));
@@ -262,6 +288,29 @@ class ExperimentController extends BaseController {
 							);
 		return View::make("partials/experiment-queue-block", array( "queues" => $queues, "queueDefaults" => $queueDefaults) );
 	}
-}
 
+    public function browseView()
+    {
+        $pageNo = Input::get('pageNo');
+        $prev = Input::get('prev');
+        if(empty($pageNo)){
+            $pageNo = 1;
+        }else{
+            if(isset($prev)){
+                $pageNo -= 1;
+            }else{
+                $pageNo += 1;
+            }
+        }
+
+        $expContainer = Utilities::get_all_user_experiments_with_pagination($this->limit, ($pageNo-1)*$this->limit);
+        $experimentStates = Utilities::getExpStates();
+        return View::make('experiment/browse', array(
+            'pageNo' => $pageNo,
+            'limit' => $this->limit,
+            'expStates' => $experimentStates,
+            'expContainer' => $expContainer
+        ));
+    }
+}
 ?>

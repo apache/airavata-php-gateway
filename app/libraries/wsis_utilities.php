@@ -1,65 +1,12 @@
 <?php
 
 require_once 'id_utilities.php';
-require_once 'WSISClient.php';
-
-//$GLOBALS['WSIS_ROOT'] = './lib/WSIS/';
-//require_once $GLOBALS['WSIS_ROOT'] . 'WSISClient.php';
 
 /**
  * Utilities for ID management with a WSO2 IS 4.6.0
  */
 
 class WSISUtilities implements IdUtilities{
-    /**
-     * wso2 IS client
-     * 
-     * @var WSISClient
-     * @access private
-     */
-    private $wsis_client;
-
-    /**
-     * Connect to the identity store.
-     * @return mixed|void
-     */
-    public function connect() { 
-   
-        $wsis_config = Utilities::read_config();    
-        if(substr($wsis_config['service-url'], -1) !== "/"){
-            $wsis_config['service-url'] = $wsis_config['service-url'] . "/";
-        }
-        
-        if(!substr($wsis_config['cafile-path'], 0) !== "/"){
-            $wsis_config['cafile-path'] = "/" . $wsis_config['cafile-path'];
-        }
-        $wsis_config['cafile-path'] = app_path() . $wsis_config['cafile-path'];            
-        
-        /*
-        if( Session::has("username"))
-        {
-            $username = Session::get("username");
-            $password = Session::get("password");
-        }
-        else
-        {
-            $username = $_POST["username"];
-            $password = $_POST["password"];
-        }
-        */
-        $username = $wsis_config['admin-username'];
-        $password = $wsis_config['admin-password'];
-        
-        $this->wsis_client = new WSISClient(
-                $username,
-                $password,
-                $wsis_config['server'],
-                $wsis_config['service-url'],
-                $wsis_config['cafile-path'],
-                $wsis_config['verify-peer'],
-                $wsis_config['allow-self-signed']
-        );    
-    }
 
     /**
      * Return true if the given username exists in the identity server.
@@ -69,7 +16,7 @@ class WSISUtilities implements IdUtilities{
     public function username_exists($username) {
         try{
             //$this->wsis_client = new WSISClient( $username);
-            return $this->wsis_client->username_exists($username);
+            return WSIS::username_exists($username);
         } catch (Exception $ex) {
             print_r( $ex);
             throw new Exception("Unable to check whether username exists", 0, NULL);
@@ -85,7 +32,7 @@ class WSISUtilities implements IdUtilities{
      */
     public function authenticate($username, $password) {
         try{
-            return $this->wsis_client->authenticate($username, $password);
+            return WSIS::authenticate($username, $password);
         } catch (Exception $ex) {
             var_dump( $ex);
             throw new Exception("Unable to authenticate user", 0, NULL);
@@ -101,7 +48,7 @@ class WSISUtilities implements IdUtilities{
     public function add_user($username, $password, $first_name, $last_name, $email, $organization,
             $address, $country,$telephone, $mobile, $im, $url) {
         try{
-            $this->wsis_client->addUser($username, $password, $first_name . " " . $last_name);
+            WSIS::addUser($username, $password, $first_name . " " . $last_name);
         } catch (Exception $ex) {
             var_dump($ex);
             throw new Exception("Unable to add new user", 0, NULL);
@@ -195,7 +142,7 @@ class WSISUtilities implements IdUtilities{
      */
     public function isExistingRole( $roleName){
         try{
-            return $this->wsis_client->is_existing_role( $roleName);
+            return WSIS::is_existing_role( $roleName);
         } catch (Exception $ex) {
             var_dump($ex);
             throw new Exception("Unable to check if role exists.", 0, $ex);
@@ -209,7 +156,7 @@ class WSISUtilities implements IdUtilities{
      */
     public function addRole($roleName){
         try{
-            return $this->wsis_client->add_role( $roleName);
+            return WSIS::add_role( $roleName);
         } catch (Exception $ex) {
             var_dump( $ex);
             throw new Exception("Unable to add role.", 0, $ex);
@@ -225,7 +172,7 @@ class WSISUtilities implements IdUtilities{
      */
     public function deleteRole($roleName) {
         try {
-            $this->wsis_client->delete_role($roleName);
+            WSIS::delete_role($roleName);
         } catch (Exception $ex) {
             throw new Exception("Unable to delete role", 0, $ex);
         }
@@ -239,7 +186,7 @@ class WSISUtilities implements IdUtilities{
     public function getRoleNames()
     {
         try{
-            return $this->wsis_client->get_all_roles();
+            WSIS::get_all_roles();
         } catch (Exception $ex) {
             var_dump($ex);
             throw new Exception("Unable to get roles.", 0, NULL);
@@ -255,7 +202,7 @@ class WSISUtilities implements IdUtilities{
     public function getRoleListOfUser($username)
     {
         try{
-            return $this->wsis_client->get_user_roles( $username);
+            return WSIS::get_user_roles( $username);
         } catch (Exception $ex) {
             var_dump($ex);
             throw new Exception("Unable to get roles.", 0, NULL);
@@ -271,7 +218,7 @@ class WSISUtilities implements IdUtilities{
     public function getUserListOfRole($role)
     {
         try{
-            return $this->wsis_client->get_userlist_of_role( $role);
+            return WSIS::get_userlist_of_role( $role);
         } catch (Exception $ex) {
             var_dump( $ex); exit;
             throw new Exception("Unable to get users.", 0, NULL);
@@ -307,7 +254,7 @@ class WSISUtilities implements IdUtilities{
     public function updateRoleListOfUser($username, $roles)
     {
         try{
-            return $this->wsis_client->update_user_roles( $username, $roles);
+            return WSIS::update_user_roles( $username, $roles);
         } catch (Exception $ex) {
             var_dump($ex); exit;
             throw new Exception("Unable to update User roles.", 0, NULL);
@@ -326,7 +273,7 @@ class WSISUtilities implements IdUtilities{
      */
     public function listUsers(){
         try {
-            return $this->wsis_client->list_users();
+            return WSIS::list_users();
         } catch (Exception $ex) {
     
             throw new Exception( "Unable to list users", 0, $ex);
@@ -341,7 +288,7 @@ class WSISUtilities implements IdUtilities{
      */
     public function getTenantId(){
         try {
-            return $this->wsis_client->get_tenant_id();
+            return WSIS::get_tenant_id();
         } catch (Exception $ex) {
             var_dump( $ex->debug_message); 
             throw new Exception("Unable to get the Tenant Id.", 0, $ex);
@@ -355,10 +302,19 @@ class WSISUtilities implements IdUtilities{
     */
     public function createTenant( $inputs){
         try {
-            return $this->wsis_client->create_tenant( $inputs);
+            return WSIS::create_tenant( $inputs);
         } catch (Exception $ex) {
             var_dump( $ex); 
             //throw new Exception("Unable to create Tenant.", 0, $ex);
         }
+    }
+
+    /**
+     * Connect to the user database.
+     * @return mixed|void
+     */
+    public function connect()
+    {
+        // TODO: Implement connect() method.
     }
 }

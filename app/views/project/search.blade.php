@@ -28,6 +28,31 @@
 
             <button name="search" type="submit" class="btn btn-primary" value="Search"><span class="glyphicon glyphicon-search"></span> Search</button>
                 <p class="help-block">You can use * as a wildcard character. Tip: search for * alone to retrieve all of your projects.</p>
+
+            <!-- Pagination Handling -->
+            <?php
+            if(isset( $projects))
+            {
+                ?>
+                <div class="pull-right btn-toolbar" style="padding-bottom: 5px">
+                    <?php
+                    if($pageNo!=1){
+                        echo '<input class="btn btn-primary btn-xs" type="submit" style="cursor: pointer" name="prev" value="Previous"/>';
+                    }
+                    if(sizeof($projects)>0){
+                        echo '<input class="btn btn-primary btn-xs" type="submit" style="cursor: pointer" name="next" value="Next"/>';
+                    }
+                    ?>
+                </div>
+                <div class="pull-left">
+                    <?php if (sizeof($projects) != 0) echo 'Showing results from ' . strval(($pageNo-1)*$limit + 1)
+                        . ' to ' . strval(min($pageNo*$limit, ($pageNo-1)*$limit + sizeof($projects))); ?>
+                </div>
+                <input type="hidden" name="pageNo" value="<?php echo($pageNo) ?>"/>
+                <div style="clear: both"></div>
+            <?php
+            }
+            ?>
         </form>
 
 
@@ -47,7 +72,11 @@
              */
             if (sizeof($projects) == 0)
             {
-                Utilities::print_warning_message('No results found. Please try again.');
+                if($pageNo==1){
+                    Utilities::print_warning_message('No results found. Please try again.');
+                }else{
+                    Utilities::print_warning_message('No more results found.');
+                }
             }
             else
             {
