@@ -7,7 +7,7 @@ class AdminController extends BaseController {
 	public function __construct()
 	{
 		$this->beforeFilter('verifyadmin');
-		$idStore = new WSISUtilities();
+		$idStore = new WSISUtilities();	
         try
 	    {
 	        $idStore->connect();
@@ -29,7 +29,7 @@ class AdminController extends BaseController {
 
 	public function dashboard(){
 		//only for super admin
-		//Session::put("scigap_admin", true);
+		Session::put("scigap_admin", true);
 		$idStore = $this->idStore;
 
 		$crData = CRUtilities::getEditCRData();
@@ -123,5 +123,22 @@ class AdminController extends BaseController {
 		$idStore = $this->idStore;
 
 		return View::make("admin/manage-credentials", array("tokens" => array()) );
+	}
+
+
+	/* ---- Super Admin Functions ------- */
+
+	public function addGateway(){
+
+		$input = Input::all();
+
+		$idStore = $this->idStore;
+
+		$tm = TenantManager::addTenant(1, $input["admin-username"], $input["admin-password"], $input["admin-email"],
+                              $firstName, $lastName, $input["domain"]);
+		print_r( $tm); exit;
+		$gateway = AdminUtilities::addGateway(Input::all() );
+
+
 	}
 }

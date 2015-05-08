@@ -171,11 +171,15 @@ Route::post("admin/adduser", "AdminController@addAdminSubmit");
 
 Route::post("admin/addgatewayadmin", "AdminController@addGatewayAdminSubmit");
 
-Route::post("admin/addrole", "AdminController@addRole");
+Route::post("admin/add-role", "AdminController@addRole");
 
-Route::post("admin/checkroles", "AdminController@getRoles");
+Route::post("admin/check-roles", "AdminController@getRoles");
 
-Route::post("admin/deleterole", "AdminController@deleteRole");
+Route::post("admin/delete-role", "AdminController@deleteRole");
+
+//Super Admin Specific calls
+
+Route::post("admin/add-gateway", "AdminController@addGateway");
 
 //Airavata Server Check
 Route::get("airavata/down", function(){

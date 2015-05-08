@@ -1,9 +1,9 @@
 <input type="hidden" id="queue-array" value="{{ htmlentities( json_encode( $queues ) ) }}"/>
 <div class="form-group required">
 	@if( count( $queues) > 0 )
-	    <label for="node-count">Select a Queue</label>
+	    <label class="control-label" for="node-count">Select a Queue</label>
 	    <select name="queue-name" class="form-control" id="select-queue" @if(isset($expVal) ) @if(!$expVal['editable']){{ disabled }} @endif @endif required>
-	    	<option></option>
+	    	<option value=""></option>
 	    @foreach( $queues as $queue)
 	    	<option value="{{$queue->queueName}}"
 	    			@if(isset($expVal) ) @if( $expVal['scheduling']->queueName == $queue->queueName ) selected @endif @endif
@@ -27,7 +27,7 @@
     @if(isset($expVal) ) @if(!$expVal['editable']){{disabled}} @endif @endif>
 </div>
 <div class="form-group">
-    <label for="cpu-count">Total Core Count <span>( Max Allowed Cores - <span class="core-count alert-warning"></span>)</span></label>
+    <label for="cpu-count">Total Core Count <span>( Max Allowed Cores - <span class="cpu-count alert-warning"></span>)</span></label>
     <input type="number" class="form-control" name="cpu-count" id="cpu-count" min="1"
     value="@if(isset($expVal) ){{ $expVal['scheduling']->totalCPUCount }}@else{{$queueDefaults['cpuCount']}}@endif"
     @if(isset($expVal)) @if(!$expVal['editable']){{disabled}} @endif @endif>
@@ -55,6 +55,11 @@
 <script>
 $("#select-queue").change( function(){
 	var selectedQueue = $(this).val();
+	getQueueData( selectedQueue);
+});
+
+function getQueueData( selectedQueue)
+{
 	var queues = $.parseJSON( $("#queue-array").val() );
 	console.log( queues);
 	for( var i =0; i< queues.length; i++)
@@ -62,7 +67,7 @@ $("#select-queue").change( function(){
 		if( queues[i]['queueName'] == selectedQueue)
 		{
 			//node-count
-			if( queues[i]['maxNodes'] != 0 || queues[i]['maxNodes'] != null )
+			if( queues[i]['maxNodes'] != 0 && queues[i]['maxNodes'] != null )
 			{
 				$("#node-count").attr("max", queues[i]['maxNodes']).val(1);
 				$(".node-count").html( queues[i]['maxNodes']);
@@ -73,7 +78,7 @@ $("#select-queue").change( function(){
 
 
 			//core-count
-			if( queues[i]['maxProcessors'] != 0 || queues[i]['maxProcessors'] != null )
+			if( queues[i]['maxProcessors'] != 0 && queues[i]['maxProcessors'] != null )
 			{
 				$("#cpu-count").attr("max", queues[i]['maxProcessors']).val(1);
 				$(".cpu-count").html( queues[i]['maxProcessors']);
@@ -83,17 +88,17 @@ $("#select-queue").change( function(){
 				$(".cpu-count").parent().addClass("hide");
 
 			//walltime-count
-			if( queues[i]['maxRunTime'] != 0 || queues[i]['maxRunTime'] != null )
+			if( queues[i]['maxRunTime'] != 0 && queues[i]['maxRunTime'] != null )
 			{
 				$("#wall-time").attr("max", queues[i]['maxRunTime']).val(0);
-				$(".wall-time").html( queues[i]['maxRunTime']);
+				$(".walltime-count").html( queues[i]['maxRunTime']);
 				$(".walltime-count").parent().removeClass("hide");
 			}
 			else
-				$(".core-count").parent().addClass("hide");
+				$(".walltime-count").parent().addClass("hide");
 
 			//memory-count
-			if( queues[i]['maxMemory'] != 0 || queues[i]['maxMemory'] != null )
+			if( queues[i]['maxMemory'] != 0 && queues[i]['maxMemory'] != null )
 			{
 				$("#memory-count").attr("max", queues[i]['maxMemory']).val(0);
 				$(".memory-count").html( queues[i]['maxMemory']);
@@ -104,4 +109,5 @@ $("#select-queue").change( function(){
 		}
 	}
 	$(".queue-data").removeClass("hide");
-});
+}
+</script>

@@ -40,10 +40,11 @@
             @endif
 
         </div>
-        <div class="form-group">
-            <label for="compute-resource">Compute Resource</label>
+        <div class="form-group required">
+            <label class="control-label" for="compute-resource">Compute Resource</label>
             @if( count( $expInputs['computeResources']) > 0)
-                <select class="form-control" name="compute-resource" id="compute-resource">
+                <select class="form-control" name="compute-resource" id="compute-resource" required="required">
+                    <option value="">Select a resource</option>
                 @foreach ($expInputs['computeResources'] as $id => $name)
                     <option value="{{$id}}" {{ ($expInputs['resourceHostId'] == $id)? ' selected' : '' }}>{{$name}}</option>
                 @endforeach
@@ -59,7 +60,7 @@
             <input type="hidden" name="selected-queue" value="@if(isset($expInputs['expVal']) ){{ $expInputs['expVal']['scheduling']->queueName }} @endif"/>
             <div class="queue-view">
                 @if(isset($expInputs['expVal']) )
-                    @include( 'partials/experiment-queue-block', array('expVal' => $expVal) )
+                    @include( 'partials/experiment-queue-block', array('queues'=> $expInputs['expVal']['computeResource']->batchQueues, 'expVal' => $expInputs['expVal']) )
                 @endif
         </div>
     </div>
@@ -67,7 +68,7 @@
 <h3>Notifications</h3>
 <div class="form-group well">
 	<label for=""></label>
-	<input type="checkbox" id="enableEmail" name="enableEmailNotification" value="1">Do you want to receive email notifications for status changes in the experiment?<br/>
+	<input type="checkbox" id="enableEmail" name="enableEmailNotification" value="1"> Do you want to receive email notifications for status changes in the experiment?<br/>
 	<div class="emailSection hide">
 		<h4>Enter Email Address here.</h4>
 		<div class="emailAddresses">

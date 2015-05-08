@@ -120,30 +120,48 @@
                     @endforeach
                     </div>
                 @if( Session::has("scigap_admin"))
-                <div class="col-md-12">
-                    <button type="button" class="btn btn-default toggle-add-tenant"><span class="glyphicon glyphicon-plus"></span>Add a new gateway</button>
-                </div>
-                <div class="add-tenant col-md-6">
-                    <div class="form-group">
-                        <label>Enter Domain Name</label>
-                        <input type="text" class="form-control"/>
+                <form type="POST" id="add-tenant-form">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-default toggle-add-tenant"><span class="glyphicon glyphicon-plus"></span>Add a new gateway</button>
                     </div>
-                    <div class="form-group">
-                        <label>Enter Admin Username</label>
-                        <input type="text" class="form-control"/>
+                    <div class="add-tenant col-md-6">
+                        <div class="form-group required">
+                            <label class="control-label">Enter Domain Name</label>
+                            <input type="url" name="gatewayName" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Desired Gateway Name</label>
+                            <input type="text" name="gatewayName" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Admin Email Address</label>
+                            <input type="text" name="admin-email" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Admin First Name</label>
+                            <input type="text" name="admin-firstname" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Admin Last Name</label>
+                            <input type="text" name="admin-username" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Admin Username</label>
+                            <input type="text" name="admin-username" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Admin Password</label>
+                            <input type="password" name="admin-password" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Re-enter Admin Password</label>
+                            <input type="password" name="admin-password-confirm" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <input type="submit" class="form-control btn btn-primary" value="Register" />
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Enter Admin Password</label>
-                        <input type="text" class="form-control"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Re-enter Admin Password</label>
-                        <input type="text" class="form-control"/>
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" class="form-control btn btn-primary" value="Register" />
-                    </div>
-                </div>
+                </form>
                 @endif
 
             </div>
@@ -222,7 +240,26 @@
         $(".add-tenant").slideUp();
         
         $(".toggle-add-tenant").click( function(){
+            $('html, body').animate({
+                scrollTop: $(".toggle-add-tenant").offset().top
+            }, 500);
             $(".add-tenant").slideDown();
         });
     </script>
+
+    @if( Session::has("scigap_admin"))
+    <script>
+        $(".add-tenant-form").submit( function( event){
+            var formData = $(".add-tenant-form").serealize();
+            $.ajax({
+                type: "POST",
+                data: formData,
+                url: '"' + {{ URL::to('/') }} + '"' + '/admin/add-gateway',
+                success:function( data){
+                    console.log( data);
+                }
+            });
+        });
+    </script>
+    @endif
 @stop

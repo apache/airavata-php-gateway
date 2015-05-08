@@ -185,6 +185,7 @@ class ExperimentController extends BaseController {
 		$project = Utilities::get_project($experiment->projectID);
 
 		$expVal = Utilities::get_experiment_values( $experiment, $project);
+		//var_dump( $expVal); exit;
 		$computeResources = Utilities::create_compute_resources_select($experiment->applicationId, $expVal['scheduling']->resourceHostId);
 
 		$experimentInputs = array(	

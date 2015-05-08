@@ -191,6 +191,6 @@
         }
         else
             $("#role-form").submit();
-    })
+    });
     </script>
 @stop
