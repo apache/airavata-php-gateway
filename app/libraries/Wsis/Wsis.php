@@ -2,8 +2,8 @@
 
 namespace Wsis;
 
-use Illuminate\Support\Facades\Config;
 use Wsis\Stubs\UserStoreManager;
+use Wsis\Stubs\TenantManager;
 
 class Wsis {
 
@@ -12,6 +12,12 @@ class Wsis {
      * @access private
      */
     private $userStoreManager;
+
+    /**
+     * @var
+     * @access private
+     */
+    private $tenantManager;
 
     /**
      * @var string
@@ -63,6 +69,7 @@ class Wsis {
 
         try {
             $this->userStoreManager = new UserStoreManager($service_url, $parameters);
+            $this->tenantManager = new TenantManager($service_url, $parameters);
         } catch (Exception $ex) {
             print_r( $ex); exit;
             throw new Exception("Unable to instantiate client", 0, $ex);
@@ -265,16 +272,26 @@ class Wsis {
 
     /**
      * Function create a new Tenant
-     *
-     * @param Tenant $parameters
-     * @return void
+     * @param $active
+     * @param $adminUsername
+     * @param $adminPassword
+     * @param $email
+     * @param $firstName
+     * @param $lastName
+     * @param $tenantDomain
+     * @throws Exception
      */
-    public function create_tenant( $inputs){
+    public function create_tenant($active, $adminUsername, $adminPassword, $email,
+                                  $firstName, $lastName, $tenantDomain){
         try {
-            return $this->userStoreManager->createTenant( $inputs);
+            return $this->tenantManager->addTenant($active, $adminUsername, $adminPassword, $email,
+                $firstName, $lastName, $tenantDomain);
         } catch (Exception $ex) {
-            var_dump( $ex);
-            throw new Exception("Unable to create Tenant.", 0, $ex);
+            /**
+             * Fixme -  There is an issue in the Remote IS which throws an exception when called this method
+             * But the tenant creation works. Therefore ignores the exception for the moment.
+             */
+            //throw new Exception("Unable to create Tenant.", 0, $ex);
         }
     }
 } 
