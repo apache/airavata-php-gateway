@@ -1,6 +1,6 @@
 <?php
 
-namespace Airavata\Wsis\Facades;
+namespace Wsis\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

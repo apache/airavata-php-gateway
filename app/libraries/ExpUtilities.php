@@ -1,15 +1,6 @@
 <?php
 
-//Thrift classes - loaded from Vendor/Thrift
-use Thrift\Transport\TTransport;
-use Thrift\Exception\TException;
-use Thrift\Exception\TTransportException;
-use Thrift\Factory\TStringFuncFactory;
-use Thrift\Protocol\TBinaryProtocol;
-use Thrift\Transport\TSocket;
-
 //Airavata classes - loaded from app/libraries/Airavata
-use Airavata\API\AiravataClient;
 use Airavata\API\Error\InvalidRequestException;
 use Airavata\API\Error\AiravataClientException;
 use Airavata\API\Error\AiravataSystemException;
@@ -22,8 +13,6 @@ use Airavata\Model\Workspace\Experiment\Experiment;
 use Airavata\Model\Workspace\Experiment\ExperimentState;
 use Airavata\Model\AppCatalog\AppInterface\DataType;
 use Airavata\Model\Workspace\Experiment\JobState;
-use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionInterface;
-use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
 
 class ExpUtilities{
 
@@ -33,7 +22,6 @@ class ExpUtilities{
  */
 public static function launch_experiment($expId)
 {
-    $airavataclient = Session::get("airavataClient");
     //global $tokenFilePath;
     try
     {
@@ -151,12 +139,11 @@ public static function list_input_files($experiment)
  */
 public static function get_application_inputs($id)
 {
-    $airavataclient = Session::get("airavataClient");
     $inputs = null;
 
     try
     {
-        $inputs = $airavataclient->getApplicationInputs($id);
+        $inputs = Airavata::getApplicationInputs($id);
     }
     catch (InvalidRequestException $ire)
     {
@@ -188,12 +175,11 @@ public static function get_application_inputs($id)
  */
 public static function get_application_outputs($id)
 {
-    $airavataclient = Session::get("airavataClient");
     $outputs = null;
 
     try
     {
-        $outputs = $airavataclient->getApplicationOutputs($id);
+        $outputs = Airavata::getApplicationOutputs($id);
     }
     catch (InvalidRequestException $ire)
     {
@@ -225,11 +211,9 @@ public static function get_application_outputs($id)
  */
 public static function get_experiment($expId)
 {
-    $airavataclient = Session::get("airavataClient");
-
     try
     {
-        return $airavataclient->getExperiment($expId);
+        return Airavata::getExperiment($expId);
     }
     catch (InvalidRequestException $ire)
     {
@@ -575,11 +559,9 @@ public static function file_upload_successful()
  */
 public static function update_experiment($expId, $updatedExperiment)
 {
-    $airavataclient = Session::get("airavataClient");
-
     try
     {
-        $airavataclient->updateExperiment($expId, $updatedExperiment);
+        Airavata::updateExperiment($expId, $updatedExperiment);
 
         /*
         Utilities::print_success_message("<p>Experiment updated!</p>" .
@@ -621,14 +603,12 @@ public static function update_experiment($expId, $updatedExperiment)
  */
 public static function clone_experiment($expId)
 {
-    $airavataclient = Session::get("airavataClient");
-
     try
     {
         //create new experiment to receive the clone
-        $experiment = $airavataclient->getExperiment($expId);
+        $experiment = Airavata::getExperiment($expId);
 
-        $cloneId = $airavataclient->cloneExperiment($expId, 'Clone of ' . $experiment->name);
+        $cloneId = Airavata::cloneExperiment($expId, 'Clone of ' . $experiment->name);
 
         Utilities::print_success_message("<p>Experiment cloned!</p>" .
             '<p>You will be redirected to the edit page shortly, or you can
@@ -674,11 +654,9 @@ public static function clone_experiment($expId)
  */
 public static function cancel_experiment($expId)
 {
-    $airavataclient = Session::get("airavataClient");
-
     try
     {
-        $airavataclient->terminateExperiment($expId);
+        Airavata::terminateExperiment($expId);
 
         Utilities::print_success_message("Experiment canceled!");
     }
@@ -727,8 +705,6 @@ public static function cancel_experiment($expId)
  */
 public static function create_experiment()
 {
-    $airavataclient = Session::get("airavataClient");
-
     $experiment = Utilities::assemble_experiment();
     //var_dump($experiment); exit;
     $expId = null;
@@ -737,7 +713,7 @@ public static function create_experiment()
     {
         if($experiment)
         {
-            $expId = $airavataclient->createExperiment( Session::get("gateway_id"), $experiment);
+            $expId = Airavata::createExperiment( Session::get("gateway_id"), $experiment);
         }
 
         if ($expId)
@@ -805,8 +781,6 @@ public static function list_output_files($experiment, $expStatus)
 }
 public static function get_experiment_values( $experiment, $project, $forSearch = false)
 {
-    $airavataclient = Session::get("airavataClient");
-    //var_dump( $experiment); exit;
     $expVal = array();
     $expVal["experimentStatusString"] = "";
     $expVal["experimentTimeOfStateChange"] = "";
@@ -821,7 +795,7 @@ public static function get_experiment_values( $experiment, $project, $forSearch 
         $expVal["experimentTimeOfStateChange"] = date('Y-m-d H:i:s', $experimentStatus->timeOfStateChange/1000); // divide by 1000 since timeOfStateChange is in ms
         $expVal["experimentCreationTime"] = date('Y-m-d H:i:s', $experiment->creationTime/1000); // divide by 1000 since creationTime is in ms
     }
-    $jobStatus = $airavataclient->getJobStatuses($experiment->experimentID);
+    $jobStatus = Airavata::getJobStatuses($experiment->experimentID);
 
     if ($jobStatus)
     {
@@ -884,7 +858,6 @@ public static function get_experiment_values( $experiment, $project, $forSearch 
  */
 public static function get_expsearch_results( $inputs)
 {
-    $airavataclient = Session::get("airavataClient");
     $experiments = array();
 
     try
@@ -892,16 +865,16 @@ public static function get_expsearch_results( $inputs)
         switch ( $inputs["search-key"])
         {
             case 'experiment-name':
-                $experiments = $airavataclient->searchExperimentsByName(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
+                $experiments = Airavata::searchExperimentsByName(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
                 break;
             case 'experiment-description':
-                $experiments = $airavataclient->searchExperimentsByDesc(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
+                $experiments = Airavata::searchExperimentsByDesc(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
                 break;
             case 'application':
-                $experiments = $airavataclient->searchExperimentsByApplication(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
+                $experiments = Airavata::searchExperimentsByApplication(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
                 break;
             case 'creation-time':
-                $experiments = $airavataclient->searchExperimentsByCreationTime(Session::get('gateway_id'), Session::get('username'), strtotime( $inputs["from-date"])*1000, strtotime( $inputs["to-date"])*1000 );
+                $experiments = Airavata::searchExperimentsByCreationTime(Session::get('gateway_id'), Session::get('username'), strtotime( $inputs["from-date"])*1000, strtotime( $inputs["to-date"])*1000 );
                 break;
             case '':
         }

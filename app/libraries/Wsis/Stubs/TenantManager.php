@@ -1,7 +1,7 @@
 <?php
-namespace Airavata\Wsis\Stubs;
+namespace Wsis\Stubs;
 
-use Airavata\Wsis\Stubs\TenantMgtAdminStub;
+use Wsis\Stubs\TenantMgtAdminStub;
 
 /**
  * TenantManager class

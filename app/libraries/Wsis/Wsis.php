@@ -1,9 +1,9 @@
 <?php
 
-namespace Airavata\Wsis;
+namespace Wsis;
 
 use Illuminate\Support\Facades\Config;
-use Airavata\Wsis\Stubs\UserStoreManager;
+use Wsis\Stubs\UserStoreManager;
 
 class Wsis {
 

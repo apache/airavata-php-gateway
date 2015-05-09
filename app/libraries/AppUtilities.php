@@ -1,28 +1,19 @@
 <?php
 
 //Airavata classes - loaded from app/libraries/Airavata
-use Airavata\API\AiravataClient;
-
 use Airavata\Model\AppCatalog\AppInterface\DataType;
 use Airavata\Model\AppCatalog\AppInterface\InputDataObjectType;
 use Airavata\Model\AppCatalog\AppInterface\OutputDataObjectType;
 use Airavata\Model\AppCatalog\AppInterface\ApplicationInterfaceDescription;
-
-use Airavata\Model\Workspace\Project;
-
 use Airavata\Model\AppCatalog\AppDeployment\ApplicationModule;
 use Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType;
 use Airavata\Model\AppCatalog\AppDeployment\ApplicationDeploymentDescription;
 use Airavata\Model\AppCatalog\AppDeployment\SetEnvPaths;
 
-//use Airavata\Model\AppCatalog\ComputeResource
-
 
 class AppUtilities{
 
 	public static function create_or_update_appModule( $inputs, $update = false){
-
-		$airavataclient = Session::get("airavataClient");
 
 		$appModule = new ApplicationModule( array(
 												"appModuleName" => $inputs["appModuleName"],
@@ -31,25 +22,21 @@ class AppUtilities{
 										));
 		
 		if( $update)
-			return $airavataclient->updateApplicationModule( $inputs["appModuleId"], $appModule);
+			return Airavata::updateApplicationModule( $inputs["appModuleId"], $appModule);
 		else
-			return $airavataclient->registerApplicationModule( Session::get("gateway_id"), $appModule);
+			return Airavata::registerApplicationModule( Session::get("gateway_id"), $appModule);
 	}
 
 	public static function deleteAppModule( $appModuleId){
 
-		$airavataclient = Session::get("airavataClient");
-
-		return $airavataclient->deleteApplicationModule( $appModuleId);
+		return Airavata::deleteApplicationModule( $appModuleId);
 	}
 
 	public static function getAppInterfaceData(){
 
-		$airavataclient = Session::get("airavataClient");
-
 		$dataType = new DataType();
 		$modules = AppUtilities::getAllModules();
-		$appInterfaces = $airavataclient->getAllApplicationInterfaces( Session::get("gateway_id"));
+		$appInterfaces = Airavata::getAllApplicationInterfaces( Session::get("gateway_id"));
 
 
 		$InputDataObjectType = new InputDataObjectType();
@@ -62,8 +49,7 @@ class AppUtilities{
 	}
 
 	public static function create_or_update_appInterface( $appInterfaceValues, $update = false){
-		
-		$airavataclient = Session::get("airavataClient");
+
 		//var_dump( $appInterfaceValues); exit;
 		$appInterface = new ApplicationInterfaceDescription( array(
 																"applicationName" => $appInterfaceValues["applicationName"],
@@ -112,28 +98,23 @@ class AppUtilities{
 		//var_dump( $appInterface); exit;
 
 		if( $update)
-			$airavataclient->updateApplicationInterface( $appInterfaceValues["app-interface-id"], $appInterface);
+            Airavata::updateApplicationInterface( $appInterfaceValues["app-interface-id"], $appInterface);
 		else
-			$airavataclient->getApplicationInterface($airavataclient->registerApplicationInterface( Session::get("gateway_id"), $appInterface) );
+            Airavata::getApplicationInterface(Airavata::registerApplicationInterface( Session::get("gateway_id"), $appInterface) );
 
 		//print_r( "App interface has been created.");
 	}
 
 	public static function deleteAppInterface( $appInterfaceId){
-
-		$airavataclient = Session::get("airavataClient");
-
-		return $airavataclient->deleteApplicationInterface( $appInterfaceId);
+		return Airavata::deleteApplicationInterface( $appInterfaceId);
 	}
 
 
 	public static function getAppDeploymentData(){
 
-		$airavataclient = Session::get("airavataClient");
-
-		$appDeployments = $airavataclient->getAllApplicationDeployments( Session::get("gateway_id"));
+		$appDeployments = Airavata::getAllApplicationDeployments( Session::get("gateway_id"));
 		//var_dump( $appDeployments); exit;
-		$computeResources = $airavataclient->getAllComputeResourceNames();
+		$computeResources = Airavata::getAllComputeResourceNames();
 		$modules = AppUtilities::getAllModules();
 		$apt = new ApplicationParallelismType();
 
@@ -148,8 +129,6 @@ class AppUtilities{
 	public static function create_or_update_appDeployment( $inputs, $update = false){
 
 		$appDeploymentValues = $inputs;
-
-		$airavataclient = Session::get("airavataClient");
 
 		if( isset( $appDeploymentValues["moduleLoadCmds"]))
 			$appDeploymentValues["moduleLoadCmds"] = array_unique( array_filter( $appDeploymentValues["moduleLoadCmds"]));
@@ -207,9 +186,9 @@ class AppUtilities{
 		//var_dump( $appDeploymentValues); exit;
 		$appDeployment = new ApplicationDeploymentDescription(  $appDeploymentValues);
 		if( $update)
-			$airavataclient->updateApplicationDeployment( $inputs["app-deployment-id"], $appDeployment);
+            Airavata::updateApplicationDeployment( $inputs["app-deployment-id"], $appDeployment);
 		else
-			$appDeploymentId = $airavataclient->registerApplicationDeployment( Session::get("gateway_id"), $appDeployment);
+			$appDeploymentId = Airavata::registerApplicationDeployment( Session::get("gateway_id"), $appDeployment);
 
 		return;
 
@@ -217,14 +196,10 @@ class AppUtilities{
 
 	public static function deleteAppDeployment( $appDeploymentId )
 	{
-
-		$airavataclient = Session::get("airavataClient");
-
-		return $airavataclient->deleteApplicationDeployment( $appDeploymentId);
+		return Airavata::deleteApplicationDeployment( $appDeploymentId);
 	}
 
 	public static function getAllModules(){
-		$airavataclient = Session::get("airavataClient");
-		return $airavataclient->getAllAppModules( Session::get("gateway_id"));
+		return Airavata::getAllAppModules( Session::get("gateway_id"));
 	}
 }

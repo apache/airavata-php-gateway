@@ -1,5 +1,5 @@
 <?php
-namespace Airavata\Wsis\Stubs;
+namespace Wsis\Stubs;
 use SoapClient;
 
 /**

@@ -3,8 +3,6 @@
  * Utilities for ID management with an XML file
  */
 
-//include 'id_utilities.php';
-
 class XmlIdUtilities implements IdUtilities
 {
     const DB_PATH = 'users.xml';

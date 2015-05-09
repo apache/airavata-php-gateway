@@ -1,7 +1,5 @@
 <?php
 
-require_once 'id_utilities.php';
-
 /**
  * Utilities for ID management with a WSO2 IS 4.6.0
  */

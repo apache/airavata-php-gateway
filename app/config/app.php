@@ -121,7 +121,8 @@ return array(
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
-        'Airavata\Wsis\WsisServiceProvider',
+        'Wsis\WsisServiceProvider',
+        'Airavata\AiravataServiceProvider',
 	),
 
 	/*
@@ -188,7 +189,8 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
-        'WSIS'            => 'Airavata\Wsis\Facades\Wsis',
+        'WSIS'            => 'Wsis\Facades\Wsis',
+        'Airavata'        => 'Airavata\Facades\Airavata',
 	),
 
 );

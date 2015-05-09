@@ -1,15 +1,6 @@
 <?php
 
-//Thrift classes - loaded from Vendor/Thrift
-use Thrift\Transport\TTransport;
-use Thrift\Exception\TException;
-use Thrift\Exception\TTransportException;
-use Thrift\Factory\TStringFuncFactory;
-use Thrift\Protocol\TBinaryProtocol;
-use Thrift\Transport\TSocket;
-
 //Airavata classes - loaded from app/libraries/Airavata
-use Airavata\API\AiravataClient;
 use Airavata\API\Error\InvalidRequestException;
 use Airavata\API\Error\AiravataClientException;
 use Airavata\API\Error\AiravataSystemException;
@@ -23,8 +14,6 @@ use Airavata\Model\Workspace\Experiment\ExperimentState;
 use Airavata\Model\AppCatalog\AppInterface\DataType;
 use Airavata\Model\Workspace\Project;
 use Airavata\Model\Workspace\Experiment\JobState;
-use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionInterface;
-use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
 
 
 
@@ -207,9 +196,6 @@ public static function connect_to_id_store()
         case 'XML':
             $idStore = new XmlIdUtilities(); // XML user database
             break;
-        case 'USER_API':
-            $idStore = new UserAPIUtilities(); // Airavata UserAPI
-            break;
     }
 
     try
@@ -224,40 +210,6 @@ public static function connect_to_id_store()
     }
 }
 
-/**
- * Return an Airavata client
- * @return AiravataClient
- */
-public static function get_airavata_client()
-{
-    try
-    {
-        $app_config = Utilities::read_config();
-        $transport = new TSocket( $app_config["airavata-server"], $app_config["airavata-port"]);
-        $transport->setRecvTimeout( $app_config["airavata-timeout"]);
-        $transport->setSendTimeout( $app_config["airavata-timeout"]);
-
-        $protocol = new TBinaryProtocol($transport);
-        $transport->open();
-
-        $client = new AiravataClient($protocol);
-
-        if( is_object( $client))
-            return $client;
-        else
-            return Redirect::to("airavata/down");
-    }
-    catch (Exception $e)
-    {
-        /*Utilities::print_error_message('<p>There was a problem connecting to Airavata.
-            Please try again later or submit a bug report using the link in the Help menu.</p>' .
-            '<p>' . $e->getMessage() . '</p>');
-        */
-        
-    }
-}
-
-
 
 /**
  * Launch the experiment with the given ID
@@ -265,7 +217,6 @@ public static function get_airavata_client()
  */
 public static function launch_experiment($expId)
 {
-    $airavataclient = Session::get("airavataClient");
     //global $tokenFilePath;
     try
     {
@@ -286,7 +237,7 @@ public static function launch_experiment($expId)
 
         $app_config = Utilities::read_config();
         $hardCodedToken = $app_config['credential-store-token'];
-        $airavataclient->launchExperiment($expId, $hardCodedToken);
+        Airavata::launchExperiment($expId, $hardCodedToken);
 
         /*
         Utilities::print_success_message('Experiment launched!');
@@ -335,12 +286,11 @@ public static function launch_experiment($expId)
  */
 public static function get_all_user_projects($gatewayId, $username)
 {
-    $airavataclient = Session::get("airavataClient");
     $userProjects = null;
 
     try
     {
-        $userProjects = $airavataclient->getAllUserProjects($gatewayId, $username);
+        $userProjects = Airavata::getAllUserProjects($gatewayId, $username);
         //var_dump( $userProjects); exit;
     }
     catch (InvalidRequestException $ire)
@@ -380,12 +330,11 @@ public static function get_all_user_projects($gatewayId, $username)
  */
 public static function get_all_applications()
 {
-    $airavataclient = Session::get("airavataClient");
     $applications = null;
 
     try
     {
-        $applications = $airavataclient->getAllApplicationInterfaceNames( Session::get("gateway_id"));
+        $applications = Airavata::getAllApplicationInterfaceNames( Session::get("gateway_id"));
     }
     catch (InvalidRequestException $ire)
     {
@@ -426,12 +375,11 @@ public static function get_all_applications()
  */
 public static function get_application_interface($id)
 {
-    $airavataclient = Session::get("airavataClient");
     $applicationInterface = null;
 
     try
     {
-        $applicationInterface = $airavataclient->getApplicationInterface($id);
+        $applicationInterface = Airavata::getApplicationInterface($id);
     }
     catch (InvalidRequestException $ire)
     {
@@ -463,12 +411,11 @@ public static function get_application_interface($id)
  */
 public static function get_available_app_interface_compute_resources($id)
 {
-    $airavataclient = Session::get("airavataClient");
     $computeResources = null;
 
     try
     {
-        $computeResources = $airavataclient->getAvailableAppInterfaceComputeResources($id);
+        $computeResources = Airavata::getAvailableAppInterfaceComputeResources($id);
     }
     catch (InvalidRequestException $ire)
     {
@@ -500,12 +447,11 @@ public static function get_available_app_interface_compute_resources($id)
  */
 public static function get_compute_resource($id)
 {
-    $airavataclient = Session::get("airavataClient");
     $computeResource = null;
 
     try
     {
-        $computeResource = $airavataclient->getComputeResource($id);
+        $computeResource = Airavata::getComputeResource($id);
     }
     catch (InvalidRequestException $ire)
     {
@@ -585,12 +531,11 @@ public static function list_input_files($experiment)
  */
 public static function get_application_inputs($id)
 {
-    $airavataclient = Session::get("airavataClient");
     $inputs = null;
 
     try
     {
-        $inputs = $airavataclient->getApplicationInputs($id);
+        $inputs = Airavata::getApplicationInputs($id);
     }
     catch (InvalidRequestException $ire)
     {
@@ -622,12 +567,11 @@ public static function get_application_inputs($id)
  */
 public static function get_application_outputs($id)
 {
-    $airavataclient = Session::get("airavataClient");
     $outputs = null;
 
     try
     {
-        $outputs = $airavataclient->getApplicationOutputs($id);
+        $outputs = Airavata::getApplicationOutputs($id);
     }
     catch (InvalidRequestException $ire)
     {
@@ -659,11 +603,10 @@ public static function get_application_outputs($id)
  */
 public static function get_experiment($expId)
 {
-    $airavataclient = Session::get("airavataClient");
 
     try
     {
-        return $airavataclient->getExperiment($expId);
+        return Airavata::getExperiment($expId);
     }
     catch (InvalidRequestException $ire)
     {
@@ -711,11 +654,10 @@ public static function get_experiment($expId)
  */
 public static function get_project($projectId)
 {
-    $airavataclient = Session::get("airavataClient");
 
     try
     {
-        return $airavataclient->getProject($projectId);
+        return Airavata::getProject($projectId);
     }
     catch (InvalidRequestException $ire)
     {
@@ -760,10 +702,7 @@ public static function assemble_experiment()
     $userConfigData = new UserConfigurationData();
     $userConfigData->computationalResourceScheduling = $scheduling;
     if( isset( $_POST["userDN"]) )
-    {
-        $userConfigData->generateCert = 1;
         $userConfigData->userDN = $_POST["userDN"];
-    }
 
     $applicationInputs = Utilities::get_application_inputs($_POST['application']);
     $experimentInputs = Utilities::process_inputs($applicationInputs, $experimentInputs);
@@ -1050,11 +989,9 @@ public static function file_upload_successful()
  */
 public static function update_experiment($expId, $updatedExperiment)
 {
-    $airavataclient = Session::get("airavataClient");
-
     try
     {
-        $airavataclient->updateExperiment($expId, $updatedExperiment);
+        Airavata::updateExperiment($expId, $updatedExperiment);
 
         /*
         Utilities::print_success_message("<p>Experiment updated!</p>" .
@@ -1096,12 +1033,10 @@ public static function update_experiment($expId, $updatedExperiment)
  */
 public static function clone_experiment($expId)
 {
-    $airavataclient = Session::get("airavataClient");
-
     try
     {
         //create new experiment to receive the clone
-        $experiment = $airavataclient->getExperiment($expId);
+        $experiment = Airavata::getExperiment($expId);
 
         $cloneId = $airavataclient->cloneExperiment($expId, 'Clone of ' . $experiment->name);
 
@@ -1149,14 +1084,13 @@ public static function clone_experiment($expId)
  */
 public static function cancel_experiment($expId)
 {
-    $airavataclient = Session::get("airavataClient");
     $app_config = Utilities::read_config();
 
 
 
     try
     {
-        $airavataclient->terminateExperiment($expId, $app_config["credential-store-token"]);
+        Airavata::terminateExperiment($expId, $app_config["credential-store-token"]);
 
         Utilities::print_success_message("Experiment canceled!");
     }
@@ -1268,7 +1202,27 @@ public static function create_application_select($id = null, $editable = true)
  */
 public static function create_compute_resources_select($applicationId, $resourceHostId)
 {
-    return Utilities::get_available_app_interface_compute_resources($applicationId);
+    $computeResources = Utilities::get_available_app_interface_compute_resources($applicationId);
+    
+    if( count( $computeResources) > 0)
+    {
+    	echo '<select class="form-control" name="compute-resource" id="compute-resource">';
+	    foreach ($computeResources as $id => $name)
+	    {
+	        $selected = ($resourceHostId == $id)? ' selected' : '';
+
+	        echo '<option value="' . $id . '"' . $selected . '>' .
+	                $name . '</option>';
+
+	    }
+
+    	echo '</select>';
+    }
+    else
+    {
+    	echo "<h4>No Compute Resources exist at the moment.";
+    }
+
 }
 
 
@@ -1385,12 +1339,14 @@ public static function create_nav_bar()
 	        'Project' => array
 	        (
 	            array('label' => 'Create', 'url' => URL::to('/') . '/project/create', "nav-active" => "project"),
-	            array('label' => 'Search', 'url' => URL::to('/') . '/project/search', "nav-active"=> "project")
+	            array('label' => 'Search', 'url' => URL::to('/') . '/project/search', "nav-active"=> "project"),
+                array('label' => 'Browse', 'url' => URL::to('/') . '/project/browse', "nav-active" => "project")
 	        ),
 	        'Experiment' => array
 	        (
 	            array('label' => 'Create', 'url' => URL::to('/') . '/experiment/create', "nav-active" => "experiment"),
-	            array('label' => 'Search', 'url' => URL::to('/') . '/experiment/search', "nav-active" => "experiment")
+	            array('label' => 'Search', 'url' => URL::to('/') . '/experiment/search', "nav-active" => "experiment"),
+                array('label' => 'Browse', 'url' => URL::to('/') . '/experiment/browse', "nav-active" => "experiment")
 	        )
 	    );
 
@@ -1573,9 +1529,6 @@ public static function write_new_token($tokenId)
 
 public static function create_project()
 {
-    
-    $airavataclient = Session::get("airavataClient");
-    
     $project = new Project();
     $project->owner = Session::get('username');
     $project->name = $_POST['project-name'];
@@ -1586,7 +1539,7 @@ public static function create_project()
 
     try
     {
-        $projectId = $airavataclient->createProject( Session::get("gateway_id"), $project);
+        $projectId = Airavata::createProject( Session::get("gateway_id"), $project);
 
         if ($projectId)
         {
@@ -1622,13 +1575,12 @@ public static function create_project()
  */
 public static function get_experiments_in_project($projectId)
 {
-    $airavataclient = Session::get("airavataClient");
 
     $experiments = array();
 
     try
     {
-        $experiments = $airavataclient->getAllExperimentsInProject($projectId);
+        $experiments = Airavata::getAllExperimentsInProject($projectId);
     }
     catch (InvalidRequestException $ire)
     {
@@ -1652,7 +1604,6 @@ public static function get_experiments_in_project($projectId)
 
 public static function update_project($projectId, $projectDetails)
 {
-    $airavataclient = Session::get("airavataClient");
 
     $updatedProject = new Project();
     $updatedProject->owner = $projectDetails["owner"];
@@ -1661,7 +1612,7 @@ public static function update_project($projectId, $projectDetails)
 
     try
     {
-        $airavataclient->updateProject($projectId, $updatedProject);
+        Airavata::updateProject($projectId, $updatedProject);
 
         //Utilities::print_success_message('Project updated! Click <a href="project_summary.php?projId=' . $projectId . '">here</a> to view the project summary.');
     }
@@ -1690,7 +1641,6 @@ public static function update_project($projectId, $projectDetails)
  */
 public static function create_experiment()
 {
-    $airavataclient = Session::get("airavataClient");
 
     $experiment = Utilities::assemble_experiment();
     $expId = null;
@@ -1699,7 +1649,7 @@ public static function create_experiment()
     {
         if($experiment)
         {
-            $expId = $airavataclient->createExperiment( Session::get("gateway_id"), $experiment);
+            $expId = Airavata::createExperiment( Session::get("gateway_id"), $experiment);
         }
 
         if ($expId)
@@ -1770,7 +1720,6 @@ public static function list_output_files($experiment, $expStatus)
 
 public static function get_experiment_values( $experiment, $project, $forSearch = false)
 {
-    $airavataclient = Session::get("airavataClient");
     //var_dump( $experiment); exit;
     $expVal = array();
     $expVal["experimentStatusString"] = "";
@@ -1786,7 +1735,7 @@ public static function get_experiment_values( $experiment, $project, $forSearch 
         $expVal["experimentTimeOfStateChange"] = date('Y-m-d H:i:s', $experimentStatus->timeOfStateChange/1000); // divide by 1000 since timeOfStateChange is in ms
         $expVal["experimentCreationTime"] = date('Y-m-d H:i:s', $experiment->creationTime/1000); // divide by 1000 since creationTime is in ms
     }
-    $jobStatus = $airavataclient->getJobStatuses($experiment->experimentID);
+    $jobStatus = Airavata::getJobStatuses($experiment->experimentID);
 
     if ($jobStatus)
     {
@@ -1842,9 +1791,98 @@ public static function get_experiment_values( $experiment, $project, $forSearch 
 
 }
 
+    public static function get_all_user_projects_with_pagination($limit, $offset)
+    {
+
+        $projects = array();
+
+        try
+        {
+            $projects = Airavata::getAllUserProjectsWithPagination( Session::get("gateway_id"),
+                Session::get("username"), $limit, $offset);
+        }
+        catch (InvalidRequestException $ire)
+        {
+            Utilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
+        }
+        catch (AiravataClientException $ace)
+        {
+            Utilities::print_error_message('AiravataClientException!<br><br>' . $ace->getMessage());
+        }
+        catch (AiravataSystemException $ase)
+        {
+            if ($ase->airavataErrorType == 2) // 2 = INTERNAL_ERROR
+            {
+                Utilities::print_info_message('<p>You have not created any projects yet, so no results will be returned!</p>
+                                <p>Click <a href="create_project.php">here</a> to create a new project.</p>');
+            }
+            else
+            {
+                Utilities::print_error_message('There was a problem with Airavata. Please try again later, or report a bug using the link in the Help menu.');
+                //print_error_message('AiravataSystemException!<br><br>' . $ase->airavataErrorType . ': ' . $ase->getMessage());
+            }
+        }
+        catch (TTransportException $tte)
+        {
+            Utilities::print_error_message('TTransportException!<br><br>' . $tte->getMessage());
+        }
+
+        return $projects;
+    }
+
+
+
+    public static function get_projsearch_results_with_pagination( $searchKey, $searchValue, $limit, $offset)
+    {
+
+        $projects = array();
+
+        try
+        {
+            switch ( $searchKey)
+            {
+                case 'project-name':
+                    $projects = Airavata::searchProjectsByProjectNameWithPagination( Session::get("gateway_id"),
+                        Session::get("username"), $searchValue, $limit, $offset);
+                    break;
+                case 'project-description':
+                    $projects = $airavataclient->searchProjectsByProjectDescWithPagination( Session::get("gateway_id"),
+                        Session::get("username"), $searchValue, $limit, $offset);
+                    break;
+            }
+        }
+        catch (InvalidRequestException $ire)
+        {
+            Utilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
+        }
+        catch (AiravataClientException $ace)
+        {
+            Utilities::print_error_message('AiravataClientException!<br><br>' . $ace->getMessage());
+        }
+        catch (AiravataSystemException $ase)
+        {
+            if ($ase->airavataErrorType == 2) // 2 = INTERNAL_ERROR
+            {
+                Utilities::print_info_message('<p>You have not created any projects yet, so no results will be returned!</p>
+                                <p>Click <a href="create_project.php">here</a> to create a new project.</p>');
+            }
+            else
+            {
+                Utilities::print_error_message('There was a problem with Airavata. Please try again later, or report a bug using the link in the Help menu.');
+                //print_error_message('AiravataSystemException!<br><br>' . $ase->airavataErrorType . ': ' . $ase->getMessage());
+            }
+        }
+        catch (TTransportException $tte)
+        {
+            Utilities::print_error_message('TTransportException!<br><br>' . $tte->getMessage());
+        }
+
+        return $projects;
+    }
+
+
 public static function get_projsearch_results( $searchKey, $searchValue)
 {
-    $airavataclient = Session::get("airavataClient");;
 
     $projects = array();
 
@@ -1853,7 +1891,7 @@ public static function get_projsearch_results( $searchKey, $searchValue)
         switch ( $searchKey)
         {
             case 'project-name':
-                $projects = $airavataclient->searchProjectsByProjectName( Session::get("gateway_id"), Session::get("username"), $searchValue);
+                $projects = Airavata::searchProjectsByProjectName( Session::get("gateway_id"), Session::get("username"), $searchValue);
                 break;
             case 'project-description':
                 $projects = $airavataclient->searchProjectsByProjectDesc( Session::get("gateway_id"), Session::get("username"), $searchValue);
@@ -1915,13 +1953,87 @@ public static function create_options($values, $labels, $disabled)
     }
 }
 
-/**
+    /**
+     * Get results of the user's search of experiments with pagination
+     * @return array|null
+     */
+    public static function get_expsearch_results_with_pagination( $inputs, $limit, $offset)
+    {
+        $experiments = array();
+
+        try
+        {
+            switch ( $inputs["search-key"])
+            {
+                case 'experiment-name':
+                    $experiments = Airavata::searchExperimentsByNameWithPagination(
+                        Session::get('gateway_id'), Session::get('username'), $inputs["search-value"], $limit, $offset);
+                    break;
+                case 'experiment-description':
+                    $experiments = Airavata::searchExperimentsByDescWithPagination(
+                        Session::get('gateway_id'), Session::get('username'), $inputs["search-value"], $limit, $offset);
+                    break;
+                case 'application':
+                    $experiments = Airavata::searchExperimentsByApplicationWithPagination(
+                        Session::get('gateway_id'), Session::get('username'), $inputs["search-value"], $limit, $offset);
+                    break;
+                case 'creation-time':
+                    $experiments = Airavata::searchExperimentsByCreationTimeWithPagination(
+                        Session::get('gateway_id'), Session::get('username'), strtotime( $inputs["from-date"])*1000,
+                        strtotime( $inputs["to-date"])*1000 , $limit, $offset);
+                    break;
+                case '':
+            }
+        }
+        catch (InvalidRequestException $ire)
+        {
+            Utilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
+        }
+        catch (AiravataClientException $ace)
+        {
+            Utilities::print_error_message('AiravataClientException!<br><br>' . $ace->getMessage());
+        }
+        catch (AiravataSystemException $ase)
+        {
+            if ($ase->airavataErrorType == 2) // 2 = INTERNAL_ERROR
+            {
+                Utilities::print_info_message('<p>You have not created any experiments yet, so no results will be returned!</p>
+                                <p>Click <a href="create_experiment.php">here</a> to create an experiment, or
+                                <a href="create_project.php">here</a> to create a new project.</p>');
+            }
+            else
+            {
+                Utilities::print_error_message('There was a problem with Airavata. Please try again later or report a bug using the link in the Help menu.');
+                //print_error_message('AiravataSystemException!<br><br>' . $ase->airavataErrorType . ': ' . $ase->getMessage());
+            }
+        }
+        catch (TTransportException $tte)
+        {
+            Utilities::print_error_message('TTransportException!<br><br>' . $tte->getMessage());
+        }
+
+        //get values of all experiments
+        $expContainer = array();
+        $expNum = 0;
+        foreach( $experiments as $experiment)
+        {
+            $expValue = Utilities::get_experiment_values( $experiment, Utilities::get_project($experiment->projectID), true );
+            $expContainer[$expNum]['experiment'] = $experiment;
+            if( $expValue["experimentStatusString"] == "FAILED")
+                $expValue["editable"] = false;
+            $expContainer[$expNum]['expValue'] = $expValue;
+            $expNum++;
+        }
+
+        return $expContainer;
+    }
+
+    /**
  * Get results of the user's search of experiments
  * @return array|null
  */
 public static function get_expsearch_results( $inputs)
 {
-    $airavataclient = Session::get("airavataClient");
     $experiments = array();
 
     try
@@ -1929,16 +2041,16 @@ public static function get_expsearch_results( $inputs)
         switch ( $inputs["search-key"])
         {
             case 'experiment-name':
-                $experiments = $airavataclient->searchExperimentsByName(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
+                $experiments = Airavata::searchExperimentsByName(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
                 break;
             case 'experiment-description':
-                $experiments = $airavataclient->searchExperimentsByDesc(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
+                $experiments = Airavata::searchExperimentsByDesc(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
                 break;
             case 'application':
-                $experiments = $airavataclient->searchExperimentsByApplication(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
+                $experiments = Airavata::searchExperimentsByApplication(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
                 break;
             case 'creation-time':
-                $experiments = $airavataclient->searchExperimentsByCreationTime(Session::get('gateway_id'), Session::get('username'), strtotime( $inputs["from-date"])*1000, strtotime( $inputs["to-date"])*1000 );
+                $experiments = Airavata::searchExperimentsByCreationTime(Session::get('gateway_id'), Session::get('username'), strtotime( $inputs["from-date"])*1000, strtotime( $inputs["to-date"])*1000 );
                 break;
             case '':
         }
@@ -1986,6 +2098,64 @@ public static function get_expsearch_results( $inputs)
     return $expContainer;
 }
 
+    /**
+     * Get results of the user's all experiments with pagination.
+     * Results are ordered creation time DESC
+     * @return array|null
+     */
+    public static function get_all_user_experiments_with_pagination($limit, $offset)
+    {
+        $experiments = array();
+
+        try
+        {
+            $experiments = Airavata::getAllUserExperimentsWithPagination(
+                Session::get('gateway_id'), Session::get('username'), $limit, $offset
+            );
+        }
+        catch (InvalidRequestException $ire)
+        {
+            Utilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
+        }
+        catch (AiravataClientException $ace)
+        {
+            Utilities::print_error_message('AiravataClientException!<br><br>' . $ace->getMessage());
+        }
+        catch (AiravataSystemException $ase)
+        {
+            if ($ase->airavataErrorType == 2) // 2 = INTERNAL_ERROR
+            {
+                Utilities::print_info_message('<p>You have not created any experiments yet, so no results will be returned!</p>
+                                <p>Click <a href="create_experiment.php">here</a> to create an experiment, or
+                                <a href="create_project.php">here</a> to create a new project.</p>');
+            }
+            else
+            {
+                Utilities::print_error_message('There was a problem with Airavata. Please try again later or report a bug using the link in the Help menu.');
+                //print_error_message('AiravataSystemException!<br><br>' . $ase->airavataErrorType . ': ' . $ase->getMessage());
+            }
+        }
+        catch (TTransportException $tte)
+        {
+            Utilities::print_error_message('TTransportException!<br><br>' . $tte->getMessage());
+        }
+
+        //get values of all experiments
+        $expContainer = array();
+        $expNum = 0;
+        foreach( $experiments as $experiment)
+        {
+            $expValue = Utilities::get_experiment_values( $experiment, Utilities::get_project($experiment->projectID), true );
+            $expContainer[$expNum]['experiment'] = $experiment;
+            if( $expValue["experimentStatusString"] == "FAILED")
+                $expValue["editable"] = false;
+            $expContainer[$expNum]['expValue'] = $expValue;
+            $expNum++;
+        }
+
+        return $expContainer;
+    }
+
 public static function getExpStates(){
     return ExperimentState::$__names;
 }
@@ -2026,11 +2196,7 @@ public static function apply_changes_to_experiment($experiment, $input)
 
     $userConfigDataUpdated->computationalResourceScheduling = $schedulingUpdated;
     if( isset( $input["userDN"]) )
-    {
-        $userConfigDataUpdated->generateCert = 1;
         $userConfigDataUpdated->userDN = $input["userDN"];
-    }
-
 
     $experiment->userConfigurationData = $userConfigDataUpdated;
 
@@ -2084,20 +2250,11 @@ public static function read_config( $fileName = null){
 }
 
 public static function get_job_details( $experimentId){
-    $airavataclient = Session::get("airavataClient");
-    return $airavataclient->getJobDetails( $experimentId);
+    return Airavata::getJobDetails( $experimentId);
 }
 
 public static function get_transfer_details( $experimentId){
-    $airavataclient = Session::get("airavataClient");
-    return $airavataclient->getDataTransferDetails( $experimentId);
-}
-
-public static function getQueueDatafromResourceId( $crId){
-    $airavataclient = Session::get("airavataClient");
-    $resourceObject = $airavataclient->getComputeResource( $crId);
-
-    return $resourceObject->batchQueues;
+    return Airavata::getDataTransferDetails( $experimentId);
 }
 
 }

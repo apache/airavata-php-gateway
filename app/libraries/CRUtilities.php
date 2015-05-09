@@ -2,12 +2,8 @@
 
 
 //Airavata classes - loaded from app/libraries/Airavata
-use Airavata\API\AiravataClient;
-
 //Compute Resource classes
-
 use Airavata\Model\AppCatalog\ComputeResource\FileSystems;
-use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionInterface;
 use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
 use Airavata\Model\AppCatalog\ComputeResource\SecurityProtocol;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManager;
@@ -25,9 +21,7 @@ use Airavata\Model\AppCatalog\ComputeResource\LOCALDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\UnicoreDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
 
-
 //Gateway Classes
-
 use Airavata\Model\AppCatalog\GatewayProfile\GatewayResourceProfile;
 use Airavata\Model\AppCatalog\GatewayProfile\ComputeResourcePreference;
 
@@ -46,14 +40,13 @@ class CRUtilities{
  */
 public static function register_or_update_compute_resource( $computeDescription, $update = false)
 {
-    $airavataclient = Session::get("airavataClient");
     if( $update)
     {
         $computeResourceId = $computeDescription->computeResourceId;
 
-        if( $airavataclient->updateComputeResource( $computeResourceId, $computeDescription) )
+        if( Airavata::updateComputeResource( $computeResourceId, $computeDescription) )
         {
-            $computeResource = $airavataclient->getComputeResource( $computeResourceId);
+            $computeResource = Airavata::getComputeResource( $computeResourceId);
             return $computeResource;
         }
         else
@@ -67,10 +60,10 @@ public static function register_or_update_compute_resource( $computeDescription,
             $computeDescription["fileSystems"][$fileSystem] = "";
         */
         $cd = new ComputeResourceDescription( $computeDescription);
-        $computeResourceId = $airavataclient->registerComputeResource( $cd);
+        $computeResourceId = Airavata::registerComputeResource( $cd);
     }
 
-    $computeResource = $airavataclient->getComputeResource( $computeResourceId);
+    $computeResource = Airavata::getComputeResource( $computeResourceId);
     return $computeResource;
 
 }
@@ -111,8 +104,7 @@ public static function createQueueObject( $queue){
 
 public static function deleteQueue( $computeResourceId, $queueName)
 {
-    $airavataclient = Session::get("airavataClient");
-    $airavataclient->deleteBatchQueue( $computeResourceId, $queueName);
+    Airavata::deleteBatchQueue( $computeResourceId, $queueName);
 }
 
 
@@ -122,7 +114,6 @@ public static function deleteQueue( $computeResourceId, $queueName)
 
 public static function create_or_update_JSIObject( $inputs, $update = false){
 
-    $airavataclient = Session::get("airavataClient");
     $computeResource = Utilities::get_compute_resource(  $inputs["crId"]);
 
 
@@ -151,13 +142,13 @@ public static function create_or_update_JSIObject( $inputs, $update = false){
 
         if( $update) //update Local JSP
         {
-            $jsiObject = $airavataclient->getLocalJobSubmission( $jsiId);
-            $localSub = $airavataclient->updateResourceJobManager(  $jsiObject->resourceJobManager->resourceJobManagerId, $resourceManager);
+            $jsiObject = Airavata::getLocalJobSubmission( $jsiId);
+            $localSub = Airavata::updateResourceJobManager(  $jsiObject->resourceJobManager->resourceJobManagerId, $resourceManager);
             //$localSub = $airavataclient->updateLocalSubmissionDetails( $jsiId, $localJobSubmission);
         }
         else        // create Local JSP
         {
-            $localSub = $airavataclient->addLocalSubmissionDetails( $computeResource->computeResourceId, 0, $localJobSubmission);
+            $localSub = Airavata::addLocalSubmissionDetails( $computeResource->computeResourceId, 0, $localJobSubmission);
             return $localSub;
         }
         
@@ -182,26 +173,26 @@ public static function create_or_update_JSIObject( $inputs, $update = false){
         //var_dump( $sshJobSubmission); exit;
         if( $update) //update Local JSP
         {
-            $jsiObject = $airavataclient->getSSHJobSubmission( $jsiId);
+            $jsiObject = Airavata::getSSHJobSubmission( $jsiId);
 
             //first update resource job manager
             $rmjId = $jsiObject->resourceJobManager->resourceJobManagerId;
-            $airavataclient->updateResourceJobManager(  $rmjId, $resourceManager);
-            $jsiObject = $airavataclient->getSSHJobSubmission( $jsiId);
+            Airavata::updateResourceJobManager(  $rmjId, $resourceManager);
+            $jsiObject = Airavata::getSSHJobSubmission( $jsiId);
 
             $jsiObject->securityProtocol = intval( $inputs["securityProtocol"] );
             $jsiObject->alternativeSSHHostName = $inputs["alternativeSSHHostName"];
             $jsiObject->sshPort = intval( $inputs["sshPort"] );
             $jsiObject->monitorMode = intval( $inputs["monitorMode"] );
-            $jsiObject->resourceJobManager = $airavataclient->getresourceJobManager( $rmjId);
+            $jsiObject->resourceJobManager = Airavata::getresourceJobManager( $rmjId);
             //var_dump( $jsiObject); exit;
             //add updated resource job manager to ssh job submission object.
             //$sshJobSubmission->resourceJobManager->resourceJobManagerId = $rmjId;
-            $localSub = $airavataclient->updateSSHJobSubmissionDetails( $jsiId, $jsiObject);
+            $localSub = Airavata::updateSSHJobSubmissionDetails( $jsiId, $jsiObject);
         }
         else
         {
-            $sshSub = $airavataclient->addSSHJobSubmissionDetails( $computeResource->computeResourceId, 0, $sshJobSubmission);
+            $sshSub = Airavata::addSSHJobSubmissionDetails( $computeResource->computeResourceId, 0, $sshJobSubmission);
         }
         return;        
     }
@@ -215,15 +206,15 @@ public static function create_or_update_JSIObject( $inputs, $update = false){
                                                         );
         if( $update)
         {
-            $jsiObject = $airavataclient->getUnicoreJobSubmission( $jsiId);
+            $jsiObject = Airavata::getUnicoreJobSubmission( $jsiId);
             $jsiObject->securityProtocol = intval( $inputs["securityProtocol"] );
             $jsiObject->unicoreEndPointURL = $inputs["unicoreEndPointURL"];
 
-            $unicoreSub = $airavataclient->updateUnicoreJobSubmissionDetails( $jsiId, $jsiObject);
+            $unicoreSub = Airavata::updateUnicoreJobSubmissionDetails( $jsiId, $jsiObject);
         }
         else
         {
-            $unicoreSub = $airavataclient->addUNICOREJobSubmissionDetails( $computeResource->computeResourceId, 0, $unicoreJobSubmission);
+            $unicoreSub = Airavata::addUNICOREJobSubmissionDetails( $computeResource->computeResourceId, 0, $unicoreJobSubmission);
         }
     }
     else /* Globus does not work currently */
@@ -236,13 +227,12 @@ public static function create_or_update_JSIObject( $inputs, $update = false){
  * Creating Data Movement Interface Object.
 */
 public static function create_or_update_DMIObject( $inputs, $update = false){
-    $airavataclient = Session::get("airavataClient");
 
     $computeResource = Utilities::get_compute_resource(  $inputs["crId"] );
     if( $inputs["dataMovementProtocol"] == DataMovementProtocol::LOCAL) /* LOCAL */
     {
         $localDataMovement = new LOCALDataMovement();
-        $localdmp = $airavataclient->addLocalDataMovementDetails( $computeResource->computeResourceId, 0, $localDataMovement);
+        $localdmp = Airavata::addLocalDataMovementDetails( $computeResource->computeResourceId, 0, $localDataMovement);
         
         if( $localdmp)
             print_r( "The Local Data Movement has been added. Edit UI for the Local Data Movement Interface is yet to be made.
@@ -260,9 +250,9 @@ public static function create_or_update_DMIObject( $inputs, $update = false){
                                             );
 
         if( $update)
-            $scpdmp = $airavataclient->updateSCPDataMovementDetails( $inputs["dmiId"], $scpDataMovement);
+            $scpdmp = Airavata::updateSCPDataMovementDetails( $inputs["dmiId"], $scpDataMovement);
         else
-            $scpdmp = $airavataclient->addSCPDataMovementDetails( $computeResource->computeResourceId, 0, $scpDataMovement);   
+            $scpdmp = Airavata::addSCPDataMovementDetails( $computeResource->computeResourceId, 0, $scpDataMovement);
    }
     else if( $inputs["dataMovementProtocol"] == DataMovementProtocol::GridFTP) /* GridFTP */
     {
@@ -271,9 +261,9 @@ public static function create_or_update_DMIObject( $inputs, $update = false){
                 "gridFTPEndPoints" => $inputs["gridFTPEndPoints"]
             ));
         if( $update)
-            $gridftpdmp = $airavataclient->updateGridFTPDataMovementDetails( $inputs["dmiId"], $gridFTPDataMovement);
+            $gridftpdmp = Airavata::updateGridFTPDataMovementDetails( $inputs["dmiId"], $gridFTPDataMovement);
         else
-            $gridftpdmp = $airavataclient->addGridFTPDataMovementDetails( $computeResource->computeResourceId, 0, $gridFTPDataMovement);
+            $gridftpdmp = Airavata::addGridFTPDataMovementDetails( $computeResource->computeResourceId, 0, $gridFTPDataMovement);
     }
     else if( $inputs["dataMovementProtocol"] == DataMovementProtocol::UNICORE_STORAGE_SERVICE) /* Unicore Storage Service */
     {
@@ -284,9 +274,9 @@ public static function create_or_update_DMIObject( $inputs, $update = false){
                                                             )
                                                         );
         if( $update)
-            $unicoredmp = $airavataclient->updateUnicoreDataMovementDetails( $inputs["dmiId"], $unicoreDataMovement);
+            $unicoredmp = Airavata::updateUnicoreDataMovementDetails( $inputs["dmiId"], $unicoreDataMovement);
         else
-            $unicoredmp = $airavataclient->addUnicoreDataMovementDetails( $computeResource->computeResourceId, 0, $unicoreDataMovement);
+            $unicoredmp = Airavata::addUnicoreDataMovementDetails( $computeResource->computeResourceId, 0, $unicoreDataMovement);
     }
     else /* other data movement protocols */
     {
@@ -295,8 +285,7 @@ public static function create_or_update_DMIObject( $inputs, $update = false){
 }
 
 public static function getAllCRObjects( $onlyName = false){
-    $airavataclient = Session::get("airavataClient");
-    $crNames = $airavataclient->getAllComputeResourceNames();
+    $crNames = Airavata::getAllComputeResourceNames();
     if( $onlyName)
         return $crNames;
     else
@@ -304,7 +293,7 @@ public static function getAllCRObjects( $onlyName = false){
         $crObjects = array();
         foreach( $crNames as $id => $crName)
         {
-            $crObjects[] = $airavataclient->getComputeResource( $id);
+            $crObjects[] = Airavata::getComputeResource( $id);
         }
         return $crObjects;
     }
@@ -312,8 +301,7 @@ public static function getAllCRObjects( $onlyName = false){
 }
 
 public static function getBrowseCRData(){
-    $airavataclient = Session::get("airavataClient");
-	$appDeployments = $airavataclient->getAllApplicationDeployments( Session::get("gateway_id"));
+	$appDeployments = Airavata::getAllApplicationDeployments( Session::get("gateway_id"));
 
     return array( 'crObjects' => CRUtilities::getAllCRObjects(true),
     			  'appDeployments' => $appDeployments 
@@ -322,30 +310,28 @@ public static function getBrowseCRData(){
 
 public static function getJobSubmissionDetails( $jobSubmissionInterfaceId, $jsp){
     //jsp = job submission protocol type
-    $airavataclient = Session::get("airavataClient");
     if( $jsp == JobSubmissionProtocol::LOCAL)
-        return $airavataclient->getLocalJobSubmission( $jobSubmissionInterfaceId);
+        return Airavata::getLocalJobSubmission( $jobSubmissionInterfaceId);
     else if( $jsp == JobSubmissionProtocol::SSH)
-        return $airavataclient->getSSHJobSubmission( $jobSubmissionInterfaceId);
+        return Airavata::getSSHJobSubmission( $jobSubmissionInterfaceId);
     else if( $jsp == JobSubmissionProtocol::UNICORE)
-        return $airavataclient->getUnicoreJobSubmission( $jobSubmissionInterfaceId);
+        return Airavata::getUnicoreJobSubmission( $jobSubmissionInterfaceId);
     else if( $jsp == JobSubmissionProtocol::CLOUD)
-        return $airavataclient->getCloudJobSubmission( $jobSubmissionInterfaceId);
+        return Airavata::getCloudJobSubmission( $jobSubmissionInterfaceId);
 
     //globus get function not present ??	
 }
 
 public static function getDataMovementDetails( $dataMovementInterfaceId, $dmi){
     //jsp = job submission protocol type
-    $airavataclient = Session::get("airavataClient");
     if( $dmi == DataMovementProtocol::LOCAL)
-        return $airavataclient->getLocalDataMovement( $dataMovementInterfaceId);
+        return Airavata::getLocalDataMovement( $dataMovementInterfaceId);
     else if( $dmi == DataMovementProtocol::SCP)
-        return $airavataclient->getSCPDataMovement( $dataMovementInterfaceId);
+        return Airavata::getSCPDataMovement( $dataMovementInterfaceId);
     else if( $dmi == DataMovementProtocol::GridFTP)
-        return $airavataclient->getGridFTPDataMovement( $dataMovementInterfaceId);
+        return Airavata::getGridFTPDataMovement( $dataMovementInterfaceId);
     else if( $dmi == DataMovementProtocol::UNICORE_STORAGE_SERVICE)
-        return $airavataclient->getUnicoreDataMovement( $dataMovementInterfaceId);
+        return Airavata::getUnicoreDataMovement( $dataMovementInterfaceId);
     /*
     else if( $dmi == JobSubmissionProtocol::CLOUD)
         return $airavataclient->getCloudJobSubmission( $dataMovementInterfaceId);
@@ -355,26 +341,24 @@ public static function getDataMovementDetails( $dataMovementInterfaceId, $dmi){
 }
 
 public static function deleteActions( $inputs){
-    $airavataclient = Session::get("airavataClient");
     if( isset( $inputs["jsiId"]) )
-        if( $airavataclient->deleteJobSubmissionInterface( $inputs["crId"], $inputs["jsiId"]) )
+        if( Airavata::deleteJobSubmissionInterface( $inputs["crId"], $inputs["jsiId"]) )
             return 1;
         else
             return 0;
     else if( isset( $inputs["dmiId"]) )
-        if( $airavataclient->deleteDataMovementInterface( $inputs["crId"], $inputs["dmiId"]) )
+        if( Airavata::deleteDataMovementInterface( $inputs["crId"], $inputs["dmiId"]) )
             return 1;
         else 
             return 0;
     elseif( isset( $inputs["del-crId"]))
-    	if( $airavataclient->deleteComputeResource( $inputs["del-crId"] ) )
+    	if( Airavata::deleteComputeResource( $inputs["del-crId"] ) )
     		return 1;
     	else
     		return 0;
 }
 
 public static function create_or_update_gateway_profile( $inputs, $update = false){
-    $airavataclient = Session::get("airavataClient");
 
     $computeResourcePreferences = array();
     if( isset( $input["crPreferences"]) )
@@ -393,23 +377,22 @@ public static function create_or_update_gateway_profile( $inputs, $update = fals
                                                         "gatewayDescription" => $inputs["gatewayDescription"]
                                                         )
                                                 );
-        $gatewayProfileId = $airavataclient->updateGatewayResourceProfile( $inputs["edit-gpId"], $gatewayProfile);
+        $gatewayProfileId = Airavata::updateGatewayResourceProfile( $inputs["edit-gpId"], $gatewayProfile);
     }
     else
-        $gatewayProfileId = $airavataclient->registerGatewayResourceProfile( $gatewayProfile);
+        $gatewayProfileId = Airavata::registerGatewayResourceProfile( $gatewayProfile);
 }
 
 public static function getAllGatewayProfilesData(){
-    $airavataclient = Session::get("airavataClient");
 
     if( Session::has("scigap_admin") )
-        $gateways = $airavataclient->getAllGateways();
+        $gateways = Airavata::getAllGateways();
     else
     {
-        $gateways[0] = $airavataclient->getGateway( Config::get('wsis::gateway-id'));
+        $gateways[0] = Airavata::getGateway( Config::get('wsis::gateway-id'));
     }
 
-    $gatewayProfiles = $airavataclient->getAllGatewayComputeResources();
+    $gatewayProfiles = Airavata::getAllGatewayComputeResources();
     //$gatewayProfileIds = array("GatewayTest3_57726e98-313f-4e7c-87a5-18e69928afb5", "GatewayTest4_4fd9fb28-4ced-4149-bdbd-1f276077dad8");
     foreach( $gateways as $key => $gw)
     {
@@ -421,7 +404,7 @@ public static function getAllGatewayProfilesData(){
             {
                 foreach( (array)$gp->computeResourcePreferences as $i => $crp)
                 {
-                    $gatewayProfiles[$index]->computeResourcePreferences[$i]->crDetails = $airavataclient->getComputeResource( $crp->computeResourceId);
+                    $gatewayProfiles[$index]->computeResourcePreferences[$i]->crDetails = Airavata::getComputeResource( $crp->computeResourceId);
                 }
                 $gateways[$key]->profile = $gatewayProfiles[$index];
             }
@@ -433,25 +416,19 @@ public static function getAllGatewayProfilesData(){
 }
 
 public static function add_or_update_CRP( $inputs){
-    $airavataclient = Session::get("airavataClient");
-
     $computeResourcePreferences = new computeResourcePreference( $inputs);
 
     //var_dump( $inputs); exit;
-    return $airavataclient->addGatewayComputeResourcePreference( $inputs["gatewayId"], $inputs["computeResourceId"], $computeResourcePreferences);
+    return Airavata::addGatewayComputeResourcePreference( $inputs["gatewayId"], $inputs["computeResourceId"], $computeResourcePreferences);
 
 }
 
 public static function deleteGP( $gpId){
-    $airavataclient = Session::get("airavataClient");
-
-    return $airavataclient->deleteGatewayResourceProfile( $gpId);
+    return Airavata::deleteGatewayResourceProfile( $gpId);
 }
 
 public static function deleteCR( $inputs){
-    $airavataclient = Session::get("airavataClient");
-
-    return $airavataclient->deleteGatewayComputeResourcePreference( $inputs["gpId"], $inputs["rem-crId"]);
+    return Airavata::deleteGatewayComputeResourcePreference( $inputs["gpId"], $inputs["rem-crId"]);
 }
 
 }

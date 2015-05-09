@@ -1,4 +1,4 @@
-<?php namespace Airavata\Wsis;
+<?php namespace Wsis;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Config;
@@ -19,7 +19,7 @@ class WsisServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        $this->package('airavata/wsis');
+        $this->package('wsis/wsis');
     }
 
 	/**
@@ -33,13 +33,13 @@ class WsisServiceProvider extends ServiceProvider {
         $this->app['wsis'] = $this->app->share(function($app)
         {
             return new Wsis(
-                Config::get('wsis::admin-username'),
-                Config::get('wsis::admin-password'),
-                Config::get('wsis::server'),
-                Config::get('wsis::service-url'),
-                Config::get('wsis::cafile-path'),
-                Config::get('wsis::verify-peer'),
-                Config::get('wsis::allow-selfsigned-cert')
+                Config::get('pga_config.wsis')['admin-username'],
+                Config::get('pga_config.wsis')['admin-password'],
+                Config::get('pga_config.wsis')['server'],
+                Config::get('pga_config.wsis')['service-url'],
+                Config::get('pga_config.wsis')['cafile-path'],
+                Config::get('pga_config.wsis')['verify-peer'],
+                Config::get('pga_config.wsis')['allow-self-signed-cert']
             );
         });
 
@@ -47,7 +47,7 @@ class WsisServiceProvider extends ServiceProvider {
         $this->app->booting(function()
         {
             $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-            $loader->alias('WSIS', 'Airavata\Wsis\Facades\Wsis');
+            $loader->alias('WSIS', 'Wsis\Facades\Wsis');
         });
 	}
 

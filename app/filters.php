@@ -13,11 +13,9 @@
 
 App::before(function($request)
 {
-	$airavataClient = Utilities::get_airavata_client();
-	if( ! is_object( $airavataClient))
+    $apiVersion = Airavata::getApiVersion();
+	if(empty($apiVersion))
 		return View::make("server-down");
-	else
-		Session::put("airavataClient", $airavataClient);
 });
 
 
