@@ -128,10 +128,7 @@ public static function id_matches_db($username, $password)
     //var_dump( $idStore->authenticate($username, $password)); exit;
     if($idStore->authenticate($username, $password))
     {
-        //checking if user is an Admin and saving in Session.
-       $app_config = Utilities::read_config();
-
-        if( in_array( $app_config["admin-role"], (array)$idStore->getRoleListOfUser( $username)))
+        if( in_array(Config::get('pga_config.wsis')['admin-role-name'], (array)$idStore->getRoleListOfUser( $username)))
         {
             Session::put("admin", true);
         }
