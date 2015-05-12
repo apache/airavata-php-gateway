@@ -1,7 +1,7 @@
 <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li @if( Session::has("manage"))  class="active" @endif>
-                        <a href="{{ URL::to('/')}}/admin/dashboard/gateway"><i class="fa fa-fw fa-dashboard"></i> Gateway @if( Session::has("scigap_admin"))s @endif</a>
+                        <a href="{{ URL::to('/')}}/admin/dashboard/gateway"><i class="fa fa-fw fa-dashboard"></i> Gateway@if( Session::has("scigap_admin"))s@endif</a>
                     </li>
                     <li>
                         <a href="{{ URL::to('/')}}/admin/dashboard/users"><i class="fa fa-fw fa-bar-chart-o"></i> Users</a>

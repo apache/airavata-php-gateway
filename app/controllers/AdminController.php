@@ -29,15 +29,22 @@ class AdminController extends BaseController {
 
 	public function dashboard(){
 		//only for super admin
-		Session::put("scigap_admin", true);
+		//Session::put("scigap_admin", true);
 		$idStore = $this->idStore;
 
 		$crData = CRUtilities::getEditCRData();
 		$gateways = CRUtilities::getAllGatewayProfilesData();
-		return View::make("admin/manage-gateway", array( 
+
+		$gatewayData = array( 
 														"gateways" => $gateways, 
 														"computeResources" => CRUtilities::getAllCRObjects(),
-														"crData" => $crData));
+														"crData" => $crData);
+		if( Session::has("scigap_admin"))
+			$view = "scigap-admin/manage-gateway";
+		else
+			$view = "admin/manage-gateway";
+
+			return View::make( $view, $gatewayData);
 	}
 
 	public function addAdminSubmit(){
@@ -130,15 +137,13 @@ class AdminController extends BaseController {
 
 	public function addGateway(){
 
-		$input = Input::all();
+		$inputs = Input::all();
 
 		$idStore = $this->idStore;
 
-		$tm = TenantManager::addTenant(1, $input["admin-username"], $input["admin-password"], $input["admin-email"],
-                              $firstName, $lastName, $input["domain"]);
+		$tm = $idStore->createTenant(1, $inputs["admin-username"], $inputs["admin-password"], $inputs["admin-email"],
+                                  $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
 		print_r( $tm); exit;
 		$gateway = AdminUtilities::addGateway(Input::all() );
-
-
 	}
 }

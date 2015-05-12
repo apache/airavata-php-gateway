@@ -101,7 +101,7 @@
             var visitortimezone = visitortime.getTimezoneOffset()/60;
             $.ajax({
                 type: "GET",
-                url: "../setUserTimezone",
+                url: "setUserTimezone",
                 data: 'timezone='+ visitortimezone,
                 success: function(){
                     //location.reload();

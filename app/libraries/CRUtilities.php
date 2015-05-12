@@ -389,7 +389,7 @@ public static function getAllGatewayProfilesData(){
         $gateways = Airavata::getAllGateways();
     else
     {
-        $gateways[0] = Airavata::getGateway( Config::get('wsis::gateway-id'));
+        $gateways[0] = Airavata::getGateway( Session::get("gateway_id") );
     }
 
     $gatewayProfiles = Airavata::getAllGatewayComputeResources();

@@ -24,146 +24,96 @@
             </div>
             <div class="container-fluid">
 
-                    <div class="row">
+                <div class="row">
 
-                        <div class="col-md-6">
-                            @if( Session::has("scigap_admin") )
-                                <h3>Existing Gateways :</h3>
-                            @else
-                                <h3>Gateway Settings</h3>
-                            @endif
-                        </div>
-                        @if( Session::has("scigap_admin"))
-                        <div class="col-md-6" style="margin-top:3.5%">
-                            <input type="text" class="col-md-12 filterinput" placeholder="Search by Gateway Name" />
-                        </div>
-                        @endif
+                    <div class="col-md-6">
+                        <h3>Gateway Settings</h3>
                     </div>
-                    <div class="panel-group" id="accordion2">
-                    @foreach( $gateways as $indexGP => $gp )
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a class="accordion-toggle collapsed gateway-name" data-toggle="collapse" data-parent="#accordion2" href="#collapse-gateway-{{$indexGP}}">
-                                    {{ $gp->gatewayName }}
-                                    </a>
-                                    <div class="pull-right col-md-2 gateway-options fade">
-                                        <span class="glyphicon glyphicon-pencil edit-gateway" style="cursor:pointer;" data-toggle="modal" data-target="#edit-gateway-block" data-gp-id="{{ $gp->gatewayId }}" data-gp-name="{{ $gp->gatewayName }}"></span>
-                                        <span class="glyphicon glyphicon-trash delete-gateway" style="cursor:pointer;" data-toggle="modal" data-target="#delete-gateway-block" data-gp-name="{{$gp->gatewayName}}" data-gp-id="{{ $gp->gatewayId }}"></span>
-                                    </div>
-                                </h4>
-                            </div>
-                            <div id="collapse-gateway-{{$indexGP}}" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <div class="app-interface-block">
-                                        <div class="row">
-                                            <div class="col-md-10">
-                                                <button class="btn btn-default add-cr" data-gpid="{{$gp->gatewayId}}"><span class="glyphicon glyphicon-plus"></span> Add a Compute Resource</button>
-                                            </div>
-                                            <div class="col-md-10">
-                                                @if( isset( $gp->profile->computeResourcePreferences) )
-                                                    <div class="col-md-12">
-                                                        <h3>Existing Compute Resources :</h3>
-                                                    </div>
-                                                <div class="accordion-inner">
-                                                    <div class="panel-group" id="accordion-{{$indexGP}}">
-                                                    @foreach( (array)$gp->profile->computeResourcePreferences as $indexCRP => $crp )
-                                                        <div class="panel panel-default">
-                                                            <div class="panel-heading">
-                                                                <h4 class="panel-title">
-                                                                    <a class="accordion-toggle collapsed gateway-name" data-toggle="collapse" data-parent="#accordion" href="#collapse-crp-{{$indexGP}}-{{$indexCRP}}">
-                                                                    {{ $crp->crDetails->hostName }}
-                                                                    </a>
-                                                                    <div class="pull-right col-md-2 gateway-options fade">
-                                                                        <span class="glyphicon glyphicon-remove remove-resource" style="cursor:pointer;" data-toggle="modal" data-target="#remove-resource-block" data-cr-name="{{$crp->crDetails->hostName}}" data-cr-id="{{$crp->computeResourceId}}" data-gp-id="{{ $gp->gatewayId }}"></span>
-                                                                    </div>
-                                                                </h4>
-                                                            </div>
-                                                            <div id="collapse-crp-{{$indexGP}}-{{$indexCRP}}" class="panel-collapse collapse">
-                                                                <div class="panel-body">
-                                                                    <div class="app-compute-resource-preferences-block">
-                                                                        <form action="{{URL::to('/')}}/gp/update-crp" method="POST">
-                                                                            <input type="hidden" name="gatewayId" id="gatewayId" value="{{$gp->gatewayId}}">
-                                                                            <input type="hidden" name="computeResourceId" id="gatewayId" value="{{$crp->computeResourceId}}">
-                                                                            <div class="form-horizontal">
-                                                                                @include('partials/gateway-preferences', array('computeResource' => $crp->crDetails, 'crData' => $crData, 'preferences'=>$crp, 'show'=>true))
-                                                                            </div>
-                                                                        </form>
-                                                                    </div>
+                    @if( Session::has("scigap_admin"))
+                    <div class="col-md-6" style="margin-top:3.5%">
+                        <input type="text" class="col-md-12 filterinput" placeholder="Search by Gateway Name" />
+                    </div>
+                    @endif
+                </div>
+                <div class="panel-group" id="accordion2">
+                @foreach( $gateways as $indexGP => $gp )
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle collapsed gateway-name" data-toggle="collapse" data-parent="#accordion2" href="#collapse-gateway-{{$indexGP}}">
+                                {{ $gp->gatewayName }}
+                                </a>
+                                <div class="pull-right col-md-2 gateway-options fade">
+                                    <span class="glyphicon glyphicon-pencil edit-gateway" style="cursor:pointer;" data-toggle="modal" data-target="#edit-gateway-block" data-gp-id="{{ $gp->gatewayId }}" data-gp-name="{{ $gp->gatewayName }}"></span>
+                                </div>
+                            </h4>
+                        </div>
+                        <div id="collapse-gateway-{{$indexGP}}" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="app-interface-block">
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <button class="btn btn-default add-cr" data-gpid="{{$gp->gatewayId}}"><span class="glyphicon glyphicon-plus"></span> Add a Compute Resource</button>
+                                        </div>
+                                        <div class="col-md-10">
+                                            @if( isset( $gp->profile->computeResourcePreferences) )
+                                                <div class="col-md-12">
+                                                    <h3>Existing Compute Resources :</h3>
+                                                </div>
+                                            <div class="accordion-inner">
+                                                <div class="panel-group" id="accordion-{{$indexGP}}">
+                                                @foreach( (array)$gp->profile->computeResourcePreferences as $indexCRP => $crp )
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                                <a class="accordion-toggle collapsed gateway-name" data-toggle="collapse" data-parent="#accordion" href="#collapse-crp-{{$indexGP}}-{{$indexCRP}}">
+                                                                {{ $crp->crDetails->hostName }}
+                                                                </a>
+                                                                <div class="pull-right col-md-2 gateway-options fade">
+                                                                    <span class="glyphicon glyphicon-remove remove-resource" style="cursor:pointer;" data-toggle="modal" data-target="#remove-resource-block" data-cr-name="{{$crp->crDetails->hostName}}" data-cr-id="{{$crp->computeResourceId}}" data-gp-id="{{ $gp->gatewayId }}"></span>
+                                                                </div>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapse-crp-{{$indexGP}}-{{$indexCRP}}" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <div class="app-compute-resource-preferences-block">
+                                                                    <form action="{{URL::to('/')}}/gp/update-crp" method="POST">
+                                                                        <input type="hidden" name="gatewayId" id="gatewayId" value="{{$gp->gatewayId}}">
+                                                                        <input type="hidden" name="computeResourceId" id="gatewayId" value="{{$crp->computeResourceId}}">
+                                                                        <div class="form-horizontal">
+                                                                            @include('partials/gateway-preferences', array('computeResource' => $crp->crDetails, 'crData' => $crData, 'preferences'=>$crp, 'show'=>true))
+                                                                        </div>
+                                                                    </form>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    @endforeach
                                                     </div>
+                                                @endforeach
                                                 </div>
-                                                @endif
-                                                <!-- 
-                                                Adding a user as admin will shift to roles. Removing from here. 
-                                                <h4><span class="glyphicon glyphicon-plus"></span> Add a user as Admin to this Gateway</h4>
-                                                <form action="{{URL::to('/')}}/admin/addgatewayadmin" method="POST" role="form" enctype="multipart/form-data">
-                                                    <div class="form-group required">
-                                                        <label for="experiment-name" class="control-label">Enter Username</label>
-                                                        <input type="text" class="form-control" name="username" id="experiment-name" placeholder="username" autofocus required="required">
-                                                        <input type="hidden" name="gateway_name" value="{{ $gp->gatewayName }}"/>
-                                                    </div>
-                                                    <div class="btn-toolbar">
-                                                        <input name="add" type="submit" class="btn btn-primary" value="Add Admin"/>
-                                                    </div>   
-                                                </form>
-                                                -->
                                             </div>
+                                            @endif
+                                            <!-- 
+                                            Adding a user as admin will shift to roles. Removing from here. 
+                                            <h4><span class="glyphicon glyphicon-plus"></span> Add a user as Admin to this Gateway</h4>
+                                            <form action="{{URL::to('/')}}/admin/addgatewayadmin" method="POST" role="form" enctype="multipart/form-data">
+                                                <div class="form-group required">
+                                                    <label for="experiment-name" class="control-label">Enter Username</label>
+                                                    <input type="text" class="form-control" name="username" id="experiment-name" placeholder="username" autofocus required="required">
+                                                    <input type="hidden" name="gateway_name" value="{{ $gp->gatewayName }}"/>
+                                                </div>
+                                                <div class="btn-toolbar">
+                                                    <input name="add" type="submit" class="btn btn-primary" value="Add Admin"/>
+                                                </div>   
+                                            </form>
+                                            -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
                     </div>
-                @if( Session::has("scigap_admin"))
-                <form type="POST" id="add-tenant-form">
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-default toggle-add-tenant"><span class="glyphicon glyphicon-plus"></span>Add a new gateway</button>
-                    </div>
-                    <div class="add-tenant col-md-6">
-                        <div class="form-group required">
-                            <label class="control-label">Enter Domain Name</label>
-                            <input type="url" name="gatewayName" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Desired Gateway Name</label>
-                            <input type="text" name="gatewayName" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Email Address</label>
-                            <input type="text" name="admin-email" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin First Name</label>
-                            <input type="text" name="admin-firstname" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Last Name</label>
-                            <input type="text" name="admin-username" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Username</label>
-                            <input type="text" name="admin-username" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Password</label>
-                            <input type="password" name="admin-password" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Re-enter Admin Password</label>
-                            <input type="password" name="admin-password-confirm" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <input type="submit" class="form-control btn btn-primary" value="Register" />
-                        </div>
-                    </div>
-                </form>
-                @endif
-
+                @endforeach
+                </div>
             </div>
             <!-- /.container-fluid -->
 
@@ -237,29 +187,5 @@
         //make first tab of accordion open by default.
         //temporary fix
         $("#accordion2").children(".panel").children(".collapse").addClass("in");
-        $(".add-tenant").slideUp();
-        
-        $(".toggle-add-tenant").click( function(){
-            $('html, body').animate({
-                scrollTop: $(".toggle-add-tenant").offset().top
-            }, 500);
-            $(".add-tenant").slideDown();
-        });
     </script>
-
-    @if( Session::has("scigap_admin"))
-    <script>
-        $(".add-tenant-form").submit( function( event){
-            var formData = $(".add-tenant-form").serealize();
-            $.ajax({
-                type: "POST",
-                data: formData,
-                url: '"' + {{ URL::to('/') }} + '"' + '/admin/add-gateway',
-                success:function( data){
-                    console.log( data);
-                }
-            });
-        });
-    </script>
-    @endif
 @stop

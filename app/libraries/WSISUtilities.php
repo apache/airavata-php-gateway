@@ -298,9 +298,11 @@ class WSISUtilities implements IdUtilities{
     * @param Tenant $parameters
     * @return void
     */
-    public function createTenant( $inputs){
+    public function createTenant( $active, $adminUsername, $adminPassword, $email,
+                                  $firstName, $lastName, $tenantDomain){
         try {
-            return WSIS::create_tenant( $inputs);
+            return WSIS::create_tenant( $active, $adminUsername, $adminPassword, $email,
+                                  $firstName, $lastName, $tenantDomain);
         } catch (Exception $ex) {
             var_dump( $ex); 
             //throw new Exception("Unable to create Tenant.", 0, $ex);
