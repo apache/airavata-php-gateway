@@ -13,7 +13,7 @@
 
 App::before(function($request)
 {
-    $apiVersion = Airavata::getApiVersion();
+    $apiVersion = Airavata::getAPIVersion();
 	if(empty($apiVersion))
 		return View::make("server-down");
 });
