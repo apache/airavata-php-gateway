@@ -2234,6 +2234,11 @@ public static function get_transfer_details( $experimentId){
     return Airavata::getDataTransferDetails( $experimentId);
 }
 
+public static function getQueueDatafromResourceId( $crId){
+    $resourceObject = Airavata::getComputeResource( $crId);
+    return $resourceObject->batchQueues;
+}
+
 }
 
 ?>
