@@ -57,6 +57,7 @@ class ExperimentController extends BaseController {
 						        "resourceHostId" => null,
 						        "advancedOptions" => $app_config["advanced-experiment-options"]
 					        );
+
 			return View::make( "experiment/create-complete", array( "expInputs" => $experimentInputs) );
 		}
 

@@ -34,7 +34,6 @@
         Utilities::print_error_message("You need to be an admin to use this service.");
         Session::forget("admin-alert");
     }
-    
 ?>
 
 @show
