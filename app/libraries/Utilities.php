@@ -1035,7 +1035,7 @@ public static function clone_experiment($expId)
         //create new experiment to receive the clone
         $experiment = Airavata::getExperiment($expId);
 
-        $cloneId = $airavataclient->cloneExperiment($expId, 'Clone of ' . $experiment->name);
+        $cloneId = Airavata::cloneExperiment($expId, 'Clone of ' . $experiment->name);
 
         Utilities::print_success_message("<p>Experiment cloned!</p>" .
             '<p>You will be redirected to the edit page shortly, or you can

@@ -175,7 +175,7 @@
                     $(".gateway-error").html(data).removeClass("hide");
                 }
             }).complete( function(){
-                $("add-gateway-loading").modal("hide");
+                $("#add-gateway-loading").modal("hide");
             });
         });
     </script>

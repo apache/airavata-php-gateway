@@ -19,47 +19,50 @@
             {{ Utilities::print_warning_message('No Compute Resources are registered. Please use "Register Compute Resource" to register a new resources.') }}
         @else
             <div class="col-md-12">
+            <div class="row">
                 <div class="col-md-6">
                     <h3 style="margin:0;">Existing Compute Resources :</h3>
                 </div>
                 <input type="text" class="pull-right filterinput col-md-6" placeholder="Search by Compute Resource Name"/>
-            <div class="table-responsive">
-                <table class="table">
+            </div>
+            <div class="row">
+                <div class="table-responsive">
+                    <table class="table">
 
-                    <tr>
+                        <tr>
 
-                        <th>Name</th>
-                        <th>Id</th>
-                        <th>Edit</th>
-                        <th>View</th>
-                        <th>Delete</th>
-                    </tr>
+                            <th>Name</th>
+                            <th>Id</th>
+                            <th>Edit</th>
+                            <th>View</th>
+                            <th>Delete</th>
+                        </tr>
 
-            @foreach ($allCRs as $crId => $crName)
+                @foreach ($allCRs as $crId => $crName)
 
-	                <tr id="crDetails">
-	                    <td>{{ $crName }}</td>
-	                    <td>{{ $crId }}</td>
-	                    <td><a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
-	                            <span class="glyphicon glyphicon-pencil"></span>
-	                        </a>
-	                    </td>
-	                    <td>
-	                        <a  class="view-cr" href="#" > <!-- {{URL::to('/')}}/cr/summary?crId={{ $crId }}"> -->
-	                            <span class="glyphicon glyphicon-list"></span>
-	                        </a>
-	                    </td>
-	                    <td>
-	                    	<a href="#" title="Delete">
-	                    		<span class="glyphicon glyphicon-trash del-cr"  data-toggle="modal" data-target="#delete-cr-block"  data-delete-cr-name="{{$crName}}" data-deployment-count="{{$connectedDeployments[$crId]}}" data-crid="{{$crId}}" ></span>
-	                    	</a>
-	                    </td>
-	                </tr>
-	            @endforeach
+    	                <tr id="crDetails">
+    	                    <td>{{ $crName }}</td>
+    	                    <td>{{ $crId }}</td>
+    	                    <td><a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
+    	                            <span class="glyphicon glyphicon-pencil"></span>
+    	                        </a>
+    	                    </td>
+    	                    <td>
+    	                        <a  class="view-cr" href="#" > <!-- {{URL::to('/')}}/cr/summary?crId={{ $crId }}"> -->
+    	                            <span class="glyphicon glyphicon-list"></span>
+    	                        </a>
+    	                    </td>
+    	                    <td>
+    	                    	<a href="#" title="Delete">
+    	                    		<span class="glyphicon glyphicon-trash del-cr"  data-toggle="modal" data-target="#delete-cr-block"  data-delete-cr-name="{{$crName}}" data-deployment-count="{{$connectedDeployments[$crId]}}" data-crid="{{$crId}}" ></span>
+    	                    	</a>
+    	                    </td>
+    	                </tr>
+    	            @endforeach
 
-	           </table>
-			</div>
-
+    	           </table>
+    			</div>
+            </div>
         @endif
     @endif
 

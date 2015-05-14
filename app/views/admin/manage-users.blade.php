@@ -75,25 +75,29 @@
                 <div class="modal-body">
                     <h4 class="roles-of-user"></h4>
                     <div class="roles-load">
-                        Getting User Roles. Please Wait...  
+                        Getting User Roles. Please Wait...  <img src="{{URL::to('/')}}ajax-loader.gif"/>
                     </div>
                     <div class="roles-list">
+                        <div class="add-role-area">
+                            <div class="form-group">
+                                <label class="control-label">Add a new role to the user</label>
+                                <select name="new-role">
+                                    <option>Select a role</option>
+                                    @foreach( (array)$roles as $role)
+                                    <option value="{{role}}">{{$role}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>  
                 </div>
                 <div class="modal-footer">
                     <div class="form-group">
-                        <input type="submit" class="btn btn-primary" data-dismiss="modal"  value="Ok"/>
+                        <input type="submit" class="btn btn-primary" data-dismiss="modal"  value="Close"/>
                     </div>
                 </div>
             </div>
             <input type="hidden" class="base-url" value="{{URL::to('/')}}"/>
-        </div>
-    </div>
-
-    <div class="role-block">
-        <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default role-name" disabled>Role</button>
-            <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>
         </div>
     </div>
 @stop
@@ -133,7 +137,7 @@
                 $(".role-block").find(".role-name").html( roles[i]);
                 var newRoleBlock = $(".role-block").html();
                 roleBlocks += newRoleBlock;
-                $(".roles-list").html( roleBlocks);
+                $(".roles-list").prepend( roleBlocks);
             }
             $(".roles-load").addClass("hide");
             $(".roles-list").removeClass("hide");

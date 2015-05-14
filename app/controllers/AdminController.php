@@ -94,7 +94,7 @@ class AdminController extends BaseController {
 	public function rolesView(){
 		$idStore = $this->idStore;
 		$roles = $idStore->getRoleNames();
-
+		var_dump( $roles); exit;
 		return View::make("admin/manage-roles", array("roles" => $roles));
 	}
 
@@ -141,9 +141,11 @@ class AdminController extends BaseController {
 
 		$idStore = $this->idStore;
 
+		$gateway = AdminUtilities::addGateway(Input::all() );
+
 		$tm = $idStore->createTenant(1, $inputs["admin-username"], $inputs["admin-password"], $inputs["admin-email"],
                                   $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
-		print_r( $tm); exit;
-		$gateway = AdminUtilities::addGateway(Input::all() );
+		
+		return $gateway;
 	}
 }

@@ -187,6 +187,7 @@ Route::post("admin/delete-role", "AdminController@deleteRole");
 //Super Admin Specific calls
 
 Route::post("admin/add-gateway", "AdminController@addGateway");
+Route::get("admin/add-gateway", "AdminController@addGateway");
 
 //Airavata Server Check
 Route::get("airavata/down", function(){
