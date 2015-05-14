@@ -79,15 +79,16 @@
                     </div>
                     <div class="roles-list">
                     </div>  
-                    <div class="add-role">
-                        <div class="form-group">
+                    <div class="add-roles-block hide">
+                        <div class="form-group form-horizontal">
                             <label class="control-label">Add a new role to the user</label>
-                            <select name="new-role">
+                            <select multiple name="new-role" class="new-roles-select" class="form-control">
                                 <option>Select a role</option>
                                 @foreach( (array)$roles as $role)
                                 <option value="{{$role}}">{{$role}}</option>
                                 @endforeach
                             </select>
+                            <button type="button" class="btn btn primary add-roles-submit">Add Roles</button>
                         </div>
                     </div>
                 </div>
@@ -98,6 +99,13 @@
                 </div>
             </div>
             <input type="hidden" class="base-url" value="{{URL::to('/')}}"/>
+        </div>
+    </div>
+
+    <div class="role-block hide">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default role-name" disabled>Role</button>
+            <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>
         </div>
     </div>
 @stop
@@ -116,11 +124,18 @@
     );
     $(".check-roles").click( function(){
 
+        //remove disabled roles from previous actions.
+        $(".new-roles-select option").each(function()
+        {
+            $(this).removeAttr("disabled");
+        }
         var userName = $(this).data("username");
         $("#check-role-block").modal("show");
         $(".roles-of-user").html( "User : " + userName);
         $(".roles-load").removeClass("hide");
         $(".roles-list").addClass("hide");
+
+        //getting user's existing roles
         $.ajax({
             type: "POST",
             url: $(".base-url").val() + "/admin/check-roles",
@@ -134,14 +149,28 @@
             roleBlocks = "";
             for( var i=0; i<roles.length; i++)
             {
+                //disable roles which user already has.
+                $(".new-roles-select option").each(function()
+                {
+                    if( $(this).val() == roles[i])
+                        $(this).attr("disabled", "disabled");
+                    else
+                        $(this).removeAttr("disabled");
+                });
                 $(".role-block").find(".role-name").html( roles[i]);
                 var newRoleBlock = $(".role-block").html();
                 roleBlocks += newRoleBlock;
                 $(".roles-list").prepend( roleBlocks);
+
+                $(".add-roles-block").removeClass("hide");
             }
             $(".roles-load").addClass("hide");
             $(".roles-list").removeClass("hide");
         });
+
+        $(".add-roles-submit").click( function(){
+            console.log( $(".new-roles-select").val() );
+        })
 
     });
     </script>

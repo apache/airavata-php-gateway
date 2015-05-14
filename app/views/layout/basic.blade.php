@@ -99,8 +99,8 @@
             var visitortime = new Date();
             var visitortimezone = visitortime.getTimezoneOffset()/60;
             $.ajax({
-                type: "GET",
-                url: "{{URL::to('/')/setUserTimezone",
+                type:"GET",
+                url:"{{URL::to('/')}}/setUserTimezone",
                 data: 'timezone='+ visitortimezone,
                 success: function(){
                     //location.reload();

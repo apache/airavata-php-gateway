@@ -631,7 +631,10 @@ public static function assemble_experiment()
     $userConfigData = new UserConfigurationData();
     $userConfigData->computationalResourceScheduling = $scheduling;
     if( isset( $_POST["userDN"]) )
+    {        
+        $userConfigDataUpdated->generateCert = 1;
         $userConfigData->userDN = $_POST["userDN"];
+    }
 
     $applicationInputs = Utilities::get_application_inputs($_POST['application']);
     $experimentInputs = Utilities::process_inputs($applicationInputs, $experimentInputs);
@@ -2105,7 +2108,10 @@ public static function apply_changes_to_experiment($experiment, $input)
 
     $userConfigDataUpdated->computationalResourceScheduling = $schedulingUpdated;
     if( isset( $input["userDN"]) )
+    {
+        $userConfigDataUpdated->generateCert = 1;
         $userConfigDataUpdated->userDN = $input["userDN"];
+    }
 
     $experiment->userConfigurationData = $userConfigDataUpdated;
 
