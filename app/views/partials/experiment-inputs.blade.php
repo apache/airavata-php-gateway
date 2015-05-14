@@ -50,7 +50,7 @@
                 @endforeach
                 </select>
             @else
-                <h4>No Compute Resources exist at the moment
+                <h4>Application deployed Computational resources are currently available
             @endif
         </div>
         <div class="queue-block">

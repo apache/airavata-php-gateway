@@ -39,26 +39,13 @@ class AccountController extends BaseController {
         $im = $_POST['im'];
         $url = $_POST['url'];
 
-        $idStore = new WSISUtilities();
-
-        try
-	    {
-	        $idStore->connect();
-	    }
-	    catch (Exception $e)
-	    {
-	        Utilities::print_error_message('<p>Error connecting to ID store.
-	            Please try again later or report a bug using the link in the Help menu</p>' .
-	            '<p>' . $e->getMessage() . '</p>');
-	    }
-
-        if ($idStore->username_exists($username)) {
+        if (WSIS::usernameExists($username)) {
         	return Redirect::to("create")
 										->withInput(Input::except('password', 'password_confirm'))
 										->with("username_exists", true);
 		}
         else{
-            $idStore->add_user($username, $password, $first_name, $last_name, $email, $organization,
+            WSIS::addUser($username, $password, $first_name, $last_name, $email, $organization,
             $address, $country,$telephone, $mobile, $im, $url);
             Utilities::print_success_message('New user created!');
 
@@ -76,8 +63,12 @@ class AccountController extends BaseController {
             $username = $_POST['username'];
             $password = $_POST['password'];
             try {
-                if ( Utilities::id_matches_db($username, $password)) {
-                	
+                if (WSIS::authenticate($username, $password)) {
+                    if( in_array(Config::get('pga_config.wsis')['admin-role-name'], (array)WSIS::getUserRoles($username)))
+                    {
+                        Session::put("admin", true);
+                    }
+
                     Utilities::store_id_in_session($username);
                     Utilities::print_success_message('Login successful! You will be redirected to your home page shortly.');
                 	Session::put("gateway_id", Config::get('pga_config.wsis')['gateway-id']);

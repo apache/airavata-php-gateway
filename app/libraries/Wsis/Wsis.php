@@ -133,7 +133,7 @@ class Wsis {
      * @return boolean
      * @throws Exception
      */
-    public function username_exists($username){
+    public function usernameExists($username){
         try {
             return $this->userStoreManager->isExistingUser($username);
         } catch (Exception $ex) {
@@ -147,7 +147,7 @@ class Wsis {
      * @param string $roleName
      * @return IsExistingRoleResponse
      */
-    public function is_existing_role( $roleName){
+    public function isExistingRole( $roleName){
         try {
             return $this->userStoreManager->isExistingRole( $roleName);
         } catch (Exception $ex) {
@@ -160,7 +160,7 @@ class Wsis {
      *
      * @param string $roleName
      */
-    public function add_role($roleName){
+    public function addRole($roleName){
         try {
             return $this->userStoreManager->addRole( $roleName);
         } catch (Exception $ex) {
@@ -175,7 +175,7 @@ class Wsis {
      * @return void
      * @throws Exception
      */
-    public function delete_role($roleName) {
+    public function deleteRole($roleName) {
         try {
             $this->userStoreManager->deleteRole($roleName);
         } catch (Exception $ex) {
@@ -190,7 +190,7 @@ class Wsis {
      *
      * @return roles list
      */
-    public function get_all_roles(){
+    public function getAllRoles(){
         try {
             return $this->userStoreManager->getRoleNames();
         } catch (Exception $ex) {
@@ -203,7 +203,7 @@ class Wsis {
      *
      * @return user role
      */
-    public function get_user_roles( $username){
+    public function getUserRoles( $username){
         try {
             return $this->userStoreManager->getRoleListOfUser( $username);
         } catch (Exception $ex) {
@@ -217,7 +217,7 @@ class Wsis {
      * @param GetUserListOfRole $parameters
      * @return GetUserListOfRoleResponse
      */
-    public function get_userlist_of_role( $role){
+    public function getUserListOfRole( $role){
         try {
             return $this->userStoreManager->getUserListOfRole( $role);
         } catch (Exception $ex) {
@@ -232,7 +232,7 @@ class Wsis {
      * @param UpdateRoleListOfUser $parameters
      * @return void
      */
-    public function update_user_roles( $username, $roles){
+    public function updateUserRoles( $username, $roles){
         try {
             return $this->userStoreManager->updateRoleListOfUser( $username, $roles);
         } catch (Exception $ex) {
@@ -246,7 +246,7 @@ class Wsis {
      * @param void
      * @return void
      */
-    public function list_users(){
+    public function listUsers(){
         try {
             return $this->userStoreManager->listUsers();
         } catch (Exception $ex) {
@@ -261,7 +261,7 @@ class Wsis {
      * @param GetTenantId $parameters
      * @return GetTenantIdResponse
      */
-    public function get_tenant_id(){
+    public function getTenantId(){
         try {
             return $this->userStoreManager->getTenantId();
         } catch (Exception $ex) {
@@ -281,7 +281,7 @@ class Wsis {
      * @param $tenantDomain
      * @throws Exception
      */
-    public function create_tenant($active, $adminUsername, $adminPassword, $email,
+    public function createTenant($active, $adminUsername, $adminPassword, $email,
                                   $firstName, $lastName, $tenantDomain){
         try {
             return $this->tenantManager->addTenant($active, $adminUsername, $adminPassword, $email,
