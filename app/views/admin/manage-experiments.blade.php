@@ -201,20 +201,20 @@
                                                                 <div style="width:4px;height:0;border:5px solid rgb(237,194,64);overflow:hidden"></div>
                                                             </div>
                                                         </td>
-                                                        <td class="legendLabel">sin(x)</td>
+                                                        <td class="legendLabel">Canceled Experiments</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="legendColorBox">
                                                             <div style="border:1px solid #ccc;padding:1px"><div style="width:4px;height:0;border:5px solid rgb(175,216,248);overflow:hidden"></div></div>
                                                         </td>
-                                                        <td class="legendLabel">cos(x)</td>
+                                                        <td class="legendLabel">Successful Experiments</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
 
-                                    
+
                                 </div>
                             </div>
                         </div>

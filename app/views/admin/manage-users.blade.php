@@ -75,21 +75,21 @@
                 <div class="modal-body">
                     <h4 class="roles-of-user"></h4>
                     <div class="roles-load">
-                        Getting User Roles. Please Wait...  <img src="{{URL::to('/')}}ajax-loader.gif"/>
+                        Getting User Roles. Please Wait...  <img src="{{URL::to('/')}}/assets/ajax-loader.gif"/>
                     </div>
                     <div class="roles-list">
-                        <div class="add-role-area">
-                            <div class="form-group">
-                                <label class="control-label">Add a new role to the user</label>
-                                <select name="new-role">
-                                    <option>Select a role</option>
-                                    @foreach( (array)$roles as $role)
-                                    <option value="{{role}}">{{$role}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
                     </div>  
+                    <div class="add-role">
+                        <div class="form-group">
+                            <label class="control-label">Add a new role to the user</label>
+                            <select name="new-role">
+                                <option>Select a role</option>
+                                @foreach( (array)$roles as $role)
+                                <option value="{{$role}}">{{$role}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <div class="form-group">
@@ -123,7 +123,7 @@
         $(".roles-list").addClass("hide");
         $.ajax({
             type: "POST",
-            url: $(".base-url").val() + "/admin/checkroles",
+            url: $(".base-url").val() + "/admin/check-roles",
             data: 
             { 
               username: userName

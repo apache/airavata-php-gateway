@@ -69,7 +69,7 @@ class AdminController extends BaseController {
 
 	public function rolesView(){
 
-		$roles = WSIS::getAllRolles();
+		$roles = WSIS::getAllRoles();
 		return View::make("admin/manage-roles", array("roles" => $roles));
 	}
 
