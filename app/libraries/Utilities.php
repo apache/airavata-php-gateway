@@ -632,7 +632,7 @@ public static function assemble_experiment()
     $userConfigData->computationalResourceScheduling = $scheduling;
     if( isset( $_POST["userDN"]) )
     {        
-        $userConfigDataUpdated->generateCert = 1;
+        $userConfigData->generateCert = 1;
         $userConfigData->userDN = $_POST["userDN"];
     }
 
