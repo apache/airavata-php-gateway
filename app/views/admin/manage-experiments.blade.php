@@ -38,6 +38,7 @@
                 </div>
 
                 <div class="dates row">
+                    <h1 class="text-center well alert alert-danger" >UI beyond this message is under construction view with dummy values.</h1>
                     <div class="col-md-12">
                     Select dates between which you want to review experiments.
                     </div>
@@ -161,7 +162,7 @@
                     <div class="col-lg-12">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Line Graph Example with Tooltips</h3>
+                                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>Experiment v/s Time Graph</h3>
                             </div>
                             <div class="panel-body">
                                 <div class="flot-chart">
@@ -222,6 +223,7 @@
                 </div>
 
                 <div class="row">
+                    <h1 class="text-center well alert alert-danger" >Proposed UI to view flow of one experiment.</h1>
                     <div class="tree">
                         <ul>
                             <li>
@@ -309,7 +311,24 @@
     @parent
     {{ HTML::script('js/gateway.js') }} 
     {{ HTML::script('js/moment.js')}}   
-    {{ HTML::script('js/datetimepicker.js')}}            
+    {{ HTML::script('js/datetimepicker.js')}}    
+
+    <!-- Morris Charts JavaScript -->
+    <!--
+    to be uncommented when actually in use. 
+
+    {{ HTML::script('js/morris/raphael.min.js')}}
+    {{ HTML::script('js/morris/morris.min.js')}}
+    {{ HTML::script('js/morris/morris-data.js')}}
+    -->
+
+    <!-- Flot Charts JavaScript -->
+    <!--[if lte IE 8]><script src="js/excanvas.min.js')}}<![endif]-->
+    {{ HTML::script('js/flot/jquery.flot.js')}}
+    {{ HTML::script('js/flot/jquery.flot.tooltip.min.js')}}
+    {{ HTML::script('js/flot/jquery.flot.resize.js')}}
+    {{ HTML::script('js/flot/jquery.flot.pie.js')}}
+    {{ HTML::script('js/flot/flot-data.js')}}        
     <script>
 
         //make first tab of accordion open by default.
