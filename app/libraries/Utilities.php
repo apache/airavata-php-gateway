@@ -103,43 +103,6 @@ public static function form_submitted()
 }
 
 /**
- * Compare the submitted credentials with those stored in the database
- * @param $username
- * @param $password
- * @return bool
- */
-public static function id_matches_db($username, $password)
-{
-    $idStore = new WSISUtilities();
-
-    try
-    {
-        $idStore->connect();
-    }
-    catch (Exception $e)
-    {
-        Utilities::print_error_message('<p>Error connecting to ID store.
-            Please try again later or report a bug using the link in the Help menu</p>' .
-            '<p>' . $e->getMessage() . '</p>');
-    }
-    //checking user roles.
-    //var_dump( $idStore->updateRoleListOfUser( $username, array( "new"=>array("admin"), "deleted"=>array() ) ) );
-    //var_dump($idStore->getRoleListOfUser( $username) ); exit;
-    //var_dump( $idStore->authenticate($username, $password)); exit;
-    if($idStore->authenticate($username, $password))
-    {
-        if( in_array(Config::get('pga_config.wsis')['admin-role-name'], (array)$idStore->getRoleListOfUser( $username)))
-        {
-            Session::put("admin", true);
-        }
-        return true;
-    }else{
-        return false;
-    }
-}
-
-
-/**
  * Store username in session variables
  * @param $username
  */
@@ -176,37 +139,6 @@ public static function verify_login()
         return false;
     }
 }
-
-/**
- * Connect to the ID store
- */
-public static function connect_to_id_store()
-{
-    global $idStore;
-    $app_config = Utilities::read_config();
-
-    switch ($app_config["user-store"])
-    {
-        case 'WSO2':
-            $idStore = new WSISUtilities(); // WS02 Identity Server
-            break;
-        case 'XML':
-            $idStore = new XmlIdUtilities(); // XML user database
-            break;
-    }
-
-    try
-    {
-        $idStore->connect();
-    }
-    catch (Exception $e)
-    {
-        Utilities::print_error_message('<p>Error connecting to ID store.
-            Please try again later or report a bug using the link in the Help menu</p>' .
-            '<p>' . $e->getMessage() . '</p>');
-    }
-}
-
 
 /**
  * Launch the experiment with the given ID
