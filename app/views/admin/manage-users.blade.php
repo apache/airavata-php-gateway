@@ -164,7 +164,7 @@
                 $(".role-block").find(".role-name").html( roles[i]);
                 var newRoleBlock = $(".role-block").html();
                 roleBlocks += newRoleBlock;
-                $(".roles-list").prepend( roleBlocks);
+                $(".roles-list").html( roleBlocks);
 
                 $(".add-roles-block").removeClass("hide");
             }
@@ -196,7 +196,7 @@
                 }
             });
             $(".add-roles-submit").html( "Add Roles");
-            $(".add-roles-submit").append("<span class='alert alert-success col-md-12'>Roles have been added</span>");
+            $(".add-roles-submit").after("<span class='alert alert-success col-md-12'>Roles have been added</span>");
         });
 
     });
