@@ -80,7 +80,7 @@
                     <div class="roles-list">
                     </div>  
                     <div class="add-roles-block hide">
-                        <div class="form-group form-horizontal">
+                        <div class="form-group well">
                             <label class="control-label">Add a new role to the user</label>
                             <select multiple name="new-role" class="new-roles-select" class="form-control">
                                 <option>Select a role</option>
@@ -88,13 +88,13 @@
                                 <option value="{{$role}}">{{$role}}</option>
                                 @endforeach
                             </select>
-                            <button type="button" class="btn btn primary add-roles-submit">Add Roles</button>
+                            <button type="button" class="btn btn-primary add-roles-submit"  data-username="">Add Roles</button>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <div class="form-group">
-                        <input type="submit" class="btn btn-primary" data-dismiss="modal"  value="Close"/>
+                        <input type="submit" class="btn" data-dismiss="modal"  value="Close"/>
                     </div>
                 </div>
             </div>
@@ -128,12 +128,16 @@
         $(".new-roles-select option").each(function()
         {
             $(this).removeAttr("disabled");
-        }
+        });
+
         var userName = $(this).data("username");
         $("#check-role-block").modal("show");
         $(".roles-of-user").html( "User : " + userName);
         $(".roles-load").removeClass("hide");
         $(".roles-list").addClass("hide");
+        $(".add-roles-submit").data("username", userName);
+        $(this).find(".alert-success").remove();
+
 
         //getting user's existing roles
         $.ajax({
@@ -166,11 +170,34 @@
             }
             $(".roles-load").addClass("hide");
             $(".roles-list").removeClass("hide");
+
+
         });
 
         $(".add-roles-submit").click( function(){
-            console.log( $(".new-roles-select").val() );
-        })
+            $(this).attr("disabled", "disabled");
+            $(this).html("<img src='" + $(".base-url").val() + "/ajax-loader.gif'/>");
+            userName = $(this).data("username");
+            var rolesToAdd = $(".new-roles-select").val();
+            $(".roles-list").find(".role-name").each( function(){
+                rolesToAdd.push( $(this).html() );
+            })
+            $.ajax({
+                type: "POST",
+                url: $(".base-url").val() + "/admin/add-roles-to-user",
+                data: 
+                { 
+                    add: true,
+                    username: userName,
+                    roles : rolesToAdd
+                },
+                success( data){
+                    console.log( data);
+                }
+            });
+            $(".add-roles-submit").html( "Add Roles");
+            $(".add-roles-submit").append("<span class='alert alert-success col-md-12'>Roles have been added</span>");
+        });
 
     });
     </script>

@@ -96,6 +96,13 @@ class AdminController extends BaseController {
 		return View::make("admin/manage-credentials", array("tokens" => array()) );
 	}
 
+	public function updateUserRoles(){
+		if( Input::has("add"))
+			return WSIS::updateUserRoles(Input::get("username"), array("new"=> Input::get("roles"), "deleted" => array() ) );
+		else
+			return WSIS::updateUserRoles(Input::get("username"), array("new"=> array(), "deleted" => Input::get("roles") ) );
+	}
+
 
 	/* ---- Super Admin Functions ------- */
 
