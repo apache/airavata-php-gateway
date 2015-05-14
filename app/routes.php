@@ -166,6 +166,8 @@ Route::get("admin/dashboard/roles", "AdminController@rolesView");
 
 Route::get("admin/dashboard/experiments", "AdminController@experimentsView");
 
+Route::get("admin/dashboard/resources", "AdminController@resourcesView");
+
 Route::get("admin/dashboard/experiment/summary", function(){
 	return Redirect::to("experiment/summary?expId=" . $_GET["expId"] . "&dashboard=true");
 });

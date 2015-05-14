@@ -77,6 +77,12 @@ class AdminController extends BaseController {
 		return View::make("admin/manage-experiments" );
 	}
 
+	public function resourcesView(){
+		$data = CRUtilities::getBrowseCRData();
+		$allCRs = $data["crObjects"];
+		return View::make("admin/manage-resources", array("resources" => $allCRs) );
+	}
+
 	public function addRole(){
 		WSIS::addRole( Input::get("role") );
 		return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been added.");
