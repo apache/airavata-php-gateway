@@ -3,7 +3,7 @@
 	<textarea class="form-control" maxlength="255" name="qdesc" placeholder="Queue Description">@if( isset( $queueData) ){{ $queueData->queueDescription }}@endif</textarea>
 </div>
 <div class="form-group">
-	<label class="control-label">Queue Max Run Time<small> (In Hours) </small></label>
+	<label class="control-label">Queue Max Run Time<small> (In Minutes) </small></label>
 	<input type="number" min="0" class="form-control" value="@if( isset( $queueData) ){{ $queueData->maxRunTime }}@endif" maxlength="30" name="qmaxruntime" placeholder="Queue Max Run Time"/>
 </div>
 <div class="form-group">

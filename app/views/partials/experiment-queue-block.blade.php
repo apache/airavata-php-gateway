@@ -38,7 +38,7 @@
         <input type="number" class="form-control" name="wall-time" id="wall-time" min="0"
         value="@if(isset($expVal) ){{ $expVal['scheduling']->wallTimeLimit }}@else{{$queueDefaults['wallTimeLimit']}}@endif"
         @if(isset($expVal)) @if(!$expVal['editable']){{disabled}} @endif @endif>
-        <span class="input-group-addon">hours</span>
+        <span class="input-group-addon">minutes</span>
     </div>
 </div>
 <div class="form-group">
