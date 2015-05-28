@@ -61,7 +61,8 @@ class Wsis {
             'password' => $admin_password,
             'stream_context' => $context,
             'trace' => 1,
-            'features' => SOAP_WAIT_ONE_WAY_CALLS
+            'features' => SOAP_WAIT_ONE_WAY_CALLS,
+            'cache_wsdl' => WSDL_CACHE_BOTH
         );
 
         $this->server = $server;
