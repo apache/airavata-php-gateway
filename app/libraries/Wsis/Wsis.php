@@ -72,8 +72,7 @@ class Wsis {
             $this->userStoreManager = new UserStoreManager($service_url, $parameters);
             $this->tenantManager = new TenantManager($service_url, $parameters);
         } catch (Exception $ex) {
-            print_r( $ex); exit;
-            throw new Exception("Unable to instantiate client", 0, $ex);
+            throw new Exception("Unable to instantiate WSO2 IS client", 0, $ex);
         }
     }
 

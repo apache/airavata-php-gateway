@@ -1,10 +1,12 @@
 <?php namespace Airavata;
 
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Config;
 use Airavata\API\AiravataClient;
 use Thrift\Transport\TSocket;
 use Thrift\Protocol\TBinaryProtocol;
+use Illuminate\Routing\Redirector;
 
 class AiravataServiceProvider extends ServiceProvider {
 
@@ -49,14 +51,13 @@ class AiravataServiceProvider extends ServiceProvider {
                 $client = new AiravataClient($protocol);
 
             }catch (\Exception $ex){
-                var_dump($ex);
-                exit;
+                throw new \Exception("Unable to instantiate Airavata Client", 0,  $ex);
             }
 
             if( is_object( $client))
                 return $client;
             else
-                return Redirect::to("airavata/down");
+                throw new \Exception("Unable to instantiate Airavata Client");
         });
 
         //registering alis
