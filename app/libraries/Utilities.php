@@ -164,8 +164,7 @@ public static function launch_experiment($expId)
         Utilities::print_success_message('Experiment launched using ' . $tokenString . ' allocation!');
         */
 
-        $app_config = Utilities::read_config();
-        $hardCodedToken = $app_config['credential-store-token'];
+        $hardCodedToken = Config::get('pga_config.airavata')['credential-store-token'];
         Airavata::launchExperiment($expId, $hardCodedToken);
 
         /*
@@ -618,7 +617,6 @@ public static function assemble_experiment()
 {
     $utility = new Utilities();
     $experimentInputs = array();
-    $app_config = Utilities::read_config();
 
     $scheduling = new ComputationalResourceScheduling();
     $scheduling->totalCPUCount = $_POST['cpu-count'];
@@ -1016,13 +1014,10 @@ public static function clone_experiment($expId)
  */
 public static function cancel_experiment($expId)
 {
-    $app_config = Utilities::read_config();
-
-
 
     try
     {
-        Airavata::terminateExperiment($expId, $app_config["credential-store-token"]);
+        Airavata::terminateExperiment($expId, Config::get('pga_config.airavata')["credential-store-token"]);
 
         Utilities::print_success_message("Experiment canceled!");
     }
@@ -2130,40 +2125,6 @@ public static function apply_changes_to_experiment($experiment, $input)
         //var_dump($experiment);
         return $experiment;
     }
-}
-
-public static function read_config( $fileName = null){
-    $wsis_config = null;
-
-    if( $fileName == null)
-        $fileName = "app_config.ini";
-    try {
-        if (file_exists( app_path() . "/config/" . $fileName ) ) {
-
-            try
-            {
-                $wsis_config = parse_ini_file( app_path() . "/config/" . $fileName );
-            }
-
-            catch( \Exception $e)
-            {
-                print_r( $e); exit;
-            }
-        } 
-        else 
-        {
-            throw new Exception("Error: Cannot open file!");
-        }
-
-        if (!$wsis_config) 
-        {
-            throw new Exception('Error: Unable to read the file!');
-        }
-    }catch (Exception $e) {
-        throw new Exception('Unable to instantiate the client. Try editing the file.', 0, NULL);
-    }
-    return $wsis_config;
-
 }
 
 public static function get_job_details( $experimentId){

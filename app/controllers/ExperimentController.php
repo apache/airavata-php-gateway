@@ -34,12 +34,10 @@ class ExperimentController extends BaseController {
 			
 			$computeResources = Utilities::create_compute_resources_select($_POST['application'], null);
 
-			$app_config = Utilities::read_config();
-
-			$queueDefaults = array( "queueName" => $app_config["queue-name"],
-						        	"nodeCount" => $app_config["node-count"],
-						        	"cpuCount" => $app_config["total-cpu-count"],
-						        	"wallTimeLimit" => $app_config["wall-time-limit"]
+			$queueDefaults = array( "queueName" => Config::get('pga_config.airavata')["queue-name"],
+						        	"nodeCount" => Config::get('pga_config.airavata')["node-count"],
+						        	"cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
+						        	"wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
 							);
 
 			$experimentInputs = array( 
@@ -48,14 +46,14 @@ class ExperimentController extends BaseController {
 						        "experimentDescription" => $_POST['experiment-description'] . ' ',
 						        "project" => $_POST['project'],
 						        "application" => $_POST['application'],
-						        "allowedFileSize" => $app_config["server-allowed-file-size"],
+						        "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
 						        "echo" => ($_POST['application'] == 'Echo')? ' selected' : '',
 						        "wrf" => ($_POST['application'] == 'WRF')? ' selected' : '',
 						        "queueDefaults" => $queueDefaults,
-						        "advancedOptions" => $app_config["advanced-experiment-options"],
+						        "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"],
 						        "computeResources" => $computeResources,
 						        "resourceHostId" => null,
-						        "advancedOptions" => $app_config["advanced-experiment-options"]
+						        "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"]
 					        );
 
 			return View::make( "experiment/create-complete", array( "expInputs" => $experimentInputs) );
@@ -181,11 +179,10 @@ class ExperimentController extends BaseController {
 
 	public function editView()
 	{
-		$app_config = Utilities::read_config();
-		$queueDefaults = array( "queueName" => $app_config["queue-name"],
-						        "nodeCount" => $app_config["node-count"],
-						        "cpuCount" => $app_config["total-cpu-count"],
-						        "wallTimeLimit" => $app_config["wall-time-limit"]
+		$queueDefaults = array( "queueName" => Config::get('pga_config.airavata')["queue-name"],
+						        "nodeCount" => Config::get('pga_config.airavata')["node-count"],
+						        "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
+						        "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
 							);
 
 		$experiment = Utilities::get_experiment($_GET['expId']);
@@ -200,19 +197,19 @@ class ExperimentController extends BaseController {
 						        "experimentName" => $experiment->name,
 						        "experimentDescription" => $experiment->description,
 						        "application" => $experiment->applicationId,
-						      	"allowedFileSize" => $app_config["server-allowed-file-size"],
+						      	"allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
 								'experiment' => $experiment,
 								"queueDefaults" => $queueDefaults,
 								'project' => $project,
 								'expVal' => $expVal,
 								'cloning' => true,
-						        'advancedOptions' => $app_config["advanced-experiment-options"],
+						        'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"],
 						        'computeResources' => $computeResources,
 						        "resourceHostId" => $expVal['scheduling']->resourceHostId,
 								'project' => $project,
 								'expVal' => $expVal,
 								'cloning' => true,
-						        'advancedOptions' => $app_config["advanced-experiment-options"]
+						        'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
 								);
 		return View::make("experiment/edit", array("expInputs" => $experimentInputs) );
 	}
@@ -282,11 +279,10 @@ class ExperimentController extends BaseController {
 	public function getQueueView()
 	{
 		$queues = Utilities::getQueueDatafromResourceId( Input::get("crId"));
-		$app_config = Utilities::read_config();
-		$queueDefaults = array( "queueName" => $app_config["queue-name"],
-						        "nodeCount" => $app_config["node-count"],
-						        "cpuCount" => $app_config["total-cpu-count"],
-						        "wallTimeLimit" => $app_config["wall-time-limit"]
+		$queueDefaults = array( "queueName" => Config::get('pga_config.airavata')["queue-name"],
+						        "nodeCount" => Config::get('pga_config.airavata')["node-count"],
+						        "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
+						        "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
 							);
 		return View::make("partials/experiment-queue-block", array( "queues" => $queues, "queueDefaults" => $queueDefaults) );
 	}
