@@ -50,14 +50,14 @@ if (isset( $expContainer))
                 <th>Description</th>
                 <!--<th>Resource</th>-->
                 <th>Creation Time</th>
-                <th>
-                    <select class="form-control select-status">
-                        <option value="ALL">Status</option>
-                    @foreach( $expStates as $index => $state)
-                        <option value="{{ $state }}">{{ $state }}</option>
-                    @endforeach
-                    </select>
-                </th>
+                <th>Status</th>
+<!--                    <select class="form-control select-status">-->
+<!--                        <option value="ALL">Status</option>-->
+<!--                    @foreach( $expStates as $index => $state)-->
+<!--                        <option value="{{ $state }}">{{ $state }}</option>-->
+<!--                    @endforeach-->
+<!--                    </select>-->
+<!--                </th>-->
             </tr>
     
 

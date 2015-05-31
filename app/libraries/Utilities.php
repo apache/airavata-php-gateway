@@ -1451,7 +1451,7 @@ public static function create_project()
 
     try
     {
-        $projectId = Airavata::createProject( Session::get("gateway_id"), $project);
+        $projectId = Airavata::createProject(Config::get('pga_config.airavata')['gateway-id'], $project);
 
         if ($projectId)
         {
@@ -1875,27 +1875,29 @@ public static function create_options($values, $labels, $disabled)
 
         try
         {
+            $filters = array();
+            if($inputs["status-type"] != "ALL"){
+                $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::STATUS] = $inputs["status-type"];
+            }
             switch ( $inputs["search-key"])
             {
                 case 'experiment-name':
-                    $experiments = Airavata::searchExperimentsByNameWithPagination(
-                        Session::get('gateway_id'), Session::get('username'), $inputs["search-value"], $limit, $offset);
+                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = $inputs["search-value"];
                     break;
                 case 'experiment-description':
-                    $experiments = Airavata::searchExperimentsByDescWithPagination(
-                        Session::get('gateway_id'), Session::get('username'), $inputs["search-value"], $limit, $offset);
+                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::EXPERIMENT_DESC] = $inputs["search-value"];
                     break;
                 case 'application':
-                    $experiments = Airavata::searchExperimentsByApplicationWithPagination(
-                        Session::get('gateway_id'), Session::get('username'), $inputs["search-value"], $limit, $offset);
+                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::APPLICATION_ID] = $inputs["search-value"];
                     break;
                 case 'creation-time':
-                    $experiments = Airavata::searchExperimentsByCreationTimeWithPagination(
-                        Session::get('gateway_id'), Session::get('username'), strtotime( $inputs["from-date"])*1000,
-                        strtotime( $inputs["to-date"])*1000 , $limit, $offset);
+                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::FROM_DATE] = strtotime( $inputs["from-date"])*1000;
+                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::TO_DATE] = strtotime( $inputs["to-date"])*1000;
                     break;
                 case '':
             }
+            $experiments = Airavata::searchExperiments(
+                Session::get('gateway_id'), Session::get('username'), $filters, $limit, $offset);
         }
         catch (InvalidRequestException $ire)
         {

@@ -69,17 +69,22 @@ return array(
         /**
          * Airavata API server location
          */
-        'airavata-server' => 'gw111.iu.xsede.org',
+        'airavata-server' => 'localhost',
 
         /**
          * Airavata API server port
          */
-        'airavata-port' => '9930',
+        'airavata-port' => '8930',
 
         /**
          * Airavata API server thrift communication timeout
          */
-        'airavata-timeout' => '1000000'
+        'airavata-timeout' => '1000000',
+
+        /**
+         * PGA Gateway ID
+         */
+        'gateway-id' => 'default'
     ]
 
 );

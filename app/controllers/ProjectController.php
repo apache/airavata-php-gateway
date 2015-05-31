@@ -6,7 +6,7 @@ class ProjectController extends BaseController {
      * Limit used in fetching paginated results
      * @var int
      */
-    var $limit = 10;
+    var $limit = 20;
 
 	/**
 	*    Instantiate a new ProjectController Instance

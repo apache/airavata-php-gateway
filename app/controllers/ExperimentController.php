@@ -6,7 +6,7 @@ class ExperimentController extends BaseController {
      * Limit used in fetching paginated results
      * @var int
      */
-    var $limit = 10;
+    var $limit = 20;
 
 	/**
 	*    Instantiate a new ExperimentController Instance
@@ -271,6 +271,7 @@ class ExperimentController extends BaseController {
 
 		$experimentStates = Utilities::getExpStates();
 		return View::make('experiment/search', array(
+                                                    'input' => Input::all(),
                                                     'pageNo' => $pageNo,
                                                     'limit' => $this->limit,
 													'expStates' => $experimentStates,
