@@ -16,6 +16,10 @@
     
     <table class="table">
         <tr>
+            <td><strong>Experiment Id</strong></td>
+            <td><?php echo $experiment->experimentID; ?></td>
+        </tr>
+        <tr>
             <td><strong>Name</strong></td>
             <td><?php echo $experiment->name; ?></td>
         </tr>
@@ -76,6 +80,22 @@
         <tr>
             <td><strong>Update time</strong></td>
             <td class="time" unix-time="<?php echo $expVal["experimentTimeOfStateChange"]; ?>"></td>
+        </tr>
+        <tr>
+            <td><strong>Wall time</strong></td>
+            <td><?php echo $experiment->userConfigurationData->computationalResourceScheduling->wallTimeLimit; ?></td>
+        </tr>
+        <tr>
+            <td><strong>CPU count</strong></td>
+            <td><?php echo $experiment->userConfigurationData->computationalResourceScheduling->totalCPUCount; ?></td>
+        </tr>
+        <tr>
+            <td><strong>Node count</strong></td>
+            <td><?php echo $experiment->userConfigurationData->computationalResourceScheduling->nodeCount; ?></td>
+        </tr>
+        <tr>
+            <td><strong>Queue</strong></td>
+            <td><?php echo $experiment->userConfigurationData->computationalResourceScheduling->queueName; ?></td>
         </tr>
         <tr>
             <td><strong>Inputs</strong></td>

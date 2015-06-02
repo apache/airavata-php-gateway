@@ -37,6 +37,7 @@
 
     echo '<th>Name</th>';
     echo '<th>Application</th>';
+    echo '<th>Compute Resource</th>';
     echo '<th>Time</th>';
     echo '<th>Status</th>';
 
@@ -75,8 +76,8 @@
 
         echo "<td>$applicationInterface->applicationName</td>";
 
-
-
+        echo '<td>' . Utilities::get_compute_resource($experiment->userConfigurationData
+                ->computationalResourceScheduling->resourceHostId)->hostName . '</td>';
         echo '<td class="time" unix-time="' . $expValues["experimentTimeOfStateChange"] . '"></td>';
 
 
