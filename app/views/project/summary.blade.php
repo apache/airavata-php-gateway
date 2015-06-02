@@ -77,7 +77,7 @@
 
 
 
-        echo '<td>' . $expValues["experimentTimeOfStateChange"] . '</td>';
+        echo '<td class="time" unix-time="' . $expValues["experimentTimeOfStateChange"] . '"></td>';
 
 
         switch ($expValues["experimentStatusString"])
@@ -118,4 +118,8 @@
 
 
 </div>
+@stop
+@section('scripts')
+@parent
+    {{ HTML::script('js/time-conversion.js')}}
 @stop

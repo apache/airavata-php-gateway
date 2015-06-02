@@ -104,8 +104,8 @@
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
                         </td>
-                        <td>
-                            <?php echo date('Y-m-d H:i:s', $project->creationTime/1000); ?>
+                        <td class="time" unix-time="
+                            <?php echo $project->creationTime/1000 ?>">
                         </td>
                         <td>
                             <a href="{{URL::to('/')}}/project/summary?projId=<?php echo $project->projectID; ?>">
@@ -129,4 +129,8 @@
 
     </div>
 
+@stop
+@section('scripts')
+@parent
+   {{ HTML::script('js/time-conversion.js')}}
 @stop

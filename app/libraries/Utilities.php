@@ -1639,8 +1639,8 @@ public static function get_experiment_values( $experiment, $project, $forSearch 
         $experimentState = $experimentStatus->experimentState;
         $experimentStatusString = ExperimentState::$__names[$experimentState];
         $expVal["experimentStatusString"] = $experimentStatusString;
-        $expVal["experimentTimeOfStateChange"] = date('Y-m-d H:i:s', $experimentStatus->timeOfStateChange/1000); // divide by 1000 since timeOfStateChange is in ms
-        $expVal["experimentCreationTime"] = date('Y-m-d H:i:s', $experiment->creationTime/1000); // divide by 1000 since creationTime is in ms
+        $expVal["experimentTimeOfStateChange"] = $experimentStatus->timeOfStateChange/1000; // divide by 1000 since timeOfStateChange is in ms
+        $expVal["experimentCreationTime"] = $experiment->creationTime/1000; // divide by 1000 since creationTime is in ms
     }
     $jobStatus = Airavata::getJobStatuses($experiment->experimentID);
 

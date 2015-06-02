@@ -161,7 +161,7 @@ if (isset( $expContainer))
             echo '<td>' . $description . '</td>';
 
             //echo "<td>$computeResource->hostName</td>";
-            echo '<td>' . date('Y-m-d H:i:s', $experiment['experiment']->creationTime/1000) . '</td>';
+            echo '<td class="time" unix-time="' . $experiment['experiment']->creationTime/1000 . '"></td>';
 
 
             switch ($experiment['expValue']['experimentStatusString'])
@@ -211,6 +211,7 @@ if (isset( $expContainer))
 
 @section('scripts')
     @parent
+    {{ HTML::script('js/time-conversion.js')}}
     {{ HTML::script('js/moment.js')}}            
     {{ HTML::script('js/datetimepicker.js')}}            
 

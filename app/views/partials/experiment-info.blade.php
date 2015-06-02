@@ -71,11 +71,11 @@
 
         <tr>
             <td><strong>Creation time</strong></td>
-            <td><?php echo $expVal["experimentCreationTime"]; ?></td>
+            <td class="time" unix-time="<?php echo $expVal["experimentCreationTime"]; ?>"></td>
         </tr>
         <tr>
             <td><strong>Update time</strong></td>
-            <td><?php echo $expVal["experimentTimeOfStateChange"]; ?></td>
+            <td class="time" unix-time="<?php echo $expVal["experimentTimeOfStateChange"]; ?>"></td>
         </tr>
         <tr>
             <td><strong>Inputs</strong></td>
@@ -134,3 +134,8 @@
     <!-- check of correct experiment Id ends here -->
     @endif
 </div>
+
+@section('scripts')
+@parent
+    {{ HTML::script('js/time-conversion.js')}}
+@stop
