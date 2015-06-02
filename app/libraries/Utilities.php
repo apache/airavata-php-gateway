@@ -1550,6 +1550,8 @@ public static function create_experiment()
 {
 
     $experiment = Utilities::assemble_experiment();
+    var_dump($experiment);
+    exit;
     $expId = null;
 
     try
