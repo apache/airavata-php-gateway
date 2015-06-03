@@ -99,7 +99,7 @@ return array(
         /**
          * Credentials Store Token
          */
-        'credential-store-token' => '811351f3-7484-4931-b354-24881e7963e9',
+        'credential-store-token' => 'bdc612fe-401e-4684-88e9-317f99409c45',
 
         /**
          * Default queue name
