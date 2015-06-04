@@ -92,6 +92,11 @@ return array(
         'server-allowed-file-size' => 64,
 
         /**
+         * directory in the web server where experiment data is staged. This path should be a relative path from app root
+         */
+        'experiment-data-root' => '/../experimentData/',
+
+        /**
          * Advanced experiments options
          */
         'advanced-experiment-options' => '',

@@ -11,20 +11,18 @@
 |
 */
 
-App::before(function($request)
-{
+App::before(function ($request) {
     $authzToken = new Airavata\Model\Security\AuthzToken();
     $authzToken->accessToken = "emptyToken";
     $apiVersion = Airavata::getAPIVersion($authzToken);
-	if(empty($apiVersion))
-		return View::make("server-down");
+    if (empty($apiVersion))
+        return View::make("server-down");
 });
 
 
-App::after(function($request, $response)
-{
-	//
-	// Test commit.
+App::after(function ($request, $response) {
+    //
+    // Test commit.
 });
 
 /*
@@ -38,25 +36,19 @@ App::after(function($request, $response)
 |
 */
 
-Route::filter('auth', function()
-{
-	if (Auth::guest())
-	{
-		if (Request::ajax())
-		{
-			return Response::make('Unauthorized', 401);
-		}
-		else
-		{
-			return Redirect::guest('login');
-		}
-	}
+Route::filter('auth', function () {
+    if (Auth::guest()) {
+        if (Request::ajax()) {
+            return Response::make('Unauthorized', 401);
+        } else {
+            return Redirect::guest('login');
+        }
+    }
 });
 
 
-Route::filter('auth.basic', function()
-{
-	return Auth::basic();
+Route::filter('auth.basic', function () {
+    return Auth::basic();
 });
 
 /*
@@ -70,9 +62,8 @@ Route::filter('auth.basic', function()
 |
 */
 
-Route::filter('guest', function()
-{
-	if (Auth::check()) return Redirect::to('/');
+Route::filter('guest', function () {
+    if (Auth::check()) return Redirect::to('/');
 });
 
 /*
@@ -86,30 +77,23 @@ Route::filter('guest', function()
 |
 */
 
-Route::filter('csrf', function()
-{
-	if (Session::token() != Input::get('_token'))
-	{
-		throw new Illuminate\Session\TokenMismatchException;
-	}
+Route::filter('csrf', function () {
+    if (Session::token() != Input::get('_token')) {
+        throw new Illuminate\Session\TokenMismatchException;
+    }
 });
 
 
-Route::filter('verifylogin',function()
-{
-	if( ! Utilities::verify_login() )
-		return Redirect::to("home")->with("login-alert", true);
+Route::filter('verifylogin', function () {
+    if (!CommonUtilities::verify_login())
+        return Redirect::to("home")->with("login-alert", true);
 });
 
-Route::filter('verifyadmin', function()
-{
-	if( Utilities::verify_login() )
-	{
-		if( !Session::has("admin"))
-		{
-			return Redirect::to("home")->with("admin-alert", true);
-		}
-	} 
-	else
-		return Redirect::to("home")->with("login-alert", true);
+Route::filter('verifyadmin', function () {
+    if (CommonUtilities::verify_login()) {
+        if (!Session::has("admin")) {
+            return Redirect::to("home")->with("admin-alert", true);
+        }
+    } else
+        return Redirect::to("home")->with("login-alert", true);
 });

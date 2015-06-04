@@ -1,19 +1,19 @@
-    <div class="container" style="max-width: 750px;">
+<div class="container" style="max-width: 750px;">
 
     @if(isset( $invalidExperimentId ) )
-        <div class="alert alert-danger">
-            The Experiment ID does not exist. Please go to correct experiment.
-        </div>
+    <div class="alert alert-danger">
+        The Experiment ID does not exist. Please go to correct experiment.
+    </div>
     @else
     <h1>
         Experiment Summary
         @if( !isset($dashboard))
         <small><a href="{{ URL::to('/') }}/experiment/summary?expId={{ $experiment->experimentID }}"
                   title="Refresh"><span class="glyphicon glyphicon-refresh refresh-exp"></span></a></small>
-    	@endif
+        @endif
     </h1>
-    
-    
+
+
     <table class="table">
         <tr>
             <td><strong>Experiment Id</strong></td>
@@ -57,16 +57,16 @@
             <td><strong>Working Dir</strong></td>
 
             <?php
-            foreach($jobDetails as $job) echo '
+            foreach ($jobDetails as $job) echo '
                 <td>' . $job->workingDir . '</td>
             ';
             ?>
         </tr>
-         <tr>
+        <tr>
             <td><strong>Job Description</strong></td>
 
             <?php
-            foreach($jobDetails as $job) echo '
+            foreach ($jobDetails as $job) echo '
                 <td>' . $job->jobDescription . '</td>
             ';
             ?>
@@ -99,23 +99,23 @@
         </tr>
         <tr>
             <td><strong>Inputs</strong></td>
-            <td><?php Utilities::list_input_files($experiment); ?></td>
+            <td><?php ProjectUtilities::get_project($experiment->projectID); ?></td>
         </tr>
         <tr>
             <td><strong>Outputs</strong></td>
-            <td><?php Utilities::list_output_files($experiment, $expVal["experimentStatusString"]); ?></td>
+            <td><?php ExperimentUtilities::list_output_files($experiment, $expVal["experimentStatusString"]); ?></td>
         </tr>
         @if( $expVal["experimentStatusString"] == "FAILED")
         <tr>
             <td><strong>Errors</strong></td>
             <td>
                 @foreach( (array)$experiment->errors as $error)
-                    {{ $error->actualErrorMessage }}
+                {{ $error->actualErrorMessage }}
                 @endforeach
             </td>
         </tr>
         @endif
-        
+
     </table>
 
     @if( !isset( $dashboard))
@@ -125,12 +125,13 @@
                    type="submit"
                    class="btn btn-success"
                    value="Launch"
-                   title="Launch the experiment" <?php if(!$expVal["editable"] ) echo 'disabled'  ?>>
+                   title="Launch the experiment" <?php if (!$expVal["editable"]) echo 'disabled' ?>>
             <a href="{{URL::to('/') }}/experiment/cancel?expId={{ $experiment->experimentID }}"
                class="btn btn-default"
                role="button"
-               title="Edit the experiment's settings" <?php if(!$expVal["cancelable"] ) echo 'disabled'  ?>>
-                <input name="cancel" type="submit" class="btn btn-warning" value="Cancel" <?php if(!$expVal["cancelable"]) echo 'disabled';  ?> >
+               title="Edit the experiment's settings" <?php if (!$expVal["cancelable"]) echo 'disabled' ?>>
+                <input name="cancel" type="submit" class="btn btn-warning"
+                       value="Cancel" <?php if (!$expVal["cancelable"]) echo 'disabled'; ?> >
             </a>
             <input name="clone"
                    type="submit"
@@ -142,7 +143,7 @@
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentID }}"
                class="btn btn-default"
                role="button"
-               title="Edit the experiment's settings" <?php if(!$expVal["editable"] ) echo 'disabled'  ?>>
+               title="Edit the experiment's settings" <?php if (!$expVal["editable"]) echo 'disabled' ?>>
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit
             </a>
@@ -157,5 +158,5 @@
 
 @section('scripts')
 @parent
-    {{ HTML::script('js/time-conversion.js')}}
+{{ HTML::script('js/time-conversion.js')}}
 @stop
