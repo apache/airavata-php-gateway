@@ -620,16 +620,6 @@ class ExperimentUtilities
             $expVal["experimentTimeOfStateChange"] = $experimentStatus->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
             $expVal["experimentCreationTime"] = $experiment->creationTime / 1000; // divide by 1000 since creationTime is in ms
         }
-        $jobStatus = Airavata::getJobStatuses($experiment->experimentID);
-
-        if ($jobStatus) {
-            $jobName = array_keys($jobStatus);
-            $jobState = JobState::$__names[$jobStatus[$jobName[0]]->jobState];
-        } else {
-            $jobState = null;
-        }
-
-        $expVal["jobState"] = $jobState;
 
         if (!$forSearch) {
             $userConfigData = $experiment->userConfigurationData;
@@ -668,6 +658,25 @@ class ExperimentUtilities
 
         return $expVal;
 
+    }
+
+    /**
+     * Method to get the job status of an experiment
+     * @param $experiment
+     * @return null
+     */
+    public static function get_job_status($experiment)
+    {
+        $jobStatus = Airavata::getJobStatuses($experiment->experimentID);
+
+        if ($jobStatus) {
+            $jobName = array_keys($jobStatus);
+            $jobState = JobState::$__names[$jobStatus[$jobName[0]]->jobState];
+        } else {
+            $jobState = null;
+        }
+
+        return $jobState;
     }
 
 

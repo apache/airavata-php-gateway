@@ -7,7 +7,7 @@ class ExperimentController extends BaseController
      * Limit used in fetching paginated results
      * @var int
      */
-    var $limit = 10;
+    var $limit = 20;
 
     /**
      *    Instantiate a new ExperimentController Instance
@@ -82,6 +82,7 @@ class ExperimentController extends BaseController
         if ($experiment != null) {
             $project = ProjectUtilities::get_project($experiment->projectID);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+            $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentID);
             $transferDetails = ExperimentUtilities::get_transfer_details($experiment->experimentID);
             //var_dump( $jobDetails); exit;
@@ -133,6 +134,7 @@ class ExperimentController extends BaseController
         $project = ProjectUtilities::get_project($experiment->projectID);
 
         $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+        $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
         /*if (isset($_POST['save']))
         {
             $updatedExperiment = Utilities::apply_changes_to_experiment($experiment);
@@ -148,6 +150,7 @@ class ExperimentController extends BaseController
             $project = ProjectUtilities::get_project($experiment->projectID);
 
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+            $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
 
             return Redirect::to('experiment/edit?expId=' . $experiment->experimentID);
 
@@ -170,6 +173,7 @@ class ExperimentController extends BaseController
         $project = ProjectUtilities::get_project($experiment->projectID);
 
         $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+        $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
         //var_dump( $expVal); exit;
         $computeResources = CRUtilities::create_compute_resources_select($experiment->applicationId, $expVal['scheduling']->resourceHostId);
 
@@ -243,7 +247,7 @@ class ExperimentController extends BaseController
         $expContainer = ExperimentUtilities::get_expsearch_results_with_pagination(Input::all(), $this->limit,
             ($pageNo - 1) * $this->limit);
 
-        $experimentStates = CommonUtilities::getExpStates();
+        $experimentStates = ExperimentUtilities::getExpStates();
         return View::make('experiment/search', array(
             'input' => Input::all(),
             'pageNo' => $pageNo,

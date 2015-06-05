@@ -124,7 +124,12 @@ return array(
         /**
          * Default wall time limit
          */
-        'wall-time-limit' => '30'
+        'wall-time-limit' => '30',
+
+        /**
+         * Life time of app catalog data cache in minutes
+         */
+        'app-catalog-cache-duration' => 5
     ]
 
 );

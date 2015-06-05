@@ -248,7 +248,14 @@ class AppUtilities
         $applicationInterface = null;
 
         try {
-            $applicationInterface = Airavata::getApplicationInterface($id);
+            if (Cache::has('APP-' . $id)) {
+                return Cache::get('APP-' . $id);
+            } else {
+                $applicationInterface = Airavata::getApplicationInterface($id);
+                Cache::put('APP-' . $id, $applicationInterface, Config::get('pga_config.airavata')['app-catalog-cache-duration']);
+                return $applicationInterface;
+            }
+
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting the application interface.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -262,8 +269,6 @@ class AppUtilities
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
                 '<p>Airavata System Exception: ' . $ase->getMessage() . '</p>');
         }
-
-        return $applicationInterface;
     }
 
     /**

@@ -15,18 +15,18 @@ return array(
 	|
 	*/
 
-	'driver' => 'apc',
+    'driver' => 'file',
 
-	/*
-	|--------------------------------------------------------------------------
-	| File Cache Location
-	|--------------------------------------------------------------------------
-	|
-	| When using the "file" cache driver, we need a location where the cache
-	| files may be stored. A sensible default has been specified, but you
-	| are free to change it to any other place on disk that you desire.
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | File Cache Location
+    |--------------------------------------------------------------------------
+    |
+    | When using the "file" cache driver, we need a location where the cache
+    | files may be stored. A sensible default has been specified, but you
+    | are free to change it to any other place on disk that you desire.
+    |
+    */
 
 	'path' => storage_path().'/cache',
 
