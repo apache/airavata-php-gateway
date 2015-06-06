@@ -394,8 +394,6 @@ to be uncommented when actually in use.
 -->
 
 <!-- Flot Charts JavaScript -->
-<!--[if lte IE 8]>
-<script src="js/excanvas.min.js')}}<![endif]-->
 {{ HTML::script('js/flot/jquery.flot.js')}}
 {{ HTML::script('js/flot/jquery.flot.tooltip.min.js')}}
 {{ HTML::script('js/flot/jquery.flot.resize.js')}}
@@ -412,67 +410,64 @@ to be uncommented when actually in use.
         $(".add-tenant").slideDown();
     });
 
-    $(function () {
-        $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
-        $('.tree li.parent_li > span').on('click', function (e) {
-            var children = $(this).parent('li.parent_li').find(' > ul > li');
-            if (children.is(":visible")) {
-                children.hide('fast');
-                $(this).attr('title', 'Expand this branch').find(' > i').addClass('icon-plus-sign').removeClass('icon-minus-sign');
-            } else {
-                children.show('fast');
-                $(this).attr('title', 'Collapse this branch').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
-            }
-            e.stopPropagation();
-        });
+    $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+    $('.tree li.parent_li > span').on('click', function (e) {
+        var children = $(this).parent('li.parent_li').find(' > ul > li');
+        if (children.is(":visible")) {
+            children.hide('fast');
+            $(this).attr('title', 'Expand this branch').find(' > i').addClass('icon-plus-sign').removeClass('icon-minus-sign');
+        } else {
+            children.show('fast');
+            $(this).attr('title', 'Collapse this branch').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
+        }
+        e.stopPropagation();
+    });
 
-        $(".get-experiment").click(function () {
-            $(".loading-img").removeClass("hide");
-            $.ajax({
-                url: 'experiment/summary?expId=' + $(".experimentId").val(),
-                type: 'get',
-                success: function (data) {
-                    $(".experiment-info").html(data);
-
-                }
-            }).complete(function () {
-                $(".loading-img").addClass("hide");
-            });
-        });
-
-        //Experiment stages are under development.
-        $(".tree").parent().addClass("hide");
-
-        /* making datetimepicker work for exp search */
-
-        $('#datetimepicker9').datetimepicker({
-            pick12HourFormat: false
-        });
-        $('#datetimepicker10').datetimepicker({
-            pick12HourFormat: false
-        });
-        $("#datetimepicker9").on("dp.change", function (e) {
-            $('#datetimepicker10').data("DateTimePicker").setMinDate(e.date);
-        });
-        $("#datetimepicker10").on("dp.change", function (e) {
-            $('#datetimepicker9').data("DateTimePicker").setMaxDate(e.date);
-        });
-
-        /* selecting creation time */
-        $("#search-key").on("change", function () {
-            if (this.value == "creation-time") {
-                $(".search-text-block").addClass("hide");
-                $(".select-dates").removeClass("hide");
-                $("#search-value").removeAttr("required");
+    $(".get-experiment").click(function () {
+        $(".loading-img").removeClass("hide");
+        $.ajax({
+            url: 'experiment/summary?expId=' + $(".experimentId").val(),
+            type: 'get',
+            success: function (data) {
+                $(".experiment-info").html(data);
 
             }
-            else {
-                $(".search-text-block").removeClass("hide");
-                $(".select-dates").addClass("hide");
-                $("#search-value").attr("required");
-            }
+        }).complete(function () {
+            $(".loading-img").addClass("hide");
         });
+    });
 
+    //Experiment stages are under development.
+    $(".tree").parent().addClass("hide");
+
+    /* making datetimepicker work for exp search */
+
+    $('#datetimepicker9').datetimepicker({
+        pick12HourFormat: false
+    });
+    $('#datetimepicker10').datetimepicker({
+        pick12HourFormat: false
+    });
+    $("#datetimepicker9").on("dp.change", function (e) {
+        $('#datetimepicker10').data("DateTimePicker").setMinDate(e.date);
+    });
+    $("#datetimepicker10").on("dp.change", function (e) {
+        $('#datetimepicker9').data("DateTimePicker").setMaxDate(e.date);
+    });
+
+    /* selecting creation time */
+    $("#search-key").on("change", function () {
+        if (this.value == "creation-time") {
+            $(".search-text-block").addClass("hide");
+            $(".select-dates").removeClass("hide");
+            $("#search-value").removeAttr("required");
+
+        }
+        else {
+            $(".search-text-block").removeClass("hide");
+            $(".select-dates").addClass("hide");
+            $("#search-value").attr("required");
+        }
     });
 </script>
 @stop

@@ -556,7 +556,7 @@ class ExperimentUtilities
 
             if ($expId) {
                 /*
-                Utilities::print_success_message("Experiment {$_POST['experiment-name']} created!" .
+                CommonUtilities::print_success_message("Experiment {$_POST['experiment-name']} created!" .
                     ' <a href="experiment_summary.php?expId=' . $expId . '">Go to experiment summary page</a>');
                 */
             } else {

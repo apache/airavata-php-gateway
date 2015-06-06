@@ -66,7 +66,7 @@ class ExperimentController extends BaseController
             /* Not required.
             else
             {
-                Utilities::print_success_message("<p>Experiment {$_POST['experiment-name']} created!</p>" .
+                CommonUtilities::print_success_message("<p>Experiment {$_POST['experiment-name']} created!</p>" .
                     '<p>You will be redirected to the summary page shortly, or you can
                     <a href=' . URL::to('/') . '"/experiment/summary?expId=' . $expId . '">go directly</a> to experiment summary page.</p>');
 
@@ -137,9 +137,9 @@ class ExperimentController extends BaseController
         $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
         /*if (isset($_POST['save']))
         {
-            $updatedExperiment = Utilities::apply_changes_to_experiment($experiment);
+            $updatedExperiment = CommonUtilities::apply_changes_to_experiment($experiment);
 
-            Utilities::update_experiment($experiment->experimentID, $updatedExperiment);
+            CommonUtilities::update_experiment($experiment->experimentID, $updatedExperiment);
         }*/
         if (isset($_POST['launch'])) {
             ExperimentUtilities::launch_experiment($experiment->experimentID);

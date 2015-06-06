@@ -224,7 +224,7 @@ class AppUtilities
             CommonUtilities::print_warning_message('<p>You must create an application module, interface and deployment space before you can create an experiment.
                 Click <a href="' . URL::to('/') . '/app/module">here</a> to create an application.</p>');
             /*
-            Utilities::print_error_message('<p>There was a problem getting all applications.
+            CommonUtilities::print_error_message('<p>There was a problem getting all applications.
                 Please try again later or submit a bug report using the link in the Help menu.</p>' .
                 '<p>Airavata System Exception: ' . $ase->getMessage() . '</p>');
                 */

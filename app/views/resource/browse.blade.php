@@ -16,7 +16,8 @@
 
     @if ( isset( $allCRs) )
     @if (sizeof($allCRs) == 0)
-    {{ Utilities::print_warning_message('No Compute Resources are registered. Please use "Register Compute Resource" to
+    {{ CommonUtilities::print_warning_message('No Compute Resources are registered. Please use "Register Compute
+    Resource" to
     register a new resources.') }}
     @else
     <div class="col-md-12">

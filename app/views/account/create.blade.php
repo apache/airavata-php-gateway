@@ -17,7 +17,7 @@
     @if ($errors->has())
 
     @foreach ($errors->all() as $error)
-    {{ Utilities::print_error_message($error) }}
+    {{ CommonUtilities::print_error_message($error) }}
     @endforeach
 
     @endif
@@ -25,7 +25,7 @@
     <form action="create" method="post" role="form">
 
         @if( Session::has('username_exists'))
-        {{ Utilities::print_error_message('The username you entered is already in use. Please select another.') }}
+        {{ CommonUtilities::print_error_message('The username you entered is already in use. Please select another.') }}
         @endif
         <?php
         Session::forget("username_exists");

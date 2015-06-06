@@ -18,7 +18,7 @@
 
     <form action="login" method="post" role="form">
         @if( Session::has("invalid-credentials") )
-        {{ Utilities::print_error_message('Invalid username or password. Please try again.') }}
+        {{ CommonUtilities::print_error_message('Invalid username or password. Please try again.') }}
         @endif
         <?php
         Session::forget("invalid-credentials");
