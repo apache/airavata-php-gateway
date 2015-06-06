@@ -6,7 +6,7 @@
     "require": {
         "laravel/framework": "4.2.*",
         "apache/thrift": "1.0.*@dev",
-        "barryvdh/laravel-ide-helper": "~2.0"
+        "barryvdh/laravel-ide-helper": "1.*"
     },
     "autoload": {
         "classmap": [
