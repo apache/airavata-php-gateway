@@ -68,13 +68,14 @@ return array(
     'airavata' => [
         /**
          * Airavata API server location
-         */
         'airavata-server' => 'gw111.iu.xsede.org',
+         */
+        'airavata-server' => 'localhost',
 
         /**
          * Airavata API server port
          */
-        'airavata-port' => '9930',
+        'airavata-port' => '8930',
 
         /**
          * Airavata API server thrift communication timeout

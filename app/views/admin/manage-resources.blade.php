@@ -2,6 +2,7 @@
 
 @section('page-header')
     @parent
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.1.0/css/bootstrap-toggle.min.css" rel="stylesheet">
     {{ HTML::style('css/admin.css')}}
 @stop
 
@@ -41,6 +42,7 @@
                             <td>{{ $resourceName }}</td>
                             <td>
                                 <!--This is a random selection -->
+                                <input type="checkbox" checked data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="danger">
                                 @if( strpos( $resourceName, "a") )
                                     <div class="btn-group btn-toggle"> 
                                         <button class="btn btn-xs btn-default">ON</button>
@@ -65,4 +67,12 @@
 
 @section('scripts')
     @parent
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.1.0/js/bootstrap-toggle.min.js"></script>
+    <script>
+        /*
+        $(".user-row").click( function() {
+            alert($(this).attr('id'));
+        });
+         */
+    </script>
 @stop
