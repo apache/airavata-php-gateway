@@ -109,6 +109,9 @@ class AdminController extends BaseController {
 			return WSIS::updateUserRoles(Input::get("username"), array("new"=> array(), "deleted" => Input::get("roles") ) );
 	}
 
+    public function updateResourceAvailability(){
+        //$computeResource = Utilities::get_compute_resource($computeResourceId);
+    }
 
 	/* ---- Super Admin Functions ------- */
 

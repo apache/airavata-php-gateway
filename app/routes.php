@@ -188,6 +188,8 @@ Route::post("admin/delete-role", "AdminController@deleteRole");
 
 Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 
+Route::post("admin/update-resource-availability", "AdminController@updateResourceAvailability");
+
 //Super Admin Specific calls
 
 Route::post("admin/add-gateway", "AdminController@addGateway");
