@@ -38,11 +38,12 @@
                         </tr>
                         @foreach( (array)$resources as $resourceId => $resourceName )
                         <tr class="user-row">
-                            <td>{{ $resourceId }}</td>
-                            <td>{{ $resourceName }}</td>
-                            <td>
+                            <td class="resource-id">{{ $resourceId }}</td>
+                            <td class="resource-name">{{ $resourceName }}</td>
+                            <td class="resource-switch">
                                 <!--This is a random selection -->
-                                <input type="checkbox" checked data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="danger">
+                                <input class="resource-checkbox" type="checkbox" checked data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="danger">
+                                <!-- 
                                 @if( strpos( $resourceName, "a") )
                                     <div class="btn-group btn-toggle"> 
                                         <button class="btn btn-xs btn-default">ON</button>
@@ -54,6 +55,7 @@
                                         <button class="btn btn-xs btn-default">OFF</button>
                                     </div>
                                 @endif
+                                -->
                             </td>
                         </tr>
                         @endforeach
@@ -69,10 +71,14 @@
     @parent
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.1.0/js/bootstrap-toggle.min.js"></script>
     <script>
-        /*
-        $(".user-row").click( function() {
-            alert($(this).attr('id'));
+        $(".resource-checkbox").bootstrapToggle();
+        $(".resource-switch").click( function() {
+            userRow = $(this).parent();
+            console.log(userRow.children(".resource-id").text());
+            
+            // this is flipped because button click grabs state of checkbox AT click time
+            checkedState = !($(this).find(".resource-checkbox").prop("checked"));
+            console.log(checkedState);
         });
-         */
     </script>
 @stop
