@@ -18,7 +18,7 @@
     $project = ProjectUtilities::get_project($_GET['projId']);
 
 
-    echo '<div class="panel panel-default">';
+    echo '<div>';
 
     echo '<div class="panel-heading">';
     echo '<h3>' . $project->name . ' <a href="edit?projId=' .
