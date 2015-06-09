@@ -101,6 +101,8 @@ Route::get("cr/edit", "ComputeResource@editView");
 
 Route::post("cr/edit", "ComputeResource@editSubmit");
 
+Route::get("cr/view", "ComputeResource@viewView");
+
 Route::get("cr/browse", "ComputeResource@browseView");
 
 Route::post("cr/delete-jsi", "ComputeResource@deleteActions");

@@ -50,8 +50,8 @@
                             </a>
                         </td>
                         <td>
-                            <a class="view-cr" href="#"> <!-- {{URL::to('/')}}/cr/summary?crId={{ $crId }}"> -->
-                                <span class="glyphicon glyphicon-list"></span>
+                            <a href="{{URL::to('/')}}/cr/view?crId={{ $crId }}" title="Edit">
+                            <span class="glyphicon glyphicon-list"></span>
                             </a>
                         </td>
                         <td>
@@ -104,9 +104,6 @@
     @section('scripts')
     @parent
     <script type="text/javascript">
-        $(".view-cr").click(function () {
-            alert("The functionality to view a Compute Resource is under construction.");
-        });
         $('.filterinput').keyup(function () {
             var value = $(this).val();
             if (value.length > 0) {

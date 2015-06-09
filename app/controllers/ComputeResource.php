@@ -48,7 +48,7 @@ class ComputeResource extends BaseController
         }
 
         if ($computeResourceId != "") {
-            $computeResource = AppUtilities::get_compute_resource($computeResourceId);
+            $computeResource = CRUtilities::get_compute_resource($computeResourceId);
             $jobSubmissionInterfaces = array();
             $dataMovementInterfaces = array();
             $addedJSP = array();
@@ -167,6 +167,51 @@ class ComputeResource extends BaseController
         }
 
         return Redirect::to("cr/edit?crId=" . Input::get("crId") . $tabName);
+    }
+
+    public function viewView()
+    {
+
+        $data = CRUtilities::getEditCRData();
+        $computeResourceId = "";
+        if (Input::has("crId"))
+            $computeResourceId = Input::get("crId");
+        else if (Session::has("computeResource")) {
+            $computeResource = Session::get("computeResource");
+            $computeResourceId = $computeResource->computeResourceId;
+        }
+
+        if ($computeResourceId != "") {
+            $computeResource = CRUtilities::get_compute_resource($computeResourceId);
+            $jobSubmissionInterfaces = array();
+            $dataMovementInterfaces = array();
+            $addedJSP = array();
+            $addedDMI = array();
+            //var_dump( $computeResource->jobSubmissionInterfaces); exit;
+            if (count($computeResource->jobSubmissionInterfaces)) {
+                foreach ($computeResource->jobSubmissionInterfaces as $JSI) {
+                    $jobSubmissionInterfaces[] = CRUtilities::getJobSubmissionDetails($JSI->jobSubmissionInterfaceId, $JSI->jobSubmissionProtocol);
+                    $addedJSP[] = $JSI->jobSubmissionProtocol;
+                }
+            }
+            //var_dump( CRUtilities::getJobSubmissionDetails( $data["computeResource"]->jobSubmissionInterfaces[0]->jobSubmissionInterfaceId, 1) ); exit;
+            if (count($computeResource->dataMovementInterfaces)) {
+                foreach ($computeResource->dataMovementInterfaces as $DMI) {
+                    $dataMovementInterfaces[] = CRUtilities::getDataMovementDetails($DMI->dataMovementInterfaceId, $DMI->dataMovementProtocol);
+                    $addedDMI[] = $DMI->dataMovementProtocol;
+                }
+            }
+
+            $data["computeResource"] = $computeResource;
+            $data["jobSubmissionInterfaces"] = $jobSubmissionInterfaces;
+            $data["dataMovementInterfaces"] = $dataMovementInterfaces;
+            $data["addedJSP"] = $addedJSP;
+            $data["addedDMI"] = $addedDMI;
+            //var_dump($data["jobSubmissionInterfaces"]); exit;
+            return View::make("resource/view", $data);
+        } else
+            return View::make("resource/browse")->with("login-alert", "Unable to retrieve this Compute Resource. Please report this error to devs.");
+
     }
 
     public function deleteActions()
