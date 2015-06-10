@@ -113,12 +113,15 @@ class AdminController extends BaseController {
         $computeResourceId = Input::get("computeResourceId");
         $checkedState = Input::get("checkedState");
         $computeDescription = CRUtilities::get_compute_resource($computeResourceId);
+        /*
+        $currentState = $computeDescription->active;
         $computeDescription->active = $checkedState;
 		CRUtilities::register_or_update_compute_resource($computeDescription, true);
         $newDescription = CRUtilities::get_compute_resource($computeResourceId);
-        //$currentState = $newDescription->active;
+        $currentState = $newDescription->active;
 		return json_encode(array("computeResourceId"=> $computeResourceId, "currentState"=> $currentState));
-		//return json_encode(array("result" => true));
+         */
+		return json_encode(array("result" => $computeDescription));
     }
 
 	/* ---- Super Admin Functions ------- */
