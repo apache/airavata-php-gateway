@@ -25,7 +25,9 @@ function convertTimestamp(timestamp) {
     // ie: 2013-02-18, 8:35 AM
     time = yyyy + '-' + mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm;
 
-    return time;
+    var offset = new Date().toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1];
+
+    return time + " - " + offset;
 }
 
 $(document).ready( function(){

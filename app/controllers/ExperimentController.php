@@ -1,308 +1,289 @@
- <?php
+<?php
 
-class ExperimentController extends BaseController {
+class ExperimentController extends BaseController
+{
 
     /**
      * Limit used in fetching paginated results
      * @var int
      */
-    var $limit = 10;
+    var $limit = 20;
 
-	/**
-	*    Instantiate a new ExperimentController Instance
-	**/
+    /**
+     *    Instantiate a new ExperimentController Instance
+     **/
 
-	public function __construct()
-	{
-		$this->beforeFilter('verifylogin');
-		Session::put("nav-active", "experiment");
-	}
+    public function __construct()
+    {
+        $this->beforeFilter('verifylogin');
+        Session::put("nav-active", "experiment");
+    }
 
-	public function createView()
-	{
-		Session::forget( 'exp_create_continue');
-		return View::make('experiment/create');
-	}
+    public function createView()
+    {
+        Session::forget('exp_create_continue');
+        return View::make('experiment/create');
+    }
 
-	public function createSubmit()
-	{
-		$inputs = Input::all();
+    public function createSubmit()
+    {
+        $inputs = Input::all();
 
-		if( isset( $_POST['continue'] ))
-		{
-			Session::put( 'exp_create_continue', true);
-			
-			$computeResources = Utilities::create_compute_resources_select($_POST['application'], null);
+        if (isset($_POST['continue'])) {
+            Session::put('exp_create_continue', true);
 
-			$queueDefaults = array( "queueName" => Config::get('pga_config.airavata')["queue-name"],
-						        	"nodeCount" => Config::get('pga_config.airavata')["node-count"],
-						        	"cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
-						        	"wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
-							);
+            $computeResources = CRUtilities::create_compute_resources_select($_POST['application'], null);
 
-			$experimentInputs = array( 
-								"disabled" => ' disabled',
-						        "experimentName" => $_POST['experiment-name'],
-						        "experimentDescription" => $_POST['experiment-description'] . ' ',
-						        "project" => $_POST['project'],
-						        "application" => $_POST['application'],
-						        "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
-						        "echo" => ($_POST['application'] == 'Echo')? ' selected' : '',
-						        "wrf" => ($_POST['application'] == 'WRF')? ' selected' : '',
-						        "queueDefaults" => $queueDefaults,
-						        "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"],
-						        "computeResources" => $computeResources,
-						        "resourceHostId" => null,
-						        "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"]
-					        );
+            $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
+                "nodeCount" => Config::get('pga_config.airavata')["node-count"],
+                "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
+                "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
+            );
 
-			return View::make( "experiment/create-complete", array( "expInputs" => $experimentInputs) );
-		}
+            $experimentInputs = array(
+                "disabled" => ' disabled',
+                "experimentName" => $_POST['experiment-name'],
+                "experimentDescription" => $_POST['experiment-description'] . ' ',
+                "project" => $_POST['project'],
+                "application" => $_POST['application'],
+                "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
+                "echo" => ($_POST['application'] == 'Echo') ? ' selected' : '',
+                "wrf" => ($_POST['application'] == 'WRF') ? ' selected' : '',
+                "queueDefaults" => $queueDefaults,
+                "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"],
+                "computeResources" => $computeResources,
+                "resourceHostId" => null,
+                "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"]
+            );
 
-		else if (isset($_POST['save']) || isset($_POST['launch']))
-		{
-		    $expId = Utilities::create_experiment();
+            return View::make("experiment/create-complete", array("expInputs" => $experimentInputs));
+        } else if (isset($_POST['save']) || isset($_POST['launch'])) {
+            $expId = ExperimentUtilities::create_experiment();
 
-		    if (isset($_POST['launch']) && $expId)
-		    {
-		        Utilities::launch_experiment($expId);
-		    }
-		    /* Not required.
-		    else
-		    {
-		        Utilities::print_success_message("<p>Experiment {$_POST['experiment-name']} created!</p>" .
-		            '<p>You will be redirected to the summary page shortly, or you can
-		            <a href=' . URL::to('/') . '"/experiment/summary?expId=' . $expId . '">go directly</a> to experiment summary page.</p>');
-		        
-		    }*/
-        	return Redirect::to('experiment/summary?expId=' . $expId);
-		}
-		else
-			return Redirect::to("home")->with("message", "Something went wrong here. Please file a bug report using the link in the Help menu.");
-	}
+            if (isset($_POST['launch']) && $expId) {
+                ExperimentUtilities::launch_experiment($expId);
+            }
+            /* Not required.
+            else
+            {
+                CommonUtilities::print_success_message("<p>Experiment {$_POST['experiment-name']} created!</p>" .
+                    '<p>You will be redirected to the summary page shortly, or you can
+                    <a href=' . URL::to('/') . '"/experiment/summary?expId=' . $expId . '">go directly</a> to experiment summary page.</p>');
 
-	public function summary()
-	{
-		$experiment = Utilities::get_experiment($_GET['expId']);
-		if( $experiment != null)
-		{
-			$project = Utilities::get_project($experiment->projectID);
-			$expVal = Utilities::get_experiment_values( $experiment, $project);
-			$jobDetails = Utilities::get_job_details( $experiment->experimentID);
-			$transferDetails = Utilities::get_transfer_details( $experiment->experimentID);
-			//var_dump( $jobDetails); exit;
-			// User should not clone or edit a failed experiment. Only create clones of it.
-			if( $expVal["experimentStatusString"] == "FAILED")
-				$expVal["editable"] = false;
+            }*/
+            return Redirect::to('experiment/summary?expId=' . $expId);
+        } else
+            return Redirect::to("home")->with("message", "Something went wrong here. Please file a bug report using the link in the Help menu.");
+    }
 
-			$expVal["cancelable"] = false;
-			if( $expVal["experimentStatusString"] == "LAUNCHED" || $expVal["experimentStatusString"] == "EXECUTING" )
-				$expVal["cancelable"] = true;
+    public function summary()
+    {
+        $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
+        if ($experiment != null) {
+            $project = ProjectUtilities::get_project($experiment->projectID);
+            $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+            $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
+            $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentID);
+            $transferDetails = ExperimentUtilities::get_transfer_details($experiment->experimentID);
+            //var_dump( $jobDetails); exit;
+            // User should not clone or edit a failed experiment. Only create clones of it.
+            if ($expVal["experimentStatusString"] == "FAILED")
+                $expVal["editable"] = false;
 
-			$data = array(
-										"expId" => Input::get("expId"),
-										"experiment" => $experiment,
-										"project" => $project,
-										"jobDetails" => $jobDetails,
-										"expVal" => $expVal
-						);
+            $expVal["cancelable"] = false;
+            if ($expVal["experimentStatusString"] == "LAUNCHED" || $expVal["experimentStatusString"] == "EXECUTING")
+                $expVal["cancelable"] = true;
 
-			if( Request::ajax() )
-			{
-				//admin wants to see an experiment summary
-				if( Input::has("dashboard"))
-				{
-					$data["dashboard"] = true;
-					return View::make("partials/experiment-info", $data);
-				}
-				else
-					return json_encode( $experiment);
-			}
-			else
-			{
-				return View::make( "experiment/summary", $data);
-			}
-		}
-		else
-		{
-			if( Input::has("dashboard"))
-				return View::make( "partials/experiment-info", array("invalidExperimentId" => 1)); 
-			else
-				return View::make( "experiment/summary", array("invalidExperimentId" => 1));
-		}
-	}
+            $data = array(
+                "expId" => Input::get("expId"),
+                "experiment" => $experiment,
+                "project" => $project,
+                "jobDetails" => $jobDetails,
+                "expVal" => $expVal
+            );
 
-	public function expCancel()
-	{
-		Utilities::cancel_experiment( Input::get("expId"));
+            if (Request::ajax()) {
+                //admin wants to see an experiment summary
+                if (Input::has("dashboard")) {
+                    $data["dashboard"] = true;
+                    return View::make("partials/experiment-info", $data);
+                } else
+                    return json_encode($experiment);
+            } else {
+                return View::make("experiment/summary", $data);
+            }
+        } else {
+            if (Input::has("dashboard"))
+                return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
+            else
+                return View::make("experiment/summary", array("invalidExperimentId" => 1));
+        }
+    }
 
-		return Redirect::to('experiment/summary?expId=' . Input::get("expId"));
-	}
+    public function expCancel()
+    {
+        ExperimentUtilities::cancel_experiment(Input::get("expId"));
 
-	public function expChange()
-	{
-		//var_dump( Input::all() ); exit;
-		$experiment = Utilities::get_experiment( Input::get('expId') );
-		$project = Utilities::get_project($experiment->projectID);
+        return Redirect::to('experiment/summary?expId=' . Input::get("expId"));
+    }
 
-		$expVal = Utilities::get_experiment_values( $experiment, $project);
-		/*if (isset($_POST['save']))
-		{
-		    $updatedExperiment = Utilities::apply_changes_to_experiment($experiment);
+    public function expChange()
+    {
+        //var_dump( Input::all() ); exit;
+        $experiment = ExperimentUtilities::get_experiment(Input::get('expId'));
+        $project = ProjectUtilities::get_project($experiment->projectID);
 
-		    Utilities::update_experiment($experiment->experimentID, $updatedExperiment);
-		}*/
-		if (isset($_POST['launch']))
-		{
-		    Utilities::launch_experiment($experiment->experimentID);
-			return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
-		}
-		elseif (isset($_POST['clone']))
-		{
-		    $cloneId = Utilities::clone_experiment($experiment->experimentID);
-		    $experiment = Utilities::get_experiment( $cloneId );
-			$project = Utilities::get_project($experiment->projectID);
+        $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+        $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
+        /*if (isset($_POST['save']))
+        {
+            $updatedExperiment = CommonUtilities::apply_changes_to_experiment($experiment);
 
-			$expVal = Utilities::get_experiment_values( $experiment, $project);
+            CommonUtilities::update_experiment($experiment->experimentID, $updatedExperiment);
+        }*/
+        if (isset($_POST['launch'])) {
+            ExperimentUtilities::launch_experiment($experiment->experimentID);
+            return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
+        } elseif (isset($_POST['clone'])) {
+            $cloneId = ExperimentUtilities::clone_experiment($experiment->experimentID);
+            $experiment = ExperimentUtilities::get_experiment($cloneId);
+            $project = ProjectUtilities::get_project($experiment->projectID);
 
-			return Redirect::to('experiment/edit?expId=' . $experiment->experimentID);
+            $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+            $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
 
-		}
-		
-		elseif (isset($_POST['cancel']))
-		{
-		    Utilities::cancel_experiment($experiment->experimentID);
-			return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
+            return Redirect::to('experiment/edit?expId=' . $experiment->experimentID);
 
-		}
-	}
+        } elseif (isset($_POST['cancel'])) {
+            ExperimentUtilities::cancel_experiment($experiment->experimentID);
+            return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
 
-	public function editView()
-	{
-		$queueDefaults = array( "queueName" => Config::get('pga_config.airavata')["queue-name"],
-						        "nodeCount" => Config::get('pga_config.airavata')["node-count"],
-						        "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
-						        "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
-							);
+        }
+    }
 
-		$experiment = Utilities::get_experiment($_GET['expId']);
-		$project = Utilities::get_project($experiment->projectID);
+    public function editView()
+    {
+        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
+            "nodeCount" => Config::get('pga_config.airavata')["node-count"],
+            "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
+            "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
+        );
 
-		$expVal = Utilities::get_experiment_values( $experiment, $project);
-		//var_dump( $expVal); exit;
-		$computeResources = Utilities::create_compute_resources_select($experiment->applicationId, $expVal['scheduling']->resourceHostId);
+        $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
+        $project = ProjectUtilities::get_project($experiment->projectID);
 
-		$experimentInputs = array(	
-								"disabled" => ' ',
-						        "experimentName" => $experiment->name,
-						        "experimentDescription" => $experiment->description,
-						        "application" => $experiment->applicationId,
-						      	"allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
-								'experiment' => $experiment,
-								"queueDefaults" => $queueDefaults,
-								'project' => $project,
-								'expVal' => $expVal,
-								'cloning' => true,
-						        'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"],
-						        'computeResources' => $computeResources,
-						        "resourceHostId" => $expVal['scheduling']->resourceHostId,
-								'project' => $project,
-								'expVal' => $expVal,
-								'cloning' => true,
-						        'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
-								);
-		return View::make("experiment/edit", array("expInputs" => $experimentInputs) );
-	}
+        $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+        $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
+        //var_dump( $expVal); exit;
+        $computeResources = CRUtilities::create_compute_resources_select($experiment->applicationId, $expVal['scheduling']->resourceHostId);
 
-	public function editSubmit()
-	{
-		if (isset($_POST['save']) || isset($_POST['launch']))
-		{
-	        $experiment = Utilities::get_experiment(Input::get('expId') ); // update local experiment variable
-		    $updatedExperiment = Utilities::apply_changes_to_experiment($experiment, Input::all() );
+        $experimentInputs = array(
+            "disabled" => ' ',
+            "experimentName" => $experiment->name,
+            "experimentDescription" => $experiment->description,
+            "application" => $experiment->applicationId,
+            "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
+            'experiment' => $experiment,
+            "queueDefaults" => $queueDefaults,
+            'project' => $project,
+            'expVal' => $expVal,
+            'cloning' => true,
+            'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"],
+            'computeResources' => $computeResources,
+            "resourceHostId" => $expVal['scheduling']->resourceHostId,
+            'project' => $project,
+            'expVal' => $expVal,
+            'cloning' => true,
+            'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
+        );
+        return View::make("experiment/edit", array("expInputs" => $experimentInputs));
+    }
 
-		    Utilities::update_experiment($experiment->experimentID, $updatedExperiment);
+    public function editSubmit()
+    {
+        if (isset($_POST['save']) || isset($_POST['launch'])) {
+            $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
+            $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
 
-		    if (isset($_POST['save']))
-		    {
-		        $experiment = Utilities::get_experiment(Input::get('expId') ); // update local experiment variable
-		    }
-		    if (isset($_POST['launch']))
-		    {
-		        Utilities::launch_experiment($experiment->experimentID);
-		    }
+            ExperimentUtilities::update_experiment($experiment->experimentID, $updatedExperiment);
 
-			return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
-		}
-		else
-			return View::make("home");
-	}
+            if (isset($_POST['save'])) {
+                $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
+            }
+            if (isset($_POST['launch'])) {
+                ExperimentUtilities::launch_experiment($experiment->experimentID);
+            }
 
-	public function searchView()
-	{
-		$experimentStates = Utilities::getExpStates();
-		return View::make("experiment/search", array( "expStates" => $experimentStates ) );
-	}
+            return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
+        } else
+            return View::make("home");
+    }
 
-	public function searchSubmit()
-	{
+    public function searchView()
+    {
+        $experimentStates = ExperimentUtilities::getExpStates();
+        return View::make("experiment/search", array("expStates" => $experimentStates));
+    }
+
+    public function searchSubmit()
+    {
         $search = Input::get('search');
-        if(isset($search)){
+        if (isset($search)) {
             $pageNo = 1;
-        }else{
+        } else {
             $pageNo = Input::get('pageNo');
             $prev = Input::get('prev');
-            if(empty($pageNo)){
+            if (empty($pageNo)) {
                 $pageNo = 1;
-            }else{
-                if(isset($prev)){
+            } else {
+                if (isset($prev)) {
                     $pageNo -= 1;
-                }else{
+                } else {
                     $pageNo += 1;
                 }
             }
         }
 
-        $expContainer = Utilities::get_expsearch_results_with_pagination( Input::all(), $this->limit,
-            ($pageNo-1)*$this->limit);
+        $expContainer = ExperimentUtilities::get_expsearch_results_with_pagination(Input::all(), $this->limit,
+            ($pageNo - 1) * $this->limit);
 
-		$experimentStates = Utilities::getExpStates();
-		return View::make('experiment/search', array(
-                                                    'input' => Input::all(),
-                                                    'pageNo' => $pageNo,
-                                                    'limit' => $this->limit,
-													'expStates' => $experimentStates,
-													'expContainer' => $expContainer 
-												));
-	}
+        $experimentStates = ExperimentUtilities::getExpStates();
+        return View::make('experiment/search', array(
+            'input' => Input::all(),
+            'pageNo' => $pageNo,
+            'limit' => $this->limit,
+            'expStates' => $experimentStates,
+            'expContainer' => $expContainer
+        ));
+    }
 
-	public function getQueueView()
-	{
-		$queues = Utilities::getQueueDatafromResourceId( Input::get("crId"));
-		$queueDefaults = array( "queueName" => Config::get('pga_config.airavata')["queue-name"],
-						        "nodeCount" => Config::get('pga_config.airavata')["node-count"],
-						        "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
-						        "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
-							);
-		return View::make("partials/experiment-queue-block", array( "queues" => $queues, "queueDefaults" => $queueDefaults) );
-	}
+    public function getQueueView()
+    {
+        $queues = ExperimentUtilities::getQueueDatafromResourceId(Input::get("crId"));
+        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
+            "nodeCount" => Config::get('pga_config.airavata')["node-count"],
+            "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
+            "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
+        );
+        return View::make("partials/experiment-queue-block", array("queues" => $queues, "queueDefaults" => $queueDefaults));
+    }
 
     public function browseView()
     {
         $pageNo = Input::get('pageNo');
         $prev = Input::get('prev');
-        if(empty($pageNo)){
+        if (empty($pageNo)) {
             $pageNo = 1;
-        }else{
-            if(isset($prev)){
+        } else {
+            if (isset($prev)) {
                 $pageNo -= 1;
-            }else{
+            } else {
                 $pageNo += 1;
             }
         }
 
-        $expContainer = Utilities::get_all_user_experiments_with_pagination($this->limit, ($pageNo-1)*$this->limit);
-        $experimentStates = Utilities::getExpStates();
+        $expContainer = ExperimentUtilities::get_all_user_experiments_with_pagination($this->limit, ($pageNo - 1) * $this->limit);
+        $experimentStates = ExperimentUtilities::getExpStates();
         return View::make('experiment/browse', array(
             'pageNo' => $pageNo,
             'limit' => $this->limit,
@@ -311,4 +292,5 @@ class ExperimentController extends BaseController {
         ));
     }
 }
+
 ?>

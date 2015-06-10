@@ -1,21 +1,21 @@
 @extends('layout.basic')
 
 @section('page-header')
-    @parent
+@parent
 @stop
 
 @section('content')
 
 <div class="container" style="max-width: 750px;">
 
-	<?php if( Session::has("project_edited")) { ?>
-		<div class="alert alert-success">
-			The project has been edited
-		</div>
-		<?php Session::forget("project_edited"); 
+    <?php if (Session::has("project_edited")) { ?>
+        <div class="alert alert-success">
+            The project has been edited
+        </div>
+        <?php Session::forget("project_edited");
 
-		}
-	?>
+    }
+    ?>
 
 
     <h1>Edit Project</h1>

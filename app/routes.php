@@ -28,8 +28,8 @@ Route::get("logout", "AccountController@logout");
 
 Route::get("forgot-password", "AccountController@forgotPassword");
 
-Route::get("setUserTimezone", function(){
-	Session::set("user_timezone", Input::get("timezone"));
+Route::get("setUserTimezone", function () {
+    Session::set("user_timezone", Input::get("timezone"));
 });
 /*
  * The following routes will not work without logging in.
@@ -89,17 +89,19 @@ Route::post("experiment/browse", "ExperimentController@browseView");
  * Compute Resources Routes
 */
 
-Route::get("cr/create", function(){
-	return Redirect::to("cr/create/step1");
+Route::get("cr/create", function () {
+    return Redirect::to("cr/create/step1");
 });
 
-Route::get("cr/create", "ComputeResource@createView"); 
+Route::get("cr/create", "ComputeResource@createView");
 
 Route::post("cr/create", "ComputeResource@createSubmit");
 
-Route::get("cr/edit", "ComputeResource@editView"); 
+Route::get("cr/edit", "ComputeResource@editView");
 
-Route::post("cr/edit", "ComputeResource@editSubmit"); 
+Route::post("cr/edit", "ComputeResource@editSubmit");
+
+Route::get("cr/view", "ComputeResource@viewView");
 
 Route::get("cr/browse", "ComputeResource@browseView");
 
@@ -168,8 +170,8 @@ Route::get("admin/dashboard/experiments", "AdminController@experimentsView");
 
 Route::get("admin/dashboard/resources", "AdminController@resourcesView");
 
-Route::get("admin/dashboard/experiment/summary", function(){
-	return Redirect::to("experiment/summary?expId=" . $_GET["expId"] . "&dashboard=true");
+Route::get("admin/dashboard/experiment/summary", function () {
+    return Redirect::to("experiment/summary?expId=" . $_GET["expId"] . "&dashboard=true");
 });
 
 Route::get("admin/dashboard/credential-store", "AdminController@credentialStoreView");
@@ -196,15 +198,15 @@ Route::post("admin/add-gateway", "AdminController@addGateway");
 Route::get("admin/add-gateway", "AdminController@addGateway");
 
 //Airavata Server Check
-Route::get("airavata/down", function(){
-	return View::make("server-down");
+Route::get("airavata/down", function () {
+    return View::make("server-down");
 });
 /*
  * Test Routes.
 */
 
-Route::get("testjob", function(){
-	//print_r( Session::all());
+Route::get("testjob", function () {
+    //print_r( Session::all());
 });
 
 

@@ -93,6 +93,11 @@ return array(
         'server-allowed-file-size' => 64,
 
         /**
+         * directory in the web server where experiment data is staged. This path should be a relative path from app root
+         */
+        'experiment-data-root' => '/../experimentData/',
+
+        /**
          * Advanced experiments options
          */
         'advanced-experiment-options' => '',
@@ -120,7 +125,12 @@ return array(
         /**
          * Default wall time limit
          */
-        'wall-time-limit' => '30'
+        'wall-time-limit' => '30',
+
+        /**
+         * Life time of app catalog data cache in minutes
+         */
+        'app-catalog-cache-duration' => 5
     ]
 
 );

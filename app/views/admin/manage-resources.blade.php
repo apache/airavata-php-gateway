@@ -74,11 +74,16 @@
         $(".resource-checkbox").bootstrapToggle();
         $(".resource-switch").click( function() {
             userRow = $(this).parent();
-            console.log(userRow.children(".resource-id").text());
+            computeResourceId = userRow.children(".resource-id").text();
+            console.log(computeResourceId);
             
             // this is flipped because button click grabs state of checkbox AT click time
             checkedState = !($(this).find(".resource-checkbox").prop("checked"));
             console.log(checkedState);
+
+            $.post("/airavata-php-gateway/public/admin/update-resource-availability", {"computeResourceId":computeResourceId, "checkedState":checkedState}, function(data) {
+                console.log(data);
+            });
         });
     </script>
 @stop
