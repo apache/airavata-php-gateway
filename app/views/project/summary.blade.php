@@ -18,9 +18,9 @@
     $project = ProjectUtilities::get_project($_GET['projId']);
 
 
-    echo '<div class="panel panel-default">';
+    echo '<div>';
 
-    echo '<div class="panel-heading">';
+    echo '<div>';
     echo '<h3>' . $project->name . ' <a href="edit?projId=' .
         $project->projectID .
         '" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a></h3>';
