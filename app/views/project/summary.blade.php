@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div class="container" style="max-width: 750px;">
+<div class="container" style="max-width: 80%;">
 
 
     <h1>Project Summary</h1>
@@ -38,43 +38,19 @@
     echo '<th>Application</th>';
     echo '<th>Compute Resource</th>';
     echo '<th>Time</th>';
-    echo '<th>Status</th>';
+    echo '<th>Experiment Status</th>';
+    echo '<th>Job Status</th>';
 
     echo '</tr>';
 
     foreach ($experiments as $experiment) {
         $expValues = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectID), true);
+        $expValues["jobState"] = ExperimentUtilities::get_job_status($experiment);
         $applicationInterface = AppUtilities::get_application_interface($experiment->applicationId);
 
         echo '<tr>';
 
         echo '<td>';
-
-
-        switch ($expValues["experimentStatusString"]) {
-            case 'SCHEDULED':
-            case 'LAUNCHED':
-            case 'EXECUTING':
-            case 'CANCELING':
-            case 'COMPLETED':
-                echo $experiment->name;
-                break;
-            default:
-                echo $experiment->name .
-                    ' <a href="edit?expId=' .
-                    $experiment->experimentID .
-                    '" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>';
-                break;
-        }
-
-
-        echo '</td>';
-
-        echo "<td>$applicationInterface->applicationName</td>";
-
-        echo '<td>' . CRUtilities::get_compute_resource($experiment->userConfigurationData
-                ->computationalResourceScheduling->resourceHostId)->hostName . '</td>';
-        echo '<td class="time" unix-time="' . $expValues["experimentTimeOfStateChange"] . '"></td>';
 
 
         switch ($expValues["experimentStatusString"]) {
@@ -94,15 +70,40 @@
                 break;
         }
 
+        switch ($expValues["experimentStatusString"]) {
+            case 'SCHEDULED':
+            case 'LAUNCHED':
+            case 'EXECUTING':
+            case 'CANCELING':
+            case 'COMPLETED':
+                echo '<a class="' . $textClass . '" href="' . URL::to('/') . '/experiment/summary?expId=' .
+                    $experiment->experimentID . '">' . $experiment->name . '</a>';
+                break;
+            default:
+                echo '<a class="' . $textClass . '" href="' . URL::to('/') . '/experiment/summary?expId=' .
+                    $experiment->experimentID . '">' . $experiment->name . '</a>' .
+                    ' <a href="' . URL::to('/') . '/experiment/edit?expId=' .
+                    $experiment->experimentID .
+                    '" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>';
+                break;
+        }
 
-        echo '<td><a class="' .
-            $textClass .
-            '" href="' . URL::to('/') . '/experiment/summary?expId=' .
-            $experiment->experimentID .
-            '">' .
-            $expValues["experimentStatusString"] .
-            '</a></td>';
 
+        echo '</td>';
+
+        echo "<td>$applicationInterface->applicationName</td>";
+
+        echo '<td>' . CRUtilities::get_compute_resource($experiment->userConfigurationData
+                ->computationalResourceScheduling->resourceHostId)->hostName . '</td>';
+        echo '<td class="time" unix-time="' . $expValues["experimentTimeOfStateChange"] . '"></td>';
+
+
+        echo '<td>'. $expValues["experimentStatusString"] . '</td>';
+
+        if ($expValues["jobState"]) echo '
+            <td>' . $expValues["jobState"] . '</td>';
+        else
+            echo '<td></td>';
         echo '</tr>';
     }
 

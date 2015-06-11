@@ -399,6 +399,10 @@ to be uncommented when actually in use.
 {{ HTML::script('js/flot/jquery.flot.resize.js')}}
 {{ HTML::script('js/flot/jquery.flot.pie.js')}}
 {{ HTML::script('js/flot/flot-data.js')}}
+
+{{ HTML::script('js/moment.js')}}
+{{ HTML::script('js/datetimepicker.js')}}
+
 <script>
 
     //make first tab of accordion open by default.
@@ -440,7 +444,7 @@ to be uncommented when actually in use.
     //Experiment stages are under development.
     $(".tree").parent().addClass("hide");
 
-    /* making datetimepicker work for exp search */
+    /* making datetimepicker work for exp stat search */
 
     $('#datetimepicker9').datetimepicker({
         pick12HourFormat: false
@@ -455,19 +459,5 @@ to be uncommented when actually in use.
         $('#datetimepicker9').data("DateTimePicker").setMaxDate(e.date);
     });
 
-    /* selecting creation time */
-    $("#search-key").on("change", function () {
-        if (this.value == "creation-time") {
-            $(".search-text-block").addClass("hide");
-            $(".select-dates").removeClass("hide");
-            $("#search-value").removeAttr("required");
-
-        }
-        else {
-            $(".search-text-block").removeClass("hide");
-            $(".select-dates").addClass("hide");
-            $("#search-value").attr("required");
-        }
-    });
 </script>
 @stop

@@ -5,7 +5,8 @@
     "license": "MIT",
     "require": {
         "laravel/framework": "4.2.*",
-        "apache/thrift": "1.0.*@dev"
+        "apache/thrift": "1.0.*@dev",
+        "barryvdh/laravel-ide-helper": "1.*"
     },
     "autoload": {
         "classmap": [
@@ -18,10 +19,12 @@
     "scripts": {
         "post-install-cmd": [
             "php artisan clear-compiled",
+            "php artisan ide-helper:generate",
             "php artisan optimize"
         ],
         "post-update-cmd": [
             "php artisan clear-compiled",
+            "php artisan ide-helper:generate",
             "php artisan optimize"
         ],
         "post-create-project-cmd": [
