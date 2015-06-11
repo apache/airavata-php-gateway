@@ -6,10 +6,10 @@
 
 @section('content')
 
-<div class="container" style="max-width: 80%;">
+<div class="container" style="max-width: 750px;">
 
 
-    <h1>Project Summary</h1>
+<h1>Project Summary</h1>
 
 
 
