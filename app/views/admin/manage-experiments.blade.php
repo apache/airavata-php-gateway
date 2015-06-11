@@ -38,335 +38,247 @@
     </div>
 </div>
 
+<hr/>
+<br/>
+
 <div class="dates row">
-    <h1 class="text-center well alert alert-danger">UI beyond this message is under construction view with dummy
-        values.</h1>
-
-    <div class="col-md-12">
-        Select dates between which you want to review experiments.
-    </div>
-    <div class="col-sm-8" style="height:75px;">
-        <div class='col-md-6'>
-            <div class="form-group">
-                <div class='input-group date' id='datetimepicker9'>
-                    <input type='text' class="form-control" placeholder="From Date" name="from-date"
-                           value="<?php if (isset($_POST['from-date'])) echo $_POST['from-date'] ?>"/>
+    <div class="well col-md-12">
+        <div class="col-md-12">
+            <h4>Select dates between which you want to review experiment statistics.</h4>
+        </div>
+        <div class="col-md-10">
+            <div class='col-md-5'>
+                <div class="form-group">
+                    <div class='input-group date' id='datetimepicker9'>
+                        <input type='text' class="form-control" placeholder="From Date" name="from-date"/>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                     </span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class='col-md-6'>
-            <div class="form-group">
-                <div class='input-group date' id='datetimepicker10'>
-                    <input type='text' class="form-control" placeholder="To Date" name="to-date"
-                           value="<?php if (isset($_POST['to-date'])) echo $_POST['to-date'] ?>"/>
+            <div class='col-md-5'>
+                <div class="form-group">
+                    <div class='input-group date' id='datetimepicker10'>
+                        <input type='text' class="form-control" placeholder="To Date" name="to-date"/>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                                     </span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- high level statistics -->
-<div class="high-level-values row tex-center">
-    <div class="col-lg-3 col-md-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-comments fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">26</div>
-                        <div>Total Experiments</div>
                     </div>
                 </div>
             </div>
-            <a href="#">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
-
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6">
-        <div class="panel panel-green">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-comments fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">16</div>
-                        <div>Successful Experiments</div>
-                    </div>
-                </div>
+            <div class="col-md-2">
+                <button name="getStatistics" id="getStatistics" type="submit" class="btn btn-primary pull-right"
+                        value="GetStatistics"><span
+                        class="glyphicon glyphicon-search"></span> Get Statistics
+                </button>
             </div>
-            <a href="#">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></i></span>
-
-                    <div class="clearfix"></div>
-                </div>
-            </a>
         </div>
     </div>
-
-    <div class="col-lg-3 col-md-6">
-        <div class="panel panel-yellow">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-comments fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">10</div>
-                        <div>Canceled Experiments</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></i></span>
-
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6">
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-comments fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">6</div>
-                        <div>Failed Experiments</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
-
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
+    <div class="experiment-statistics"></div>
 </div>
 
-<div class="row">
-    <div class="col-lg-12">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>Experiment v/s Time Graph</h3>
-            </div>
-            <div class="panel-body">
-                <div class="flot-chart">
-                    <div class="flot-chart-content" id="flot-line-chart" style="padding: 0px; position: relative;">
-                        <canvas class="base" width="1596" height="400"></canvas>
-                        <canvas class="overlay" width="1596" height="400"
-                                style="position: absolute; left: 0px; top: 0px;"></canvas>
-                        <div class="tickLabels" style="font-size:smaller">
-                            <div class="xAxis x1Axis" style="color:#545454">
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:-33px;top:383px;width:122px">0
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:97px;top:383px;width:122px">1
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:228px;top:383px;width:122px">2
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:358px;top:383px;width:122px">3
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:488px;top:383px;width:122px">4
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:619px;top:383px;width:122px">5
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:749px;top:383px;width:122px">6
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:879px;top:383px;width:122px">7
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:1010px;top:383px;width:122px">8
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:1140px;top:383px;width:122px">9
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:1270px;top:383px;width:122px">10
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:center;left:1401px;top:383px;width:122px">11
-                                </div>
-                            </div>
-                            <div class="yAxis y1Axis" style="color:#545454">
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:right;top:337px;right:1575px;width:21px">-1.0
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:right;top:259px;right:1575px;width:21px">-0.5
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:right;top:182px;right:1575px;width:21px">0.0
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:right;top:104px;right:1575px;width:21px">0.5
-                                </div>
-                                <div class="tickLabel"
-                                     style="position:absolute;text-align:right;top:26px;right:1575px;width:21px">1.0
-                                </div>
-                            </div>
-                        </div>
-                        <div class="legend">
-                            <div
-                                style="position: absolute; width: 45px; height: 34px; top: 9px; right: 9px; opacity: 0.85; background-color: rgb(255, 255, 255);"></div>
-                            <table style="position:absolute;top:9px;right:9px;;font-size:smaller;color:#545454">
-                                <tbody>
-                                <tr>
-                                    <td class="legendColorBox">
-                                        <div style="border:1px solid #ccc;padding:1px">
-                                            <div
-                                                style="width:4px;height:0;border:5px solid rgb(237,194,64);overflow:hidden"></div>
-                                        </div>
-                                    </td>
-                                    <td class="legendLabel">Canceled Experiments</td>
-                                </tr>
-                                <tr>
-                                    <td class="legendColorBox">
-                                        <div style="border:1px solid #ccc;padding:1px">
-                                            <div
-                                                style="width:4px;height:0;border:5px solid rgb(175,216,248);overflow:hidden"></div>
-                                        </div>
-                                    </td>
-                                    <td class="legendLabel">Successful Experiments</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
 
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <h1 class="text-center well alert alert-danger">Proposed UI to view flow of one experiment.</h1>
-
-    <div class="tree">
-        <ul>
-            <li>
-                <span><i class="icon-calendar"></i>Experiment 1</span>
-                <ul>
-                    <li>
-                        <span class="badge badge-success"><i class="icon-minus-sign"></i>Pre Processing</span>
-                        <ul>
-                            <li>
-                                <a href=""><span class="alert alert-success"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                    PGA to Airavata Authentication Successful</a>
-                            </li>
-                            <li>
-                                <a href=""><span class="alert alert-success"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                    Airavata to Resource Authentication Successful</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <span class="badge badge-success"><i class="icon-minus-sign"></i>Input Staging</span>
-                        <ul>
-                            <li>
-                                <span class="alert alert-success"><i
-                                        class="icon-time"></i>2015-04-17 15:21:21</span> &ndash; <a href="">PGA to
-                                    Airavata File Transfer Successful</a>
-                            </li>
-                            <li>
-                                <span class="alert alert-success" abhi><i
-                                        class="icon-time"></i>2015-04-17 15:21:21</span> &ndash; <a href="">Airavata to
-                                    Resource File Transfer Successful</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <span class="badge badge-warning"><i class="icon-minus-sign"></i>Job Description</span>
-                        <ul>
-                            <li>
-                                <a href=""><span>
-                                                   Long Script of Job Description / PBS Script <br/>
-                                                   <br/>
-                                                    <p>
-                                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-                                                        commodo ligula eget dolor. Aenean massa. Cum sociis natoque
-                                                        penatibus et magnis dis parturient montes, nascetur ridiculus
-                                                        mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
-                                                        quis, sem. Nulla consequat massa quis enim. Donec pede justo,
-                                                        fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo,
-                                                        rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum
-                                                        felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-                                                        Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.
-                                                        Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac,
-                                                        enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a,
-                                                        tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque
-                                                        rutrum. Aenean
-                                                    </p>
-                                                 </span></a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <span class="badge badge-important"><i class="icon-minus-sign"></i>Execution</span>
-                        <ul>
-                            <li>
-                                <a href=""><span class="alert alert-success"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                    Execution of Job Description - No errors</a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <span class="badge badge-important"><i class="icon-minus-sign"></i>Experiment Complete</span>
-                        <ul>
-                            <li>
-                                <a href=""><span class="alert alert-danger"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                    Output Transfer from Resource to Airavata UnSuccessful</a>
-                                <br/>
-                                <span> Some text about failure</span>
-                            </li>
-                            <li>
-                                <a href=""><span class="alert alert-danger"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                    Output Transfer from Airavata to PGA UnSuccessful</a>
-                                <br/>
-                                <span> Some text about failure</span>
-                            </li>
-                        </ul>
-                    </li>
-
-
-                </ul>
-            </li>
-        </ul>
-    </div>
-</div>
+<!--<div class="row">-->
+<!--    <div class="col-lg-12">-->
+<!--        <div class="panel panel-primary">-->
+<!--            <div class="panel-heading">-->
+<!--                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>Experiment v/s Time Graph</h3>-->
+<!--            </div>-->
+<!--            <div class="panel-body">-->
+<!--                <div class="flot-chart">-->
+<!--                    <div class="flot-chart-content" id="flot-line-chart" style="padding: 0px; position: relative;">-->
+<!--                        <canvas class="base" width="1596" height="400"></canvas>-->
+<!--                        <canvas class="overlay" width="1596" height="400"-->
+<!--                                style="position: absolute; left: 0px; top: 0px;"></canvas>-->
+<!--                        <div class="tickLabels" style="font-size:smaller">-->
+<!--                            <div class="xAxis x1Axis" style="color:#545454">-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:-33px;top:383px;width:122px">0-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:97px;top:383px;width:122px">1-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:228px;top:383px;width:122px">2-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:358px;top:383px;width:122px">3-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:488px;top:383px;width:122px">4-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:619px;top:383px;width:122px">5-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:749px;top:383px;width:122px">6-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:879px;top:383px;width:122px">7-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:1010px;top:383px;width:122px">8-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:1140px;top:383px;width:122px">9-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:1270px;top:383px;width:122px">10-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:center;left:1401px;top:383px;width:122px">11-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="yAxis y1Axis" style="color:#545454">-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:right;top:337px;right:1575px;width:21px">-1.0-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:right;top:259px;right:1575px;width:21px">-0.5-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:right;top:182px;right:1575px;width:21px">0.0-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:right;top:104px;right:1575px;width:21px">0.5-->
+<!--                                </div>-->
+<!--                                <div class="tickLabel"-->
+<!--                                     style="position:absolute;text-align:right;top:26px;right:1575px;width:21px">1.0-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="legend">-->
+<!--                            <div-->
+<!--                                style="position: absolute; width: 45px; height: 34px; top: 9px; right: 9px; opacity: 0.85; background-color: rgb(255, 255, 255);"></div>-->
+<!--                            <table style="position:absolute;top:9px;right:9px;;font-size:smaller;color:#545454">-->
+<!--                                <tbody>-->
+<!--                                <tr>-->
+<!--                                    <td class="legendColorBox">-->
+<!--                                        <div style="border:1px solid #ccc;padding:1px">-->
+<!--                                            <div-->
+<!--                                                style="width:4px;height:0;border:5px solid rgb(237,194,64);overflow:hidden"></div>-->
+<!--                                        </div>-->
+<!--                                    </td>-->
+<!--                                    <td class="legendLabel">Canceled Experiments</td>-->
+<!--                                </tr>-->
+<!--                                <tr>-->
+<!--                                    <td class="legendColorBox">-->
+<!--                                        <div style="border:1px solid #ccc;padding:1px">-->
+<!--                                            <div-->
+<!--                                                style="width:4px;height:0;border:5px solid rgb(175,216,248);overflow:hidden"></div>-->
+<!--                                        </div>-->
+<!--                                    </td>-->
+<!--                                    <td class="legendLabel">Successful Experiments</td>-->
+<!--                                </tr>-->
+<!--                                </tbody>-->
+<!--                            </table>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!---->
+<!---->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!---->
+<!--<div class="row">-->
+<!--    <h1 class="text-center well alert alert-danger">Proposed UI to view flow of one experiment.</h1>-->
+<!---->
+<!--    <div class="tree">-->
+<!--        <ul>-->
+<!--            <li>-->
+<!--                <span><i class="icon-calendar"></i>Experiment 1</span>-->
+<!--                <ul>-->
+<!--                    <li>-->
+<!--                        <span class="badge badge-success"><i class="icon-minus-sign"></i>Pre Processing</span>-->
+<!--                        <ul>-->
+<!--                            <li>-->
+<!--                                <a href=""><span class="alert alert-success"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;-->
+<!--                                    PGA to Airavata Authentication Successful</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href=""><span class="alert alert-success"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;-->
+<!--                                    Airavata to Resource Authentication Successful</a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li>-->
+<!--                        <span class="badge badge-success"><i class="icon-minus-sign"></i>Input Staging</span>-->
+<!--                        <ul>-->
+<!--                            <li>-->
+<!--                                <span class="alert alert-success"><i-->
+<!--                                        class="icon-time"></i>2015-04-17 15:21:21</span> &ndash; <a href="">PGA to
+-->
+<!--                                    Airavata File Transfer Successful</a>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <span class="alert alert-success" abhi><i-->
+<!--                                        class="icon-time"></i>2015-04-17 15:21:21</span> &ndash; <a href="">Airavata to
+-->
+<!--                                    Resource File Transfer Successful</a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li>-->
+<!--                        <span class="badge badge-warning"><i class="icon-minus-sign"></i>Job Description</span>-->
+<!--                        <ul>-->
+<!--                            <li>-->
+<!--                                <a href=""><span>-->
+<!--                                                   Long Script of Job Description / PBS Script <br/>-->
+<!--                                                   <br/>-->
+<!--                                                    <p>-->
+<!--                                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean-->
+<!--                                                        commodo ligula eget dolor. Aenean massa. Cum sociis natoque-->
+<!--                                                        penatibus et magnis dis parturient montes, nascetur ridiculus-->
+<!--                                                        mus. Donec quam felis, ultricies nec, pellentesque eu, pretium-->
+<!--                                                        quis, sem. Nulla consequat massa quis enim. Donec pede justo,-->
+<!--                                                        fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo,-->
+<!--                                                        rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum-->
+<!--                                                        felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.-->
+<!--                                                        Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.-->
+<!--                                                        Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac,-->
+<!--                                                        enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a,-->
+<!--                                                        tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque-->
+<!--                                                        rutrum. Aenean-->
+<!--                                                    </p>-->
+<!--                                                 </span></a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!--                    <li>-->
+<!--                        <span class="badge badge-important"><i class="icon-minus-sign"></i>Execution</span>-->
+<!--                        <ul>-->
+<!--                            <li>-->
+<!--                                <a href=""><span class="alert alert-success"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;-->
+<!--                                    Execution of Job Description - No errors</a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!---->
+<!--                    <li>-->
+<!--                        <span class="badge badge-important"><i class="icon-minus-sign"></i>Experiment Complete</span>-->
+<!--                        <ul>-->
+<!--                            <li>-->
+<!--                                <a href=""><span class="alert alert-danger"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;-->
+<!--                                    Output Transfer from Resource to Airavata UnSuccessful</a>-->
+<!--                                <br/>-->
+<!--                                <span> Some text about failure</span>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a href=""><span class="alert alert-danger"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;-->
+<!--                                    Output Transfer from Airavata to PGA UnSuccessful</a>-->
+<!--                                <br/>-->
+<!--                                <span> Some text about failure</span>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
+<!---->
+<!---->
+<!--                </ul>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </div>-->
+<!--</div>-->
 </div>
 <!-- /.container-fluid -->
 
@@ -459,5 +371,21 @@ to be uncommented when actually in use.
         $('#datetimepicker9').data("DateTimePicker").setMaxDate(e.date);
     });
 
+    $("#getStatistics").click(function () {
+        $fromTime = $("#datetimepicker9").find("input").val();
+        $toTime = $("#datetimepicker10").find("input").val();
+        if ($fromTime == '' || $toTime == '') {
+            alert("Please Select Valid Date Inputs!");
+        } else {
+            $.ajax({
+                url: 'experimentStatistics?fromTime=' + $fromTime + '&' + 'toTime=' + $toTime,
+                type: 'get',
+                success: function (data) {
+                    $(".experiment-statistics").html(data);
+
+                }
+            })
+        }
+    });
 </script>
 @stop

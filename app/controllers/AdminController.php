@@ -123,4 +123,15 @@ class AdminController extends BaseController {
 		
 		return $gateway;
 	}
+
+
+    public function experimentStatistics()
+    {
+        if (Request::ajax()) {
+            $inputs = Input::all();
+            $expStatistics = AdminUtilities::getExperimentExecutionStatistics(strtotime($inputs['fromTime']) * 1000
+                , strtotime($inputs['toTime']) * 1000);
+            return View::make("admin/experiment-statistics", array("expStatistics" => $expStatistics));
+        }
+    }
 }
