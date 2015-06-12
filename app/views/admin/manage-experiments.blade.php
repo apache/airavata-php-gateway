@@ -74,8 +74,8 @@
         </div>
     </div>
     <div class="experiment-statistics"></div>
+    <div class="loading-img-statistics hide text-center"><img src="{{URL::to('/')}}/assets/ajax-loader.gif"/></div>
 </div>
-
 
 <!--<div class="row">-->
 <!--    <div class="col-lg-12">-->
@@ -377,14 +377,16 @@ to be uncommented when actually in use.
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
+            $(".loading-img-statistics").removeClass("hide");
             $.ajax({
                 url: 'experimentStatistics?fromTime=' + $fromTime + '&' + 'toTime=' + $toTime,
                 type: 'get',
                 success: function (data) {
                     $(".experiment-statistics").html(data);
-
                 }
-            })
+            }).complete(function () {
+                $(".loading-img-statistics").addClass("hide");
+            });
         }
     });
 </script>

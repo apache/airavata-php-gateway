@@ -116,9 +116,9 @@ class AdminController extends BaseController {
 
 		$inputs = Input::all();
 
-		$gateway = AdminUtilities::addGateway(Input::all() );
+        $gateway = AdminUtilities::add_gateway(Input::all());
 
-		$tm = WSIS::createTenant(1, $inputs["admin-username"], $inputs["admin-password"], $inputs["admin-email"],
+        $tm = WSIS::createTenant(1, $inputs["admin-username"], $inputs["admin-password"], $inputs["admin-email"],
                                   $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
 		
 		return $gateway;
@@ -129,9 +129,19 @@ class AdminController extends BaseController {
     {
         if (Request::ajax()) {
             $inputs = Input::all();
-            $expStatistics = AdminUtilities::getExperimentExecutionStatistics(strtotime($inputs['fromTime']) * 1000
+            $expStatistics = AdminUtilities::get_experiment_execution_statistics(strtotime($inputs['fromTime']) * 1000
                 , strtotime($inputs['toTime']) * 1000);
             return View::make("admin/experiment-statistics", array("expStatistics" => $expStatistics));
+        }
+    }
+
+    public function getExperimentsOfTimeRange()
+    {
+        if (Request::ajax()) {
+            $inputs = Input::all();
+            $expContainer = AdminUtilities::get_experiments_of_time_range($inputs);
+            $expStates = ExperimentUtilities::getExpStates();
+            return View::make("partials/experiment-container", array("expContainer" => $expContainer, "expStates" => $expStates));
         }
     }
 }

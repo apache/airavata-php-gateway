@@ -168,6 +168,8 @@ Route::get("admin/dashboard/roles", "AdminController@rolesView");
 
 Route::get("admin/dashboard/experiments", "AdminController@experimentsView");
 
+Route::get("admin/dashboard/experimentsOfTimeRange", "AdminController@getExperimentsOfTimeRange");
+
 Route::get("admin/dashboard/experimentStatistics", "AdminController@experimentStatistics");
 
 Route::get("admin/dashboard/resources", "AdminController@resourcesView");

@@ -13,8 +13,8 @@
                     </div>
                 </div>
             </div>
-            <a href="#">
-                <div class="panel-footer">
+            <a id="getAllExperiments" href="#experiment-container">
+            <div class="panel-footer">
                     <span class="pull-left">View Details</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
@@ -37,8 +37,8 @@
                     </div>
                 </div>
             </div>
-            <a href="#">
-                <div class="panel-footer">
+            <a id="getCompletedExperiments" href="#experiment-container">
+            <div class="panel-footer">
                     <span class="pull-left">View Details</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></i></span>
 
@@ -61,8 +61,8 @@
                     </div>
                 </div>
             </div>
-            <a href="#">
-                <div class="panel-footer">
+            <a id="getCancelledExperiments" href="#experiment-container">
+            <div class="panel-footer">
                     <span class="pull-left">View Details</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></i></span>
 
@@ -85,8 +85,8 @@
                     </div>
                 </div>
             </div>
-            <a href="#">
-                <div class="panel-footer">
+            <a id="getFailedExperiments" href="#experiment-container">
+            <div class="panel-footer">
                     <span class="pull-left">View Details</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
@@ -96,3 +96,103 @@
         </div>
     </div>
 </div>
+
+<div id="experiment-container" style="margin: 20px" class="experiment-container"></div>
+
+<script>
+    $("#getAllExperiments").click(function () {
+        //These are coming from manage-experiments.blade.php
+        $fromTime = $("#datetimepicker9").find("input").val();
+        $toTime = $("#datetimepicker10").find("input").val();
+        if ($fromTime == '' || $toTime == '') {
+            alert("Please Select Valid Date Inputs!");
+        } else {
+            $.ajax({
+                type: 'GET',
+                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
+                data: {
+                    'status-type': 'ALL',
+                    'search-key': 'creation-time',
+                    'from-date': $fromTime,
+                    'to-date': $toTime
+                },
+                async: false,
+                success: function (data) {
+                    $(".experiment-container").html(data);
+                }
+            });
+        }
+    });
+
+    $("#getCompletedExperiments").click(function () {
+        //These are coming from manage-experiments.blade.php
+        $fromTime = $("#datetimepicker9").find("input").val();
+        $toTime = $("#datetimepicker10").find("input").val();
+        if ($fromTime == '' || $toTime == '') {
+            alert("Please Select Valid Date Inputs!");
+        } else {
+            $.ajax({
+                type: 'GET',
+                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
+                data: {
+                    'status-type': 'COMPLETED',
+                    'search-key': 'creation-time',
+                    'from-date': $fromTime,
+                    'to-date': $toTime
+                },
+                async: false,
+                success: function (data) {
+                    $(".experiment-container").html(data);
+                }
+            });
+        }
+    });
+
+    $("#getCancelledExperiments").click(function () {
+        //These are coming from manage-experiments.blade.php
+        $fromTime = $("#datetimepicker9").find("input").val();
+        $toTime = $("#datetimepicker10").find("input").val();
+        if ($fromTime == '' || $toTime == '') {
+            alert("Please Select Valid Date Inputs!");
+        } else {
+            $.ajax({
+                type: 'GET',
+                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
+                data: {
+                    'status-type': 'CANCELED',
+                    'search-key': 'creation-time',
+                    'from-date': $fromTime,
+                    'to-date': $toTime
+                },
+                async: false,
+                success: function (data) {
+                    $(".experiment-container").html(data);
+                }
+            });
+        }
+    });
+
+    $("#getFailedExperiments").click(function () {
+        //These are coming from manage-experiments.blade.php
+        $fromTime = $("#datetimepicker9").find("input").val();
+        $toTime = $("#datetimepicker10").find("input").val();
+        if ($fromTime == '' || $toTime == '') {
+            alert("Please Select Valid Date Inputs!");
+        } else {
+            $.ajax({
+                type: 'GET',
+                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
+                data: {
+                    'status-type': 'FAILED',
+                    'search-key': 'creation-time',
+                    'from-date': $fromTime,
+                    'to-date': $toTime
+                },
+                async: false,
+                success: function (data) {
+                    $(".experiment-container").html(data);
+                }
+            });
+        }
+    });
+</script>
