@@ -257,7 +257,7 @@ class AppUtilities
                     return $applicationInterface;
                 }
             } else {
-                $applicationInterface = Airavata::getApplicationInterface($id);
+                return $applicationInterface = Airavata::getApplicationInterface($id);
             }
 
 

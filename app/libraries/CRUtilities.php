@@ -429,7 +429,7 @@ class CRUtilities
                     return $computeResource;
                 }
             } else {
-                $computeResource = Airavata::getComputeResource($id);
+                return $computeResource = Airavata::getComputeResource($id);
             }
 
         } catch (InvalidRequestException $ire) {
