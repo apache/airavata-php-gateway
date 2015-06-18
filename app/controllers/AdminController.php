@@ -110,18 +110,26 @@ class AdminController extends BaseController {
 	}
 
     public function updateResourceAvailability(){
+        // inputs
         $computeResourceId = Input::get("computeResourceId");
         $checkedState = Input::get("checkedState");
+        
+        // get compute resource description
         $computeDescription = CRUtilities::get_compute_resource($computeResourceId);
-        /*
-        $currentState = $computeDescription->active;
-        $computeDescription->active = $checkedState;
-		CRUtilities::register_or_update_compute_resource($computeDescription, true);
+
+        // change to false
+        $stupid = $checkedState === 'true'? true: false;
+        $computeDescription->active = $stupid;
+
+        //update
+		$retValue = CRUtilities::register_or_update_compute_resource($computeDescription, true);
+
+        // sanity check
         $newDescription = CRUtilities::get_compute_resource($computeResourceId);
         $currentState = $newDescription->active;
-		return json_encode(array("computeResourceId"=> $computeResourceId, "currentState"=> $currentState));
-         */
-		return json_encode(array("result" => $computeDescription));
+
+		return json_encode(array("checkedState" => $computeDescription->active, "currentState"=> $currentState, "reValueState" => $retValue->active, "currentDescription"=> $newDescription, "retValue" => $retValue));
+		//return json_encode(array("result" => $computeDescription));
     }
 
 	/* ---- Super Admin Functions ------- */

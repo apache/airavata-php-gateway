@@ -280,7 +280,7 @@ class CRUtilities
     {
         $appDeployments = Airavata::getAllApplicationDeployments(Session::get("gateway_id"));
 
-        return array('crObjects' => CRUtilities::getAllCRObjects(true),
+        return array('crObjects' => CRUtilities::getAllCRObjects(false),
             'appDeployments' => $appDeployments
         );
     }

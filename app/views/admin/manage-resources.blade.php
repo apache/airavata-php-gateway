@@ -2,7 +2,7 @@
 
 @section('page-header')
     @parent
-    <link href="https://gitcdn.github.io/bootstrap-toggle/2.1.0/css/bootstrap-toggle.min.css" rel="stylesheet">
+    {{ HTML::style('css/bootstrap-toggle.min.css')}}
     {{ HTML::style('css/admin.css')}}
 @stop
 
@@ -36,26 +36,16 @@
                                 Status
                             </th>
                         </tr>
-                        @foreach( (array)$resources as $resourceId => $resourceName )
+                        @foreach( (array)$resources as $resource ) 
                         <tr class="user-row">
-                            <td class="resource-id">{{ $resourceId }}</td>
-                            <td class="resource-name">{{ $resourceName }}</td>
+                            <td class="resource-id">{{ $resource -> computeResourceId }}</td>
+                            <td class="resource-name">{{ $resource -> hostName }}</td>
                             <td class="resource-switch">
-                                <!--This is a random selection -->
-                                <input class="resource-checkbox" type="checkbox" checked data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="danger">
-                                <!-- 
-                                @if( strpos( $resourceName, "a") )
-                                    <div class="btn-group btn-toggle"> 
-                                        <button class="btn btn-xs btn-default">ON</button>
-                                        <button class="btn btn-xs btn-danger active">Switch OFF</button>
-                                    </div>
+                                @if ( $resource -> active )
+                                    <input class="resource-checkbox" type="checkbox" checked data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="danger">
                                 @else
-                                    <div class="btn-group btn-toggle"> 
-                                        <button class="btn btn-xs btn-success active">Switch ON</button>
-                                        <button class="btn btn-xs btn-default">OFF</button>
-                                    </div>
+                                    <input class="resource-checkbox" type="checkbox" unchecked data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="danger">
                                 @endif
-                                -->
                             </td>
                         </tr>
                         @endforeach
@@ -69,7 +59,7 @@
 
 @section('scripts')
     @parent
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.1.0/js/bootstrap-toggle.min.js"></script>
+    {{ HTML::script('js/bootstrap-toggle.js')}}
     <script>
         $(".resource-checkbox").bootstrapToggle();
         $(".resource-switch").click( function() {
