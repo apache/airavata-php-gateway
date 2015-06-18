@@ -127,6 +127,11 @@ return array(
         'wall-time-limit' => '30',
 
         /**
+         * Enable app-catalog cache
+         */
+        'enable-app-catalog-cache' => true,
+
+        /**
          * Life time of app catalog data cache in minutes
          */
         'app-catalog-cache-duration' => 5

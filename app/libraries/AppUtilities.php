@@ -248,13 +248,18 @@ class AppUtilities
         $applicationInterface = null;
 
         try {
-            if (Cache::has('APP-' . $id)) {
-                return Cache::get('APP-' . $id);
+            if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+                if (Cache::has('APP-' . $id)) {
+                    return Cache::get('APP-' . $id);
+                } else {
+                    $applicationInterface = Airavata::getApplicationInterface($id);
+                    Cache::put('APP-' . $id, $applicationInterface, Config::get('pga_config.airavata')['app-catalog-cache-duration']);
+                    return $applicationInterface;
+                }
             } else {
                 $applicationInterface = Airavata::getApplicationInterface($id);
-                Cache::put('APP-' . $id, $applicationInterface, Config::get('pga_config.airavata')['app-catalog-cache-duration']);
-                return $applicationInterface;
             }
+
 
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting the application interface.
