@@ -16,22 +16,7 @@ use Airavata\Model\Workspace\Experiment\UserConfigurationData;
 
 class ExperimentUtilities
 {
-
-    private $sshUser;
-    private $hostName;
-    private static $pathConstant;
     private static $experimentPath;
-    private static $experimentDataPathAbsolute;
-
-    function __construct()
-    {
-        $this->sshUser = "root";
-        $this->hostName = $_SERVER['SERVER_NAME'];
-
-        self::$experimentDataPathAbsolute = base_path() . Config::get('pga_config.airavata')['experiment-data-root'];
-        self::$pathConstant = 'file://' . $this->sshUser . '@' . $this->hostName . ':' . self::$experimentDataPathAbsolute;
-        self::$experimentPath = null;
-    }
 
     /**
      * Launch the experiment with the given ID
@@ -174,9 +159,12 @@ class ExperimentUtilities
         }
 
         $advHandling = new AdvancedOutputDataHandling();
+        $sshUser = "root";
+        $hostName = $_SERVER['SERVER_NAME'];
+        $expPathConstant = 'file://' . $sshUser . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-root'];
 
         $advHandling->outputDataDir = str_replace(base_path() . Config::get('pga_config.airavata')['experiment-data-root'],
-            ExperimentUtilities::$pathConstant, ExperimentUtilities::$experimentPath);
+            $expPathConstant, ExperimentUtilities::$experimentPath);
         $userConfigData->advanceOutputDataHandling = $advHandling;
 
         //TODO: replace constructor with a call to airvata to get a prepopulated experiment template
@@ -300,7 +288,8 @@ class ExperimentUtilities
                         $experimentAssemblySuccessful = false;
                     }
 
-                    $experimentInput->value = str_replace(base_path() . Config::get('pga_config.airavata')['experiment-data-root'], ExperimentUtilities::$pathConstant, $filePath);
+                    $experimentInput->value = str_replace(base_path() . Config::get('pga_config.airavata')['experiment-data-root'],
+                        ExperimentUtilities::get_path_constants(), $filePath);
                     $experimentInput->type = $applicationInput->type;
 
                 } else {
@@ -590,11 +579,13 @@ class ExperimentUtilities
                 if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
                     $explode = explode('/', $output->value);
                     //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
-                    $outputPath = str_replace(ExperimentUtilities::$experimentDataPathAbsolute, Config::get('pga_config.airavata')['experiment-data-root'], $output->value);
+                    $outputPath = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
+                        Config::get('pga_config.airavata')['experiment-data-dir'], $output->value);
                     $outputPathArray = explode("/", $outputPath);
 
                     echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                            href="' . URL::to("/") . "/.." . str_replace(ExperimentUtilities::$experimentDataPathAbsolute, Config::get('pga_config.airavata')['experiment-data-root'], $output->value) . '">' .
+                            href="' . URL::to("/") . "/.." . str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
+                            Config::get('pga_config.airavata')['experiment-data-dir'], $output->value) . '">' .
                         $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 } elseif ($output->type == DataType::STRING) {
                     echo '<p>' . $output->value . '</p>';
