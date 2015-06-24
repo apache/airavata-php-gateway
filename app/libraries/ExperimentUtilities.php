@@ -300,7 +300,7 @@ class ExperimentUtilities
                         $experimentAssemblySuccessful = false;
                     }
 
-                    $experimentInput->value = str_replace(base_path() . Config::get('pga_config.airavata')['experiment-data-root'], CommonUtilities::$pathConstant, $filePath);
+                    $experimentInput->value = str_replace(base_path() . Config::get('pga_config.airavata')['experiment-data-root'], ExperimentUtilities::$pathConstant, $filePath);
                     $experimentInput->type = $applicationInput->type;
 
                 } else {
