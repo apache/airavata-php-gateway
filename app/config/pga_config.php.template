@@ -94,12 +94,12 @@ return array(
         /**
          * directory in the web server where experiment data is staged. (relative to the web server documents root)
          */
-        'experiment-data-path-dir' => '/experimentData',
+        'experiment-data-dir' => '/experimentData',
 
         /**
          * absolute path of the data dir
          */
-        'experiment-data-path-absolute' => '/var/www/experimentData',
+        'experiment-data-absolute-path' => '/var/www/experimentData',
 
         /**
          * Advanced experiments options
