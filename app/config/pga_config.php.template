@@ -92,9 +92,9 @@ return array(
         'server-allowed-file-size' => 64,
 
         /**
-         * directory in the web server where experiment data is staged. (relative to the web server documents root)
+         * directory in the web server where experiment data is staged. (relative to the PGA documents root)
          */
-        'experiment-data-dir' => '/experimentData',
+        'experiment-data-dir' => '/../experimentData',
 
         /**
          * absolute path of the data dir
