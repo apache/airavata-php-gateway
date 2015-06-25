@@ -163,7 +163,8 @@ class ExperimentUtilities
         $hostName = $_SERVER['SERVER_NAME'];
         $expPathConstant = 'file://' . $sshUser . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
 
-        $advHandling->outputDataDir = Config::get('pga_config.airavata')['experiment-data-absolute-path'];
+        $advHandling->outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
+            $expPathConstant, ExperimentUtilities::$experimentPath);
         $userConfigData->advanceOutputDataHandling = $advHandling;
 
         //TODO: replace constructor with a call to airvata to get a prepopulated experiment template
