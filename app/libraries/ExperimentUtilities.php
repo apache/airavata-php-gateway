@@ -616,7 +616,12 @@ class ExperimentUtilities
             $userConfigData = $experiment->userConfigurationData;
             $scheduling = $userConfigData->computationalResourceScheduling;
             $expVal['scheduling'] = $scheduling;
-            $expVal["computeResource"] = CRUtilities::get_compute_resource($scheduling->resourceHostId);
+            try {
+                $expVal["computeResource"] = CRUtilities::get_compute_resource($scheduling->resourceHostId);
+            } catch (Exception $ex) {
+                //Error while retrieving CR
+                $expVal["computeResource"] = "";
+            }
         }
         $expVal["applicationInterface"] = AppUtilities::get_application_interface($experiment->applicationId);
 
