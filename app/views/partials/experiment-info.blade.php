@@ -40,7 +40,7 @@
         <tr>
             <td><strong>Compute resource</strong></td>
             <td><?php if (!empty($expVal["computeResource"])) {
-                    $expVal["computeResource"]->hostName;
+                    echo $expVal["computeResource"]->hostName;
                 } ?></td>
         </tr>
         <tr>
