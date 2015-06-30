@@ -5,7 +5,7 @@
     "license": "MIT",
     "require": {
         "laravel/framework": "4.2.*",
-        "apache/thrift": "1.0.*@dev",
+        "apache/thrift": "1.0.*@dev"
     },
     "autoload": {
         "classmap": [
