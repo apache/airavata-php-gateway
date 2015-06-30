@@ -41,6 +41,11 @@ class CRUtilities
     {
         if ($update) {
             $computeResourceId = $computeDescription->computeResourceId;
+            if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+                if (Cache::has('CR-' . $computeResourceId)) {
+                    Cache::forget('CR-' . $computeResourceId);
+                }
+            }
 
             if (Airavata::updateComputeResource($computeResourceId, $computeDescription)) {
                 $computeResource = Airavata::getComputeResource($computeResourceId);
@@ -407,6 +412,12 @@ class CRUtilities
 
     public static function deleteCR($inputs)
     {
+        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+            $id = $inputs["rem-crId"];
+            if (Cache::has('CR-' . $id)) {
+                Cache::forget('CR-' . $id);
+            }
+        }
         return Airavata::deleteGatewayComputeResourcePreference($inputs["gpId"], $inputs["rem-crId"]);
     }
 

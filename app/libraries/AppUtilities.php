@@ -100,16 +100,26 @@ class AppUtilities
 
         //var_dump( $appInterface); exit;
 
-        if ($update)
+        if ($update) {
+            if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+                if (Cache::has('APP-' . $appInterfaceValues["app-interface-id"])) {
+                    Cache::forget('APP-' . $appInterfaceValues["app-interface-id"]);
+                }
+            }
             Airavata::updateApplicationInterface($appInterfaceValues["app-interface-id"], $appInterface);
-        else
+        } else {
             Airavata::getApplicationInterface(Airavata::registerApplicationInterface(Session::get("gateway_id"), $appInterface));
-
+        }
         //print_r( "App interface has been created.");
     }
 
     public static function deleteAppInterface($appInterfaceId)
     {
+        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+            if (Cache::has('APP-' . $appInterfaceId)) {
+                Cache::forget('APP-' . $appInterfaceId);
+            }
+        }
         return Airavata::deleteApplicationInterface($appInterfaceId);
     }
 
