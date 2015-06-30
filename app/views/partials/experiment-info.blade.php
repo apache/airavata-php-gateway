@@ -33,11 +33,15 @@
         </tr>
         <tr>
             <td><strong>Application</strong></td>
-            <td><?php echo $expVal["applicationInterface"]->applicationName; ?></td>
+            <td><?php if (!empty($expVal["applicationInterface"])) {
+                    echo $expVal["applicationInterface"]->applicationName;
+                } ?></td>
         </tr>
         <tr>
             <td><strong>Compute resource</strong></td>
-            <td><?php echo $expVal["computeResource"]->hostName; ?></td>
+            <td><?php if (!empty($expVal["computeResource"])) {
+                    $expVal["computeResource"]->hostName;
+                } ?></td>
         </tr>
         <tr>
             <td><strong>Experiment Status</strong></td>
