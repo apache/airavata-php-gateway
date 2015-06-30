@@ -106,6 +106,11 @@ class CRUtilities
 
     public static function deleteQueue($computeResourceId, $queueName)
     {
+        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+            if (Cache::has('CR-' . $computeResourceId)) {
+                Cache::forget('CR-' . $computeResourceId);
+            }
+        }
         Airavata::deleteBatchQueue($computeResourceId, $queueName);
     }
 
@@ -119,6 +124,11 @@ class CRUtilities
 
         $computeResource = CRUtilities::get_compute_resource($inputs["crId"]);
 
+        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+            if (Cache::has('CR-' . $inputs["crId"])) {
+                Cache::forget('CR-' . $inputs["crId"]);
+            }
+        }
 
         $jsiId = null;
         if (isset($inputs["jsiId"]))
@@ -220,6 +230,13 @@ class CRUtilities
     {
 
         $computeResource = CRUtilities::get_compute_resource($inputs["crId"]);
+
+        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+            if (Cache::has('CR-' . $inputs["crId"])) {
+                Cache::forget('CR-' . $inputs["crId"]);
+            }
+        }
+
         if ($inputs["dataMovementProtocol"] == DataMovementProtocol::LOCAL) /* LOCAL */ {
             $localDataMovement = new LOCALDataMovement();
             $localdmp = Airavata::addLocalDataMovementDetails($computeResource->computeResourceId, 0, $localDataMovement);
@@ -326,6 +343,20 @@ class CRUtilities
 
     public static function deleteActions($inputs)
     {
+        if (isset($inputs["crId"])) {
+            if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+                if (Cache::has('CR-' . $inputs["crId"])) {
+                    Cache::forget('CR-' . $inputs["crId"]);
+                }
+            }
+        } elseif (isset($inputs["del-crId"])) {
+            if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+                if (Cache::has('CR-' . $inputs["del-crId"])) {
+                    Cache::forget('CR-' . $inputs["del-crId"]);
+                }
+            }
+        }
+
         if (isset($inputs["jsiId"]))
             if (Airavata::deleteJobSubmissionInterface($inputs["crId"], $inputs["jsiId"]))
                 return 1;
@@ -400,6 +431,12 @@ class CRUtilities
     {
         $computeResourcePreferences = new computeResourcePreference($inputs);
 
+        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+            if (Cache::has('CR-' . $inputs["computeResourceId"])) {
+                Cache::forget('CR-' . $inputs["computeResourceId"]);
+            }
+        }
+
         //var_dump( $inputs); exit;
         return Airavata::addGatewayComputeResourcePreference($inputs["gatewayId"], $inputs["computeResourceId"], $computeResourcePreferences);
 
@@ -418,6 +455,7 @@ class CRUtilities
                 Cache::forget('CR-' . $id);
             }
         }
+
         return Airavata::deleteGatewayComputeResourcePreference($inputs["gpId"], $inputs["rem-crId"]);
     }
 
