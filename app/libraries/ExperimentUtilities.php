@@ -81,7 +81,8 @@ class ExperimentUtilities
             if ($matchingAppInput->type == DataType::URI) {
                 $explode = explode('/', $input->value);
                 echo '<p><a target="_blank"
-                        href="' . URL::to("/") . Config::get('pga_config.airavata')['experiment-data-dir'] . $explode[sizeof($explode) - 2] . '/' . $explode[sizeof($explode) - 1] . '">' .
+                        href="' . URL::to("/") . "/.." . Config::get('pga_config.airavata')['experiment-data-dir']
+                    . "/" . $explode[sizeof($explode) - 2] . '/' . $explode[sizeof($explode) - 1] . '">' .
                     $explode[sizeof($explode) - 1] . '
                 <span class="glyphicon glyphicon-new-window"></span></a></p>';
             } elseif ($matchingAppInput->type == DataType::STRING) {

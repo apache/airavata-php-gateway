@@ -103,7 +103,7 @@
         </tr>
         <tr>
             <td><strong>Inputs</strong></td>
-            <td><?php ProjectUtilities::get_project($experiment->projectID); ?></td>
+            <td><?php ExperimentUtilities::list_input_files($experiment); ?></td>
         </tr>
         <tr>
             <td><strong>Outputs</strong></td>
