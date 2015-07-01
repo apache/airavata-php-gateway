@@ -1,6 +1,6 @@
-$( document).ready( function(){
-	
-		//show options on hovering on a gateway
+$(document).ready(function () {
+
+    //show options on hovering on a gateway
 		$(".panel-title").hover( 
 			function(){
 				$(this).find(".gateway-options").addClass("in");
@@ -43,8 +43,8 @@ $( document).ready( function(){
 			crId = $(this).val();
 			//This is done as Jquery creates problems when using period(.) in id or class.
 			crId = crId.replace(/\./g,"_");
-			$(this).parent().parent().find(".pref-space").html( $("#cr-" + crId).html());
-		});
+            $(".pref-space").html($("#cr-" + crId).html());
+        });
 
 		$(".edit-gateway").click( function(){
 			$(".edit-gp-name").val( $(this).data("gp-name") );
