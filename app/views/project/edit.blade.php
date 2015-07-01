@@ -27,13 +27,13 @@
                    class="form-control"
                    name="project-name"
                    id="project-name"
-                   value="{{ $project->name }}" required>
+                   value="{{ $project->name }}" required maxlength="50">
         </div>
         <div class="form-group">
             <label for="project-description">Project Description</label>
             <textarea class="form-control"
                       name="project-description"
-                      id="project-description">{{ $project->description }}</textarea>
+                      id="project-description" maxlength="200">{{ $project->description }}</textarea>
             <input type="hidden" name="projectId" value="{{ Input::get('projId') }}"/>
         </div>
 

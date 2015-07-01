@@ -26,12 +26,12 @@
         <div class="form-group required">
             <label for="experiment-name" class="control-label">Experiment Name</label>
             <input type="text" class="form-control" name="experiment-name" id="experiment-name"
-                   placeholder="Enter experiment name" autofocus required="required">
+                   placeholder="Enter experiment name" autofocus required="required" maxlength="50">
         </div>
         <div class="form-group">
             <label for="experiment-description">Experiment Description</label>
             <textarea class="form-control" name="experiment-description" id="experiment-description"
-                      placeholder="Optional: Enter a short description of the experiment"></textarea>
+                      placeholder="Optional: Enter a short description of the experiment" maxlength="200"></textarea>
         </div>
         <div class="form-group required">
             <label for="project" class="control-label">Project</label>

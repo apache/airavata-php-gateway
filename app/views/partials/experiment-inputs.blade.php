@@ -1,13 +1,15 @@
 <div class="form-group required">
     <label for="experiment-name" class="control-label">Experiment Name</label>
     <input type="text" class="form-control" name="experiment-name" id="experiment-name"
-           placeholder="Enter experiment name" autofocus required="required" {{ $expInputs['disabled'] }} value="{{
+           placeholder="Enter experiment name" autofocus required="required" maxlength="50" {{ $expInputs['disabled'] }}
+    value="{{
     $expInputs['experimentName'] }}">
 </div>
 <div class="form-group">
     <label for="experiment-description">Experiment Description</label>
     <textarea class="form-control" name="experiment-description" id="experiment-description"
-              placeholder="Optional: Enter a short description of the experiment" {{ $expInputs['disabled'] }}>{{
+              placeholder="Optional: Enter a short description of the experiment" maxlength="200" {{
+    $expInputs['disabled'] }}>{{
     $expInputs['experimentDescription'] }}</textarea>
 </div>
 <div class="form-group required">
