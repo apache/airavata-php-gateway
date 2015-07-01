@@ -72,5 +72,19 @@
         var emailInput = $(this).parent().find("#emailAddresses").clone();
         emailInput.removeAttr("id").removeAttr("required").val("").appendTo(".emailAddresses");
     });
+
+    $("#compute-resource").change(function () {
+        var crId = $(this).val();
+        $(".loading-img ").removeClass("hide");
+        $.ajax({
+            url: '../experiment/getQueueView',
+            type: 'get',
+            data: {crId: crId},
+            success: function (data) {
+                $(".queue-view").html(data);
+                $(".loading-img ").addClass("hide");
+            }
+        });
+    });
 </script>
 @stop
