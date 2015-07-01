@@ -632,7 +632,6 @@ class ExperimentUtilities
             case 'CREATED':
             case 'VALIDATED':
             case 'SCHEDULED':
-            case 'CANCELED':
             case 'FAILED':
                 $expVal["editable"] = true;
                 break;
