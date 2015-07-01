@@ -27,7 +27,7 @@
                    class="form-control"
                    name="project-name"
                    id="project-name"
-                   value="{{ $project->name }}">
+                   value="{{ $project->name }}" required>
         </div>
         <div class="form-group">
             <label for="project-description">Project Description</label>
