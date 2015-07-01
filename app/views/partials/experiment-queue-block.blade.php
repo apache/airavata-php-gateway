@@ -26,6 +26,7 @@
                     class="node-count alert-warning"></span>)</span></label>
         <input type="number" class="form-control" name="node-count" id="node-count" min="1"
                value="@if(isset($expVal) ){{ $expVal['scheduling']->nodeCount }}@else{{$queueDefaults['nodeCount']}}@endif"
+               required
         @if(isset($expVal) ) @if(!$expVal['editable']){{disabled}} @endif @endif>
     </div>
     <div class="form-group">
@@ -33,6 +34,7 @@
                     class="cpu-count alert-warning"></span>)</span></label>
         <input type="number" class="form-control" name="cpu-count" id="cpu-count" min="1"
                value="@if(isset($expVal) ){{ $expVal['scheduling']->totalCPUCount }}@else{{$queueDefaults['cpuCount']}}@endif"
+               required
         @if(isset($expVal)) @if(!$expVal['editable']){{disabled}} @endif @endif>
     </div>
     <div class="form-group">
@@ -40,8 +42,9 @@
                     class="walltime-count alert-warning"></span>)</span></label>
 
         <div class="input-group">
-            <input type="number" class="form-control" name="wall-time" id="wall-time" min="0"
+            <input type="number" class="form-control" name="wall-time" id="wall-time" min="1"
                    value="@if(isset($expVal) ){{ $expVal['scheduling']->wallTimeLimit }}@else{{$queueDefaults['wallTimeLimit']}}@endif"
+                   required
             @if(isset($expVal)) @if(!$expVal['editable']){{disabled}} @endif @endif>
             <span class="input-group-addon">minutes</span>
         </div>
