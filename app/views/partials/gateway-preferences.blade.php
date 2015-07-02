@@ -1,6 +1,5 @@
 <!-- String replace is done as Jquery creates problems when using period(.) in id or class. -->
-<div id="cr-{{ str_replace( '.', "
-     _", $computeResource->computeResourceId) }}" class="@if(isset( $show) ) @if( !$show) hide @endif @else hide @endif">
+<div id="cr-{{ str_replace( '.', "_", $computeResource->computeResourceId) }}" class="@if(isset( $show) ) @if( !$show) hide @endif @else hide @endif">
 <h3 class="text-center">Set Preferences</h3>
 <div class="form-group">
     <label class="control-label col-md-3">Override by Airavata</label>
