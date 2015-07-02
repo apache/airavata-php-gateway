@@ -314,7 +314,7 @@ to be uncommented when actually in use.
 
 {{ HTML::script('js/moment.js')}}
 {{ HTML::script('js/datetimepicker.js')}}
-
+{{ HTML::script('js/time-conversion.js')}}
 <script>
 
     //make first tab of accordion open by default.

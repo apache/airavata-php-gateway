@@ -31,9 +31,13 @@ function convertTimestamp(timestamp) {
 }
 
 $(document).ready( function(){
+    updateTime();
+});
+
+function updateTime(){
     var elements = document.getElementsByClassName("time"),
-    i = elements.length;
+        i = elements.length;
     while (i--) {
         elements[i].innerHTML = convertTimestamp(elements[i].getAttribute("unix-time"));
     }
-});
+}

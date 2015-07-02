@@ -119,6 +119,8 @@
                 async: false,
                 success: function (data) {
                     $(".experiment-container").html(data);
+                    //from time-conversion.js
+                    updateTime();
                 }
             });
         }
@@ -143,6 +145,8 @@
                 async: false,
                 success: function (data) {
                     $(".experiment-container").html(data);
+                    //from time-conversion.js
+                    updateTime();
                 }
             });
         }
@@ -167,6 +171,8 @@
                 async: false,
                 success: function (data) {
                     $(".experiment-container").html(data);
+                    //from time-conversion.js
+                    updateTime();
                 }
             });
         }
@@ -191,6 +197,8 @@
                 async: false,
                 success: function (data) {
                     $(".experiment-container").html(data);
+                    //from time-conversion.js
+                    updateTime();
                 }
             });
         }
