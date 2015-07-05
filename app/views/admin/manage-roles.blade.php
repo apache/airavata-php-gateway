@@ -53,7 +53,7 @@
                     </button>
                 </div>
                 <div class="add-role col-md-6">
-                    <form role="form" action="{{URL::to('/')}}/admin/addrole" method="POST" class="add-role-form">
+                    <form role="form" action="{{URL::to('/')}}/admin/add-role" method="POST" class="add-role-form">
                         <div class="form-group">
                             <label>Enter Role Name</label>
                             <input type="text" name="role" class="form-control"/>
@@ -85,7 +85,7 @@
      aria-hidden="true">
     <div class="modal-dialog">
 
-        <form action="{{URL::to('/')}}/admin/deleterole" method="POST">
+        <form action="{{URL::to('/')}}/admin/delete-role" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="text-center">Delete Role Confirmation</h3>
