@@ -69,39 +69,6 @@ class ProjectController extends BaseController
         }
     }
 
-    public function searchView()
-    {
-        return View::make('project/search');
-    }
-
-    public function searchSubmit()
-    {
-        $search = Input::get('search');
-        if (isset($search)) {
-            $pageNo = 1;
-        } else {
-            $pageNo = Input::get('pageNo');
-            $prev = Input::get('prev');
-            if (empty($pageNo)) {
-                $pageNo = 1;
-            } else {
-                if (isset($prev)) {
-                    $pageNo -= 1;
-                } else {
-                    $pageNo += 1;
-                }
-            }
-        }
-
-        $projects = ProjectUtilities::get_projsearch_results_with_pagination(Input::get("search-key"),
-            Input::get("search-value"), $this->limit, ($pageNo - 1) * $this->limit);
-        return View::make('project/search', array(
-                'pageNo' => $pageNo,
-                'limit' => $this->limit,
-                'projects' => $projects)
-        );
-    }
-
     public function browseView()
     {
         $pageNo = Input::get('pageNo');
@@ -116,7 +83,14 @@ class ProjectController extends BaseController
             }
         }
 
-        $projects = ProjectUtilities::get_all_user_projects_with_pagination($this->limit, ($pageNo - 1) * $this->limit);
+        $searchValue = Input::get("search-value");
+        if(!empty($searchValue)){
+            $projects = ProjectUtilities::get_projsearch_results_with_pagination(Input::get("search-key"),
+                Input::get("search-value"), $this->limit, ($pageNo - 1) * $this->limit);
+        }else{
+            $projects = ProjectUtilities::get_all_user_projects_with_pagination($this->limit, ($pageNo - 1) * $this->limit);
+        }
+
         return View::make('project/browse', array(
             'pageNo' => $pageNo,
             'limit' => $this->limit,

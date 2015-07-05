@@ -714,24 +714,28 @@ class ExperimentUtilities
 
         try {
             $filters = array();
-            if ($inputs["status-type"] != "ALL") {
-                $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::STATUS] = $inputs["status-type"];
+            if(!empty($inputs["status-type"])){
+                if ($inputs["status-type"] != "ALL") {
+                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::STATUS] = $inputs["status-type"];
+                }
             }
-            switch ($inputs["search-key"]) {
-                case 'experiment-name':
-                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = $inputs["search-value"];
-                    break;
-                case 'experiment-description':
-                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::EXPERIMENT_DESC] = $inputs["search-value"];
-                    break;
-                case 'application':
-                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::APPLICATION_ID] = $inputs["search-value"];
-                    break;
-                case 'creation-time':
-                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::FROM_DATE] = strtotime($inputs["from-date"]) * 1000;
-                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::TO_DATE] = strtotime($inputs["to-date"]) * 1000;
-                    break;
-                case '':
+            if(!empty($inputs["search-key"])){
+                switch ($inputs["search-key"]) {
+                    case 'experiment-name':
+                        $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = $inputs["search-value"];
+                        break;
+                    case 'experiment-description':
+                        $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::EXPERIMENT_DESC] = $inputs["search-value"];
+                        break;
+                    case 'application':
+                        $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::APPLICATION_ID] = $inputs["search-value"];
+                        break;
+                    case 'creation-time':
+                        $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::FROM_DATE] = strtotime($inputs["from-date"]) * 1000;
+                        $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::TO_DATE] = strtotime($inputs["to-date"]) * 1000;
+                        break;
+                    case '':
+                }
             }
             $experiments = Airavata::searchExperiments(
                 Session::get('gateway_id'), Session::get('username'), $filters, $limit, $offset);

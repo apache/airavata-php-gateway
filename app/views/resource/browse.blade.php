@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div class="container">
+<div class="container" style="max-width: 80%;">
     @if( Session::has("message"))
     <div class="col-md-12">
         <span class="alert alert-success">{{ Session::get("message") }}</span>
@@ -20,13 +20,20 @@
     Resource" to
     register a new resources.') }}
     @else
+    <br/>
     <div class="col-md-12">
-        <div class="row">
-            <div class="col-md-6">
-                <h3 style="margin:0;">Existing Compute Resources :</h3>
+        <div class="panel panel-default form-inline">
+            <div class="panel-heading">
+                <h3 style="margin:0;">Search Compute Resources</h3>
             </div>
-            <input type="text" class="pull-right filterinput col-md-6" placeholder="Search by Compute Resource Name"/>
+            <div class="panel-body">
+                <div class="form-group search-text-block">
+                    <label>Compute Resource Name </label>
+                    <input type="search" class="form-control filterinput"/>
+                </div>
+            </div>
         </div>
+
         <div class="row">
             <div class="table-responsive">
                 <table class="table">

@@ -105,13 +105,11 @@ class CommonUtilities
                 'Project' => array
                 (
                     array('label' => 'Create', 'url' => URL::to('/') . '/project/create', "nav-active" => "project"),
-                    array('label' => 'Search', 'url' => URL::to('/') . '/project/search', "nav-active" => "project"),
                     array('label' => 'Browse', 'url' => URL::to('/') . '/project/browse', "nav-active" => "project")
                 ),
                 'Experiment' => array
                 (
                     array('label' => 'Create', 'url' => URL::to('/') . '/experiment/create', "nav-active" => "experiment"),
-                    array('label' => 'Search', 'url' => URL::to('/') . '/experiment/search', "nav-active" => "experiment"),
                     array('label' => 'Browse', 'url' => URL::to('/') . '/experiment/browse', "nav-active" => "experiment")
                 )
             );

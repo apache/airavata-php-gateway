@@ -46,10 +46,6 @@ Route::post("project/create", "ProjectController@createSubmit");
 
 Route::get("project/summary", "ProjectController@summary");
 
-Route::get("project/search", "ProjectController@searchView");
-
-Route::post("project/search", "ProjectController@searchSubmit");
-
 Route::get("project/edit", "ProjectController@editView");
 
 Route::post("project/edit", "ProjectController@editSubmit");
@@ -69,10 +65,6 @@ Route::post("experiment/create", "ExperimentController@createSubmit");
 Route::get("experiment/summary", "ExperimentController@summary");
 
 Route::post("experiment/summary", "ExperimentController@expChange");
-
-Route::get("experiment/search", "ExperimentController@searchView");
-
-Route::post("experiment/search", "ExperimentController@searchSubmit");
 
 Route::get("experiment/edit", "ExperimentController@editView");
 
