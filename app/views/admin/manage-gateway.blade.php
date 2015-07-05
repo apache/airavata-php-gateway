@@ -64,7 +64,7 @@
                                     </div>
                                     <div class="col-md-10">
                                         @if( isset( $gp->profile->computeResourcePreferences) )
-                                        <div class="col-md-12">
+                                        <div>
                                             <h3>Existing Compute Resources :</h3>
                                         </div>
                                         <div class="accordion-inner">
