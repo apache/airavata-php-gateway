@@ -43,7 +43,7 @@
         <label class="control-label col-md-3">Data Movement</label>
 
         <div class="col-md-9">
-            <select name="dataMovement[]" class="form-control">
+            <select name="dataMovement[]" readonly class="form-control">
                 <option>select</option>
                 <option value="1"
                 @if( isset( $appOutputs) ) @if( $appOutputs->dataMovement == 1) selected @endif @endif>True</option>

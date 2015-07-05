@@ -71,7 +71,7 @@
         <label class="control-label col-md-4">Data is Staged?</label>
 
         <div class="col-md-8">
-            <select name="dataStaged[]" class="form-control">
+            <select name="dataStaged[]" readonly class="form-control">
                 <option>select</option>
                 <option value="1"
                 @if( isset( $appInputs) ) @if( $appInputs->dataStaged == 1) selected @endif @endif>True</option>

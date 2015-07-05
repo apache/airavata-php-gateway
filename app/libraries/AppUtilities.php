@@ -42,9 +42,6 @@ class AppUtilities
         $modules = AppUtilities::getAllModules();
         $appInterfaces = Airavata::getAllApplicationInterfaces(Session::get("gateway_id"));
 
-
-        $InputDataObjectType = new InputDataObjectType();
-
         return array(
             "appInterfaces" => $appInterfaces,
             "dataTypes" => $dataType::$__names,
