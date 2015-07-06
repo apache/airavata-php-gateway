@@ -33,7 +33,7 @@
 
                 <div class="form-group search-text-block">
                     <label for="search-value">for</label>
-                    <input type="search" class="form-control" name="search-value" id="search-value" placeholder="value" required
+                    <input type="search" class="form-control" name="search-value" id="search-value" placeholder="value"
                            value="<?php if (isset($_POST['search-value'])) echo $_POST['search-value'] ?>">
                 </div>
 

@@ -8,7 +8,7 @@
 
 <div class="container" style="max-width: 80%;">
 
-    <form action="{{ URL::to('/') }}/project/search" method="post" class="form-inline" role="form">
+    <form action="{{ URL::to('/') }}/project/browse" method="post" class="form-inline" role="form">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3>Search for Projects</h3>
