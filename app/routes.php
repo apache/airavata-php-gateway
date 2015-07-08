@@ -186,6 +186,8 @@ Route::post("admin/delete-role", "AdminController@deleteRole");
 
 Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 
+Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser");
+
 //Super Admin Specific calls
 
 Route::post("admin/add-gateway", "AdminController@addGateway");

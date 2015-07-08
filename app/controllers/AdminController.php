@@ -88,6 +88,34 @@ class AdminController extends BaseController {
 		return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been added.");
 	}
 
+    public function addRolesToUser(){
+        $currentRoles = (array)WSIS::getUserRoles(Input::get("username"));
+        $roles["new"] = array_diff(Input::all()["roles"], $currentRoles);
+        $roles["deleted"] = array_diff($currentRoles, Input::all()["roles"]);
+
+        $index = array_search('Internal/everyone',$roles["new"]);
+        if($index !== FALSE){
+            unset($roles["new"][$index]);
+        }
+
+        $index = array_search('Internal/everyone',$roles["deleted"]);
+        if($index !== FALSE){
+            unset($roles["deleted"][$index]);
+        }
+
+        $username = Input::all()["username"];
+        WSIS::updateUserRoles($username, $roles);
+        return Redirect::to("admin/dashboard/roles")->with( "message", "Roles has been added.");
+    }
+
+    public function removeRoleFromUser(){
+        $roles["deleted"] = array(Input::all()["roleName"]);
+        $roles["new"] = array();
+        $username = Input::all()["username"];
+        WSIS::updateUserRoles($username, $roles);
+        return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been deleted.");
+    }
+
 	public function getRoles(){
 		return json_encode((array)WSIS::getUserRoles(Input::get("username")));
 	}
