@@ -124,7 +124,7 @@ return array(
         /**
          * Default total core count
          */
-        'total-cpu-count' => '4',
+        'total-cpu-count' => '16',
 
         /**
          * Default wall time limit
