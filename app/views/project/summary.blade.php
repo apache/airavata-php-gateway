@@ -7,16 +7,16 @@
 @section('content')
 
 <div class="container" style="max-width: 750px;">
-
-
-<h1>Project Summary</h1>
-
-
-
     <?php
-
-    $project = ProjectUtilities::get_project($_GET['projId']);
-
+        $project = ProjectUtilities::get_project($_GET['projId']);
+    ?>
+    <h1>Project Summary
+        @if( !isset($dashboard))
+        <small><a href="{{ URL::to('/') }}/project/summary?projId={{ $project->projectID }}"
+                  title="Refresh"><span class="glyphicon glyphicon-refresh refresh-exp"></span></a></small>
+        @endif
+    </h1>
+    <?php
 
     echo '<div>';
 
