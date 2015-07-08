@@ -43,14 +43,14 @@
 
         <div class="input-group">
             <input type="number" class="form-control" name="wall-time" id="wall-time" min="1"
-                   value="@if(isset($expVal) ){{ $expVal['scheduling']->wallTimeLimit }}@else{{$queueDefaults['wallTimeLimit']}}@endif"
+                   value="@if(isset($expVal)){{$expVal['scheduling']->wallTimeLimit}}@else{{$queueDefaults['wallTimeLimit']}}@endif"
                    required
             @if(isset($expVal)) @if(!$expVal['editable']){{disabled}} @endif @endif>
             <span class="input-group-addon">minutes</span>
         </div>
     </div>
     <div class="form-group">
-        <label for="wall-time">Total Physical Memory <span>( Max Allowed Memory - <span
+        <label for="physical-memory">Total Physical Memory <span>( Max Allowed Memory - <span
                     class="memory-count alert-warning"></span>)</span></label>
 
         <div class="input-group">
@@ -93,8 +93,8 @@
                     $(".cpu-count").parent().addClass("hide");
 
                 //walltime-count
-                if (queues[i]['maxRunTime'] != 0 && queues[i]['maxRunTime'] != null) {
-                    $("#wall-time").attr("max", queues[i]['maxRunTime']).val(0);
+                if (queues[i]['maxRunTime'] != null && queues[i]['maxRunTime'] != 0) {
+                    $("#wall-time").attr("max", queues[i]['maxRunTime']);
                     $(".walltime-count").html(queues[i]['maxRunTime']);
                     $(".walltime-count").parent().removeClass("hide");
                 }
