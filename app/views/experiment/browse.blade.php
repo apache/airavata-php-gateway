@@ -41,7 +41,7 @@
                     <option value="ALL">Status</option>
                     <?php
                     foreach ($expStates as $index => $state) {
-                        if (isset($input) && $state == $input["status-type"]) {
+                        if (isset($input) && isset($input["status-type"]) && $state == $input["status-type"]) {
                             echo '<option value="' . $state . '" selected>' . $state . '</option>';
                         } else {
                             echo '<option value="' . $state . '">' . $state . '</option>';
