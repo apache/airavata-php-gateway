@@ -880,7 +880,18 @@ class ExperimentUtilities
 
     public static function getExpStates()
     {
-        return ExperimentState::$__names;
+        $states = ExperimentState::$__names;
+        //removing UNKNOWN and SUSPENDED states. (AIRAVATA-1756)
+        $index = array_search('UNKNOWN',$states);
+        if($index !== FALSE){
+            unset($states[$index]);
+        }
+        $index = array_search('SUSPENDED',$states);
+        if($index !== FALSE){
+            unset($states[$index]);
+        }
+
+        return $states;
     }
 
 

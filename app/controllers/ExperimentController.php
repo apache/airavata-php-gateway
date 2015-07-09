@@ -250,6 +250,7 @@ class ExperimentController extends BaseController
         $experimentStates = ExperimentUtilities::getExpStates();
 
         return View::make('experiment/browse', array(
+            'input' => Input::all(),
             'pageNo' => $pageNo,
             'limit' => $this->limit,
             'expStates' => $experimentStates,
