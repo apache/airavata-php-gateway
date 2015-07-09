@@ -27,8 +27,6 @@ class ExperimentController extends BaseController
 
     public function createSubmit()
     {
-        $inputs = Input::all();
-
         if (isset($_POST['continue'])) {
             Session::put('exp_create_continue', true);
 

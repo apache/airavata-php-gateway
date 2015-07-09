@@ -75,7 +75,7 @@
             if (queues[i]['queueName'] == selectedQueue) {
                 //node-count
                 if (queues[i]['maxNodes'] != 0 && queues[i]['maxNodes'] != null) {
-                    $("#node-count").attr("max", queues[i]['maxNodes']).val(1);
+                    $("#node-count").attr("max", queues[i]['maxNodes']);
                     $(".node-count").html(queues[i]['maxNodes']);
                     $(".node-count").parent().removeClass("hide");
                 }
@@ -85,7 +85,7 @@
 
                 //core-count
                 if (queues[i]['maxProcessors'] != 0 && queues[i]['maxProcessors'] != null) {
-                    $("#cpu-count").attr("max", queues[i]['maxProcessors']).val(1);
+                    $("#cpu-count").attr("max", queues[i]['maxProcessors']);
                     $(".cpu-count").html(queues[i]['maxProcessors']);
                     $(".cpu-count").parent().removeClass("hide");
                 }

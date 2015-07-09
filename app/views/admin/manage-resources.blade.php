@@ -25,9 +25,8 @@
         </div>
         <div class="container-fluid">
             <div class="col-md-12">
-                <h1 class="text-center well alert alert-danger">Proposed(Dummy) UI for maintaining availability of
-                    Resources. More fields can be added.</h1>
-
+<!--                <h1 class="text-center well alert alert-danger">Proposed(Dummy) UI for maintaining availability of-->
+<!--                    Resources. More fields can be added.</h1>-->
                 <h1 class="text-center">Resources</h1>
 
                 <table class="table table-striped table-condensed">
