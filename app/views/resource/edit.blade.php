@@ -408,7 +408,15 @@
                         @endforeach
                     </select>
                 </div>
-
+                <div class="form-group">
+                    <label class="control-label">Select Monitoring Mode</label>
+                    <select name="monitorMode">
+                        @foreach( $monitorModes as $index => $mode)
+                        <option value="{{ $index }}"
+                        @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="form-group">
                     <label class="control-label">Alternate SSH Host Name</label>
                     <input class='form-control' name='alternativeSSHHostName'
@@ -430,22 +438,31 @@
                         @if( $DMI->securityProtocol == $index ) selected @endif>{{ $sp }}</option>
                         @endforeach
                     </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Select Monitoring Mode</label>
+                    <select name="monitorMode">
+                        @foreach( $monitorModes as $index => $mode)
+                        <option value="{{ $index }}"
+                        @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-                    <div>
-                        <div class="form-group required">
-                            <label class="control-label">Grid FTP End Points</label>
-                            @foreach( $DMI->gridFTPEndPoints as $endPoint)
-                            <input class="form-control" maxlength="30" name="gridFTPEndPoints[]" required="required"
-                                   value="{{$endPoint}}"/>
-                            @endforeach
-                            <button type="button" class="btn btn-sm btn-default add-gridFTPEndPoint">Add More Grid FTP
-                                End Points
-                            </button>
-                        </div>
+                <div>
+                    <div class="form-group required">
+                        <label class="control-label">Grid FTP End Points</label>
+                        @foreach( $DMI->gridFTPEndPoints as $endPoint)
+                        <input class="form-control" maxlength="30" name="gridFTPEndPoints[]" required="required"
+                               value="{{$endPoint}}"/>
+                        @endforeach
+                        <button type="button" class="btn btn-sm btn-default add-gridFTPEndPoint">Add More Grid FTP
+                            End Points
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn">Update</button>
-                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn">Update</button>
                 </div>
                 @elseif( $selectedDMIIndex == $dataMovementProtocolsObject::UNICORE_STORAGE_SERVICE)
                 <div class="form-group">
@@ -456,17 +473,26 @@
                         @if( $DMI->securityProtocol == $index ) selected @endif>{{ $sp }}</option>
                         @endforeach
                     </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Select Monitoring Mode</label>
+                    <select name="monitorMode">
+                        @foreach( $monitorModes as $index => $mode)
+                        <option value="{{ $index }}"
+                        @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-                    <div>
-                        <div class="form-group required">
-                            <label class="control-label">Unicore End Point URL</label>
-                            <input class="form-control" maxlength="30" name="unicoreEndPointURL" required="required"
-                                   value="{{ $DMI->unicoreEndPointURL }}"/>
-                        </div>
+                <div>
+                    <div class="form-group required">
+                        <label class="control-label">Unicore End Point URL</label>
+                        <input class="form-control" maxlength="30" name="unicoreEndPointURL" required="required"
+                               value="{{ $DMI->unicoreEndPointURL }}"/>
                     </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn">Update</button>
-                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn">Update</button>
                 </div>
                 @endif
             </form>
