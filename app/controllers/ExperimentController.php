@@ -234,7 +234,8 @@ class ExperimentController extends BaseController
     {
         $pageNo = Input::get('pageNo');
         $prev = Input::get('prev');
-        if (empty($pageNo) || empty(Input::all()["search-value"])) {
+        $isSearch = Input::get('search');
+        if (empty($pageNo) || isset($isSearch) ) {
             $pageNo = 1;
         } else {
             if (isset($prev)) {

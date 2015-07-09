@@ -736,7 +736,10 @@ class ExperimentUtilities
                         break;
                     case '':
                 }
+            }else{
+                $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = "*";
             }
+
             $experiments = Airavata::searchExperiments(
                 Session::get('gateway_id'), Session::get('username'), $filters, $limit, $offset);
         } catch (InvalidRequestException $ire) {
