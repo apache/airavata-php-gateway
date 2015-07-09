@@ -12,9 +12,7 @@
 */
 
 App::before(function ($request) {
-    $authzToken = new Airavata\Model\Security\AuthzToken();
-    $authzToken->accessToken = "emptyToken";
-    $apiVersion = Airavata::getAPIVersion($authzToken);
+    $apiVersion = Airavata::getAPIVersion();
     if (empty($apiVersion))
         return View::make("server-down");
 });
