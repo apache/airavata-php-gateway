@@ -420,6 +420,7 @@ class CRUtilities
         $computeResource = null;
 
         try {
+            /*
             if (Cache::has('CR-' . $id)) {
                 return Cache::get('CR-' . $id);
             } else {
@@ -427,6 +428,10 @@ class CRUtilities
                 Cache::put('CR-' . $id, $computeResource, Config::get('pga_config.airavata')['app-catalog-cache-duration']);
                 return $computeResource;
             }
+             */
+            $computeResource = Airavata::getComputeResource($id);
+            Cache::put('CR-' . $id, $computeResource, Config::get('pga_config.airavata')['app-catalog-cache-duration']);
+            return $computeResource;
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting the compute resource.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .

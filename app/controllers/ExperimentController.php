@@ -32,7 +32,17 @@ class ExperimentController extends BaseController
         if (isset($_POST['continue'])) {
             Session::put('exp_create_continue', true);
 
-            $computeResources = CRUtilities::create_compute_resources_select($_POST['application'], null);
+            $crs = CRUtilities::create_compute_resources_select($_POST['application'], null);
+            
+            $computeResources = null;
+            foreach ($crs as $key => $value) {
+                $computeResource = CRUtilities::get_compute_resource($key);
+                if ($computeResource -> active) {
+                    $computeResources[] = $value;
+                }
+            }
+
+            //$computeResources = CRUtilities::create_compute_resources_select($_POST['application'], null);
 
             $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
                 "nodeCount" => Config::get('pga_config.airavata')["node-count"],
