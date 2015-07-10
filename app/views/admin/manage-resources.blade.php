@@ -24,6 +24,7 @@
             @endif
         </div>
         <div class="container-fluid">
+            <div class="success-message"></div>
             <div class="col-md-12">
 <!--                <h1 class="text-center well alert alert-danger">Proposed(Dummy) UI for maintaining availability of-->
 <!--                    Resources. More fields can be added.</h1>-->
@@ -34,25 +35,27 @@
                         <th>ID</th>
                         <th>Name</th>
                         <th>
-                            Status
+                            Enabled
                         </th>
                     </tr>
-                    @foreach( (array)$resources as $resourceId => $resourceName )
+                    @foreach( (array)$resources as $resource)
+                    <?php
+                        $resourceId = $resource->computeResourceId;
+                        $resourceName = $resource->hostName;
+                        $enabled = $resource->enabled;
+                    ?>
                     <tr class="user-row">
                         <td>{{ $resourceId }}</td>
                         <td>{{ $resourceName }}</td>
                         <td>
-                            <!--This is a random selection -->
-                            @if( strpos( $resourceName, "a") )
-                            <div class="btn-group btn-toggle">
-                                <button class="btn btn-xs btn-default">ON</button>
-                                <button class="btn btn-xs btn-danger active">Switch OFF</button>
+                            @if(!$enabled)
+                            <div class="checkbox">
+                                <input class="resource-status" resourceId="{{$resourceId}}" type="checkbox">
                             </div>
                             @else
-                            <div class="btn-group btn-toggle">
-                                <button class="btn btn-xs btn-success active">Switch ON</button>
-                                <button class="btn btn-xs btn-default">OFF</button>
-                            </div>
+                            <div class="checkbox">
+                                <input class="resource-status" type="checkbox" resourceId="{{$resourceId}}" checked>
+                             </div>
                             @endif
                         </td>
                     </tr>
@@ -67,4 +70,40 @@
 
 @section('scripts')
 @parent
+<script>
+    $('.resource-status').click(function() {
+        var $this = $(this);
+        if ($this.is(':checked')) {
+            //enable compute resource
+            $resourceId = $this.attr("resourceId");
+            $.ajax({
+                type: 'POST',
+                url: "{{URL::to('/')}}/admin/enable-cr",
+                data: {
+                    'resourceId': $resourceId
+                },
+                async: true,
+                success: function (data) {
+                    console.log("enabled cr " + $resourceId);
+                    $(".success-message").html("<span class='alert alert-success col-md-12'>Successfully enabled compute resource</span>");
+                }
+            });
+        } else {
+            //disabled compute resource
+            $resourceId = $this.attr("resourceId");
+            $.ajax({
+                type: 'POST',
+                url: "{{URL::to('/')}}/admin/disable-cr",
+                data: {
+                    'resourceId': $resourceId
+                },
+                async: true,
+                success: function (data) {
+                    console.log("disabled cr " + $resourceId);
+                    $(".success-message").html("<span class='alert alert-success col-md-12'>Successfully disabled compute resource</span>");
+                }
+            });
+        }
+    });
+</script>
 @stop

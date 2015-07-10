@@ -184,6 +184,10 @@ Route::post("admin/check-roles", "AdminController@getRoles");
 
 Route::post("admin/delete-role", "AdminController@deleteRole");
 
+Route::post("admin/enable-cr", "AdminController@enableComputeResource");
+
+Route::post("admin/disable-cr", "AdminController@disableComputeResource");
+
 Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 
 Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser");

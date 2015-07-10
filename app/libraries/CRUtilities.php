@@ -291,7 +291,7 @@ class CRUtilities
         else {
             $crObjects = array();
             foreach ($crNames as $id => $crName) {
-                $crObjects[] = Airavata::getComputeResource($id);
+                array_push($crObjects, Airavata::getComputeResource($id));
             }
             return $crObjects;
         }
@@ -302,7 +302,7 @@ class CRUtilities
     {
         $appDeployments = Airavata::getAllApplicationDeployments(Session::get("gateway_id"));
 
-        return array('crObjects' => CRUtilities::getAllCRObjects(true),
+        return array('crObjects' => CRUtilities::getAllCRObjects(),
             'appDeployments' => $appDeployments
         );
     }

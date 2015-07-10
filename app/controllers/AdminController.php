@@ -172,4 +172,18 @@ class AdminController extends BaseController {
             return View::make("partials/experiment-container", array("expContainer" => $expContainer, "expStates" => $expStates));
         }
     }
+
+    public function enableComputeResource(){
+        $resourceId = Input::get("resourceId");
+        $computeResource = CRUtilities::get_compute_resource($resourceId);
+        $computeResource->enabled = true;
+        CRUtilities::register_or_update_compute_resource($computeResource, true);
+    }
+
+    public function disableComputeResource(){
+        $resourceId = Input::get("resourceId");
+        $computeResource = CRUtilities::get_compute_resource($resourceId);
+        $computeResource->enabled = false;
+        CRUtilities::register_or_update_compute_resource($computeResource, true);
+    }
 }

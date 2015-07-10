@@ -24,11 +24,13 @@ class ComputeResource extends BaseController
 
         $hostAliases = Input::get("hostaliases");
         $ips = Input::get("ips");
+        //Compute resource is by default enabled
         $computeDescription = array(
             "hostName" => trim(Input::get("hostname")),
             "hostAliases" => array_unique(array_filter($hostAliases)),
             "ipAddresses" => array_unique(array_filter($ips)),
-            "resourceDescription" => Input::get("description")
+            "resourceDescription" => Input::get("description"),
+            "enabled" => true
         );
         $computeResource = CRUtilities::register_or_update_compute_resource($computeDescription);
 

@@ -172,7 +172,7 @@ class ExperimentController extends BaseController
 
         $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
         $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
-        //var_dump( $expVal); exit;
+
         $computeResources = CRUtilities::create_compute_resources_select($experiment->applicationId, $expVal['scheduling']->resourceHostId);
 
         $experimentInputs = array(
