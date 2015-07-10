@@ -63,6 +63,10 @@
 </div>
 
 <script>
+
+    var selectedQueue = $("#select-queue").val();
+    getQueueData(selectedQueue);
+
     $("#select-queue").change(function () {
         var selectedQueue = $(this).val();
         getQueueData(selectedQueue);
