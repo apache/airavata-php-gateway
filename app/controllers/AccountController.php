@@ -49,7 +49,7 @@ class AccountController extends BaseController
                 $address, $country, $telephone, $mobile, $im, $url);
             CommonUtilities::print_success_message('New user created!');
 
-            return View::make('home');
+            return View::make('account/login');
         }
     }
 
