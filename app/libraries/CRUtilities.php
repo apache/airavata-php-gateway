@@ -298,11 +298,11 @@ class CRUtilities
 
     }
 
-    public static function getBrowseCRData()
+    public static function getBrowseCRData($onlyNames)
     {
         $appDeployments = Airavata::getAllApplicationDeployments(Session::get("gateway_id"));
 
-        return array('crObjects' => CRUtilities::getAllCRObjects(true),
+        return array('crObjects' => CRUtilities::getAllCRObjects($onlyNames),
             'appDeployments' => $appDeployments
         );
     }

@@ -78,7 +78,7 @@ class AdminController extends BaseController {
 	}
 
 	public function resourcesView(){
-		$data = CRUtilities::getBrowseCRData();
+		$data = CRUtilities::getBrowseCRData(false);
 		$allCRs = $data["crObjects"];
 		return View::make("admin/manage-resources", array("resources" => $allCRs) );
 	}

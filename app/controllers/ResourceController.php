@@ -188,7 +188,7 @@ class ResourceController extends BaseController
 
     public function browseView()
     {
-        $data = CRUtilities::getBrowseCRData();
+        $data = CRUtilities::getBrowseCRData(true);
         $allCRs = $data["crObjects"];
         $appDeployments = $data["appDeployments"];
 
