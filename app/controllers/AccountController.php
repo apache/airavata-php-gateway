@@ -14,7 +14,7 @@ class AccountController extends BaseController
             "username" => "required|min:6",
             "password" => "required|min:6",
             "confirm_password" => "required|same:password",
-            "email" => "required",
+            "email" => "required|email",
         );
 
         $validator = Validator::make(Input::all(), $rules);
