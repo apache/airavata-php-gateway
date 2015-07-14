@@ -22,9 +22,9 @@
             <a href="{{ URL::to('/')}}/admin/dashboard/experiments"><i
                     class="fa fa-fw fa-experiments"></i>Experiments</a>
         </li>
-        <li>
-            <a href="forms.html"><i class="fa fa-fw fa-edit"></i> Settings</a>
-        </li>
+<!--        <li>-->
+<!--            <a href="forms.html"><i class="fa fa-fw fa-edit"></i> Settings</a>-->
+<!--        </li>-->
         <!--
         <li>
             <a href="bootstrap-elements.html"><i class="fa fa-fw fa-desktop"></i> Bootstrap Elements</a>
