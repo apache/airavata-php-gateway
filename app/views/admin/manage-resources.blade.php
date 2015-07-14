@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/bootstrap-toggle.css')}}
 {{ HTML::style('css/admin.css')}}
 @stop
 
@@ -49,13 +50,9 @@
                         <td>{{ $resourceName }}</td>
                         <td>
                             @if(!$enabled)
-                            <div class="checkbox">
-                                <input class="resource-status" resourceId="{{$resourceId}}" type="checkbox">
-                            </div>
+                                <input unchecked class="resource-status" resourceId="{{$resourceId}}" type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="danger">
                             @else
-                            <div class="checkbox">
-                                <input class="resource-status" type="checkbox" resourceId="{{$resourceId}}" checked>
-                             </div>
+                                <input checked class="resource-status" resourceId="{{$resourceId}}" type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-onstyle="success" data-offstyle="danger">
                             @endif
                         </td>
                     </tr>
@@ -70,10 +67,21 @@
 
 @section('scripts')
 @parent
+{{ HTML::script('js/bootstrap-toggle.js')}}
 <script>
-    $('.resource-status').click(function() {
-        var $this = $(this);
-        if ($this.is(':checked')) {
+    // instantiate bootstrap toggle button
+    $(".resource-status").bootstrapToggle();
+
+    // bootstrap toggle button wraps checkbox in its own div named toggle
+    $('.toggle').click(function() {
+        var $this = $(this).find(".resource-status");
+
+        /*  
+            * conditional needs to be flipped because of the way the toggle checkbox UI works.
+            * the state of checkbox AT clicktime is reported, but the intention is
+            * to get the state that the checkbox switches to.
+         */
+        if (!($this.is(':checked'))) {
             //enable compute resource
             $resourceId = $this.attr("resourceId");
             $.ajax({
