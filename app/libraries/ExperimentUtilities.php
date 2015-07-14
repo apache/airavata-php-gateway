@@ -583,12 +583,14 @@ class ExperimentUtilities
                     //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
                     $outputPath = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
                         Config::get('pga_config.airavata')['experiment-data-dir'], $output->value);
-                    $outputPathArray = explode("/", $outputPath);
+                    if(file_exists($outputPath)){
+                        $outputPathArray = explode("/", $outputPath);
 
-                    echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                            href="' . URL::to("/") . "/.." . str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-                            Config::get('pga_config.airavata')['experiment-data-dir'], $output->value) . '">' .
-                        $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        echo '<p>' . $output->name . ' : ' . '<a target="_blank"
+                                href="' . URL::to("/") . "/.." . str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
+                                Config::get('pga_config.airavata')['experiment-data-dir'], $output->value) . '">' .
+                            $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                    }
                 } elseif ($output->type == DataType::STRING) {
                     echo '<p>' . $output->value . '</p>';
                 }
