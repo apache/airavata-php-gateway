@@ -36,7 +36,7 @@
     <label class="control-label">Application Parallelism Type</label>
     <select name="parallelism" class="form-control" readonly>
         @foreach( $applicationParallelismTypes as $index=>$parallelismType)
-        <option value="{{$index}}"
+        <option value="{{$parallelismType}}"
         @if( isset( $deploymentObject) ) @if( $index == $deploymentObject->parallelism) selected @endif @endif>{{
         $parallelismType }}</option>
         @endforeach
