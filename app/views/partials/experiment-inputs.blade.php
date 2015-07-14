@@ -76,7 +76,7 @@
             </div>
         </div>
     </div>
-    <h3>Notifications</h3>
+    {{--<h3>Notifications</h3>
 
     <div class="form-group well">
         <label for=""></label>
@@ -92,7 +92,7 @@
             </div>
             <button type="button" class="addEmail btn btn-default">Add another Email</button>
         </div>
-    </div>
+    </div>--}}
 
     @if( $expInputs["advancedOptions"])
     <h3>Advanced Options</h3>
