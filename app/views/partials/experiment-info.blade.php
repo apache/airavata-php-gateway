@@ -71,7 +71,7 @@
 
             <?php
             foreach ($jobDetails as $job) echo '
-                <td>' . $job->jobDescription . '</td>
+                <td>' . nl2br($job->jobDescription) . '</td>
             ';
             ?>
         </tr>

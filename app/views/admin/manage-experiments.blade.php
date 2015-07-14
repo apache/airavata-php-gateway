@@ -346,7 +346,8 @@ to be uncommented when actually in use.
             type: 'get',
             success: function (data) {
                 $(".experiment-info").html(data);
-
+                //from time-conversion.js
+                updateTime();
             }
         }).complete(function () {
             $(".loading-img").addClass("hide");
