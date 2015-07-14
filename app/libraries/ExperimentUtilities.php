@@ -583,7 +583,7 @@ class ExperimentUtilities
                     //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
                     $outputPath = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
                         Config::get('pga_config.airavata')['experiment-data-dir'], $output->value);
-                    $outputPath = str_replace('//', '/', $outputPath);
+
                     if(file_exists(str_replace('//','/',$output->value))){
                         $outputPathArray = explode("/", $outputPath);
 
