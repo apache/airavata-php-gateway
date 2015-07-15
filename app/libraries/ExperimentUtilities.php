@@ -400,6 +400,9 @@ class ExperimentUtilities
             //create new experiment to receive the clone
             $experiment = Airavata::getExperiment($expId);
 
+            //Fixme - Input Files Dir
+
+
             $cloneId = Airavata::cloneExperiment($expId, 'Clone of ' . $experiment->name);
 
             CommonUtilities::print_success_message("<p>Experiment cloned!</p>" .
