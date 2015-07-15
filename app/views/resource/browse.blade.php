@@ -2,11 +2,18 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/admin.css')}}
+{{ HTML::style('css/datetimepicker.css')}}
 @stop
 
 @section('content')
 
-<div class="container" style="max-width: 80%;">
+<div id="wrapper">
+    <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+    @include( 'partials/dashboard-block')
+    <div id="page-wrapper">
+
+<div class="container-fluid">
     @if( Session::has("message"))
     <div class="col-md-12">
         <span class="alert alert-success">{{ Session::get("message") }}</span>
@@ -42,16 +49,32 @@
 
                         <th>Name</th>
                         <th>Id</th>
+                        <th>Enabled</th>
                         <th>Edit</th>
                         <th>View</th>
                         <th>Delete</th>
                     </tr>
 
-                    @foreach ($allCRs as $crId => $crName)
-
+                    @foreach($allCRs as $resource)
+                    <?php
+                        $crId = $resource->computeResourceId;
+                        $crName = $resource->hostName;
+                        $enabled = $resource->enabled;
+                    ?>
                     <tr id="crDetails">
                         <td>{{ $crName }}</td>
                         <td>{{ $crId }}</td>
+                        <td>
+                            @if(!$enabled)
+                            <div class="checkbox">
+                                <input class="resource-status" resourceId="{{$crId}}" type="checkbox">
+                            </div>
+                            @else
+                            <div class="checkbox">
+                                <input class="resource-status" type="checkbox" resourceId="{{$crId}}" checked>
+                            </div>
+                            @endif
+                        </td>
                         <td><a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
@@ -106,6 +129,8 @@
         </div>
 
     </div>
+</div>
+</div>
 
     @stop
     @section('scripts')
@@ -140,6 +165,41 @@
             $(".delete-cr-name").html("'" + $(this).data("delete-cr-name") + "'");
             $(".delete-crId").val($(this).data("crid"));
             $(".deploymentCount").html($(this).data("deployment-count"));
+        });
+
+        $('.resource-status').click(function() {
+            var $this = $(this);
+            if ($this.is(':checked')) {
+                //enable compute resource
+                $resourceId = $this.attr("resourceId");
+                $.ajax({
+                    type: 'POST',
+                    url: "{{URL::to('/')}}/admin/enable-cr",
+                    data: {
+                        'resourceId': $resourceId
+                    },
+                    async: true,
+                    success: function (data) {
+                        console.log("enabled cr " + $resourceId);
+                        $(".success-message").html("<span class='alert alert-success col-md-12'>Successfully enabled compute resource</span>");
+                    }
+                });
+            } else {
+                //disabled compute resource
+                $resourceId = $this.attr("resourceId");
+                $.ajax({
+                    type: 'POST',
+                    url: "{{URL::to('/')}}/admin/disable-cr",
+                    data: {
+                        'resourceId': $resourceId
+                    },
+                    async: true,
+                    success: function (data) {
+                        console.log("disabled cr " + $resourceId);
+                        $(".success-message").html("<span class='alert alert-success col-md-12'>Successfully disabled compute resource</span>");
+                    }
+                });
+            }
         });
     </script>
     @stop

@@ -12,6 +12,7 @@ class ApplicationController extends BaseController {
 	{
 		$data = array();
 		$data["modules"] = AppUtilities::getAllModules();
+        Session::put("admin-nav", "app-module");
 		return View::make('application/module', $data);
 	}
 
@@ -51,6 +52,7 @@ class ApplicationController extends BaseController {
 		$data = array();
 		$data = AppUtilities::getAppInterfaceData();
 		//var_dump( $data["appInterfaces"][14] ); exit;
+        Session::put("admin-nav", "app-interface");
 		return View::make("application/interface", $data);
 	}
 
@@ -97,7 +99,7 @@ class ApplicationController extends BaseController {
 		$data = array();
 		$data = AppUtilities::getAppDeploymentData();
 		//var_dump( $data); exit;
-
+        Session::put("admin-nav", "app-deployment");
 		return View::make("application/deployment", $data);
 	}
 

@@ -24,9 +24,10 @@ class AdminController extends BaseController {
 														"crData" => $crData);
 		if( Session::has("scigap_admin"))
 			$view = "scigap-admin/manage-gateway";
-		else
+		else{
 			$view = "admin/manage-gateway";
-
+            Session::put("admin-nav", "gateway-prefs");
+        }
 			return View::make( $view, $gatewayData);
 	}
 
@@ -49,7 +50,7 @@ class AdminController extends BaseController {
 	    	$users =  WSIS::listUsers();
 	    
 	    $roles = WSIS::getAllRoles();
-
+        Session::put("admin-nav", "manage-users");
 	    return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 
 	}
@@ -70,10 +71,12 @@ class AdminController extends BaseController {
 	public function rolesView(){
 
 		$roles = WSIS::getAllRoles();
-		return View::make("admin/manage-roles", array("roles" => $roles));
+        Session::put("admin-nav", "manage-roles");
+        return View::make("admin/manage-roles", array("roles" => $roles));
 	}
 
 	public function experimentsView(){
+        Session::put("admin-nav", "exp-statistics");
 		return View::make("admin/manage-experiments" );
 	}
 
@@ -127,6 +130,7 @@ class AdminController extends BaseController {
 	}
 
 	public function credentialStoreView(){
+        Session::put("admin-nav", "credential-store");
 		return View::make("admin/manage-credentials", array("tokens" => array()) );
 	}
 

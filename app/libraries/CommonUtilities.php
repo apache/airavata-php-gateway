@@ -114,19 +114,19 @@ class CommonUtilities
                 )
             );
 
-            if (Session::has("admin")) {
-                $menus['Compute Resource'] = array
-                (
-                    array('label' => 'Register', 'url' => URL::to('/') . '/cr/create', "nav-active" => "compute-resource"),
-                    array('label' => 'Browse', 'url' => URL::to('/') . '/cr/browse', "nav-active" => "compute-resource")
-                );
-                $menus['App Catalog'] = array
-                (
-                    array('label' => 'Module', 'url' => URL::to('/') . '/app/module', "nav-active" => "app-catalog"),
-                    array('label' => 'Interface', 'url' => URL::to('/') . '/app/interface', "nav-active" => "app-catalog"),
-                    array('label' => 'Deployment', 'url' => URL::to('/') . '/app/deployment', "nav-active" => "app-catalog")
-                );
-            }
+//            if (Session::has("admin")) {
+//                $menus['Compute Resource'] = array
+//                (
+//                    array('label' => 'Register', 'url' => URL::to('/') . '/cr/create', "nav-active" => "compute-resource"),
+//                    array('label' => 'Browse', 'url' => URL::to('/') . '/cr/browse', "nav-active" => "compute-resource")
+//                );
+//                $menus['App Catalog'] = array
+//                (
+//                    array('label' => 'Module', 'url' => URL::to('/') . '/app/module', "nav-active" => "app-catalog"),
+//                    array('label' => 'Interface', 'url' => URL::to('/') . '/app/interface', "nav-active" => "app-catalog"),
+//                    array('label' => 'Deployment', 'url' => URL::to('/') . '/app/deployment', "nav-active" => "app-catalog")
+//                );
+//            }
 
             $menus['Help'] = array
             (
@@ -191,11 +191,11 @@ class CommonUtilities
                     $active = " active ";
             }
             if (Session::has("admin"))
-                echo '<li><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
+                echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
 //            else
 //                echo '<li><a href="' . URL::to("/") . '/user/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>';
 
-            echo '<li class="dropdown ' . $active . '">
+            echo '<li class="dropdown">
 
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">' . Session::get("username") . ' <span class="caret"></span></a>';
             echo '<ul class="dropdown-menu" role="menu">';

@@ -16,6 +16,7 @@ class ComputeResource extends BaseController
 
     public function createView()
     {
+        Session::put("admin-nav", "cr-create");
         return View::make("resource/create");
     }
 
@@ -235,18 +236,20 @@ class ComputeResource extends BaseController
 
     public function browseView()
     {
-        $data = CRUtilities::getBrowseCRData(true);
+        $data = CRUtilities::getBrowseCRData(false);
         $allCRs = $data["crObjects"];
         $appDeployments = $data["appDeployments"];
 
         $connectedDeployments = array();
-        foreach ((array)$allCRs as $crId => $crName) {
+        foreach ((array)$allCRs as $resource) {
+            $crId = $resource->computeResourceId;
             $connectedDeployments[$crId] = 0;
             foreach ((array)$appDeployments as $deploymentObject) {
                 if ($crId == $deploymentObject->computeHostId)
                     $connectedDeployments[$crId]++;
             }
         }
+        Session::put("admin-nav", "cr-browse");
         return View::make("resource/browse", array(
             "allCRs" => $allCRs,
             "connectedDeployments" => $connectedDeployments

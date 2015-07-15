@@ -2,12 +2,18 @@
 
 @section('page-header')
 @parent
-{{ HTML::style('css/style.css') }}
+{{ HTML::style('css/admin.css')}}
+{{ HTML::style('css/datetimepicker.css')}}
 @stop
 
 @section('content')
 
-<div class="container">
+<div id="wrapper">
+<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+@include( 'partials/dashboard-block')
+<div id="page-wrapper">
+
+<div class="container-fluid">
 <div class="col-md-offset-2 col-md-8">
 
 <input type="hidden" class="base-url" value="{{URL::to('/')}}"/>
@@ -628,6 +634,8 @@
 </div>
 
 -->
+</div>
+</div>
 </div>
 </div>
 
