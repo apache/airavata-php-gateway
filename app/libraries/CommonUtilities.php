@@ -192,8 +192,8 @@ class CommonUtilities
             }
             if (Session::has("admin"))
                 echo '<li><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
-            else
-                echo '<li><a href="' . URL::to("/") . '/user/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>';
+//            else
+//                echo '<li><a href="' . URL::to("/") . '/user/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>';
 
             echo '<li class="dropdown ' . $active . '">
 
