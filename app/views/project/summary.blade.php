@@ -37,7 +37,7 @@
     echo '<th>Name</th>';
     echo '<th>Application</th>';
     echo '<th>Compute Resource</th>';
-    echo '<th>Creation Time</th>';
+    echo '<th>Last Modified Time</th>';
     echo '<th>Experiment Status</th>';
     echo '<th>Job Status</th>';
 
