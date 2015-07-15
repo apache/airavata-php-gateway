@@ -42,7 +42,9 @@
                     <?php
                         $resourceId = $resource->computeResourceId;
                         $resourceName = $resource->hostName;
-                        $enabled = $resource->enabled;
+//Fixme
+//                        $enabled = $resource->enabled;
+                        $enabled = true;
                     ?>
                     <tr class="user-row">
                         <td>{{ $resourceId }}</td>

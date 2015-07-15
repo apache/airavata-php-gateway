@@ -173,17 +173,19 @@ class AdminController extends BaseController {
         }
     }
 
+//Fixme
     public function enableComputeResource(){
-        $resourceId = Input::get("resourceId");
-        $computeResource = CRUtilities::get_compute_resource($resourceId);
-        $computeResource->enabled = true;
-        CRUtilities::register_or_update_compute_resource($computeResource, true);
+//        $resourceId = Input::get("resourceId");
+//        $computeResource = CRUtilities::get_compute_resource($resourceId);
+//        $computeResource->enabled = true;
+//        CRUtilities::register_or_update_compute_resource($computeResource, true);
     }
 
+//Fixme
     public function disableComputeResource(){
-        $resourceId = Input::get("resourceId");
-        $computeResource = CRUtilities::get_compute_resource($resourceId);
-        $computeResource->enabled = false;
-        CRUtilities::register_or_update_compute_resource($computeResource, true);
+//        $resourceId = Input::get("resourceId");
+//        $computeResource = CRUtilities::get_compute_resource($resourceId);
+//        $computeResource->enabled = false;
+//        CRUtilities::register_or_update_compute_resource($computeResource, true);
     }
 }
