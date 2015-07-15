@@ -399,16 +399,31 @@ class ExperimentUtilities
         try {
             //create new experiment to receive the clone
             $experiment = Airavata::getExperiment($expId);
-
-            //Fixme - Input Files Dir
-
-
             $cloneId = Airavata::cloneExperiment($expId, 'Clone of ' . $experiment->name);
 
-            CommonUtilities::print_success_message("<p>Experiment cloned!</p>" .
-                '<p>You will be redirected to the edit page shortly, or you can
-                <a href="edit_experiment.php?expId=' . $cloneId . '">go directly</a> to the edit experiment page.</p>');
-            //redirect('edit_experiment.php?expId=' . $cloneId);
+            //updating the experiment inputs and output path
+            $experiment = Airavata::getExperiment($cloneId);
+            $experimentInputs = $experiment->experimentInputs;
+            ExperimentUtilities::create_experiment_folder_path();
+            $hostName = $_SERVER['SERVER_NAME'];
+            $expPathConstant = 'file://' . ExperimentUtilities::$sshUser . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
+            $outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
+                $expPathConstant, ExperimentUtilities::$experimentPath);
+            $experiment->userConfigurationData->advanceOutputDataHandling->outputDataDir = $outputDataDir;
+
+            foreach ($experimentInputs as $experimentInput) {
+                if ($experimentInput->type == DataType::URI) {
+                    $currentInputPath = $experimentInput->value;
+                    $hostPathConstant = 'file://' . ExperimentUtilities::$sshUser . '@' . $hostName . ':';
+                    $currentInputPath = str_replace($hostPathConstant, '', $currentInputPath);
+                    $parts = explode('/', rtrim($currentInputPath, '/'));
+                    $fileName = array_pop($parts);
+                    $newInputPath = ExperimentUtilities::$experimentPath . $fileName;
+                    copy($currentInputPath, $newInputPath);
+                    $experimentInput->value = $hostPathConstant . $newInputPath;
+                }
+            }
+            Airavata::updateExperiment($cloneId, $experiment);
             return $cloneId;
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem cloning the experiment.
