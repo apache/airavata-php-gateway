@@ -47,8 +47,10 @@ class AccountController extends BaseController
         } else {
             WSIS::addUser($username, $password, $first_name, $last_name, $email, $organization,
                 $address, $country, $telephone, $mobile, $im, $url);
-            CommonUtilities::print_success_message('New user created!');
 
+            //creating a default project for user
+            ProjectUtilities::create_default_project($username);
+            CommonUtilities::print_success_message('New user created!');
             return View::make('account/login');
         }
     }

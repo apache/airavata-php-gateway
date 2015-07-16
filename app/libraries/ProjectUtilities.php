@@ -130,6 +130,38 @@ class ProjectUtilities
         return $projectId;
     }
 
+    public static function create_default_project($username)
+    {
+        $project = new Project();
+        $project->owner = $username;
+        $project->name = "Default Project";
+        $project->description = "This is the default project for user " + $project->owner;
+
+
+        $projectId = null;
+
+        try {
+            $projectId = Airavata::createProject(Config::get('pga_config.airavata')['gateway-id'], $project);
+
+            if ($projectId) {
+                CommonUtilities::print_success_message("<p>Project {$_POST['project-name']} created!</p>" .
+                    '<p>You will be redirected to the summary page shortly, or you can
+                    <a href="project/summary?projId=' . $projectId . '">go directly</a> to the project summary page.</p>');
+            } else {
+                CommonUtilities::print_error_message("Error creating project {$_POST['project-name']}!");
+            }
+        } catch (InvalidRequestException $ire) {
+            CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
+        } catch (AiravataClientException $ace) {
+            CommonUtilities::print_error_message('AiravataClientException!<br><br>' . $ace->getMessage());
+        } catch (AiravataSystemException $ase) {
+            CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
+        }
+
+        return $projectId;
+    }
+
+
     /**
      * Get experiments in project
      * @param $projectId
