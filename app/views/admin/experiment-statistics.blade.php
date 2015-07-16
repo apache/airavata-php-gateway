@@ -38,7 +38,7 @@
             </div>
             <a id="getAllExperiments" href="#experiment-container">
                 <div class="panel-footer">
-                    <span class="pull-left">CREATED</span>
+                    <span class="pull-left">CREATED VALIDATED</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
                     <div class="clearfix"></div>
@@ -61,7 +61,7 @@
             </div>
             <a id="getAllExperiments" href="#experiment-container">
                 <div class="panel-footer">
-                    <span class="pull-left">SCHEDULED QUEUED RUNNING</span>
+                    <span class="pull-left">SCHEDULED LAUNCHED EXECUTING</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
                     <div class="clearfix"></div>
