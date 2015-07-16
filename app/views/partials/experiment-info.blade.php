@@ -47,6 +47,26 @@
             <td><strong>Experiment Status</strong></td>
             <td class="exp-status"><?php echo $expVal["experimentStatusString"]; ?></td>
         </tr>
+        @if( isset($dashboard))
+        <tr>
+            <td><strong>Job ID</strong></td>
+
+            <?php
+            foreach ($jobDetails as $job) echo '
+                <td>' . $job->jobID . '</td>
+            ';
+            ?>
+        </tr>
+        <tr>
+            <td><strong>Job Name</strong></td>
+
+            <?php
+            foreach ($jobDetails as $job) echo '
+                <td>' . $job->jobName . '</td>
+            ';
+            ?>
+        </tr>
+        @endif
         <?php
         if ($expVal["jobState"]) echo '
         <tr>
