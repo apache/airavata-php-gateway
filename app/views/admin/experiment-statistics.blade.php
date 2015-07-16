@@ -1,6 +1,6 @@
 <!-- high level statistics -->
 <div class="high-level-values row tex-center">
-    <div class="col-lg-3 col-md-6">
+    <div class="col-lg-2 col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <div class="row">
@@ -15,7 +15,7 @@
             </div>
             <a id="getAllExperiments" href="#experiment-container">
             <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
+                    <span class="pull-left">All</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
                     <div class="clearfix"></div>
@@ -23,8 +23,53 @@
             </a>
         </div>
     </div>
+    <div class="col-lg-2 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-comments fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">12</div>
+                        <div>Created Experiments</div>
+                    </div>
+                </div>
+            </div>
+            <a id="getAllExperiments" href="#experiment-container">
+                <div class="panel-footer">
+                    <span class="pull-left">CREATED</span>
+                    <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
-    <div class="col-lg-3 col-md-6">
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <i class="fa fa-comments fa-5x"></i>
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div class="huge">18</div>
+                        <div>Running Experiments</div>
+                    </div>
+                </div>
+            </div>
+            <a id="getAllExperiments" href="#experiment-container">
+                <div class="panel-footer">
+                    <span class="pull-left">SCHEDULED QUEUED RUNNING</span>
+                    <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
+
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4">
         <div class="panel panel-green">
             <div class="panel-heading">
                 <div class="row">
@@ -39,7 +84,7 @@
             </div>
             <a id="getCompletedExperiments" href="#experiment-container">
             <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
+                    <span class="pull-left">COMPLETED</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></i></span>
 
                     <div class="clearfix"></div>
@@ -48,7 +93,7 @@
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-6">
+    <div class="col-lg-2 col-md-4">
         <div class="panel panel-yellow">
             <div class="panel-heading">
                 <div class="row">
@@ -63,7 +108,7 @@
             </div>
             <a id="getCancelledExperiments" href="#experiment-container">
             <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
+                    <span class="pull-left">CANCELLING CANCELLED</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></i></span>
 
                     <div class="clearfix"></div>
@@ -72,7 +117,7 @@
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-6">
+    <div class="col-lg-2 col-md-4">
         <div class="panel panel-red">
             <div class="panel-heading">
                 <div class="row">
@@ -87,7 +132,7 @@
             </div>
             <a id="getFailedExperiments" href="#experiment-container">
             <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
+                    <span class="pull-left">FAILED</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
                     <div class="clearfix"></div>
@@ -107,6 +152,7 @@
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
+            $(".loading-img-statistics").removeClass("hide");
             $.ajax({
                 type: 'GET',
                 url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
@@ -122,6 +168,8 @@
                     //from time-conversion.js
                     updateTime();
                 }
+            }).complete(function () {
+                $(".loading-img-statistics").addClass("hide");
             });
         }
     });
@@ -133,6 +181,7 @@
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
+            $(".loading-img-statistics").removeClass("hide");
             $.ajax({
                 type: 'GET',
                 url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
@@ -148,6 +197,8 @@
                     //from time-conversion.js
                     updateTime();
                 }
+            }).complete(function () {
+                $(".loading-img-statistics").addClass("hide");
             });
         }
     });
@@ -159,6 +210,7 @@
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
+            $(".loading-img-statistics").removeClass("hide");
             $.ajax({
                 type: 'GET',
                 url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
@@ -174,6 +226,8 @@
                     //from time-conversion.js
                     updateTime();
                 }
+            }).complete(function () {
+                $(".loading-img-statistics").addClass("hide");
             });
         }
     });
@@ -185,6 +239,7 @@
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
+            $(".loading-img-statistics").removeClass("hide");
             $.ajax({
                 type: 'GET',
                 url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
@@ -200,6 +255,8 @@
                     //from time-conversion.js
                     updateTime();
                 }
+            }).complete(function () {
+                $(".loading-img-statistics").addClass("hide");
             });
         }
     });
