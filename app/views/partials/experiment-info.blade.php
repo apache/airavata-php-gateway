@@ -82,7 +82,7 @@
             <td class="time" unix-time="<?php echo $expVal["experimentCreationTime"]; ?>"></td>
         </tr>
         <tr>
-            <td><strong>Update time</strong></td>
+            <td><strong>Last Modified Time</strong></td>
             <td class="time" unix-time="<?php echo $expVal["experimentTimeOfStateChange"]; ?>"></td>
         </tr>
         <tr>
