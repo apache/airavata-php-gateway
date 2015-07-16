@@ -142,14 +142,7 @@ class ProjectUtilities
 
         try {
             $projectId = Airavata::createProject(Config::get('pga_config.airavata')['gateway-id'], $project);
-
-            if ($projectId) {
-                CommonUtilities::print_success_message("<p>Project {$_POST['project-name']} created!</p>" .
-                    '<p>You will be redirected to the summary page shortly, or you can
-                    <a href="project/summary?projId=' . $projectId . '">go directly</a> to the project summary page.</p>');
-            } else {
-                CommonUtilities::print_error_message("Error creating project {$_POST['project-name']}!");
-            }
+            
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
         } catch (AiravataClientException $ace) {
