@@ -91,10 +91,6 @@ class ProjectUtilities
             }
         }
         echo '</select>';
-        if (sizeof($userProjects) == 0) {
-            CommonUtilities::print_warning_message('<p>You must create a project before you can create an experiment.
-                Click <a href="' . URL::to('/') . '/project/create">here</a> to create a project.</p>');
-        }
     }
 
     //moved from create project view.
@@ -135,14 +131,14 @@ class ProjectUtilities
         $project = new Project();
         $project->owner = $username;
         $project->name = "Default Project";
-        $project->description = "This is the default project for user " + $project->owner;
+        $project->description = "This is the default project for user " . $project->owner;
 
 
         $projectId = null;
 
         try {
             $projectId = Airavata::createProject(Config::get('pga_config.airavata')['gateway-id'], $project);
-            
+
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
         } catch (AiravataClientException $ace) {
