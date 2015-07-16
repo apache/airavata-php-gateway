@@ -518,7 +518,8 @@
             <select name="dataMovementProtocol" class="form-control selected-data-movement-protocol">
                 <option></option>
                 @foreach( $dataMovementProtocols as $index => $dmp)
-                @if( ! in_array( $index, $addedDMI))
+                //GridFTP is not supported in Airavata backend. Therefore commenting out from UI
+                @if( ! in_array( $index, $addedDMI) && $dmp!="GridFTP")
                 <option value="{{ $index }}">{{ $dmp }}</option>
                 @endif
                 @endforeach
