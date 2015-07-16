@@ -28,7 +28,7 @@
             <div class="row">
 
                 <div class="col-md-6">
-                    <h3>Gateway Settings</h3>
+                    <h3>Gateway Preferences</h3>
                 </div>
                 @if( Session::has("scigap_admin"))
                 <div class="col-md-6" style="margin-top:3.5%">
