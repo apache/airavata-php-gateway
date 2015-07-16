@@ -20,9 +20,11 @@
                 <select name="applicationModules[]" class="app-module-select form-control" style="min-width: 200px" readonly>
             @for( $i=0; $i< count( $interfaceObject->applicationModules); $i++ )
                     @foreach( $modules as $index => $module)
+                    <option value="{{ $module->appModuleId }}"
                     @if( $interfaceObject->applicationModules[$i] == $module->appModuleId)
-                    <option value="{{ $module->appModuleId }}" selected>{{$module->appModuleName}}</option>
+                        selected
                     @endif
+                    >{{$module->appModuleName}}</option>
                     @endforeach
             @endfor
                 </select>
