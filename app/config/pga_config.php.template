@@ -39,11 +39,6 @@ return array(
         'service-url' => 'https://idp.scigap.org:7443/services/',
 
         /**
-         * Gateway domain name
-         */
-        'gateway-id' => 'default',
-
-        /**
          * Path to the server certificate file
          */
         'cafile-path' => app_path() . '/resources/security/idp_scigap_org.pem',

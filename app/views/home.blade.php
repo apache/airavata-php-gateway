@@ -31,8 +31,8 @@
                 </p>
                 <p><a href="https://github.com/apache/airavata-php-gateway"
                         target="_blank">See the code <span class="glyphicon glyphicon-new-window"></span></a></p>
-                <p><a href="https://cwiki.apache.org/confluence/display/AIRAVATA/XSEDE+2014+Tutorial"
-                    target="_blank">View the XSEDE 2014 tutorial documentation <span class="glyphicon glyphicon-new-window"></span></a></p>
+                <p><a href="https://cwiki.apache.org/confluence/display/AIRAVATA/XSEDE+2015+Tutorial"
+                    target="_blank">XSEDE 2015 tutorial documentation <span class="glyphicon glyphicon-new-window"></span></a></p>
             ';
         }
         ?>
