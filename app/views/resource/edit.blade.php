@@ -719,7 +719,7 @@
                     <input type="hidden" name="cr-edit" value="jsi-priority"/>
                     @foreach( $computeResource->jobSubmissionInterfaces as $index => $JSI )
                     <div class="row">
-                        <div class="col-md-offset-2 col-md-2">
+                        <div class="col-md-offset-1 col-md-5">
                             <label>
                                 {{ $jobSubmissionProtocols[ $JSI->jobSubmissionProtocol] }}
                             </label>
@@ -772,7 +772,7 @@
                     <input type="hidden" name="cr-edit" value="dmi-priority"/>
                     @foreach( $computeResource->dataMovementInterfaces as $index => $DMI )
                     <div class="row">
-                        <div class="col-md-offset-2 col-md-2">
+                        <div class="col-md-offset-1 col-md-5">
                             <label>
                                 {{ $dataMovementProtocols[ $DMI->dataMovementProtocol] }}
                             </label>
