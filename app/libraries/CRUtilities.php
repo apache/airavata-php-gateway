@@ -505,9 +505,6 @@ class CRUtilities
      */
     public static function create_compute_resources_select($applicationId, $resourceHostId)
     {
-        echo $applicationId;
-        var_dump(CRUtilities::get_available_app_interface_compute_resources($applicationId));
-        exit;
         return CRUtilities::get_available_app_interface_compute_resources($applicationId);
     }
 
