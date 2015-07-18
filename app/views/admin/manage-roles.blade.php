@@ -32,11 +32,14 @@
                         <th>
                             Role
                         </th>
+                        @if(Session::has("admin"))
                         <th>Actions</th>
+                        @endif
                     </tr>
                     @foreach( $roles as $role)
                     <tr>
                         <td class="role-name">{{ $role }}</td>
+                        @if(Session::has("admin"))
                         <td>
                             <span class="glyphicon glyphicon-pencil edit-role-name"></span>&nbsp;&nbsp;
                             <a href="{{URL::to('/')}}/admin/dashboard/users?role={{$role}}">
@@ -44,9 +47,11 @@
                             </a>
                             <span class="glyphicon glyphicon-trash delete-role"></span>&nbsp;&nbsp;
                         </td>
+                        @endif
                     </tr>
                     @endforeach
                 </table>
+                @if(Session::has("admin"))
                 <div class="col-md-12">
                     <button type="button" class="btn btn-default toggle-add-role"><span
                             class="glyphicon glyphicon-plus"></span>Add a new Role
@@ -75,7 +80,7 @@
                         </div>
                     </form>
                 </div>
-
+                @endif
             </div>
         </div>
     </div>

@@ -14,10 +14,11 @@
     <div id="page-wrapper">
 <div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-
+        @if(Session::has("admin"))
         <button class="btn btn-default create-app-module" data-toggle="modal" data-target="#new-app-module-block">Create
             a new Application Module
         </button>
+        @endif
 
         @if( count( $modules) )
         @if( Session::has("message"))
@@ -47,7 +48,7 @@
                            href="#collapse-{{$index}}">
                             {{ $module->appModuleName }}
                         </a>
-
+                        @if(Session::has("admin"))
                         <div class="pull-right col-md-2 module-options fade">
                             <span class="glyphicon glyphicon-pencil edit-app-module" style="cursor:pointer;"
                                   data-toggle="modal" data-target="#edit-app-module-block"
@@ -56,6 +57,7 @@
                                   data-toggle="modal" data-target="#delete-app-module-block"
                                   data-module-data="{{ htmlentities(json_encode( $module) ) }}"></span>
                         </div>
+                        @endif
                     </h4>
                 </div>
                 <div id="collapse-{{$index}}" class="panel-collapse collapse">

@@ -14,6 +14,11 @@ return array(
         'admin-role-name' => 'admin',
 
         /**
+         * Read only Admin Role Name
+         */
+        'read-only-admin' => 'admin-read-only',
+
+        /**
          * Gateway user role
          */
         'user-role-name' => 'Internal/everyone',

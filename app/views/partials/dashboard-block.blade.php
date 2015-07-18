@@ -21,20 +21,25 @@
         <li>
             <a><i class="fa fa-fw fa-table"></i>Compute Resources</a>
             <ul>
+                @if(Session::has("admin"))
                 <li
                 @if( Session::has("admin-nav") && Session::get("admin-nav") == "cr-create") class="active" @endif>
                     <a class="dashboard-link" href="{{ URL::to('/')}}/cr/create"><i class="fa fa-fw fa-table"></i>Register</a>
                 </li>
+                @endif
+                @if(Session::has("admin") || Session::has("admin-read-only"))
                 <li
                 @if( Session::has("admin-nav") && Session::get("admin-nav") == "cr-browse") class="active" @endif>
                     <a class="dashboard-link" href="{{ URL::to('/')}}/cr/browse"><i class="fa fa-fw fa-table"></i>Browse</a>
                 </li>
+                @endif
             </ul>
 
         </li>
         <li>
             <a><i class="fa fa-fw fa-table"></i>App Catalog</a>
             <ul>
+                @if(Session::has("admin") || Session::has("admin-read-only"))
                 <li
                 @if( Session::has("admin-nav") && Session::get("admin-nav") == "app-module") class="active" @endif>
                     <a class="dashboard-link" href="{{ URL::to('/')}}/app/module"><i class="fa fa-fw fa-table"></i>Module</a>
@@ -47,6 +52,7 @@
                 @if( Session::has("admin-nav") && Session::get("admin-nav") == "app-deployment") class="active" @endif>
                     <a class="dashboard-link" href="{{ URL::to('/')}}/app/deployment"><i class="fa fa-fw fa-table"></i>Deployment</a>
                 </li>
+                @endif
             </ul>
 
         </li>

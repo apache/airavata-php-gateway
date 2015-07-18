@@ -49,10 +49,14 @@
 
                         <th>Name</th>
                         <th>Id</th>
+                        @if(Session::has("admin"))
                         <th>Enabled</th>
                         <th>Edit</th>
+                        @endif
                         <th>View</th>
+                        @if(Session::has("admin"))
                         <th>Delete</th>
+                        @endif
                     </tr>
 
                     @foreach($allCRs as $resource)
@@ -64,6 +68,7 @@
                     <tr id="crDetails">
                         <td>{{ $crName }}</td>
                         <td>{{ $crId }}</td>
+                        @if(Session::has("admin"))
                         <td>
                             @if(!$enabled)
                             <div class="checkbox">
@@ -79,11 +84,13 @@
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
                         </td>
+                        @endif
                         <td>
                             <a href="{{URL::to('/')}}/cr/view?crId={{ $crId }}" title="Edit">
                             <span class="glyphicon glyphicon-list"></span>
                             </a>
                         </td>
+                        @if(Session::has("admin"))
                         <td>
                             <a href="#" title="Delete">
                                 <span class="glyphicon glyphicon-trash del-cr" data-toggle="modal"
@@ -92,6 +99,7 @@
                                       data-crid="{{$crId}}"></span>
                             </a>
                         </td>
+                        @endif
                     </tr>
                     @endforeach
 

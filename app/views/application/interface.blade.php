@@ -14,10 +14,11 @@
     <div id="page-wrapper">
 <div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-
+        @if(Session::has("admin"))
         <div class="row">
             <button class="btn btn-default create-app-interface">Create a new Application Interface</button>
         </div>
+        @endif
         @if( count( $appInterfaces) )
         @if( Session::has("message"))
         <div class="row">
@@ -47,7 +48,7 @@
                            data-parent="#accordion" href="#collapse-{{$index}}">
                             {{ $interface->applicationName }}
                         </a>
-
+                        @if(Session::has("admin"))
                         <div class="pull-right col-md-2 interface-options fade">
                             <span class="glyphicon glyphicon-pencil edit-app-interface" style="cursor:pointer;"
                                   data-toggle="modal" data-target="#edit-app-interface-block"
@@ -56,6 +57,7 @@
                                   data-toggle="modal" data-target="#delete-app-interface-block"
                                   data-interface-id="{{ $interface->applicationInterfaceId }}"></span>
                         </div>
+                        @endif
                     </h4>
                 </div>
                 <div id="collapse-{{$index}}" class="panel-collapse collapse">

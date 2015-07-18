@@ -68,8 +68,12 @@ class AccountController extends BaseController
             $password = $_POST['password'];
             try {
                 if (WSIS::authenticate($username, $password)) {
-                    if (in_array(Config::get('pga_config.wsis')['admin-role-name'], (array)WSIS::getUserRoles($username))) {
+                    $userRoles = (array)WSIS::getUserRoles($username);
+                    if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
                         Session::put("admin", true);
+                    }
+                    if (in_array(Config::get('pga_config.wsis')['read-only-admin'], $userRoles)) {
+                        Session::put("admin-read-only", true);
                     }
 
                     CommonUtilities::store_id_in_session($username);

@@ -45,23 +45,26 @@
                                data-parent="#accordion2" href="#collapse-gateway-{{$indexGP}}">
                                 {{ $gp->gatewayName }}
                             </a>
-
+                            @if(Session::has("admin"))
                             <div class="pull-right col-md-2 gateway-options fade">
                                 <span class="glyphicon glyphicon-pencil edit-gateway" style="cursor:pointer;"
                                       data-toggle="modal" data-target="#edit-gateway-block"
                                       data-gp-id="{{ $gp->gatewayId }}" data-gp-name="{{ $gp->gatewayName }}"></span>
                             </div>
+                            @endif
                         </h4>
                     </div>
                     <div id="collapse-gateway-{{$indexGP}}" class="panel-collapse collapse">
                         <div class="panel-body">
                             <div class="app-interface-block">
                                 <div class="row">
+                                    @if(Session::has("admin"))
                                     <div class="col-md-10">
                                         <button class="btn btn-default add-cr" data-gpid="{{$gp->gatewayId}}"><span
                                                 class="glyphicon glyphicon-plus"></span> Add a Compute Resource
                                         </button>
                                     </div>
+                                    @endif
                                     <div class="col-md-10">
                                         @if( isset( $gp->profile->computeResourcePreferences) )
                                         <div>
@@ -79,7 +82,7 @@
                                                                href="#collapse-crp-{{$indexGP}}-{{$indexCRP}}">
                                                                 {{ $crp->crDetails->hostName }}
                                                             </a>
-
+                                                            @if(Session::has("admin"))
                                                             <div class="pull-right col-md-2 gateway-options fade">
                                                                 <span class="glyphicon glyphicon-remove remove-resource"
                                                                       style="cursor:pointer;" data-toggle="modal"
@@ -88,6 +91,7 @@
                                                                       data-cr-id="{{$crp->computeResourceId}}"
                                                                       data-gp-id="{{ $gp->gatewayId }}"></span>
                                                             </div>
+                                                            @endif
                                                         </h4>
                                                     </div>
                                                     <div id="collapse-crp-{{$indexGP}}-{{$indexCRP}}"

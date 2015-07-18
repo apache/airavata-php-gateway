@@ -34,7 +34,6 @@
                         <th>
                             Role :
                             <select onchange="location = this.options[this.selectedIndex].value;">
-                                <option>Select a role</option>
                                 <option value="{{URL::to('/')}}/admin/dashboard/users">All</option>
                                 @foreach( (array)$roles as $role)
                                 <option value="{{URL::to('/')}}/admin/dashboard/users?role={{$role}}"
@@ -81,6 +80,7 @@
                 </div>
                 <div class="roles-list">
                 </div>
+                @if(Session::has("admin"))
                 <div class="add-roles-block hide">
                     <div class="form-group well">
                         <label class="control-label">Add a new roles to the user</label>
@@ -94,6 +94,7 @@
                         </button>
                     </div>
                 </div>
+                @endif
             </div>
             <div class="modal-footer">
                 <div class="success-message"></div>

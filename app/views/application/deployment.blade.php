@@ -14,10 +14,11 @@
     <div id="page-wrapper">
 <div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-
+        @if(Session::has("admin"))
         <div class="row">
             <button class="btn btn-default create-app-deployment">Create a new Application Deployment</button>
         </div>
+        @endif
         @if( count( $appDeployments) )
         @if( Session::has("message"))
         <div class="row">
@@ -47,7 +48,7 @@
                            data-parent="#accordion" href="#collapse-{{$index}}">
                             {{ $deployment->appDeploymentId }}
                         </a>
-
+                        @if(Session::has("admin"))
                         <div class="pull-right col-md-2 deployment-options fade">
                             <span class="glyphicon glyphicon-pencil edit-app-deployment" style="cursor:pointer;"
                                   data-toggle="modal" data-target="#edit-app-deployment-block"
@@ -56,6 +57,7 @@
                                   data-toggle="modal" data-target="#delete-app-deployment-block"
                                   data-deployment-id="{{ $deployment->appDeploymentId }}"></span>
                         </div>
+                        @endif
                     </h4>
                 </div>
                 <div id="collapse-{{$index}}" class="panel-collapse collapse">

@@ -85,23 +85,23 @@ Route::get("cr/create", function () {
     return Redirect::to("cr/create/step1");
 });
 
-Route::get("cr/create", "ComputeResource@createView");
+Route::get("cr/create", "ComputeResourceController@createView");
 
-Route::post("cr/create", "ComputeResource@createSubmit");
+Route::post("cr/create", "ComputeResourceController@createSubmit");
 
-Route::get("cr/edit", "ComputeResource@editView");
+Route::get("cr/edit", "ComputeResourceController@editView");
 
-Route::post("cr/edit", "ComputeResource@editSubmit");
+Route::post("cr/edit", "ComputeResourceController@editSubmit");
 
-Route::get("cr/view", "ComputeResource@viewView");
+Route::get("cr/view", "ComputeResourceController@viewView");
 
-Route::get("cr/browse", "ComputeResource@browseView");
+Route::get("cr/browse", "ComputeResourceController@browseView");
 
-Route::post("cr/delete-jsi", "ComputeResource@deleteActions");
+Route::post("cr/delete-jsi", "ComputeResourceController@deleteActions");
 
-Route::post("cr/delete-dmi", "ComputeResource@deleteActions");
+Route::post("cr/delete-dmi", "ComputeResourceController@deleteActions");
 
-Route::post("cr/delete-cr", "ComputeResource@deleteActions");
+Route::post("cr/delete-cr", "ComputeResourceController@deleteActions");
 /*
  * Application Catalog Routes
 */
@@ -114,7 +114,7 @@ Route::post("app/module-edit", "ApplicationController@modifyAppModuleSubmit");
 
 Route::post("app/module-delete", "ApplicationController@deleteAppModule");
 
-Route::get("app/interface", "ApplicationController@createAppInterfaceView");
+Route::get("app/interface", "ApplicationController@showAppInterfaceView");
 
 Route::post("app/interface-create", "ApplicationController@createAppInterfaceSubmit");
 
@@ -122,7 +122,7 @@ Route::post("app/interface-edit", "ApplicationController@editAppInterfaceSubmit"
 
 Route::post("app/interface-delete", "ApplicationController@deleteAppInterface");
 
-Route::get("app/deployment", "ApplicationController@createAppDeploymentView");
+Route::get("app/deployment", "ApplicationController@showAppDeploymentView");
 
 Route::post("app/deployment-create", "ApplicationController@createAppDeploymentSubmit");
 

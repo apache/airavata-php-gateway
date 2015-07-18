@@ -190,7 +190,7 @@ class CommonUtilities
                 if ("user-console" == Session::get("nav-active"))
                     $active = " active ";
             }
-            if (Session::has("admin"))
+            if (Session::has("admin") || Session::has("admin-read-only"))
                 echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
 //            else
 //                echo '<li><a href="' . URL::to("/") . '/user/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>';

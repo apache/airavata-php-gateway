@@ -54,6 +54,7 @@
                         </td>
                     </tr>
                 </table>
+                @if(Session::has("admin"))
                 <table class="table">
                     <tr class="text-center table-condensed">
                         <td>
@@ -61,7 +62,9 @@
                         </td>
                     </tr>
                 </table>
+                @endif
 
+                @if(Session::has("admin"))
                 <div class="row">
                     <h1 class="text-center">My Proxy Credentials</h1>
 
@@ -89,6 +92,7 @@
                         </table>
                     </div>
                 </div>
+                @endif
 
                 <h1 class="text-center">Amazon Credentials</h1>
 
