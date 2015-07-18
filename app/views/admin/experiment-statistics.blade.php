@@ -31,12 +31,12 @@
                         <i class="fa fa-comments fa-5x"></i>
                     </div>
                     <div class="col-xs-9 text-right">
-                        <div class="huge">12</div>
+                        <div class="huge">{{$expStatistics->createdExperimentCount}}</div>
                         <div>Created Experiments</div>
                     </div>
                 </div>
             </div>
-            <a id="getAllExperiments" href="#experiment-container">
+            <a id="getCreatedExperiments" href="#experiment-container">
                 <div class="panel-footer">
                     <span class="pull-left">CREATED VALIDATED</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
@@ -54,12 +54,12 @@
                         <i class="fa fa-comments fa-5x"></i>
                     </div>
                     <div class="col-xs-9 text-right">
-                        <div class="huge">18</div>
+                        <div class="huge">{{$expStatistics->runningExperimentCount}}</div>
                         <div>Running Experiments</div>
                     </div>
                 </div>
             </div>
-            <a id="getAllExperiments" href="#experiment-container">
+            <a id="getRunningExperiments" href="#experiment-container">
                 <div class="panel-footer">
                     <span class="pull-left">SCHEDULED LAUNCHED EXECUTING</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
@@ -158,6 +158,64 @@
                 url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
                 data: {
                     'status-type': 'ALL',
+                    'search-key': 'creation-time',
+                    'from-date': $fromTime,
+                    'to-date': $toTime
+                },
+                async: false,
+                success: function (data) {
+                    $(".experiment-container").html(data);
+                    //from time-conversion.js
+                    updateTime();
+                }
+            }).complete(function () {
+                $(".loading-img-statistics").addClass("hide");
+            });
+        }
+    });
+
+    $("#getCreatedExperiments").click(function () {
+        //These are coming from manage-experiments.blade.php
+        $fromTime = $("#datetimepicker9").find("input").val();
+        $toTime = $("#datetimepicker10").find("input").val();
+        if ($fromTime == '' || $toTime == '') {
+            alert("Please Select Valid Date Inputs!");
+        } else {
+            $(".loading-img-statistics").removeClass("hide");
+            $.ajax({
+                type: 'GET',
+                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
+                data: {
+                    'status-type': 'CREATED',
+                    'search-key': 'creation-time',
+                    'from-date': $fromTime,
+                    'to-date': $toTime
+                },
+                async: false,
+                success: function (data) {
+                    $(".experiment-container").html(data);
+                    //from time-conversion.js
+                    updateTime();
+                }
+            }).complete(function () {
+                $(".loading-img-statistics").addClass("hide");
+            });
+        }
+    });
+
+    $("#getRunningExperiments").click(function () {
+        //These are coming from manage-experiments.blade.php
+        $fromTime = $("#datetimepicker9").find("input").val();
+        $toTime = $("#datetimepicker10").find("input").val();
+        if ($fromTime == '' || $toTime == '') {
+            alert("Please Select Valid Date Inputs!");
+        } else {
+            $(".loading-img-statistics").removeClass("hide");
+            $.ajax({
+                type: 'GET',
+                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
+                data: {
+                    'status-type': 'RUNNING',
                     'search-key': 'creation-time',
                     'from-date': $fromTime,
                     'to-date': $toTime

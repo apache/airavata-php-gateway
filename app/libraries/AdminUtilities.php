@@ -45,8 +45,12 @@ class AdminUtilities
         $experiments = array();
         if ($inputs["status-type"] == "ALL") {
             $experiments = $experimentStatistics->allExperiments;
-        } else if ($inputs["status-type"] == "COMPLETED") {
+        }else if ($inputs["status-type"] == "COMPLETED") {
             $experiments = $experimentStatistics->completedExperiments;
+        }else if ($inputs["status-type"] == "CREATED") {
+            $experiments = $experimentStatistics->createdExperiments;
+        }else if ($inputs["status-type"] == "RUNNING") {
+            $experiments = $experimentStatistics->runningExperiments;
         } elseif ($inputs["status-type"] == "FAILED") {
             $experiments = $experimentStatistics->failedExperiments;
         } else if ($inputs["status-type"] == "CANCELED") {
