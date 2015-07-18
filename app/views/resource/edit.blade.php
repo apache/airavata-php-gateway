@@ -518,8 +518,8 @@
             <select name="dataMovementProtocol" class="form-control selected-data-movement-protocol">
                 <option></option>
                 @foreach( $dataMovementProtocols as $index => $dmp)
-                //GridFTP is not supported in Airavata backend. Therefore commenting out from UI
-                @if( ! in_array( $index, $addedDMI) && $dmp!="GridFTP")
+                //GridFTP and SFTP not supported in Airavata backend. Therefore commenting out from UI
+                @if( ! in_array( $index, $addedDMI) && $dmp!="GridFTP" && $dmp!="SFTP")
                 <option value="{{ $index }}">{{ $dmp }}</option>
                 @endif
                 @endforeach
@@ -578,14 +578,14 @@
         </select>
     </div>
 
-    <div class="form-group required">
-        <label class="control-label">Select Monitoring Mode </label>
-        <select name="monitorMode" required>
-            @foreach( $monitorModes as $index => $mode)
-            <option value="{{ $index }}">{{ $mode}}</option>
-            @endforeach
-        </select>
-    </div>
+<!--    <div class="form-group required">-->
+<!--        <label class="control-label">Select Monitoring Mode </label>-->
+<!--        <select name="monitorMode" required>-->
+<!--            @foreach( $monitorModes as $index => $mode)-->
+<!--            <option value="{{ $index }}">{{ $mode}}</option>-->
+<!--            @endforeach-->
+<!--        </select>-->
+<!--    </div>-->
 
     <div class="form-group addedScpValue hide">
         <label class="control-label">Alternate SSH Host Name</label>
