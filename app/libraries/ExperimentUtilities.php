@@ -160,25 +160,27 @@ class ExperimentUtilities
             ExperimentUtilities::create_experiment_folder_path();
         }
 
-        $advHandling = new AdvancedOutputDataHandling();
+//        $advHandling = new AdvancedOutputDataHandling();
         $hostName = $_SERVER['SERVER_NAME'];
         $expPathConstant = 'file://' . ExperimentUtilities::$sshUser . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
 
-        $advHandling->outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-            $expPathConstant, ExperimentUtilities::$experimentPath);
-        $userConfigData->advanceOutputDataHandling = $advHandling;
+//        $advHandling->outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
+//            $expPathConstant, ExperimentUtilities::$experimentPath);
+//        $userConfigData->advanceOutputDataHandling = $advHandling;
 
         //TODO: replace constructor with a call to airvata to get a prepopulated experiment template
-        $experiment = new Experiment();
+        $experiment = new ExperimentModel();
 
         // required
-        $experiment->projectID = $_POST['project'];
+        $experiment->projectId = $_POST['project'];
         $experiment->userName = Session::get('username');
         $experiment->name = $_POST['experiment-name'];
+        $experiment->gatewayId = "default";
+        $experiment->experimentName = $_POST['experiment-name'];
 
         // optional
         $experiment->description = $_POST['experiment-description'];
-        $experiment->applicationId = $_POST['application'];
+        $experiment->executionId = $_POST['application'];
         $experiment->userConfigurationData = $userConfigData;
         $experiment->experimentInputs = $experimentInputs;
         if (isset($_POST["enableEmailNotification"])) {
@@ -609,7 +611,7 @@ class ExperimentUtilities
 
         if ($experiment->experimentStatus != null) {
             $experimentStatus = $experiment->experimentStatus;
-            $experimentState = $experimentStatus->experimentState;
+            $experimentState = $experimentStatus->state;
             $experimentStatusString = ExperimentState::$__names[$experimentState];
             $expVal["experimentStatusString"] = $experimentStatusString;
             $expVal["experimentTimeOfStateChange"] = $experimentStatus->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
@@ -627,7 +629,7 @@ class ExperimentUtilities
                 $expVal["computeResource"] = "";
             }
         }
-        $expVal["applicationInterface"] = AppUtilities::get_application_interface($experiment->applicationId);
+        $expVal["applicationInterface"] = AppUtilities::get_application_interface($experiment->executionId);
 
 
         switch ($experimentStatusString) {
@@ -766,7 +768,7 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectID), true);
+            $expValue = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
             $expContainer[$expNum]['experiment'] = $experiment;
             if ($expValue["experimentStatusString"] == "FAILED")
                 $expValue["editable"] = false;
@@ -823,7 +825,7 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectID), true);
+            $expValue = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
             $expContainer[$expNum]['experiment'] = $experiment;
             if ($expValue["experimentStatusString"] == "FAILED")
                 $expValue["editable"] = false;
@@ -869,7 +871,7 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectID), true);
+            $expValue = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
             $expContainer[$expNum]['experiment'] = $experiment;
             if ($expValue["experimentStatusString"] == "FAILED")
                 $expValue["editable"] = false;
@@ -901,7 +903,7 @@ class ExperimentUtilities
     {
         $experiment->name = $input['experiment-name'];
         $experiment->description = rtrim($input['experiment-description']);
-        $experiment->projectID = $input['project'];
+        $experiment->projectId = $input['project'];
         //$experiment->applicationId = $_POST['application'];
 
         $userConfigDataUpdated = $experiment->userConfigurationData;
@@ -938,7 +940,7 @@ class ExperimentUtilities
 
         $experiment->userConfigurationData = $userConfigDataUpdated;
 
-        $applicationInputs = AppUtilities::get_application_inputs($experiment->applicationId);
+        $applicationInputs = AppUtilities::get_application_inputs($experiment->executionId);
 
         $experimentInputs = $experiment->experimentInputs; // get current inputs
         //var_dump($experimentInputs);
