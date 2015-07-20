@@ -57,7 +57,7 @@ class ExperimentUtilities
      */
     public static function list_input_files($experiment)
     {
-        $applicationInputs = AppUtilities::get_application_inputs($experiment->applicationId);
+        $applicationInputs = AppUtilities::get_application_inputs($experiment->executionId);
 
         $experimentInputs = $experiment->experimentInputs;
 
@@ -906,6 +906,7 @@ class ExperimentUtilities
         $experiment->description = rtrim($input['experiment-description']);
         $experiment->projectId = $input['project'];
         //$experiment->applicationId = $_POST['application'];
+        $experiment->executionId = $_POST['application'];
 
         $userConfigDataUpdated = $experiment->userConfigurationData;
         $schedulingUpdated = $userConfigDataUpdated->computationalResourceScheduling;

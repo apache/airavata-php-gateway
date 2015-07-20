@@ -82,7 +82,7 @@ class ExperimentController extends BaseController
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
             $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
-            $transferDetails = ExperimentUtilities::get_transfer_details($experiment->experimentId);
+//            $transferDetails = ExperimentUtilities::get_transfer_details($experiment->experimentId);
             //var_dump( $jobDetails); exit;
             // User should not clone or edit a failed experiment. Only create clones of it.
             if ($expVal["experimentStatusString"] == "FAILED")
