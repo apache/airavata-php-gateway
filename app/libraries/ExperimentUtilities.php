@@ -5,14 +5,13 @@ use Airavata\API\Error\AiravataSystemException;
 use Airavata\API\Error\ExperimentNotFoundException;
 use Airavata\API\Error\InvalidRequestException;
 use Airavata\Facades\Airavata;
-use Airavata\Model\AppCatalog\AppInterface\DataType;
-use Airavata\Model\AppCatalog\AppInterface\InputDataObjectType;
-use Airavata\Model\Workspace\Experiment\AdvancedOutputDataHandling;
-use Airavata\Model\Workspace\Experiment\ComputationalResourceScheduling;
-use Airavata\Model\Workspace\Experiment\Experiment;
-use Airavata\Model\Workspace\Experiment\ExperimentState;
-use Airavata\Model\Workspace\Experiment\JobState;
-use Airavata\Model\Workspace\Experiment\UserConfigurationData;
+use Airavata\Model\Application\Io\DataType;
+use Airavata\Model\Application\Io\InputDataObjectType;
+use Airavata\Model\Scheduling\ComputationalResourceSchedulingModel;
+use Airavata\Model\Experiment\ExperimentModel;
+use Airavata\Model\Status\ExperimentState;
+use Airavata\Model\Status\JobState;
+use Airavata\Model\Experiment\UserConfigurationDataModel;
 
 class ExperimentUtilities
 {
@@ -139,7 +138,7 @@ class ExperimentUtilities
     {
         $experimentInputs = array();
 
-        $scheduling = new ComputationalResourceScheduling();
+        $scheduling = new ComputationalResourceSchedulingModel();
         $scheduling->totalCPUCount = $_POST['cpu-count'];
         $scheduling->nodeCount = $_POST['node-count'];
         $scheduling->queueName = $_POST['queue-name'];
@@ -147,7 +146,7 @@ class ExperimentUtilities
         $scheduling->totalPhysicalMemory = $_POST['total-physical-memory'];
         $scheduling->resourceHostId = $_POST['compute-resource'];
 
-        $userConfigData = new UserConfigurationData();
+        $userConfigData = new UserConfigurationDataModel();
         $userConfigData->computationalResourceScheduling = $scheduling;
         if (isset($_POST["userDN"])) {
             $userConfigData->generateCert = 1;
@@ -719,28 +718,28 @@ class ExperimentUtilities
             $filters = array();
             if(!empty($inputs["status-type"])){
                 if ($inputs["status-type"] != "ALL") {
-                    $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::STATUS] = $inputs["status-type"];
+                    $filters[\Airavata\Model\Experiment\ExperimentSearchFields::STATUS] = $inputs["status-type"];
                 }
             }
             if(!empty($inputs["search-key"])){
                 switch ($inputs["search-key"]) {
                     case 'experiment-name':
-                        $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = $inputs["search-value"];
+                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = $inputs["search-value"];
                         break;
                     case 'experiment-description':
-                        $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::EXPERIMENT_DESC] = $inputs["search-value"];
+                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::EXPERIMENT_DESC] = $inputs["search-value"];
                         break;
                     case 'application':
-                        $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::APPLICATION_ID] = $inputs["search-value"];
+                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::APPLICATION_ID] = $inputs["search-value"];
                         break;
                     case 'creation-time':
-                        $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::FROM_DATE] = strtotime($inputs["from-date"]) * 1000;
-                        $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::TO_DATE] = strtotime($inputs["to-date"]) * 1000;
+                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::FROM_DATE] = strtotime($inputs["from-date"]) * 1000;
+                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::TO_DATE] = strtotime($inputs["to-date"]) * 1000;
                         break;
                     case '':
                 }
             }else{
-                $filters[\Airavata\Model\Workspace\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = "*";
+                $filters[\Airavata\Model\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = "*";
             }
 
             $experiments = Airavata::searchExperiments(
