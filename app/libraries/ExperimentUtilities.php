@@ -666,16 +666,17 @@ class ExperimentUtilities
      * @param $experiment
      * @return null
      */
-    public static function get_job_status(Experiment $experiment)
+    public static function get_job_status(ExperimentModel $experiment)
     {
         //$jobStatus = Airavata::getJobStatuses($experiment->experimentID);
-        if(!empty($experiment->workflowNodeDetailsList)){
+        //TODO - implement following logic with new data model.
+/*        if(!empty($experiment->workflowNodeDetailsList)){
             if(!empty($experiment->workflowNodeDetailsList[0]->taskDetailsList)){
                 if(!empty($experiment->workflowNodeDetailsList[0]->taskDetailsList[0]->jobDetailsList)){
                     $jobStatus = $experiment->workflowNodeDetailsList[0]->taskDetailsList[0]->jobDetailsList[0]->jobStatus;
                 }
             }
-        }
+        }*/
         if (isset($jobStatus)) {
             $jobState = JobState::$__names[$jobStatus->jobState];
         } else {
