@@ -78,11 +78,11 @@ class ExperimentController extends BaseController
     {
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
         if ($experiment != null) {
-            $project = ProjectUtilities::get_project($experiment->projectID);
+            $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
             $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
-            $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentID);
-            $transferDetails = ExperimentUtilities::get_transfer_details($experiment->experimentID);
+            $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
+//            $transferDetails = ExperimentUtilities::get_transfer_details($experiment->experimentId);
             //var_dump( $jobDetails); exit;
             // User should not clone or edit a failed experiment. Only create clones of it.
             if ($expVal["experimentStatusString"] == "FAILED")
@@ -129,7 +129,7 @@ class ExperimentController extends BaseController
     {
         //var_dump( Input::all() ); exit;
         $experiment = ExperimentUtilities::get_experiment(Input::get('expId'));
-        $project = ProjectUtilities::get_project($experiment->projectID);
+        $project = ProjectUtilities::get_project($experiment->projectId);
 
         $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
         $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
@@ -137,24 +137,24 @@ class ExperimentController extends BaseController
         {
             $updatedExperiment = CommonUtilities::apply_changes_to_experiment($experiment);
 
-            CommonUtilities::update_experiment($experiment->experimentID, $updatedExperiment);
+            CommonUtilities::update_experiment($experiment->experimentId, $updatedExperiment);
         }*/
         if (isset($_POST['launch'])) {
-            ExperimentUtilities::launch_experiment($experiment->experimentID);
-            return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
+            ExperimentUtilities::launch_experiment($experiment->experimentId);
+            return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
         } elseif (isset($_POST['clone'])) {
-            $cloneId = ExperimentUtilities::clone_experiment($experiment->experimentID);
+            $cloneId = ExperimentUtilities::clone_experiment($experiment->experimentId);
             $experiment = ExperimentUtilities::get_experiment($cloneId);
-            $project = ProjectUtilities::get_project($experiment->projectID);
+            $project = ProjectUtilities::get_project($experiment->projectId);
 
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
             $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
 
-            return Redirect::to('experiment/edit?expId=' . $experiment->experimentID);
+            return Redirect::to('experiment/edit?expId=' . $experiment->experimentId);
 
         } elseif (isset($_POST['cancel'])) {
-            ExperimentUtilities::cancel_experiment($experiment->experimentID);
-            return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
+            ExperimentUtilities::cancel_experiment($experiment->experimentId);
+            return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
 
         }
     }
@@ -168,7 +168,7 @@ class ExperimentController extends BaseController
         );
 
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
-        $project = ProjectUtilities::get_project($experiment->projectID);
+        $project = ProjectUtilities::get_project($experiment->projectId);
 
         $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
         $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
@@ -203,16 +203,16 @@ class ExperimentController extends BaseController
             $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
             $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
 
-            ExperimentUtilities::update_experiment($experiment->experimentID, $updatedExperiment);
+            ExperimentUtilities::update_experiment($experiment->experimentId, $updatedExperiment);
 
             if (isset($_POST['save'])) {
                 $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
             }
             if (isset($_POST['launch'])) {
-                ExperimentUtilities::launch_experiment($experiment->experimentID);
+                ExperimentUtilities::launch_experiment($experiment->experimentId);
             }
 
-            return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
+            return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
         } else
             return View::make("home");
     }
