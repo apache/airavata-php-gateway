@@ -8,7 +8,7 @@
     <h1>
         Experiment Summary
         @if( !isset($dashboard))
-        <small><a href="{{ URL::to('/') }}/experiment/summary?expId={{ $experiment->experimentID }}"
+        <small><a href="{{ URL::to('/') }}/experiment/summary?expId={{ $experiment->experimentId }}"
                   title="Refresh"><span class="glyphicon glyphicon-refresh refresh-exp"></span></a></small>
         @endif
     </h1>
@@ -17,11 +17,11 @@
     <table class="table">
         <tr>
             <td><strong>Experiment Id</strong></td>
-            <td><?php echo $experiment->experimentID; ?></td>
+            <td><?php echo $experiment->experimentId; ?></td>
         </tr>
         <tr>
             <td><strong>Name</strong></td>
-            <td><?php echo $experiment->name; ?></td>
+            <td><?php echo $experiment->experimentName; ?></td>
         </tr>
         <tr>
             <td><strong>Description</strong></td>
@@ -130,7 +130,7 @@
                    class="btn btn-success"
                    value="Launch"
                    title="Launch the experiment" <?php if (!$expVal["editable"]) echo 'style="display: none"' ?>>
-            <a href="{{URL::to('/') }}/experiment/cancel?expId={{ $experiment->experimentID }}"
+            <a href="{{URL::to('/') }}/experiment/cancel?expId={{ $experiment->experimentId }}"
                class="btn btn-default"
                role="button"
                tit  le="Edit the experiment's settings" <?php if (!$expVal["cancelable"]) echo 'style="display: none"' ?>>
@@ -144,7 +144,7 @@
                    title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings
                     after it has been launched.">
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
-            <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentID }}"
+            <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}"
                class="btn btn-default"
                role="button"
                title="Edit the experiment's settings" <?php if (!$expVal["editable"]) echo 'style="display: none"' ?>>
