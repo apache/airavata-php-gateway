@@ -161,6 +161,19 @@
         @section('scripts')
         @parent
         <script type="text/javascript">
+            var warn = true;
+
+            function disableWarn(){
+                warn = false;
+                return false;
+            }
+
+            window.onbeforeunload = function() {
+                if(warn){
+                    return "Are you sure you want to navigate to other page ? (you will loose all unsaved data)";
+                }
+                warn = true;
+            }
 
             $(".panel-title").hover(
                 function () {

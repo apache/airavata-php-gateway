@@ -832,5 +832,19 @@
         $(".delete-queueName").val($(this).data("queue-name"));
         $(".delete-queueName").html($(this).data("queue-name"));
     })
+
+    var warn = true;
+
+    function disableWarn(){
+        warn = false;
+        return false;
+    }
+
+    window.onbeforeunload = function() {
+        if(warn){
+            return "Are you sure you want to navigate to other page ? (you will loose all unsaved data)";
+        }
+        warn = true;
+    }
 </script>
 @stop
