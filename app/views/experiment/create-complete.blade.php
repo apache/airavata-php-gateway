@@ -81,5 +81,9 @@
             }
         });
     });
+
+    window.onbeforeunload = function() {
+        return "Are you sure you want to navigate to other page ? (you will loose all unsaved data)";
+    }
 </script>
 @stop
