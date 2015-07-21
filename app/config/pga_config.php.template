@@ -39,9 +39,9 @@ return array(
         'server' => 'idp.scigap.org',
 
         /**
-         * Identity server web services endpoint
+         * Identity server url
          */
-        'service-url' => 'https://idp.scigap.org:7443/services/',
+        'service-url' => 'https://idp.scigap.org:7443/',
 
         /**
          * Path to the server certificate file
