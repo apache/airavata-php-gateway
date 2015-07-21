@@ -48,6 +48,9 @@ class AccountController extends BaseController
             WSIS::addUser($username, $password, $first_name, $last_name, $email, $organization,
                 $address, $country, $telephone, $mobile, $im, $url);
 
+            //update user profile
+            WSIS::updateUserProfile($username, $email, $first_name, $last_name);
+
             //creating a default project for user
             ProjectUtilities::create_default_project($username);
             CommonUtilities::print_success_message('New user created!');
@@ -74,6 +77,11 @@ class AccountController extends BaseController
                     }
                     if (in_array(Config::get('pga_config.wsis')['read-only-admin'], $userRoles)) {
                         Session::put("admin-read-only", true);
+                    }
+
+                    $userProfile = WSIS::getUserProfile($username);
+                    if($userProfile != null && !empty($userProfile)){
+                        Session::put("user-profile", $userProfile);
                     }
 
                     CommonUtilities::store_id_in_session($username);

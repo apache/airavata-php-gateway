@@ -2,6 +2,7 @@
 
 namespace Wsis;
 
+use Wsis\Stubs\UserProfileManager;
 use Wsis\Stubs\UserStoreManager;
 use Wsis\Stubs\TenantManager;
 
@@ -18,6 +19,12 @@ class Wsis {
      * @access private
      */
     private $tenantManager;
+
+    /**
+     * @var
+     * @access private
+     */
+    private $userProfileManager;
 
     /**
      * @var string
@@ -71,6 +78,7 @@ class Wsis {
         try {
             $this->userStoreManager = new UserStoreManager($service_url, $parameters);
             $this->tenantManager = new TenantManager($service_url, $parameters);
+            $this->userProfileManager = new UserProfileManager($service_url, $parameters);
         } catch (Exception $ex) {
             throw new Exception("Unable to instantiate WSO2 IS client", 0, $ex);
         }
@@ -293,5 +301,24 @@ class Wsis {
              */
             //throw new Exception("Unable to create Tenant.", 0, $ex);
         }
+    }
+
+    /**
+     * Function to update the user profile
+     * @param $username
+     * @param $email
+     * @param $firstName
+     * @param $lastName
+     */
+    public function updateUserProfile($username, $email, $firstName, $lastName){
+        $this->userProfileManager->updateUserProfile($username, $email, $firstName, $lastName);
+    }
+
+    /**
+     * Function to get the user profile of a user
+     * @param $username
+     */
+    public function getUserProfile($username){
+        return $this->userProfileManager->getUserProfile($username);
     }
 } 
