@@ -18,7 +18,7 @@ class UserStoreManager {
 
     public function __construct($server_url, $options) {
         $this->serviceStub = new UserStoreManagerStub(
-                $server_url . "RemoteUserStoreManagerService?wsdl", $options
+                $server_url . "services/RemoteUserStoreManagerService?wsdl", $options
         );
     }
     

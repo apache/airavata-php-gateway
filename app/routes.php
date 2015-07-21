@@ -28,6 +28,12 @@ Route::get("logout", "AccountController@logout");
 
 Route::get("forgot-password", "AccountController@forgotPassword");
 
+Route::get("reset-password", "AccountController@resetPassword");
+
+Route::post("reset-password", "AccountController@resetPasswordSubmit");
+
+Route::post("forgot-password", "AccountController@forgotPasswordSubmit");
+
 Route::get("setUserTimezone", function () {
     Session::set("user_timezone", Input::get("timezone"));
 });

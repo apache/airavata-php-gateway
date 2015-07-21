@@ -18,7 +18,7 @@ class TenantManager {
 
     public function __construct($server_url, $options) {
         $this->serviceStub = new TenantMgtAdminStub(
-                $server_url . "TenantMgtAdminService?wsdl", $options
+                $server_url . "services/TenantMgtAdminService?wsdl", $options
         );
     }
     

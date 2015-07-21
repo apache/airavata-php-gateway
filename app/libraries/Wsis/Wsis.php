@@ -5,6 +5,7 @@ namespace Wsis;
 use Wsis\Stubs\UserProfileManager;
 use Wsis\Stubs\UserStoreManager;
 use Wsis\Stubs\TenantManager;
+use Wsis\Stubs\UserInformationRecoveryManager;
 
 class Wsis {
 
@@ -25,6 +26,12 @@ class Wsis {
      * @access private
      */
     private $userProfileManager;
+
+    /**
+     * @var
+     * @access private
+     */
+    private $userInfoRecoveryManager;
 
     /**
      * @var string
@@ -79,6 +86,7 @@ class Wsis {
             $this->userStoreManager = new UserStoreManager($service_url, $parameters);
             $this->tenantManager = new TenantManager($service_url, $parameters);
             $this->userProfileManager = new UserProfileManager($service_url, $parameters);
+            $this->userInfoRecoveryManager = new UserInformationRecoveryManager($service_url, $parameters);
         } catch (Exception $ex) {
             throw new Exception("Unable to instantiate WSO2 IS client", 0, $ex);
         }
@@ -320,5 +328,43 @@ class Wsis {
      */
     public function getUserProfile($username){
         return $this->userProfileManager->getUserProfile($username);
+    }
+
+    /**
+     * Method to validate username
+     * @param $username
+     */
+    public function validateUser($username){
+        return $this->userInfoRecoveryManager->validateUsername($username);
+    }
+
+
+    /**
+     * Method to send password reset notification
+     * @param $username
+     */
+    public function sendPasswordResetNotification($username, $key){
+        return $this->userInfoRecoveryManager->sendPasswordResetNotification($username, $key);
+    }
+
+    /**
+     * Method to validate the password reset email confirmation code
+     * @param $username
+     * @param $confirmation
+     * @return mixed
+     */
+    public function validateConfirmationCode($username, $confirmation){
+        return $this->userInfoRecoveryManager->validateConfirmationCode($username, $confirmation);
+    }
+
+    /**
+     * Method to reset user password
+     * @param $username
+     * @param $newPassword
+     * @param $key
+     * @return mixed
+     */
+    public function resetPassword($username, $newPassword, $key){
+        return $this->userInfoRecoveryManager->resetPassword($username, $newPassword, $key);
     }
 } 

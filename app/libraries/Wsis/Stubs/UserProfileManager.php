@@ -18,7 +18,7 @@ class UserProfileManager {
 
     public function __construct($server_url, $options) {
         $this->serviceStub = new UserProfileManagerStub(
-            $server_url . "UserProfileMgtService?wsdl", $options
+            $server_url . "services/UserProfileMgtService?wsdl", $options
         );
     }
 
