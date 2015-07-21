@@ -401,7 +401,7 @@ class ExperimentUtilities
             //create new experiment to receive the clone
             $experiment = Airavata::getExperiment($expId);
 
-            $cloneId = Airavata::cloneExperiment($expId, 'Clone of ' . $experiment->name);
+            $cloneId = Airavata::cloneExperiment($expId, 'Clone of ' . $experiment->experimentName);
 
             CommonUtilities::print_success_message("<p>Experiment cloned!</p>" .
                 '<p>You will be redirected to the edit page shortly, or you can
@@ -906,7 +906,7 @@ class ExperimentUtilities
         $experiment->description = rtrim($input['experiment-description']);
         $experiment->projectId = $input['project'];
         //$experiment->applicationId = $_POST['application'];
-        $experiment->executionId = $_POST['application'];
+//        $experiment->executionId = $_POST['application'];
 
         $userConfigDataUpdated = $experiment->userConfigurationData;
         $schedulingUpdated = $userConfigDataUpdated->computationalResourceScheduling;

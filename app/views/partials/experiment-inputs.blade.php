@@ -15,7 +15,7 @@
 <div class="form-group required">
     <label for="project" class="control-label">Project</label>
     @if( isset( $expInputs['cloning']))
-    {{ ProjectUtilities::create_project_select($expInputs['experiment']->projectID, $expInputs['expVal']['editable']) }}
+    {{ ProjectUtilities::create_project_select($expInputs['experiment']->projectId, $expInputs['expVal']['editable']) }}
     @else
     {{ ProjectUtilities::create_project_select($expInputs['project'], !$expInputs['disabled']) }}
     @endif

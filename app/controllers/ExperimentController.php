@@ -173,13 +173,13 @@ class ExperimentController extends BaseController
         $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
         $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
 
-        $computeResources = CRUtilities::create_compute_resources_select($experiment->applicationId, $expVal['scheduling']->resourceHostId);
+        $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
 
         $experimentInputs = array(
             "disabled" => ' ',
-            "experimentName" => $experiment->name,
+            "experimentName" => $experiment->experimentName,
             "experimentDescription" => $experiment->description,
-            "application" => $experiment->applicationId,
+            "application" => $experiment->executionId,
             "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
             'experiment' => $experiment,
             "queueDefaults" => $queueDefaults,
