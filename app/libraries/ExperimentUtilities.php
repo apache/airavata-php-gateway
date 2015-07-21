@@ -18,8 +18,6 @@ class ExperimentUtilities
 {
     private static $experimentPath;
 
-    private static $sshUser = "root";
-
     /**
      * Launch the experiment with the given ID
      * @param $expId
@@ -163,7 +161,7 @@ class ExperimentUtilities
 
         $advHandling = new AdvancedOutputDataHandling();
         $hostName = $_SERVER['SERVER_NAME'];
-        $expPathConstant = 'file://' . ExperimentUtilities::$sshUser . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
+        $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
 
         $advHandling->outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
             $expPathConstant, ExperimentUtilities::$experimentPath);
@@ -290,7 +288,7 @@ class ExperimentUtilities
                         $experimentAssemblySuccessful = false;
                     }
                     $hostName = $_SERVER['SERVER_NAME'];
-                    $experimentInput->value = 'file://' . ExperimentUtilities::$sshUser . '@' . $hostName . ':' . $filePath;
+                    $experimentInput->value = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . $filePath;
                     $experimentInput->type = $applicationInput->type;
 
                 } else {
@@ -406,7 +404,7 @@ class ExperimentUtilities
             $experimentInputs = $experiment->experimentInputs;
             ExperimentUtilities::create_experiment_folder_path();
             $hostName = $_SERVER['SERVER_NAME'];
-            $expPathConstant = 'file://' . ExperimentUtilities::$sshUser . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
+            $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
             $outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
                 $expPathConstant, ExperimentUtilities::$experimentPath);
             $experiment->userConfigurationData->advanceOutputDataHandling->outputDataDir = $outputDataDir;
@@ -414,7 +412,7 @@ class ExperimentUtilities
             foreach ($experimentInputs as $experimentInput) {
                 if ($experimentInput->type == DataType::URI) {
                     $currentInputPath = $experimentInput->value;
-                    $hostPathConstant = 'file://' . ExperimentUtilities::$sshUser . '@' . $hostName . ':';
+                    $hostPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':';
                     $currentInputPath = str_replace($hostPathConstant, '', $currentInputPath);
                     $parts = explode('/', rtrim($currentInputPath, '/'));
                     $fileName = array_pop($parts);
