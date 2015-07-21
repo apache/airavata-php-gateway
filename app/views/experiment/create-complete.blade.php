@@ -21,13 +21,13 @@
 
         <div class="form-group btn-toolbar">
             <div class="btn-group">
-                <button name="save" type="submit" class="btn btn-primary" value="Save">Save</button>
-                <button name="launch" type="submit" class="btn btn-success" id="expLaunch" value="Save and launch">Save
+                <button onclick="disableWarn()" name="save" type="submit" class="btn btn-primary" value="Save">Save</button>
+                <button onclick="disableWarn()" name="launch" type="submit" class="btn btn-success" id="expLaunch" value="Save and launch">Save
                     and launch
                 </button>
             </div>
 
-            <a href="{{URL::to('/')}}/experiment/create" class="btn btn-default" role="button">Start over</a>
+            <a onclick="disableWarn()" href="{{URL::to('/')}}/experiment/create" class="btn btn-default" role="button">Start over</a>
         </div>
 
     </form>
@@ -41,6 +41,13 @@
 @section('scripts')
 @parent
 <script>
+    var warn = true;
+
+    function disableWarn(){
+        warn = false;
+        return false;
+    }
+
     $('.file-input').bind('change', function () {
 
         var inputFileSize = Math.round(this.files[0].size / (1024 * 1024));
@@ -83,7 +90,10 @@
     });
 
     window.onbeforeunload = function() {
-        return "Are you sure you want to navigate to other page ? (you will loose all unsaved data)";
+        if(warn){
+            return "Are you sure you want to navigate to other page ? (you will loose all unsaved data)";
+        }
+        warn = true;
     }
 </script>
 @stop
