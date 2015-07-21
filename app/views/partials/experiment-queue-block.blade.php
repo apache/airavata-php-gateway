@@ -4,7 +4,6 @@
     <label class="control-label" for="node-count">Select a Queue</label>
     <select name="queue-name" class="form-control" id="select-queue" @if(isset($expVal) ) @if(!$expVal['editable']){{
     disabled }} @endif @endif required>
-    <option value=""></option>
     @foreach( $queues as $queue)
     <option value="{{$queue->queueName}}"
     @if(isset($expVal) ) @if( $expVal['scheduling']->queueName == $queue->queueName ) selected @endif @endif
