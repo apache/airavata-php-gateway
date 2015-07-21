@@ -82,10 +82,10 @@ if (Session::has("admin-alert")) {
                     e.preventDefault();
                     showCollectorDialog();
                 });
+            },fieldValues: {
+                email : email !== 'undefined' ? email : "",
+                fullname : fullName !== 'undefined' ? fullName : ""
             }
-        },fieldValues: {
-            email : email !== 'undefined' ? email : "",
-            fullname : fullName !== 'undefined' ? fullName : ""
         }
     });
 
