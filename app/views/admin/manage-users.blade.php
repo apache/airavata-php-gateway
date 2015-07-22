@@ -110,7 +110,9 @@
 <div class="role-block hide">
     <div class="btn-group" role="group">
         <button type="button" class="btn btn-default role-name" disabled>Role</button>
+        @if(Session::has("admin"))
         <button type="button" class="btn btn-default existing-role-button"><span class="glyphicon glyphicon-remove"></span></button>
+        @endif
     </div>
 </div>
 @stop
