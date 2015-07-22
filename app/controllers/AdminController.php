@@ -49,12 +49,26 @@ class AdminController extends BaseController {
 		}
 		else
 	    	$users =  WSIS::listUsers();
-	    
+
 	    $roles = WSIS::getAllRoles();
         Session::put("admin-nav", "manage-users");
 	    return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 
 	}
+
+    public function searchUsersView(){
+        if(Input::has("search_val"))
+        {
+            $users =  WSIS::searchUsers(Input::get("search_val"));
+        }
+        else
+            $users = WSIS::listUsers();
+
+        $roles = WSIS::getAllRoles();
+        Session::put("admin-nav", "manage-users");
+        return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
+
+    }
 
 	public function addGatewayAdminSubmit(){
 		//check if username exists

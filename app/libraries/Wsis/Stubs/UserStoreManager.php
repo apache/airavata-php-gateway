@@ -118,6 +118,19 @@ class UserStoreManager {
         return $this->serviceStub->listUsers($parameters)->return;
     }
 
+    /**
+     * Function to search users
+     * @param $phrase
+     * @return string
+     */
+    public function searchUsers($phrase){
+        $parameters = new ListUsers();
+        $parameters->filter = "*" . $phrase . "*";
+        $parameters->maxItemLimit = -1;
+
+        return $this->serviceStub->listUsers($parameters)->return;
+    }
+
      /**
      * Function get user list
      *

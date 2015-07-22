@@ -272,6 +272,21 @@ class Wsis {
     }
 
     /**
+     * Function to search users
+     * @param $phrase
+     * @return string
+     * @throws Exception
+     */
+    public function searchUsers($phrase){
+        try {
+            return $this->userStoreManager->searchUsers($phrase);
+        } catch (Exception $ex) {
+            var_dump( $ex->debug_message);
+            throw new Exception("Unable to list users.", 0, $ex);
+        }
+    }
+
+    /**
      * Function to get the tenant id
      *
      * @param GetTenantId $parameters

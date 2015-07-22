@@ -164,6 +164,8 @@ Route::get("admin/dashboard/gateway", "AdminController@dashboard");
 
 Route::get("admin/dashboard/users", "AdminController@usersView");
 
+Route::post("admin/dashboard/users", "AdminController@searchUsersView");
+
 Route::get("admin/dashboard/roles", "AdminController@rolesView");
 
 Route::get("admin/dashboard/experiments", "AdminController@experimentsView");
