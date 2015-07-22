@@ -13,11 +13,11 @@
          @if( Session::has("admin-nav") && Session::get("admin-nav") == "manage-roles") class="active" @endif>
             <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/roles"><i class="fa fa-fw fa-table"></i>Roles</a>
         </li>
-        <li
-        @if( Session::has("admin-nav") && Session::get("admin-nav") == "credential-store") class="active" @endif>
-            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/credential-store"><i class="fa fa-fw fa-table"></i>Credential
-                Store</a>
-        </li>
+<!--        <li-->
+<!--        @if( Session::has("admin-nav") && Session::get("admin-nav") == "credential-store") class="active" @endif>-->
+<!--            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/credential-store"><i class="fa fa-fw fa-table"></i>Credential-->
+<!--                Store</a>-->
+<!--        </li>-->
         <li>
             <a><i class="fa fa-fw fa-table"></i>Compute Resources</a>
             <ul>
