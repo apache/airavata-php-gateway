@@ -157,12 +157,20 @@
                 <input name="cancel" type="submit" class="btn btn-warning"
                        value="Cancel" <?php if (!$expVal["cancelable"]) echo 'disabled'; ?> >
             </a>
-            <input name="clone"
-                   type="submit"
-                   class="btn btn-primary"
-                   value="Clone"
-                   title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings
-                    after it has been launched.">
+<!--            <input name="clone"-->
+<!--                   type="submit"-->
+<!--                   class="btn btn-primary"-->
+<!--                   value="Clone"-->
+<!--                   title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings-->
+<!--                    after it has been launched.">-->
+            <a href="{{URL::to('/') }}/experiment/clone?expId={{ $experiment->experimentID }}"
+               class="btn btn-primary"
+               role="button"
+               title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings
+                    after it has been launched." target="_blank">
+                <span class="glyphicon glyphicon-pencil"></span>
+                Clone
+            </a>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentID }}"
                class="btn btn-default"

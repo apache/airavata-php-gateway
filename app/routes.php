@@ -72,6 +72,8 @@ Route::get("experiment/summary", "ExperimentController@summary");
 
 Route::post("experiment/summary", "ExperimentController@expChange");
 
+Route::get("experiment/clone", "ExperimentController@cloneExperiment");
+
 Route::get("experiment/edit", "ExperimentController@editView");
 
 Route::post("experiment/edit", "ExperimentController@editSubmit");
