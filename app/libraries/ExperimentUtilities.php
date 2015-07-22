@@ -995,7 +995,7 @@ class ExperimentUtilities
         $disabled = $editable ? '' : 'disabled';
 
         $applicationIds = AppUtilities::get_all_applications();
-
+        uksort($applicationIds, 'strcasecmp');
         echo '<select class="form-control" name="application" id="application" required ' . $disabled . '>';
 
         if (count($applicationIds)) {
