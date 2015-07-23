@@ -14,7 +14,7 @@
                 </div>
             </div>
             <a id="getAllExperiments" href="#experiment-container">
-            <div class="panel-footer">
+            <div class="panel-footer" style="height: 100px">
                     <span class="pull-left">All</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
@@ -37,8 +37,8 @@
                 </div>
             </div>
             <a id="getCreatedExperiments" href="#experiment-container">
-                <div class="panel-footer">
-                    <span class="pull-left">CREATED VALIDATED</span>
+                <div class="panel-footer" style="height: 100px">
+                    <span class="pull-left">CREATED VALIDATED &nbsp; &nbsp; &nbsp; &nbsp; </span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
                     <div class="clearfix"></div>
@@ -60,7 +60,7 @@
                 </div>
             </div>
             <a id="getRunningExperiments" href="#experiment-container">
-                <div class="panel-footer">
+                <div class="panel-footer" style="height: 100px">
                     <span class="pull-left">SCHEDULED LAUNCHED EXECUTING</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
@@ -83,7 +83,7 @@
                 </div>
             </div>
             <a id="getCompletedExperiments" href="#experiment-container">
-            <div class="panel-footer">
+            <div class="panel-footer" style="height: 100px">
                     <span class="pull-left">COMPLETED</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></i></span>
 
@@ -107,7 +107,7 @@
                 </div>
             </div>
             <a id="getCancelledExperiments" href="#experiment-container">
-            <div class="panel-footer">
+            <div class="panel-footer" style="height: 100px">
                     <span class="pull-left">CANCELLING CANCELLED</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></i></span>
 
@@ -131,7 +131,7 @@
                 </div>
             </div>
             <a id="getFailedExperiments" href="#experiment-container">
-            <div class="panel-footer">
+            <div class="panel-footer" style="height: 100px">
                     <span class="pull-left">FAILED</span>
                     <span class="pull-right"><span class="glyphicon glyphicon-arrow-right"></span></span>
 
