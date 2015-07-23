@@ -14,11 +14,6 @@
     <div id="page-wrapper">
 <div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-        @if(Session::has("admin"))
-        <div class="row">
-            <button class="btn btn-default create-app-deployment">Create a new Application Deployment</button>
-        </div>
-        @endif
         @if( count( $appDeployments) )
         @if( Session::has("message"))
         <div class="row">
@@ -30,7 +25,11 @@
         </div>
         {{ Session::forget("message") }}
         @endif
-
+        @if(Session::has("admin"))
+        <div class="row">
+            <button class="btn btn-default create-app-deployment">Create a new Application Deployment</button>
+        </div>
+        @endif
         <div class="row">
             <div class="col-md-6">
                 <h3>Existing Application Deployments :</h3>

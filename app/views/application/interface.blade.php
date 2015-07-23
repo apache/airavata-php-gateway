@@ -14,11 +14,6 @@
     <div id="page-wrapper">
 <div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-        @if(Session::has("admin"))
-        <div class="row">
-            <button class="btn btn-default create-app-interface">Create a new Application Interface</button>
-        </div>
-        @endif
         @if( count( $appInterfaces) )
         @if( Session::has("message"))
         <div class="row">
@@ -29,6 +24,11 @@
             </div>
         </div>
         {{ Session::forget("message") }}
+        @endif
+        @if(Session::has("admin"))
+        <div class="row">
+            <button class="btn btn-default create-app-interface">Create a new Application Interface</button>
+        </div>
         @endif
         <div class="row">
 

@@ -40,6 +40,17 @@ class ApplicationController extends BaseController {
 	public function deleteAppModule()
 	{
         $this->beforeFilter('verifyeditadmin');
+        $data = AppUtilities::getAppInterfaceData();
+        foreach($data["appInterfaces"] as $appInterface){
+            foreach($appInterface->applicationModules as $appModule){
+                if($appModule == Input::get("appModuleId")){
+                    $errorMessage = "The selected app module is already assigned to " . $appInterface->applicationName
+                    . " interface. Hence it cannot be removed";
+                    return Redirect::to("app/module")->with("errorMessage", $errorMessage);
+                }
+            }
+        }
+
 		if( AppUtilities::deleteAppModule( Input::get("appModuleId") ) )
 			$message = "Module has been deleted successfully!";
 		else

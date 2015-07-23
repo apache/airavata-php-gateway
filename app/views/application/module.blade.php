@@ -14,12 +14,6 @@
     <div id="page-wrapper">
 <div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-        @if(Session::has("admin"))
-        <button class="btn btn-default create-app-module" data-toggle="modal" data-target="#new-app-module-block">Create
-            a new Application Module
-        </button>
-        @endif
-
         @if( count( $modules) )
         @if( Session::has("message"))
         <div class="row">
@@ -30,6 +24,23 @@
             </div>
         </div>
         {{ Session::forget("message") }}
+        @endif
+        @if( Session::has("errorMessage"))
+        <div class="row">
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                {{ Session::get("errorMessage") }}
+            </div>
+        </div>
+        {{ Session::forget("errorMessage") }}
+        @endif
+        @if(Session::has("admin"))
+        <div class="row">
+            <button class="btn btn-default create-app-module" data-toggle="modal" data-target="#new-app-module-block">Create
+                a new Application Module
+            </button>
+        </div>
         @endif
         <div class="row">
             <div class="col-md-6">
