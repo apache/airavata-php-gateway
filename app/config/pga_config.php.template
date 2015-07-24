@@ -82,11 +82,6 @@ return array(
         'airavata-timeout' => '1000000',
 
         /**
-         * Time zone of the location where the Airavata API server is hosted
-         */
-        'time-zone' => 'EST5EDT',
-
-        /**
          * PGA Gateway ID
          */
         'gateway-id' => 'default',
