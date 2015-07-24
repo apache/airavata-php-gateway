@@ -38,9 +38,17 @@ class AdminUtilities
      */
     public static function get_experiments_of_time_range($inputs)
     {
+        date_default_timezone_set('UTC');
+        $fromTime = new DateTime($inputs['from-date']);
+        $fromTime->setTimezone(new DateTimeZone(Config::get('pga_config.airavata')["time-zone"]));
+        $fromTime = strtotime($fromTime->format('m/d/y H:i'));
+        $toTime = new DateTime($inputs['to-date']);
+        $toTime->setTimezone(new DateTimeZone(Config::get('pga_config.airavata')["time-zone"]));
+        $toTime = strtotime($toTime->format('m/d/y H:i'));
+
         $experimentStatistics = AdminUtilities::get_experiment_execution_statistics(
-            strtotime($inputs["from-date"]) * 1000,
-            strtotime($inputs["to-date"]) * 1000
+            $fromTime * 1000,
+            $toTime * 1000
         );
         $experiments = array();
         if ($inputs["status-type"] == "ALL") {
