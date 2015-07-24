@@ -176,8 +176,15 @@ class AdminController extends BaseController {
     {
         if (Request::ajax()) {
             $inputs = Input::all();
-            $expStatistics = AdminUtilities::get_experiment_execution_statistics(strtotime($inputs['fromTime']) * 1000
-                , strtotime($inputs['toTime']) * 1000);
+            date_default_timezone_set('UTC');
+            $fromTime = new DateTime(strtotime($inputs['fromTime']));
+            $fromTime->setTimezone(new DateTimeZone(Config::get('pga_config.airavata')["time-zone"]));
+            $fromTime = strtotime($fromTime->format('Y-m-d H:i:s'));
+            $toTime = new DateTime(strtotime($inputs['toTime']));
+            $toTime->setTimezone(new DateTimeZone(Config::get('pga_config.airavata')["time-zone"]));
+            $toTime = strtotime($toTime->format('Y-m-d H:i:s'));
+            $expStatistics = AdminUtilities::get_experiment_execution_statistics($fromTime * 1000
+                , $toTime * 1000);
             return View::make("admin/experiment-statistics", array("expStatistics" => $expStatistics));
         }
     }
@@ -188,7 +195,8 @@ class AdminController extends BaseController {
             $inputs = Input::all();
             $expContainer = AdminUtilities::get_experiments_of_time_range($inputs);
             $expStates = ExperimentUtilities::getExpStates();
-            return View::make("partials/experiment-container", array("expContainer" => $expContainer, "expStates" => $expStates));
+            return View::make("partials/experiment-container", array("expContainer" => array_reverse($expContainer),
+                "expStates" => $expStates));
         }
     }
 
