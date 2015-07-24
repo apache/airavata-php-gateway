@@ -176,15 +176,8 @@ class AdminController extends BaseController {
     {
         if (Request::ajax()) {
             $inputs = Input::all();
-            date_default_timezone_set('UTC');
-            $fromTime = new DateTime($inputs['fromTime']);
-            $fromTime->setTimezone(new DateTimeZone(Config::get('pga_config.airavata')["time-zone"]));
-            $fromTime = strtotime($fromTime->format('m/d/y H:i'));
-            $toTime = new DateTime($inputs['toTime']);
-            $toTime->setTimezone(new DateTimeZone(Config::get('pga_config.airavata')["time-zone"]));
-            $toTime = strtotime($toTime->format('m/d/y H:i'));
-            $expStatistics = AdminUtilities::get_experiment_execution_statistics($fromTime * 1000
-                , $toTime * 1000);
+            $expStatistics = AdminUtilities::get_experiment_execution_statistics(strtotime($inputs['fromTime']) * 1000
+                , strtotime($inputs['toTime']) * 1000);
             return View::make("admin/experiment-statistics", array("expStatistics" => $expStatistics));
         }
     }
