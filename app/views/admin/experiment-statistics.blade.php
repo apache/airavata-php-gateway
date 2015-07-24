@@ -198,7 +198,10 @@
     $("#getCreatedExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
+        $fromTime = convertToUtc($fromTime);
         $toTime = $("#datetimepicker10").find("input").val();
+        $toTime - convertToUtc($toTime);
+
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -227,7 +230,9 @@
     $("#getRunningExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
+        $fromTime = convertToUtc($fromTime);
         $toTime = $("#datetimepicker10").find("input").val();
+        $toTime - convertToUtc($toTime);
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -256,7 +261,9 @@
     $("#getCompletedExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
+        $fromTime = convertToUtc($fromTime);
         $toTime = $("#datetimepicker10").find("input").val();
+        $toTime - convertToUtc($toTime);
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -285,7 +292,9 @@
     $("#getCancelledExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
+        $fromTime = convertToUtc($fromTime);
         $toTime = $("#datetimepicker10").find("input").val();
+        $toTime - convertToUtc($toTime);
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -314,7 +323,9 @@
     $("#getFailedExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
+        $fromTime = convertToUtc($fromTime);
         $toTime = $("#datetimepicker10").find("input").val();
+        $toTime - convertToUtc($toTime);
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
