@@ -146,30 +146,12 @@
 
 <script>
 
-    function convertToUtc(str) {
-
-        var date = new Date(str);
-        var year = date.getUTCFullYear();
-        var month = date.getUTCMonth()+1;
-        var dd = date.getUTCDate();
-        var hh = date.getUTCHours();
-        var mi = date.getUTCMinutes();
-        var sec = date.getUTCSeconds();
-
-        // 2010-11-12T13:14:15Z
-
-        theDate = year + "-" + (month [1] ? month : "0" + month [0]) + "-" +
-            (dd[1] ? dd : "0" + dd[0]);
-        theTime = (hh[1] ? hh : "0" + hh[0]) + ":" + (mi[1] ? mi : "0" + mi[0]);
-        return [ theDate, theTime ].join("T");
-    }
-
     $("#getAllExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = convertToUtc($fromTime);
+        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
         $toTime = $("#datetimepicker10").find("input").val();
-        $toTime - convertToUtc($toTime);
+        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -198,9 +180,9 @@
     $("#getCreatedExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = convertToUtc($fromTime);
+        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
         $toTime = $("#datetimepicker10").find("input").val();
-        $toTime - convertToUtc($toTime);
+        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
 
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
@@ -230,9 +212,9 @@
     $("#getRunningExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = convertToUtc($fromTime);
+        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
         $toTime = $("#datetimepicker10").find("input").val();
-        $toTime - convertToUtc($toTime);
+        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -261,9 +243,9 @@
     $("#getCompletedExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = convertToUtc($fromTime);
+        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
         $toTime = $("#datetimepicker10").find("input").val();
-        $toTime - convertToUtc($toTime);
+        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -292,9 +274,9 @@
     $("#getCancelledExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = convertToUtc($fromTime);
+        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
         $toTime = $("#datetimepicker10").find("input").val();
-        $toTime - convertToUtc($toTime);
+        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -323,9 +305,9 @@
     $("#getFailedExperiments").click(function () {
         //These are coming from manage-experiments.blade.php
         $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = convertToUtc($fromTime);
+        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
         $toTime = $("#datetimepicker10").find("input").val();
-        $toTime - convertToUtc($toTime);
+        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
