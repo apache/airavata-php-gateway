@@ -151,7 +151,7 @@
         var date = new Date(str);
         var year = date.getUTCFullYear();
         var month = date.getUTCMonth()+1;
-        var dd = dategetUTCDate();
+        var dd = date.getUTCDate();
         var hh = date.getUTCHours();
         var mi = date.getUTCMinutes();
         var sec = date.getUTCSeconds();
