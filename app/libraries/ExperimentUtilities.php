@@ -17,8 +17,6 @@ class ExperimentUtilities
 {
     private static $experimentPath;
 
-    private static $sshUser = "root";
-
     /**
      * Launch the experiment with the given ID
      * @param $expId
@@ -27,7 +25,7 @@ class ExperimentUtilities
     {
         try {
             $hardCodedToken = Config::get('pga_config.airavata')['credential-store-token'];
-            Airavata::launchExperiment($expId, $hardCodedToken);
+            Airavata::launchExperiment(Session::get('authz-token'), $expId, $hardCodedToken);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem launching the experiment.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -101,7 +99,7 @@ class ExperimentUtilities
     {
 
         try {
-            return Airavata::getExperiment($expId);
+            return Airavata::getExperiment(Session::get('authz-token'), $expId);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -162,7 +160,7 @@ class ExperimentUtilities
 
 //        $advHandling = new AdvancedOutputDataHandling();
         $hostName = $_SERVER['SERVER_NAME'];
-        $expPathConstant = 'file://' . ExperimentUtilities::$sshUser . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
+        $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
 
 //        $advHandling->outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
 //            $expPathConstant, ExperimentUtilities::$experimentPath);
@@ -291,7 +289,7 @@ class ExperimentUtilities
                         $experimentAssemblySuccessful = false;
                     }
                     $hostName = $_SERVER['SERVER_NAME'];
-                    $experimentInput->value = 'file://' . ExperimentUtilities::$sshUser . '@' . $hostName . ':' . $filePath;
+                    $experimentInput->value = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . $filePath;
                     $experimentInput->type = $applicationInput->type;
 
                 } else {
@@ -370,7 +368,7 @@ class ExperimentUtilities
     public static function update_experiment($expId, $updatedExperiment)
     {
         try {
-            Airavata::updateExperiment($expId, $updatedExperiment);
+            Airavata::updateExperiment(Session::get('authz-token'), $expId, $updatedExperiment);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem updating the experiment.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -399,14 +397,32 @@ class ExperimentUtilities
     {
         try {
             //create new experiment to receive the clone
-            $experiment = Airavata::getExperiment($expId);
+            $experiment = Airavata::getExperiment(Session::get('authz-token'), $expId);
+            $cloneId = Airavata::cloneExperiment(Session::get('authz-token'), $expId, 'Clone of ' . $experiment->name);
 
-            $cloneId = Airavata::cloneExperiment($expId, 'Clone of ' . $experiment->experimentName);
+            //updating the experiment inputs and output path
+            $experiment = Airavata::getExperiment(Session::get('authz-token'), $cloneId);
+            $experimentInputs = $experiment->experimentInputs;
+            ExperimentUtilities::create_experiment_folder_path();
+            $hostName = $_SERVER['SERVER_NAME'];
+            $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
+            $outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
+                $expPathConstant, ExperimentUtilities::$experimentPath);
+            $experiment->userConfigurationData->advanceOutputDataHandling->outputDataDir = $outputDataDir;
 
-            CommonUtilities::print_success_message("<p>Experiment cloned!</p>" .
-                '<p>You will be redirected to the edit page shortly, or you can
-                <a href="edit_experiment.php?expId=' . $cloneId . '">go directly</a> to the edit experiment page.</p>');
-            //redirect('edit_experiment.php?expId=' . $cloneId);
+            foreach ($experimentInputs as $experimentInput) {
+                if ($experimentInput->type == DataType::URI) {
+                    $currentInputPath = $experimentInput->value;
+                    $hostPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':';
+                    $currentInputPath = str_replace($hostPathConstant, '', $currentInputPath);
+                    $parts = explode('/', rtrim($currentInputPath, '/'));
+                    $fileName = array_pop($parts);
+                    $newInputPath = ExperimentUtilities::$experimentPath . $fileName;
+                    copy($currentInputPath, $newInputPath);
+                    $experimentInput->value = $hostPathConstant . $newInputPath;
+                }
+            }
+            Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
             return $cloneId;
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem cloning the experiment.
@@ -439,7 +455,7 @@ class ExperimentUtilities
     {
 
         try {
-            Airavata::terminateExperiment($expId, Config::get('pga_config.airavata')["credential-store-token"]);
+            Airavata::terminateExperiment(Session::get('authz-token'), $expId, Config::get('pga_config.airavata')["credential-store-token"]);
 
             CommonUtilities::print_success_message("Experiment canceled!");
         } catch (InvalidRequestException $ire) {
@@ -543,7 +559,7 @@ class ExperimentUtilities
 
         try {
             if ($experiment) {
-                $expId = Airavata::createExperiment(Session::get("gateway_id"), $experiment);
+                $expId = Airavata::createExperiment(Session::get('authz-token'), Session::get("gateway_id"), $experiment);
             }
 
             if ($expId) {
@@ -721,7 +737,7 @@ class ExperimentUtilities
             $filters = array();
             if(!empty($inputs["status-type"])){
                 if ($inputs["status-type"] != "ALL") {
-                    $filters[\Airavata\Model\Experiment\ExperimentSearchFields::STATUS] = $inputs["status-type"];
+                    $filters[ExperimentSearchFields::STATUS] = $inputs["status-type"];
                 }
             }
             if(!empty($inputs["search-key"])){
@@ -730,14 +746,14 @@ class ExperimentUtilities
                         $filters[\Airavata\Model\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = $inputs["search-value"];
                         break;
                     case 'experiment-description':
-                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::EXPERIMENT_DESC] = $inputs["search-value"];
+                        $filters[ExperimentSearchFields::EXPERIMENT_DESC] = $inputs["search-value"];
                         break;
                     case 'application':
-                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::APPLICATION_ID] = $inputs["search-value"];
+                        $filters[ExperimentSearchFields::APPLICATION_ID] = $inputs["search-value"];
                         break;
                     case 'creation-time':
-                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::FROM_DATE] = strtotime($inputs["from-date"]) * 1000;
-                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::TO_DATE] = strtotime($inputs["to-date"]) * 1000;
+                        $filters[ExperimentSearchFields::FROM_DATE] = strtotime($inputs["from-date"]) * 1000;
+                        $filters[ExperimentSearchFields::TO_DATE] = strtotime($inputs["to-date"]) * 1000;
                         break;
                     case '':
                 }
@@ -745,7 +761,7 @@ class ExperimentUtilities
                 $filters[\Airavata\Model\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = "*";
             }
 
-            $experiments = Airavata::searchExperiments(
+            $experiments = Airavata::searchExperiments(Session::get('authz-token'),
                 Session::get('gateway_id'), Session::get('username'), $filters, $limit, $offset);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
@@ -791,16 +807,16 @@ class ExperimentUtilities
         try {
             switch ($inputs["search-key"]) {
                 case 'experiment-name':
-                    $experiments = Airavata::searchExperimentsByName(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
+                    $experiments = Airavata::searchExperimentsByName(Session::get('authz-token'), Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
                     break;
                 case 'experiment-description':
-                    $experiments = Airavata::searchExperimentsByDesc(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
+                    $experiments = Airavata::searchExperimentsByDesc(Session::get('authz-token'), Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
                     break;
                 case 'application':
-                    $experiments = Airavata::searchExperimentsByApplication(Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
+                    $experiments = Airavata::searchExperimentsByApplication(Session::get('authz-token'), Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
                     break;
                 case 'creation-time':
-                    $experiments = Airavata::searchExperimentsByCreationTime(Session::get('gateway_id'), Session::get('username'), strtotime($inputs["from-date"]) * 1000, strtotime($inputs["to-date"]) * 1000);
+                    $experiments = Airavata::searchExperimentsByCreationTime(Session::get('authz-token'), Session::get('gateway_id'), Session::get('username'), strtotime($inputs["from-date"]) * 1000, strtotime($inputs["to-date"]) * 1000);
                     break;
                 case '':
             }
@@ -847,7 +863,7 @@ class ExperimentUtilities
         $experiments = array();
 
         try {
-            $experiments = Airavata::getAllUserExperimentsWithPagination(
+            $experiments = Airavata::getAllUserExperimentsWithPagination(Session::get('authz-token'),
                 Session::get('gateway_id'), Session::get('username'), $limit, $offset
             );
         } catch (InvalidRequestException $ire) {
@@ -958,17 +974,17 @@ class ExperimentUtilities
 
     public static function get_job_details($experimentId)
     {
-        return Airavata::getJobDetails($experimentId);
+        return Airavata::getJobDetails(Session::get('authz-token'), $experimentId);
     }
 
     public static function get_transfer_details($experimentId)
     {
-        return Airavata::getDataTransferDetails($experimentId);
+        return Airavata::getDataTransferDetails(Session::get('authz-token'), $experimentId);
     }
 
     public static function getQueueDatafromResourceId($crId)
     {
-        $resourceObject = Airavata::getComputeResource($crId);
+        $resourceObject = Airavata::getComputeResource(Session::get('authz-token'), $crId);
         return $resourceObject->batchQueues;
     }
 
@@ -982,7 +998,7 @@ class ExperimentUtilities
         $disabled = $editable ? '' : 'disabled';
 
         $applicationIds = AppUtilities::get_all_applications();
-
+        uksort($applicationIds, 'strcasecmp');
         echo '<select class="form-control" name="application" id="application" required ' . $disabled . '>';
 
         if (count($applicationIds)) {

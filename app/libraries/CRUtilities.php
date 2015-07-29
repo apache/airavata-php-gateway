@@ -47,8 +47,8 @@ class CRUtilities
                 }
             }
 
-            if (Airavata::updateComputeResource($computeResourceId, $computeDescription)) {
-                $computeResource = Airavata::getComputeResource($computeResourceId);
+            if (Airavata::updateComputeResource(Session::get('authz-token'), $computeResourceId, $computeDescription)) {
+                $computeResource = Airavata::getComputeResource(Session::get('authz-token'), $computeResourceId);
                 return $computeResource;
             } else
                 print_r("Something went wrong while updating!");
@@ -60,10 +60,10 @@ class CRUtilities
                 $computeDescription["fileSystems"][$fileSystem] = "";
             */
             $cd = new ComputeResourceDescription($computeDescription);
-            $computeResourceId = Airavata::registerComputeResource($cd);
+            $computeResourceId = Airavata::registerComputeResource(Session::get('authz-token'), $cd);
         }
 
-        $computeResource = Airavata::getComputeResource($computeResourceId);
+        $computeResource = Airavata::getComputeResource(Session::get('authz-token'), $computeResourceId);
         return $computeResource;
 
     }
@@ -111,7 +111,7 @@ class CRUtilities
                 Cache::forget('CR-' . $computeResourceId);
             }
         }
-        Airavata::deleteBatchQueue($computeResourceId, $queueName);
+        Airavata::deleteBatchQueue(Session::get('authz-token'), $computeResourceId, $queueName);
     }
 
 
@@ -154,12 +154,12 @@ class CRUtilities
 
             if ($update) //update Local JSP
             {
-                $jsiObject = Airavata::getLocalJobSubmission($jsiId);
-                $localSub = Airavata::updateResourceJobManager($jsiObject->resourceJobManager->resourceJobManagerId, $resourceManager);
+                $jsiObject = Airavata::getLocalJobSubmission(Session::get('authz-token'), $jsiId);
+                $localSub = Airavata::updateResourceJobManager(Session::get('authz-token'), $jsiObject->resourceJobManager->resourceJobManagerId, $resourceManager);
                 //$localSub = $airavataclient->updateLocalSubmissionDetails( $jsiId, $localJobSubmission);
             } else // create Local JSP
             {
-                $localSub = Airavata::addLocalSubmissionDetails($computeResource->computeResourceId, 0, $localJobSubmission);
+                $localSub = Airavata::addLocalSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $localJobSubmission);
                 return $localSub;
             }
 
@@ -182,24 +182,24 @@ class CRUtilities
             //var_dump( $sshJobSubmission); exit;
             if ($update) //update Local JSP
             {
-                $jsiObject = Airavata::getSSHJobSubmission($jsiId);
+                $jsiObject = Airavata::getSSHJobSubmission(Session::get('authz-token'), $jsiId);
 
                 //first update resource job manager
                 $rmjId = $jsiObject->resourceJobManager->resourceJobManagerId;
-                Airavata::updateResourceJobManager($rmjId, $resourceManager);
-                $jsiObject = Airavata::getSSHJobSubmission($jsiId);
+                Airavata::updateResourceJobManager(Session::get('authz-token'), $rmjId, $resourceManager);
+                $jsiObject = Airavata::getSSHJobSubmission(Session::get('authz-token'), $jsiId);
 
                 $jsiObject->securityProtocol = intval($inputs["securityProtocol"]);
                 $jsiObject->alternativeSSHHostName = $inputs["alternativeSSHHostName"];
                 $jsiObject->sshPort = intval($inputs["sshPort"]);
                 $jsiObject->monitorMode = intval($inputs["monitorMode"]);
-                $jsiObject->resourceJobManager = Airavata::getresourceJobManager($rmjId);
+                $jsiObject->resourceJobManager = Airavata::getresourceJobManager(Session::get('authz-token'), $rmjId);
                 //var_dump( $jsiObject); exit;
                 //add updated resource job manager to ssh job submission object.
                 //$sshJobSubmission->resourceJobManager->resourceJobManagerId = $rmjId;
-                $localSub = Airavata::updateSSHJobSubmissionDetails($jsiId, $jsiObject);
+                $localSub = Airavata::updateSSHJobSubmissionDetails(Session::get('authz-token'), $jsiId, $jsiObject);
             } else {
-                $sshSub = Airavata::addSSHJobSubmissionDetails($computeResource->computeResourceId, 0, $sshJobSubmission);
+                $sshSub = Airavata::addSSHJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $sshJobSubmission);
             }
             return;
         } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::UNICORE) {
@@ -210,13 +210,13 @@ class CRUtilities
                 )
             );
             if ($update) {
-                $jsiObject = Airavata::getUnicoreJobSubmission($jsiId);
+                $jsiObject = Airavata::getUnicoreJobSubmission(Session::get('authz-token'), $jsiId);
                 $jsiObject->securityProtocol = intval($inputs["securityProtocol"]);
                 $jsiObject->unicoreEndPointURL = $inputs["unicoreEndPointURL"];
 
-                $unicoreSub = Airavata::updateUnicoreJobSubmissionDetails($jsiId, $jsiObject);
+                $unicoreSub = Airavata::updateUnicoreJobSubmissionDetails(Session::get('authz-token'), $jsiId, $jsiObject);
             } else {
-                $unicoreSub = Airavata::addUNICOREJobSubmissionDetails($computeResource->computeResourceId, 0, $unicoreJobSubmission);
+                $unicoreSub = Airavata::addUNICOREJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $unicoreJobSubmission);
             }
         } else /* Globus does not work currently */ {
             print_r("Whoops! We haven't coded for this Job Submission Protocol yet. Still working on it. Please click <a href='" . URL::to('/') . "/cr/edit'>here</a> to go back to edit page for compute resource.");
@@ -239,7 +239,7 @@ class CRUtilities
 
         if ($inputs["dataMovementProtocol"] == DataMovementProtocol::LOCAL) /* LOCAL */ {
             $localDataMovement = new LOCALDataMovement();
-            $localdmp = Airavata::addLocalDataMovementDetails($computeResource->computeResourceId, 0, $localDataMovement);
+            $localdmp = Airavata::addLocalDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $localDataMovement);
 
             if ($localdmp)
                 print_r("The Local Data Movement has been added. Edit UI for the Local Data Movement Interface is yet to be made.
@@ -255,18 +255,18 @@ class CRUtilities
             );
 
             if ($update)
-                $scpdmp = Airavata::updateSCPDataMovementDetails($inputs["dmiId"], $scpDataMovement);
+                $scpdmp = Airavata::updateSCPDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $scpDataMovement);
             else
-                $scpdmp = Airavata::addSCPDataMovementDetails($computeResource->computeResourceId, 0, $scpDataMovement);
+                $scpdmp = Airavata::addSCPDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $scpDataMovement);
         } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::GridFTP) /* GridFTP */ {
             $gridFTPDataMovement = new GridFTPDataMovement(array(
                 "securityProtocol" => $inputs["securityProtocol"],
                 "gridFTPEndPoints" => $inputs["gridFTPEndPoints"]
             ));
             if ($update)
-                $gridftpdmp = Airavata::updateGridFTPDataMovementDetails($inputs["dmiId"], $gridFTPDataMovement);
+                $gridftpdmp = Airavata::updateGridFTPDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $gridFTPDataMovement);
             else
-                $gridftpdmp = Airavata::addGridFTPDataMovementDetails($computeResource->computeResourceId, 0, $gridFTPDataMovement);
+                $gridftpdmp = Airavata::addGridFTPDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $gridFTPDataMovement);
         } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::UNICORE_STORAGE_SERVICE) /* Unicore Storage Service */ {
             $unicoreDataMovement = new UnicoreDataMovement(array
                 (
@@ -275,9 +275,9 @@ class CRUtilities
                 )
             );
             if ($update)
-                $unicoredmp = Airavata::updateUnicoreDataMovementDetails($inputs["dmiId"], $unicoreDataMovement);
+                $unicoredmp = Airavata::updateUnicoreDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $unicoreDataMovement);
             else
-                $unicoredmp = Airavata::addUnicoreDataMovementDetails($computeResource->computeResourceId, 0, $unicoreDataMovement);
+                $unicoredmp = Airavata::addUnicoreDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $unicoreDataMovement);
         } else /* other data movement protocols */ {
             print_r("Whoops! We haven't coded for this Data Movement Protocol yet. Still working on it. Please click <a href='" . URL::to('/') . "/cr/edit'>here</a> to go back to edit page for compute resource.");
         }
@@ -285,13 +285,13 @@ class CRUtilities
 
     public static function getAllCRObjects($onlyName = false)
     {
-        $crNames = Airavata::getAllComputeResourceNames();
+        $crNames = Airavata::getAllComputeResourceNames(Session::get('authz-token'));
         if ($onlyName)
             return $crNames;
         else {
             $crObjects = array();
             foreach ($crNames as $id => $crName) {
-                array_push($crObjects, Airavata::getComputeResource($id));
+                array_push($crObjects, Airavata::getComputeResource(Session::get('authz-token'), $id));
             }
             return $crObjects;
         }
@@ -300,7 +300,7 @@ class CRUtilities
 
     public static function getBrowseCRData($onlyNames)
     {
-        $appDeployments = Airavata::getAllApplicationDeployments(Session::get("gateway_id"));
+        $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), Session::get("gateway_id"));
 
         return array('crObjects' => CRUtilities::getAllCRObjects($onlyNames),
             'appDeployments' => $appDeployments
@@ -311,13 +311,13 @@ class CRUtilities
     {
         //jsp = job submission protocol type
         if ($jsp == JobSubmissionProtocol::LOCAL)
-            return Airavata::getLocalJobSubmission($jobSubmissionInterfaceId);
+            return Airavata::getLocalJobSubmission(Session::get('authz-token'), $jobSubmissionInterfaceId);
         else if ($jsp == JobSubmissionProtocol::SSH)
-            return Airavata::getSSHJobSubmission($jobSubmissionInterfaceId);
+            return Airavata::getSSHJobSubmission(Session::get('authz-token'), $jobSubmissionInterfaceId);
         else if ($jsp == JobSubmissionProtocol::UNICORE)
-            return Airavata::getUnicoreJobSubmission($jobSubmissionInterfaceId);
+            return Airavata::getUnicoreJobSubmission(Session::get('authz-token'), $jobSubmissionInterfaceId);
         else if ($jsp == JobSubmissionProtocol::CLOUD)
-            return Airavata::getCloudJobSubmission($jobSubmissionInterfaceId);
+            return Airavata::getCloudJobSubmission(Session::get('authz-token'), $jobSubmissionInterfaceId);
 
         //globus get function not present ??
     }
@@ -326,13 +326,13 @@ class CRUtilities
     {
         //jsp = job submission protocol type
         if ($dmi == DataMovementProtocol::LOCAL)
-            return Airavata::getLocalDataMovement($dataMovementInterfaceId);
+            return Airavata::getLocalDataMovement(Session::get('authz-token'), $dataMovementInterfaceId);
         else if ($dmi == DataMovementProtocol::SCP)
-            return Airavata::getSCPDataMovement($dataMovementInterfaceId);
+            return Airavata::getSCPDataMovement(Session::get('authz-token'), $dataMovementInterfaceId);
         else if ($dmi == DataMovementProtocol::GridFTP)
-            return Airavata::getGridFTPDataMovement($dataMovementInterfaceId);
+            return Airavata::getGridFTPDataMovement(Session::get('authz-token'), $dataMovementInterfaceId);
         else if ($dmi == DataMovementProtocol::UNICORE_STORAGE_SERVICE)
-            return Airavata::getUnicoreDataMovement($dataMovementInterfaceId);
+            return Airavata::getUnicoreDataMovement(Session::get('authz-token'), $dataMovementInterfaceId);
         /*
         else if( $dmi == JobSubmissionProtocol::CLOUD)
             return $airavataclient->getCloudJobSubmission( $dataMovementInterfaceId);
@@ -358,17 +358,17 @@ class CRUtilities
         }
 
         if (isset($inputs["jsiId"]))
-            if (Airavata::deleteJobSubmissionInterface($inputs["crId"], $inputs["jsiId"]))
+            if (Airavata::deleteJobSubmissionInterface(Session::get('authz-token'), $inputs["crId"], $inputs["jsiId"]))
                 return 1;
             else
                 return 0;
         else if (isset($inputs["dmiId"]))
-            if (Airavata::deleteDataMovementInterface($inputs["crId"], $inputs["dmiId"]))
+            if (Airavata::deleteDataMovementInterface(Session::get('authz-token'), $inputs["crId"], $inputs["dmiId"]))
                 return 1;
             else
                 return 0;
         elseif (isset($inputs["del-crId"]))
-            if (Airavata::deleteComputeResource($inputs["del-crId"]))
+            if (Airavata::deleteComputeResource(Session::get('authz-token'), $inputs["del-crId"]))
                 return 1;
             else
                 return 0;
@@ -394,21 +394,21 @@ class CRUtilities
                     "gatewayDescription" => $inputs["gatewayDescription"]
                 )
             );
-            $gatewayProfileId = Airavata::updateGatewayResourceProfile($inputs["edit-gpId"], $gatewayProfile);
+            $gatewayProfileId = Airavata::updateGatewayResourceProfile(Session::get('authz-token'), $inputs["edit-gpId"], $gatewayProfile);
         } else
-            $gatewayProfileId = Airavata::registerGatewayResourceProfile($gatewayProfile);
+            $gatewayProfileId = Airavata::registerGatewayResourceProfile(Session::get('authz-token'), $gatewayProfile);
     }
 
     public static function getAllGatewayProfilesData()
     {
 
         if (Session::has("scigap_admin"))
-            $gateways = Airavata::getAllGateways();
+            $gateways = Airavata::getAllGateways(Session::get('authz-token'));
         else {
-            $gateways[0] = Airavata::getGateway(Session::get("gateway_id"));
+            $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
         }
 
-        $gatewayProfiles = Airavata::getAllGatewayComputeResources();
+        $gatewayProfiles = Airavata::getAllGatewayComputeResources(Session::get('authz-token'));
         //$gatewayProfileIds = array("GatewayTest3_57726e98-313f-4e7c-87a5-18e69928afb5", "GatewayTest4_4fd9fb28-4ced-4149-bdbd-1f276077dad8");
         foreach ($gateways as $key => $gw) {
             $gateways[$key]->profile = array();
@@ -416,7 +416,7 @@ class CRUtilities
 
                 if ($gw->gatewayId == $gp->gatewayID) {
                     foreach ((array)$gp->computeResourcePreferences as $i => $crp) {
-                        $gatewayProfiles[$index]->computeResourcePreferences[$i]->crDetails = Airavata::getComputeResource($crp->computeResourceId);
+                        $gatewayProfiles[$index]->computeResourcePreferences[$i]->crDetails = Airavata::getComputeResource(Session::get('authz-token'), $crp->computeResourceId);
                     }
                     $gateways[$key]->profile = $gatewayProfiles[$index];
                 }
@@ -438,13 +438,13 @@ class CRUtilities
         }
 
         //var_dump( $inputs); exit;
-        return Airavata::addGatewayComputeResourcePreference($inputs["gatewayId"], $inputs["computeResourceId"], $computeResourcePreferences);
+        return Airavata::addGatewayComputeResourcePreference(Session::get('authz-token'), $inputs["gatewayId"], $inputs["computeResourceId"], $computeResourcePreferences);
 
     }
 
     public static function deleteGP($gpId)
     {
-        return Airavata::deleteGatewayResourceProfile($gpId);
+        return Airavata::deleteGatewayResourceProfile(Session::get('authz-token'), $gpId);
     }
 
     public static function deleteCR($inputs)
@@ -456,7 +456,7 @@ class CRUtilities
             }
         }
 
-        return Airavata::deleteGatewayComputeResourcePreference($inputs["gpId"], $inputs["rem-crId"]);
+        return Airavata::deleteGatewayComputeResourcePreference(Session::get('authz-token'), $inputs["gpId"], $inputs["rem-crId"]);
     }
 
     /**
@@ -473,12 +473,12 @@ class CRUtilities
                 if (Cache::has('CR-' . $id)) {
                     return Cache::get('CR-' . $id);
                 } else {
-                    $computeResource = Airavata::getComputeResource($id);
+                    $computeResource = Airavata::getComputeResource(Session::get('authz-token'), $id);
                     Cache::put('CR-' . $id, $computeResource, Config::get('pga_config.airavata')['app-catalog-cache-duration']);
                     return $computeResource;
                 }
             } else {
-                return $computeResource = Airavata::getComputeResource($id);
+                return $computeResource = Airavata::getComputeResource(Session::get('authz-token'), $id);
             }
 
         } catch (InvalidRequestException $ire) {
@@ -518,7 +518,7 @@ class CRUtilities
         $computeResources = null;
 
         try {
-            $computeResources = Airavata::getAvailableAppInterfaceComputeResources($id);
+            $computeResources = Airavata::getAvailableAppInterfaceComputeResources(Session::get('authz-token'), $id);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting compute resources.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .

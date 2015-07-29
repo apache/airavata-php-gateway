@@ -1,5 +1,7 @@
 <div class="well app-input-data-block">
+    @if(Session::has("admin"))
     <span class="glyphicon glyphicon-trash pull-right remove-input-space"></span>
+    @endif
     <h4>App Input Fields</h4>
 
     <div class="form-group required">

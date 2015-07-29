@@ -2,18 +2,18 @@
 
 @section('page-header')
 @parent
-{{ HTML::style('css/style.css') }}
+{{ HTML::style('css/admin.css')}}
+{{ HTML::style('css/datetimepicker.css')}}
 @stop
 
 @section('content')
 
-<div class="container">
+<div id="wrapper">
+    <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+    @include( 'partials/dashboard-block')
+    <div id="page-wrapper">
+<div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-
-        <button class="btn btn-default create-app-module" data-toggle="modal" data-target="#new-app-module-block">Create
-            a new Application Module
-        </button>
-
         @if( count( $modules) )
         @if( Session::has("message"))
         <div class="row">
@@ -24,6 +24,23 @@
             </div>
         </div>
         {{ Session::forget("message") }}
+        @endif
+        @if( Session::has("errorMessage"))
+        <div class="row">
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                {{ Session::get("errorMessage") }}
+            </div>
+        </div>
+        {{ Session::forget("errorMessage") }}
+        @endif
+        @if(Session::has("admin"))
+        <div class="row">
+            <button class="btn btn-default create-app-module" data-toggle="modal" data-target="#new-app-module-block">Create
+                a new Application Module
+            </button>
+        </div>
         @endif
         <div class="row">
             <div class="col-md-6">
@@ -42,7 +59,7 @@
                            href="#collapse-{{$index}}">
                             {{ $module->appModuleName }}
                         </a>
-
+                        @if(Session::has("admin"))
                         <div class="pull-right col-md-2 module-options fade">
                             <span class="glyphicon glyphicon-pencil edit-app-module" style="cursor:pointer;"
                                   data-toggle="modal" data-target="#edit-app-module-block"
@@ -51,6 +68,7 @@
                                   data-toggle="modal" data-target="#delete-app-module-block"
                                   data-module-data="{{ htmlentities(json_encode( $module) ) }}"></span>
                         </div>
+                        @endif
                     </h4>
                 </div>
                 <div id="collapse-{{$index}}" class="panel-collapse collapse">
@@ -146,6 +164,8 @@
 
             </div>
         </div>
+        </div>
+    </div>
 
         @stop
 

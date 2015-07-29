@@ -28,6 +28,12 @@ Route::get("logout", "AccountController@logout");
 
 Route::get("forgot-password", "AccountController@forgotPassword");
 
+Route::get("reset-password", "AccountController@resetPassword");
+
+Route::post("reset-password", "AccountController@resetPasswordSubmit");
+
+Route::post("forgot-password", "AccountController@forgotPasswordSubmit");
+
 Route::get("setUserTimezone", function () {
     Session::set("user_timezone", Input::get("timezone"));
 });
@@ -66,6 +72,8 @@ Route::get("experiment/summary", "ExperimentController@summary");
 
 Route::post("experiment/summary", "ExperimentController@expChange");
 
+Route::get("experiment/clone", "ExperimentController@cloneExperiment");
+
 Route::get("experiment/edit", "ExperimentController@editView");
 
 Route::post("experiment/edit", "ExperimentController@editSubmit");
@@ -85,23 +93,23 @@ Route::get("cr/create", function () {
     return Redirect::to("cr/create/step1");
 });
 
-Route::get("cr/create", "ComputeResource@createView");
+Route::get("cr/create", "ComputeResourceController@createView");
 
-Route::post("cr/create", "ComputeResource@createSubmit");
+Route::post("cr/create", "ComputeResourceController@createSubmit");
 
-Route::get("cr/edit", "ComputeResource@editView");
+Route::get("cr/edit", "ComputeResourceController@editView");
 
-Route::post("cr/edit", "ComputeResource@editSubmit");
+Route::post("cr/edit", "ComputeResourceController@editSubmit");
 
-Route::get("cr/view", "ComputeResource@viewView");
+Route::get("cr/view", "ComputeResourceController@viewView");
 
-Route::get("cr/browse", "ComputeResource@browseView");
+Route::get("cr/browse", "ComputeResourceController@browseView");
 
-Route::post("cr/delete-jsi", "ComputeResource@deleteActions");
+Route::post("cr/delete-jsi", "ComputeResourceController@deleteActions");
 
-Route::post("cr/delete-dmi", "ComputeResource@deleteActions");
+Route::post("cr/delete-dmi", "ComputeResourceController@deleteActions");
 
-Route::post("cr/delete-cr", "ComputeResource@deleteActions");
+Route::post("cr/delete-cr", "ComputeResourceController@deleteActions");
 /*
  * Application Catalog Routes
 */
@@ -114,7 +122,7 @@ Route::post("app/module-edit", "ApplicationController@modifyAppModuleSubmit");
 
 Route::post("app/module-delete", "ApplicationController@deleteAppModule");
 
-Route::get("app/interface", "ApplicationController@createAppInterfaceView");
+Route::get("app/interface", "ApplicationController@showAppInterfaceView");
 
 Route::post("app/interface-create", "ApplicationController@createAppInterfaceSubmit");
 
@@ -122,7 +130,7 @@ Route::post("app/interface-edit", "ApplicationController@editAppInterfaceSubmit"
 
 Route::post("app/interface-delete", "ApplicationController@deleteAppInterface");
 
-Route::get("app/deployment", "ApplicationController@createAppDeploymentView");
+Route::get("app/deployment", "ApplicationController@showAppDeploymentView");
 
 Route::post("app/deployment-create", "ApplicationController@createAppDeploymentSubmit");
 
@@ -155,6 +163,8 @@ Route::get("admin/dashboard", "AdminController@dashboard");
 Route::get("admin/dashboard/gateway", "AdminController@dashboard");
 
 Route::get("admin/dashboard/users", "AdminController@usersView");
+
+Route::post("admin/dashboard/users", "AdminController@searchUsersView");
 
 Route::get("admin/dashboard/roles", "AdminController@rolesView");
 

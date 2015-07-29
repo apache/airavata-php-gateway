@@ -25,8 +25,23 @@
         </div>
         <div class="container-fluid">
             <div class="col-md-12">
-
-                <h1 class="text-center">Users</h1>
+                <form action="{{URL::to('/') }}/admin/dashboard/users" method="post" role="form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3>Users :</h3>
+                        </div>
+                        <div class="input-group" style="margin-top: 1.5%">
+                            <input required="required" name="search_val" type="text" class="form-control" placeholder="Search by Username"
+                            @if(Input::has("search_val"))
+                            value="{{Input::get("search_val")}}"
+                            @endif
+                            >
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">Search</button>
+                            </span>
+                        </div>
+                    </div>
+                </form>
 
                 <table class="table table-striped table-condensed">
                     <tr>
@@ -34,7 +49,6 @@
                         <th>
                             Role :
                             <select onchange="location = this.options[this.selectedIndex].value;">
-                                <option>Select a role</option>
                                 <option value="{{URL::to('/')}}/admin/dashboard/users">All</option>
                                 @foreach( (array)$roles as $role)
                                 <option value="{{URL::to('/')}}/admin/dashboard/users?role={{$role}}"
@@ -81,6 +95,7 @@
                 </div>
                 <div class="roles-list">
                 </div>
+                @if(Session::has("admin"))
                 <div class="add-roles-block hide">
                     <div class="form-group well">
                         <label class="control-label">Add a new roles to the user</label>
@@ -94,6 +109,7 @@
                         </button>
                     </div>
                 </div>
+                @endif
             </div>
             <div class="modal-footer">
                 <div class="success-message"></div>
@@ -109,7 +125,9 @@
 <div class="role-block hide">
     <div class="btn-group" role="group">
         <button type="button" class="btn btn-default role-name" disabled>Role</button>
+        @if(Session::has("admin"))
         <button type="button" class="btn btn-default existing-role-button"><span class="glyphicon glyphicon-remove"></span></button>
+        @endif
     </div>
 </div>
 @stop

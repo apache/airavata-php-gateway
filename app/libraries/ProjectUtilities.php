@@ -53,7 +53,7 @@ class ProjectUtilities
     {
 
         try {
-            return Airavata::getProject($projectId);
+            return Airavata::getProject(Session::get('authz-token'), $projectId);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting the project.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -91,10 +91,6 @@ class ProjectUtilities
             }
         }
         echo '</select>';
-        if (sizeof($userProjects) == 0) {
-            CommonUtilities::print_warning_message('<p>You must create a project before you can create an experiment.
-                Click <a href="' . URL::to('/') . '/project/create">here</a> to create a project.</p>');
-        }
     }
 
     //moved from create project view.
@@ -110,7 +106,7 @@ class ProjectUtilities
         $projectId = null;
 
         try {
-            $projectId = Airavata::createProject(Config::get('pga_config.airavata')['gateway-id'], $project);
+            $projectId = Airavata::createProject(Session::get('authz-token'), Config::get('pga_config.airavata')['gateway-id'], $project);
 
             if ($projectId) {
                 CommonUtilities::print_success_message("<p>Project {$_POST['project-name']} created!</p>" .
@@ -130,6 +126,31 @@ class ProjectUtilities
         return $projectId;
     }
 
+    public static function create_default_project($username)
+    {
+        $project = new Project();
+        $project->owner = $username;
+        $project->name = "Default Project";
+        $project->description = "This is the default project for user " . $project->owner;
+
+
+        $projectId = null;
+
+        try {
+            $projectId = Airavata::createProject(Session::get('authz-token'), Config::get('pga_config.airavata')['gateway-id'], $project);
+
+        } catch (InvalidRequestException $ire) {
+            CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
+        } catch (AiravataClientException $ace) {
+            CommonUtilities::print_error_message('AiravataClientException!<br><br>' . $ace->getMessage());
+        } catch (AiravataSystemException $ase) {
+            CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
+        }
+
+        return $projectId;
+    }
+
+
     /**
      * Get experiments in project
      * @param $projectId
@@ -141,7 +162,7 @@ class ProjectUtilities
         $experiments = array();
 
         try {
-            $experiments = Airavata::getAllExperimentsInProject($projectId);
+            $experiments = Airavata::getAllExperimentsInProject(Session::get('authz-token'), $projectId);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
         } catch (AiravataClientException $ace) {
@@ -164,7 +185,7 @@ class ProjectUtilities
         $updatedProject->description = $projectDetails["description"];
 
         try {
-            Airavata::updateProject($projectId, $updatedProject);
+            Airavata::updateProject(Session::get('authz-token'), $projectId, $updatedProject);
 
             //Utilities::print_success_message('Project updated! Click <a href="project_summary.php?projId=' . $projectId . '">here</a> to view the project summary.');
         } catch (InvalidRequestException $ire) {
@@ -185,7 +206,7 @@ class ProjectUtilities
         $projects = array();
 
         try {
-            $projects = Airavata::getAllUserProjectsWithPagination(Session::get("gateway_id"),
+            $projects = Airavata::getAllUserProjectsWithPagination(Session::get('authz-token'), Session::get("gateway_id"),
                 Session::get("username"), $limit, $offset);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
@@ -216,11 +237,11 @@ class ProjectUtilities
         try {
             switch ($searchKey) {
                 case 'project-name':
-                    $projects = Airavata::searchProjectsByProjectNameWithPagination(Session::get("gateway_id"),
+                    $projects = Airavata::searchProjectsByProjectNameWithPagination(Session::get('authz-token'), Session::get("gateway_id"),
                         Session::get("username"), $searchValue, $limit, $offset);
                     break;
                 case 'project-description':
-                    $projects = Airavata::searchProjectsByProjectDescWithPagination(Session::get("gateway_id"),
+                    $projects = Airavata::searchProjectsByProjectDescWithPagination(Session::get('authz-token'), Session::get("gateway_id"),
                         Session::get("username"), $searchValue, $limit, $offset);
                     break;
             }
@@ -253,10 +274,10 @@ class ProjectUtilities
         try {
             switch ($searchKey) {
                 case 'project-name':
-                    $projects = Airavata::searchProjectsByProjectName(Session::get("gateway_id"), Session::get("username"), $searchValue);
+                    $projects = Airavata::searchProjectsByProjectName(Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"), $searchValue);
                     break;
                 case 'project-description':
-                    $projects = Airavata::searchProjectsByProjectDesc(Session::get("gateway_id"), Session::get("username"), $searchValue);
+                    $projects = Airavata::searchProjectsByProjectDesc(Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"), $searchValue);
                     break;
             }
         } catch (InvalidRequestException $ire) {

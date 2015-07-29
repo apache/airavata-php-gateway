@@ -14,6 +14,11 @@ return array(
         'admin-role-name' => 'admin',
 
         /**
+         * Read only Admin Role Name
+         */
+        'read-only-admin' => 'admin-read-only',
+
+        /**
          * Gateway user role
          */
         'user-role-name' => 'Internal/everyone',
@@ -34,14 +39,9 @@ return array(
         'server' => 'idp.scigap.org',
 
         /**
-         * Identity server web services endpoint
+         * Identity server url
          */
-        'service-url' => 'https://idp.scigap.org:7443/services/',
-
-        /**
-         * Gateway domain name
-         */
-        'gateway-id' => 'default',
+        'service-url' => 'https://idp.scigap.org:7443/',
 
         /**
          * Path to the server certificate file
@@ -100,6 +100,11 @@ return array(
          * absolute path of the data dir
          */
         'experiment-data-absolute-path' => '/var/www/experimentData',
+
+        /**
+         * username for the user for accessing the experiment data over ssh
+         */
+        'ssh-user' => 'root',
 
         /**
          * Advanced experiments options

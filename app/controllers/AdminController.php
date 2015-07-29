@@ -4,6 +4,7 @@ class AdminController extends BaseController {
 
 	public function __construct()
 	{
+        $this->beforeFilter('verifyadmin');
 		Session::put("nav-active", "user-console");
 	}
 
@@ -24,9 +25,10 @@ class AdminController extends BaseController {
 														"crData" => $crData);
 		if( Session::has("scigap_admin"))
 			$view = "scigap-admin/manage-gateway";
-		else
+		else{
 			$view = "admin/manage-gateway";
-
+            Session::put("admin-nav", "gateway-prefs");
+        }
 			return View::make( $view, $gatewayData);
 	}
 
@@ -47,12 +49,26 @@ class AdminController extends BaseController {
 		}
 		else
 	    	$users =  WSIS::listUsers();
-	    
-	    $roles = WSIS::getAllRoles();
 
+	    $roles = WSIS::getAllRoles();
+        Session::put("admin-nav", "manage-users");
 	    return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 
 	}
+
+    public function searchUsersView(){
+        if(Input::has("search_val"))
+        {
+            $users =  WSIS::searchUsers(Input::get("search_val"));
+        }
+        else
+            $users = WSIS::listUsers();
+
+        $roles = WSIS::getAllRoles();
+        Session::put("admin-nav", "manage-users");
+        return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
+
+    }
 
 	public function addGatewayAdminSubmit(){
 		//check if username exists
@@ -70,10 +86,12 @@ class AdminController extends BaseController {
 	public function rolesView(){
 
 		$roles = WSIS::getAllRoles();
-		return View::make("admin/manage-roles", array("roles" => $roles));
+        Session::put("admin-nav", "manage-roles");
+        return View::make("admin/manage-roles", array("roles" => $roles));
 	}
 
 	public function experimentsView(){
+        Session::put("admin-nav", "exp-statistics");
 		return View::make("admin/manage-experiments" );
 	}
 
@@ -127,6 +145,7 @@ class AdminController extends BaseController {
 	}
 
 	public function credentialStoreView(){
+        Session::put("admin-nav", "credential-store");
 		return View::make("admin/manage-credentials", array("tokens" => array()) );
 	}
 
@@ -169,7 +188,8 @@ class AdminController extends BaseController {
             $inputs = Input::all();
             $expContainer = AdminUtilities::get_experiments_of_time_range($inputs);
             $expStates = ExperimentUtilities::getExpStates();
-            return View::make("partials/experiment-container", array("expContainer" => $expContainer, "expStates" => $expStates));
+            return View::make("partials/experiment-container", array("expContainer" => array_reverse($expContainer),
+                "expStates" => $expStates));
         }
     }
 

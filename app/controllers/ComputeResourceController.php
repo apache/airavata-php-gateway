@@ -1,6 +1,6 @@
 <?php
 
-class ComputeResource extends BaseController
+class ComputeResourceController extends BaseController
 {
 
     /**
@@ -16,12 +16,14 @@ class ComputeResource extends BaseController
 
     public function createView()
     {
+        $this->beforeFilter('verifyeditadmin');
+        Session::put("admin-nav", "cr-create");
         return View::make("resource/create");
     }
 
     public function createSubmit()
     {
-
+        $this->beforeFilter('verifyeditadmin');
         $hostAliases = Input::get("hostaliases");
         $ips = Input::get("ips");
         //Compute resource is by default enabled
@@ -39,7 +41,7 @@ class ComputeResource extends BaseController
 
     public function editView()
     {
-
+        $this->beforeFilter('verifyeditadmin');
         $data = CRUtilities::getEditCRData();
         $computeResourceId = "";
         if (Input::has("crId"))
@@ -84,7 +86,7 @@ class ComputeResource extends BaseController
 
     public function editSubmit()
     {
-
+        $this->beforeFilter('verifyeditadmin');
         $tabName = "";
         if (Input::get("cr-edit") == "resDesc") /* Modify compute Resource description */ {
             $computeDescription = CRUtilities::get_compute_resource(Input::get("crId"));
@@ -173,7 +175,6 @@ class ComputeResource extends BaseController
 
     public function viewView()
     {
-
         $data = CRUtilities::getEditCRData();
         $computeResourceId = "";
         if (Input::has("crId"))
@@ -218,7 +219,7 @@ class ComputeResource extends BaseController
 
     public function deleteActions()
     {
-
+        $this->beforeFilter('verifyeditadmin');
         $result = CRUtilities::deleteActions(Input::all());
         if (Input::has("jsiId")) {
             return Redirect::to("cr/edit?crId=" . Input::get("crId") . "#tab-jobSubmission")
@@ -235,18 +236,20 @@ class ComputeResource extends BaseController
 
     public function browseView()
     {
-        $data = CRUtilities::getBrowseCRData(true);
+        $data = CRUtilities::getBrowseCRData(false);
         $allCRs = $data["crObjects"];
         $appDeployments = $data["appDeployments"];
 
         $connectedDeployments = array();
-        foreach ((array)$allCRs as $crId => $crName) {
+        foreach ((array)$allCRs as $resource) {
+            $crId = $resource->computeResourceId;
             $connectedDeployments[$crId] = 0;
             foreach ((array)$appDeployments as $deploymentObject) {
                 if ($crId == $deploymentObject->computeHostId)
                     $connectedDeployments[$crId]++;
             }
         }
+        Session::put("admin-nav", "cr-browse");
         return View::make("resource/browse", array(
             "allCRs" => $allCRs,
             "connectedDeployments" => $connectedDeployments

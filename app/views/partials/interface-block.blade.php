@@ -14,22 +14,23 @@
     </div>
     <div class="form-group">
         <label class="control-label">Application Modules</label>
-
         <div class="app-modules">
+            @if( isset( $interfaceObject))
             <div class="input-group">
                 <select name="applicationModules[]" class="app-module-select form-control" style="min-width: 200px" readonly>
-            @if( isset( $interfaceObject))
             @for( $i=0; $i< count( $interfaceObject->applicationModules); $i++ )
                     @foreach( $modules as $index => $module)
+                    <option value="{{ $module->appModuleId }}"
                     @if( $interfaceObject->applicationModules[$i] == $module->appModuleId)
-                    <option value="{{ $module->appModuleId }}" selected>{{$module->appModuleName}}</option>
+                        selected
                     @endif
+                    >{{$module->appModuleName}}</option>
                     @endforeach
             @endfor
-            @endif
                 </select>
                 <span class="input-group-addon hide remove-app-module" style="cursor:pointer;">x</span>
             </div>
+            @endif
         </div>
         <button type="button" class="hide btn btn-default add-app-module">Add Application Module</button>
     </div>

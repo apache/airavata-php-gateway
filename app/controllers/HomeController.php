@@ -17,6 +17,7 @@ class HomeController extends BaseController {
 
 	public function getIndex()
 	{
+        Session::put("nav-active", "home");
 		return View::make('home');
 	}
 

@@ -2,12 +2,18 @@
 
 @section('page-header')
 @parent
-{{ HTML::style('css/style.css') }}
+{{ HTML::style('css/admin.css')}}
+{{ HTML::style('css/datetimepicker.css')}}
 @stop
 
 @section('content')
 
-<div class="container">
+<div id="wrapper">
+<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+@include( 'partials/dashboard-block')
+<div id="page-wrapper">
+
+<div class="container-fluid">
 <div class="col-md-offset-2 col-md-8">
 
 <input type="hidden" class="base-url" value="{{URL::to('/')}}"/>
@@ -408,7 +414,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
+{{--                <div class="form-group">
                     <label class="control-label">Select Monitoring Mode</label>
                     <select name="monitorMode">
                         @foreach( $monitorModes as $index => $mode)
@@ -416,7 +422,7 @@
                         @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
                         @endforeach
                     </select>
-                </div>
+                </div>--}}
                 <div class="form-group">
                     <label class="control-label">Alternate SSH Host Name</label>
                     <input class='form-control' name='alternativeSSHHostName'
@@ -439,7 +445,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
+{{--                <div class="form-group">
                     <label class="control-label">Select Monitoring Mode</label>
                     <select name="monitorMode">
                         @foreach( $monitorModes as $index => $mode)
@@ -447,7 +453,7 @@
                         @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
                         @endforeach
                     </select>
-                </div>
+                </div>--}}
 
                 <div>
                     <div class="form-group required">
@@ -474,7 +480,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
+{{--                <div class="form-group">
                     <label class="control-label">Select Monitoring Mode</label>
                     <select name="monitorMode">
                         @foreach( $monitorModes as $index => $mode)
@@ -482,7 +488,7 @@
                         @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
                         @endforeach
                     </select>
-                </div>
+                </div>--}}
 
                 <div>
                     <div class="form-group required">
@@ -512,7 +518,8 @@
             <select name="dataMovementProtocol" class="form-control selected-data-movement-protocol">
                 <option></option>
                 @foreach( $dataMovementProtocols as $index => $dmp)
-                @if( ! in_array( $index, $addedDMI))
+                //GridFTP and SFTP not supported in Airavata backend. Therefore commenting out from UI
+                @if( ! in_array( $index, $addedDMI) && $dmp!="GridFTP" && $dmp!="SFTP")
                 <option value="{{ $index }}">{{ $dmp }}</option>
                 @endif
                 @endforeach
@@ -571,14 +578,14 @@
         </select>
     </div>
 
-    <div class="form-group required">
-        <label class="control-label">Select Monitoring Mode </label>
-        <select name="monitorMode" required>
-            @foreach( $monitorModes as $index => $mode)
-            <option value="{{ $index }}">{{ $mode}}</option>
-            @endforeach
-        </select>
-    </div>
+<!--    <div class="form-group required">-->
+<!--        <label class="control-label">Select Monitoring Mode </label>-->
+<!--        <select name="monitorMode" required>-->
+<!--            @foreach( $monitorModes as $index => $mode)-->
+<!--            <option value="{{ $index }}">{{ $mode}}</option>-->
+<!--            @endforeach-->
+<!--        </select>-->
+<!--    </div>-->
 
     <div class="form-group addedScpValue hide">
         <label class="control-label">Alternate SSH Host Name</label>
@@ -628,6 +635,8 @@
 </div>
 
 -->
+</div>
+</div>
 </div>
 </div>
 
@@ -710,7 +719,7 @@
                     <input type="hidden" name="cr-edit" value="jsi-priority"/>
                     @foreach( $computeResource->jobSubmissionInterfaces as $index => $JSI )
                     <div class="row">
-                        <div class="col-md-offset-2 col-md-2">
+                        <div class="col-md-offset-1 col-md-5">
                             <label>
                                 {{ $jobSubmissionProtocols[ $JSI->jobSubmissionProtocol] }}
                             </label>
@@ -763,7 +772,7 @@
                     <input type="hidden" name="cr-edit" value="dmi-priority"/>
                     @foreach( $computeResource->dataMovementInterfaces as $index => $DMI )
                     <div class="row">
-                        <div class="col-md-offset-2 col-md-2">
+                        <div class="col-md-offset-1 col-md-5">
                             <label>
                                 {{ $dataMovementProtocols[ $DMI->dataMovementProtocol] }}
                             </label>

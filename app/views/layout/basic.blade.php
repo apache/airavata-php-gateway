@@ -10,6 +10,16 @@
     {{ HTML::style('css/bootstrap.min.css')}}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <?php
+        if(Session::has("user-profile")){
+            echo "<script>\n";
+            echo "var email = '" . Session::get("user-profile")["email"] . "'\n";
+            echo "var fullName = '" . Session::get("user-profile")["firstname"]
+                . " " . Session::get("user-profile")["lastname"] . "'";
+            echo "</script>";
+        }
+    ?>
 </head>
 
 <?php
@@ -60,6 +70,9 @@ if (Session::has("admin-alert")) {
                     e.preventDefault();
                     showCollectorDialog();
                 });
+            },fieldValues: {
+                email : email !== 'undefined' ? email : "",
+                fullname : fullName !== 'undefined' ? fullName : ""
             }
         },
         "674243b0": {
@@ -69,6 +82,9 @@ if (Session::has("admin-alert")) {
                     e.preventDefault();
                     showCollectorDialog();
                 });
+            },fieldValues: {
+                email : email !== 'undefined' ? email : "",
+                fullname : fullName !== 'undefined' ? fullName : ""
             }
         }
     });

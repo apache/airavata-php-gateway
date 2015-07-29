@@ -47,6 +47,26 @@
             <td><strong>Experiment Status</strong></td>
             <td class="exp-status"><?php echo $expVal["experimentStatusString"]; ?></td>
         </tr>
+        @if( isset($dashboard))
+        <tr>
+            <td><strong>Job ID</strong></td>
+
+            <?php
+            foreach ($jobDetails as $job) echo '
+                <td>' . $job->jobID . '</td>
+            ';
+            ?>
+        </tr>
+        <tr>
+            <td><strong>Job Name</strong></td>
+
+            <?php
+            foreach ($jobDetails as $job) echo '
+                <td>' . $job->jobName . '</td>
+            ';
+            ?>
+        </tr>
+        @endif
         <?php
         if ($expVal["jobState"]) echo '
         <tr>
@@ -82,7 +102,7 @@
             <td class="time" unix-time="<?php echo $expVal["experimentCreationTime"]; ?>"></td>
         </tr>
         <tr>
-            <td><strong>Update time</strong></td>
+            <td><strong>Last Modified Time</strong></td>
             <td class="time" unix-time="<?php echo $expVal["experimentTimeOfStateChange"]; ?>"></td>
         </tr>
         <tr>
@@ -130,19 +150,27 @@
                    class="btn btn-success"
                    value="Launch"
                    title="Launch the experiment" <?php if (!$expVal["editable"]) echo 'style="display: none"' ?>>
-            <a href="{{URL::to('/') }}/experiment/cancel?expId={{ $experiment->experimentId }}"
-               class="btn btn-default"
+            <a id="cancel_exp_link" href="{{URL::to('/') }}/experiment/cancel?expId={{ $experiment->experimentId }}"
+               class="btn btn-default" onclick="return confirm('Are you sure you want to cancel this experiment?')"
                role="button"
                tit  le="Edit the experiment's settings" <?php if (!$expVal["cancelable"]) echo 'style="display: none"' ?>>
                 <input name="cancel" type="submit" class="btn btn-warning"
                        value="Cancel" <?php if (!$expVal["cancelable"]) echo 'disabled'; ?> >
             </a>
-            <input name="clone"
-                   type="submit"
-                   class="btn btn-primary"
-                   value="Clone"
-                   title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings
-                    after it has been launched.">
+<!--            <input name="clone"-->
+<!--                   type="submit"-->
+<!--                   class="btn btn-primary"-->
+<!--                   value="Clone"-->
+<!--                   title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings-->
+<!--                    after it has been launched.">-->
+            <a href="{{URL::to('/') }}/experiment/clone?expId={{ $experiment->experimentId }}"
+               class="btn btn-primary"
+               role="button"
+               title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings
+                    after it has been launched." target="_blank">
+                <span class="glyphicon glyphicon-pencil"></span>
+                Clone
+            </a>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}"
                class="btn btn-default"

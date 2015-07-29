@@ -49,6 +49,7 @@
 </div>
 <hr/>
 <div class="form-group">
+    <label class="control-label">Module Load Commands</label>
     <div class="show-load-cmds">
         @if( isset( $deploymentObject))
         @foreach( (array)$deploymentObject->moduleLoadCmds as $index => $cmd)

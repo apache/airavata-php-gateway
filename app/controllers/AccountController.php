@@ -30,15 +30,24 @@ class AccountController extends BaseController
         $last_name = $_POST['last_name'];
         $username = $_POST['username'];
         $password = $_POST['password'];
-        $confirm_password = $_POST['confirm_password'];
         $email = $_POST['email'];
-        $organization = $_POST['organization'];
-        $address = $_POST['address'];
-        $country = $_POST['country'];
-        $telephone = $_POST['telephone'];
-        $mobile = $_POST['mobile'];
-        $im = $_POST['im'];
-        $url = $_POST['url'];
+
+        //Fixme - Save these user information
+//        $organization = $_POST['organization'];
+//        $address = $_POST['address'];
+//        $country = $_POST['country'];
+//        $telephone = $_POST['telephone'];
+//        $mobile = $_POST['mobile'];
+//        $im = $_POST['im'];
+//        $url = $_POST['url'];
+        $organization = "";
+        $address = "";
+        $country = "";
+        $telephone = "";
+        $mobile = "";
+        $im = "";
+        $url = "";
+
 
         if (WSIS::usernameExists($username)) {
             return Redirect::to("create")
@@ -47,8 +56,13 @@ class AccountController extends BaseController
         } else {
             WSIS::addUser($username, $password, $first_name, $last_name, $email, $organization,
                 $address, $country, $telephone, $mobile, $im, $url);
-            CommonUtilities::print_success_message('New user created!');
 
+            //update user profile
+            WSIS::updateUserProfile($username, $email, $first_name, $last_name);
+
+            //creating a default project for user
+            ProjectUtilities::create_default_project($username);
+            CommonUtilities::print_success_message('New user created!');
             return View::make('account/login');
         }
     }
@@ -66,14 +80,23 @@ class AccountController extends BaseController
             $password = $_POST['password'];
             try {
                 if (WSIS::authenticate($username, $password)) {
-                    if (in_array(Config::get('pga_config.wsis')['admin-role-name'], (array)WSIS::getUserRoles($username))) {
+                    $userRoles = (array)WSIS::getUserRoles($username);
+                    if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
                         Session::put("admin", true);
+                    }
+                    if (in_array(Config::get('pga_config.wsis')['read-only-admin'], $userRoles)) {
+                        Session::put("admin-read-only", true);
+                    }
+
+                    $userProfile = WSIS::getUserProfile($username);
+                    if($userProfile != null && !empty($userProfile)){
+                        Session::put("user-profile", $userProfile);
                     }
 
                     CommonUtilities::store_id_in_session($username);
                     CommonUtilities::print_success_message('Login successful! You will be redirected to your home page shortly.');
-                    Session::put("gateway_id", Config::get('pga_config.wsis')['gateway-id']);
                     //TODO::If this option is not safe, have to find a better method to send credentials to identity server on every connection.
+                    Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
                     Session::put("password", $_POST["password"]);
 
                     return Redirect::to("home");
@@ -92,6 +115,92 @@ class AccountController extends BaseController
     {
         return View::make("account/forgot-password");
     }
+
+    public function forgotPasswordSubmit()
+    {
+        $username = Input::get("username");
+        if(empty($username)){
+            CommonUtilities::print_error_message("Please provide a valid username");
+            return View::make("account/forgot-password");
+        }else{
+            $username = $username . "@" . explode("@",Config::get('pga_config.wsis')['admin-username'])[1];
+            try{
+                $key = WSIS::validateUser($username);
+                if(!empty($key)){
+                    $result = WSIS::sendPasswordResetNotification($username, $key);
+                    if($result===true){
+                        CommonUtilities::print_success_message("Password reset notification was sent to your email account");
+                        return View::make("home");
+                    }else{
+                        CommonUtilities::print_error_message("Failed to send password reset notification email");
+                        return View::make("home");
+                    }
+                }else{
+                    CommonUtilities::print_error_message("Failed to validate the given username");
+                    return View::make("account/forgot-password");
+                }
+            }catch (Exception $ex){
+                CommonUtilities::print_error_message("Password reset operation failed");
+                return View::make("home");
+            }
+        }
+    }
+
+    public function resetPassword()
+    {
+        $confirmation = Input::get("confirmation");
+        $username = Input::get("username");
+        if(empty($username) || empty($confirmation)){
+            return View::make("home");
+        }else{
+            $username = $username . "@" . explode("@",Config::get('pga_config.wsis')['admin-username'])[1];
+            try{
+                $key = WSIS::validateConfirmationCode($username, $confirmation);
+                if(!empty($key)){
+                    return View::make("account/reset-password", array("key" => $key, "username"=>$username));
+                }else{
+                    return View::make("home");
+                }
+            }catch (Exception $e){
+                return View::make("home");
+            }
+        }
+
+    }
+
+    public function resetPasswordSubmit()
+    {
+        $rules = array(
+            "new_password" => "required|min:6",
+            "confirm_new_password" => "required|same:new_password",
+        );
+
+        $validator = Validator::make(Input::all(), $rules);
+        if ($validator->fails()) {
+            return Redirect::to("reset-password")
+                ->withInput(Input::except('new_password', 'confirm)new_password'))
+                ->withErrors($validator);
+        }
+
+        $key =  $_POST['key'];
+        $username =  $_POST['username'];
+        $new_password =  $_POST['new_password'];
+
+        try{
+            $result = WSIS::resetPassword($username, $new_password, $key);
+            if($result){
+                CommonUtilities::print_success_message("User password was reset successfully");
+                return View::make("account/login");
+            }else{
+                CommonUtilities::print_error_message("Resetting user password operation failed");
+                return View::make("account/home");
+            }
+        }catch (Exception $e){
+            CommonUtilities::print_error_message("Resetting user password operation failed");
+            return View::make("account/home");
+        }
+    }
+
 
     public function logout()
     {

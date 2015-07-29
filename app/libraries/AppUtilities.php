@@ -24,15 +24,15 @@ class AppUtilities
         ));
 
         if ($update)
-            return Airavata::updateApplicationModule($inputs["appModuleId"], $appModule);
+            return Airavata::updateApplicationModule(Session::get('authz-token'), $inputs["appModuleId"], $appModule);
         else
-            return Airavata::registerApplicationModule(Session::get("gateway_id"), $appModule);
+            return Airavata::registerApplicationModule(Session::get('authz-token'), Session::get("gateway_id"), $appModule);
     }
 
     public static function deleteAppModule($appModuleId)
     {
 
-        return Airavata::deleteApplicationModule($appModuleId);
+        return Airavata::deleteApplicationModule(Session::get('authz-token'), $appModuleId);
     }
 
     public static function getAppInterfaceData()
@@ -40,7 +40,7 @@ class AppUtilities
 
         $dataType = new DataType();
         $modules = AppUtilities::getAllModules();
-        $appInterfaces = Airavata::getAllApplicationInterfaces(Session::get("gateway_id"));
+        $appInterfaces = Airavata::getAllApplicationInterfaces(Session::get('authz-token'), Session::get("gateway_id"));
 
         return array(
             "appInterfaces" => $appInterfaces,
@@ -103,9 +103,9 @@ class AppUtilities
                     Cache::forget('APP-' . $appInterfaceValues["app-interface-id"]);
                 }
             }
-            Airavata::updateApplicationInterface($appInterfaceValues["app-interface-id"], $appInterface);
+            Airavata::updateApplicationInterface(Session::get('authz-token'), $appInterfaceValues["app-interface-id"], $appInterface);
         } else {
-            Airavata::getApplicationInterface(Airavata::registerApplicationInterface(Session::get("gateway_id"), $appInterface));
+            Airavata::getApplicationInterface(Session::get('authz-token'), Airavata::registerApplicationInterface(Session::get("gateway_id"), $appInterface));
         }
         //print_r( "App interface has been created.");
     }
@@ -117,16 +117,16 @@ class AppUtilities
                 Cache::forget('APP-' . $appInterfaceId);
             }
         }
-        return Airavata::deleteApplicationInterface($appInterfaceId);
+        return Airavata::deleteApplicationInterface(Session::get('authz-token'), $appInterfaceId);
     }
 
 
     public static function getAppDeploymentData()
     {
 
-        $appDeployments = Airavata::getAllApplicationDeployments(Session::get("gateway_id"));
+        $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), Session::get("gateway_id"));
         //var_dump( $appDeployments); exit;
-        $computeResources = Airavata::getAllComputeResourceNames();
+        $computeResources = Airavata::getAllComputeResourceNames(Session::get('authz-token'));
         $modules = AppUtilities::getAllModules();
         $apt = new ApplicationParallelismType();
 
@@ -191,9 +191,9 @@ class AppUtilities
         //var_dump( $appDeploymentValues); exit;
         $appDeployment = new ApplicationDeploymentDescription($appDeploymentValues);
         if ($update)
-            Airavata::updateApplicationDeployment($inputs["app-deployment-id"], $appDeployment);
+            Airavata::updateApplicationDeployment(Session::get('authz-token'), $inputs["app-deployment-id"], $appDeployment);
         else
-            $appDeploymentId = Airavata::registerApplicationDeployment(Session::get("gateway_id"), $appDeployment);
+            $appDeploymentId = Airavata::registerApplicationDeployment(Session::get('authz-token'), Session::get("gateway_id"), $appDeployment);
 
         return;
 
@@ -201,12 +201,12 @@ class AppUtilities
 
     public static function deleteAppDeployment($appDeploymentId)
     {
-        return Airavata::deleteApplicationDeployment($appDeploymentId);
+        return Airavata::deleteApplicationDeployment(Session::get('authz-token'), $appDeploymentId);
     }
 
     public static function getAllModules()
     {
-        return Airavata::getAllAppModules(Session::get("gateway_id"));
+        return Airavata::getAllAppModules(Session::get('authz-token'), Session::get("gateway_id"));
     }
 
     /**
@@ -218,7 +218,7 @@ class AppUtilities
         $applications = null;
 
         try {
-            $applications = Airavata::getAllApplicationInterfaceNames(Session::get("gateway_id"));
+            $applications = Airavata::getAllApplicationInterfaceNames(Session::get('authz-token'), Session::get("gateway_id"));
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting all applications.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -259,12 +259,12 @@ class AppUtilities
                 if (Cache::has('APP-' . $id)) {
                     return Cache::get('APP-' . $id);
                 } else {
-                    $applicationInterface = Airavata::getApplicationInterface($id);
+                    $applicationInterface = Airavata::getApplicationInterface(Session::get('authz-token'), $id);
                     Cache::put('APP-' . $id, $applicationInterface, Config::get('pga_config.airavata')['app-catalog-cache-duration']);
                     return $applicationInterface;
                 }
             } else {
-                return $applicationInterface = Airavata::getApplicationInterface($id);
+                return $applicationInterface = Airavata::getApplicationInterface(Session::get('authz-token'), $id);
             }
 
 
@@ -293,7 +293,7 @@ class AppUtilities
         $inputs = null;
 
         try {
-            $inputs = Airavata::getApplicationInputs($id);
+            $inputs = Airavata::getApplicationInputs(Session::get('authz-token'), $id);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting application inputs.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -322,7 +322,7 @@ class AppUtilities
         $outputs = null;
 
         try {
-            $outputs = Airavata::getApplicationOutputs($id);
+            $outputs = Airavata::getApplicationOutputs(Session::get('authz-token'), $id);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting application outputs.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .

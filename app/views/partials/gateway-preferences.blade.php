@@ -81,7 +81,9 @@
                value="@if( isset( $preferences) ){{$preferences->allocationProjectNumber}}@endif"/>
     </div>
 </div>
+@if(Session::has("admin"))
 <div class="form-group">
     <input type="submit" class="form-control btn btn-primary" value="Set preferences"/>
 </div>
+@endif
 </div>

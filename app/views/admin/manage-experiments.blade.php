@@ -374,7 +374,9 @@ to be uncommented when actually in use.
 
     $("#getStatistics").click(function () {
         $fromTime = $("#datetimepicker9").find("input").val();
+        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
         $toTime = $("#datetimepicker10").find("input").val();
+        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {

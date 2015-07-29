@@ -140,18 +140,8 @@ class ExperimentController extends BaseController
             CommonUtilities::update_experiment($experiment->experimentId, $updatedExperiment);
         }*/
         if (isset($_POST['launch'])) {
-            ExperimentUtilities::launch_experiment($experiment->experimentId);
-            return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
-        } elseif (isset($_POST['clone'])) {
-            $cloneId = ExperimentUtilities::clone_experiment($experiment->experimentId);
-            $experiment = ExperimentUtilities::get_experiment($cloneId);
-            $project = ProjectUtilities::get_project($experiment->projectId);
-
-            $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
-            $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
-
-            return Redirect::to('experiment/edit?expId=' . $experiment->experimentId);
-
+            ExperimentUtilities::launch_experiment($experiment->experimentID);
+            return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
         } elseif (isset($_POST['cancel'])) {
             ExperimentUtilities::cancel_experiment($experiment->experimentId);
             return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
@@ -195,6 +185,20 @@ class ExperimentController extends BaseController
             'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
         );
         return View::make("experiment/edit", array("expInputs" => $experimentInputs));
+    }
+
+    public function cloneExperiment()
+    {
+        if (isset($_GET['expId'])) {
+            $cloneId = ExperimentUtilities::clone_experiment($_GET['expId']);
+            $experiment = ExperimentUtilities::get_experiment($cloneId);
+            $project = ProjectUtilities::get_project($experiment->projectID);
+
+            $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+            $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
+
+            return Redirect::to('experiment/edit?expId=' . $cloneId);
+        }
     }
 
     public function editSubmit()

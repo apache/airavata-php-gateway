@@ -1,5 +1,7 @@
 <div class="well">
+    @if(Session::has("admin"))
     <span class="glyphicon glyphicon-trash pull-right remove-output-space"></span>
+    @endif
     <h4>App Output Fields</h4>
 
     <div class="form-group required">

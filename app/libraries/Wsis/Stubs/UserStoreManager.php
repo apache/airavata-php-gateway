@@ -18,7 +18,7 @@ class UserStoreManager {
 
     public function __construct($server_url, $options) {
         $this->serviceStub = new UserStoreManagerStub(
-                $server_url . "RemoteUserStoreManagerService?wsdl", $options
+                $server_url . "services/RemoteUserStoreManagerService?wsdl", $options
         );
     }
     
@@ -39,7 +39,7 @@ class UserStoreManager {
     public function authenticate($username, $password){
         $parameters = new Authenticate();
         $parameters->userName = $username;
-        $parameters->credential = $password;        
+        $parameters->credential = $password;
         return $this->serviceStub->authenticate($parameters)->return;
     }
     
@@ -115,6 +115,19 @@ class UserStoreManager {
         $parameters->filter = "*";
         $parameters->maxItemLimit = -1;
         
+        return $this->serviceStub->listUsers($parameters)->return;
+    }
+
+    /**
+     * Function to search users
+     * @param $phrase
+     * @return string
+     */
+    public function searchUsers($phrase){
+        $parameters = new ListUsers();
+        $parameters->filter = "*" . $phrase . "*";
+        $parameters->maxItemLimit = -1;
+
         return $this->serviceStub->listUsers($parameters)->return;
     }
 
