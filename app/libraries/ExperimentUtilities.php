@@ -917,7 +917,7 @@ class ExperimentUtilities
         $experiments = array();
 
         try {
-            $experiments = Airavata::getAllUserExperimentsWithPagination(Session::get('authz-token'),
+            $experiments = Airavata::getUserExperiments(Session::get('authz-token'),
                 Session::get('gateway_id'), Session::get('username'), $limit, $offset
             );
         } catch (InvalidRequestException $ire) {
