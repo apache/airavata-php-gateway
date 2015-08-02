@@ -162,7 +162,7 @@ class ProjectUtilities
         $experiments = array();
 
         try {
-            $experiments = Airavata::getAllExperimentsInProjectWithPagination(Session::get('authz-token'), $projectId, -1, 0);
+            $experiments = Airavata::getAllExperimentsInProject(Session::get('authz-token'), $projectId);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
         } catch (AiravataClientException $ace) {
