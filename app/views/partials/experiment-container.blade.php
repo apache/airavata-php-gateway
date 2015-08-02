@@ -44,7 +44,7 @@ else
             echo '<tr>';
             $addEditOption = "";
             if ($experiment['expValue']['editable'])
-                $addEditOption = '<a href="' . URL::to('/') . '/experiment/edit?expId=' . $experiment['experiment']->experimentID . '" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>';
+                $addEditOption = '<a href="' . URL::to('/') . '/experiment/edit?expId=' . $experiment['experiment']->experimentId . '" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>';
 
             echo '<td>' . $experiment['experiment']->name . $addEditOption . '</td>';
 
@@ -76,7 +76,7 @@ else
             ?>
             <td>
                 <a class="<?php echo $textClass; ?>"
-                   href="{{ URL::to('/') }}/experiment/summary?expId=<?php echo $experiment['experiment']->experimentID; ?>">
+                   href="{{ URL::to('/') }}/experiment/summary?expId=<?php echo $experiment['experiment']->experimentId; ?>">
                     <?php echo $experiment['expValue']['experimentStatusString']; ?>
                 </a>
             </td>
