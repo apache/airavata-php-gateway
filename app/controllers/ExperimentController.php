@@ -192,7 +192,7 @@ class ExperimentController extends BaseController
         if (isset($_GET['expId'])) {
             $cloneId = ExperimentUtilities::clone_experiment($_GET['expId']);
             $experiment = ExperimentUtilities::get_experiment($cloneId);
-            $project = ProjectUtilities::get_project($experiment->projectID);
+            $project = ProjectUtilities::get_project($experiment->projectId);
 
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
             $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);

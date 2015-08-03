@@ -398,7 +398,7 @@ class ExperimentUtilities
         try {
             //create new experiment to receive the clone
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $expId);
-            $cloneId = Airavata::cloneExperiment(Session::get('authz-token'), $expId, 'Clone of ' . $experiment->name);
+            $cloneId = Airavata::cloneExperiment(Session::get('authz-token'), $expId, 'Clone of ' . $experiment->experimentName);
 
             //updating the experiment inputs and output path
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $cloneId);
@@ -408,7 +408,7 @@ class ExperimentUtilities
             $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
             $outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
                 $expPathConstant, ExperimentUtilities::$experimentPath);
-            $experiment->userConfigurationData->advanceOutputDataHandling->outputDataDir = $outputDataDir;
+            //$experiment->userConfigurationData->advanceOutputDataHandling->outputDataDir = $outputDataDir;
 
             foreach ($experimentInputs as $experimentInput) {
                 if ($experimentInput->type == DataType::URI) {
