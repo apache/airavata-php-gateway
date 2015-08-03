@@ -38,13 +38,12 @@ class AppUtilities
     public static function getAppInterfaceData()
     {
 
-        $dataType = new DataType();
         $modules = AppUtilities::getAllModules();
         $appInterfaces = Airavata::getAllApplicationInterfaces(Session::get('authz-token'), Session::get("gateway_id"));
 
         return array(
             "appInterfaces" => $appInterfaces,
-            "dataTypes" => $dataType::$__names,
+            "dataTypes" => \Airavata\Model\Application\Io\DataType::$__names,
             "modules" => $modules
         );
     }

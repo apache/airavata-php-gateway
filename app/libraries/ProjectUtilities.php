@@ -19,7 +19,7 @@ class ProjectUtilities
         $userProjects = null;
 
         try {
-            $userProjects = Airavata::getAllUserProjects($gatewayId, $username);
+            $userProjects = Airavata::getUserProjects(Session::get('authz-token'), $gatewayId, $username, -1, 0);
             //var_dump( $userProjects); exit;
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting the user\'s projects.
@@ -162,7 +162,7 @@ class ProjectUtilities
         $experiments = array();
 
         try {
-            $experiments = Airavata::getAllExperimentsInProject(Session::get('authz-token'), $projectId);
+            $experiments = Airavata::getExperimentsInProject(Session::get('authz-token'), $projectId, -1, 0);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
         } catch (AiravataClientException $ace) {
@@ -206,7 +206,7 @@ class ProjectUtilities
         $projects = array();
 
         try {
-            $projects = Airavata::getAllUserProjectsWithPagination(Session::get('authz-token'), Session::get("gateway_id"),
+            $projects = Airavata::getUserProjects(Session::get('authz-token'), Session::get("gateway_id"),
                 Session::get("username"), $limit, $offset);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
@@ -237,11 +237,11 @@ class ProjectUtilities
         try {
             switch ($searchKey) {
                 case 'project-name':
-                    $projects = Airavata::searchProjectsByProjectNameWithPagination(Session::get('authz-token'), Session::get("gateway_id"),
+                    $projects = Airavata::searchProjectsByProjectName(Session::get('authz-token'), Session::get("gateway_id"),
                         Session::get("username"), $searchValue, $limit, $offset);
                     break;
                 case 'project-description':
-                    $projects = Airavata::searchProjectsByProjectDescWithPagination(Session::get('authz-token'), Session::get("gateway_id"),
+                    $projects = Airavata::searchProjectsByProjectDesc(Session::get('authz-token'), Session::get("gateway_id"),
                         Session::get("username"), $searchValue, $limit, $offset);
                     break;
             }
