@@ -578,14 +578,14 @@
         </select>
     </div>
 
-<!--    <div class="form-group required">-->
-<!--        <label class="control-label">Select Monitoring Mode </label>-->
-<!--        <select name="monitorMode" required>-->
-<!--            @foreach( $monitorModes as $index => $mode)-->
-<!--            <option value="{{ $index }}">{{ $mode}}</option>-->
-<!--            @endforeach-->
-<!--        </select>-->
-<!--    </div>-->
+    <div class="form-group required">
+        <label class="control-label">Select Monitoring Mode </label>
+        <select name="monitorMode" required>
+            @foreach( $monitorModes as $index => $mode)
+                <option value="{{ $index }}">{{ $mode}}</option>
+            @endforeach
+        </select>
+    </div>
 
     <div class="form-group addedScpValue hide">
         <label class="control-label">Alternate SSH Host Name</label>
