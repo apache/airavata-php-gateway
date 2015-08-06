@@ -14,7 +14,6 @@
     <div id="page-wrapper">
 <div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-        @if( count( $modules) )
         @if( Session::has("message"))
         <div class="row">
             <div class="alert alert-success alert-dismissible" role="alert">
@@ -35,6 +34,7 @@
         </div>
         {{ Session::forget("errorMessage") }}
         @endif
+        @if( count( $modules) )
         @if(Session::has("admin"))
         <div class="row">
             <button class="btn btn-default create-app-module" data-toggle="modal" data-target="#new-app-module-block">Create

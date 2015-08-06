@@ -14,7 +14,6 @@
     <div id="page-wrapper">
 <div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-        @if( count( $appDeployments) )
         @if( Session::has("message"))
         <div class="row">
             <div class="alert alert-success alert-dismissible" role="alert">
@@ -30,6 +29,7 @@
             <button class="btn btn-default create-app-deployment">Create a new Application Deployment</button>
         </div>
         @endif
+        @if( count( $appDeployments) )
         <div class="row">
             <div class="col-md-6">
                 <h3>Existing Application Deployments :</h3>
