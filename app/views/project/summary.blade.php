@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div class="container" style="max-width: 750px;">
+<div class="container" style="max-width: 80%;">
     <?php
         $project = ProjectUtilities::get_project($_GET['projId']);
     ?>
