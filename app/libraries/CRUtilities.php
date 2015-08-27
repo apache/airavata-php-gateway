@@ -163,7 +163,7 @@ class CRUtilities
                 return $localSub;
             }
 
-        } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::SSH) /* SSH */ {
+        } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::SSH_FORK) /* SSH */ {
             $resourceManager = new ResourceJobManager(array(
                 "resourceJobManagerType" => $inputs["resourceJobManagerType"],
                 "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
@@ -176,7 +176,7 @@ class CRUtilities
                     "resourceJobManager" => $resourceManager,
                     "alternativeSSHHostName" => $inputs["alternativeSSHHostName"],
                     "sshPort" => intval($inputs["sshPort"]),
-                    "monitorMode" => intval($inputs["monitorMode"])
+                    "monitorMode" => MonitorMode::FORK
                 )
             );
             //var_dump( $sshJobSubmission); exit;
