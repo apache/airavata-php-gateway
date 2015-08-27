@@ -104,7 +104,7 @@ class AppUtilities
             }
             Airavata::updateApplicationInterface(Session::get('authz-token'), $appInterfaceValues["app-interface-id"], $appInterface);
         } else {
-            Airavata::getApplicationInterface(Session::get('authz-token'), Airavata::registerApplicationInterface(Session::get("gateway_id"), $appInterface));
+            Airavata::getApplicationInterface(Session::get('authz-token'), Airavata::registerApplicationInterface(Session::get('authz-token'), Session::get("gateway_id"), $appInterface));
         }
         //print_r( "App interface has been created.");
     }
