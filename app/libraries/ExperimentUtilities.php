@@ -502,7 +502,10 @@ class ExperimentUtilities
         foreach ($inputs as $index => $input) {
             $order[$index] = $input->inputOrder;
         }
-        array_multisort($order, SORT_ASC, $inputs);
+        if($inputs != null){
+            array_multisort($order, SORT_ASC, $inputs);
+        }
+
         //var_dump( $inputs); exit;
         foreach ($inputs as $input) {
             switch ($input->type) {
