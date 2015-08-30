@@ -61,7 +61,7 @@ class AdminUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_summary_values($experiment, ProjectUtilities::get_project($experiment->projectID), true);
+            $expValue = ExperimentUtilities::get_experiment_summary_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
             $expContainer[$expNum]['experiment'] = $experiment;
             $expValue["editable"] = false;
             $expContainer[$expNum]['expValue'] = $expValue;
