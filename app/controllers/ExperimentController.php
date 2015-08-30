@@ -140,8 +140,8 @@ class ExperimentController extends BaseController
             CommonUtilities::update_experiment($experiment->experimentId, $updatedExperiment);
         }*/
         if (isset($_POST['launch'])) {
-            ExperimentUtilities::launch_experiment($experiment->experimentID);
-            return Redirect::to('experiment/summary?expId=' . $experiment->experimentID);
+            ExperimentUtilities::launch_experiment($experiment->experimentId);
+            return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
         } elseif (isset($_POST['cancel'])) {
             ExperimentUtilities::cancel_experiment($experiment->experimentId);
             return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);

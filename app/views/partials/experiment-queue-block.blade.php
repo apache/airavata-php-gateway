@@ -3,7 +3,7 @@
     @if( count( $queues) > 0 )
     <label class="control-label" for="node-count">Select a Queue</label>
     <select name="queue-name" class="form-control" id="select-queue" @if(isset($expVal) ) @if(!$expVal['editable']){{
-    disabled }} @endif @endif required>
+    "disabled" }} @endif @endif required>
     @foreach( $queues as $queue)
     <option value="{{$queue->queueName}}"
     @if(isset($expVal) ) @if( $expVal['scheduling']->queueName == $queue->queueName ) selected @endif @endif
@@ -26,7 +26,7 @@
         <input type="number" class="form-control" name="node-count" id="node-count" min="1"
                value="@if(isset($expVal) ){{ $expVal['scheduling']->nodeCount }}@else{{$queueDefaults['nodeCount']}}@endif"
                required
-        @if(isset($expVal) ) @if(!$expVal['editable']){{disabled}} @endif @endif>
+        @if(isset($expVal) ) @if(!$expVal['editable']){{"disabled"}} @endif @endif>
     </div>
     <div class="form-group">
         <label for="cpu-count">Total Core Count <span>( Max Allowed Cores - <span
@@ -34,7 +34,7 @@
         <input type="number" class="form-control" name="cpu-count" id="cpu-count" min="1"
                value="@if(isset($expVal) ){{ $expVal['scheduling']->totalCPUCount }}@else{{$queueDefaults['cpuCount']}}@endif"
                required
-        @if(isset($expVal)) @if(!$expVal['editable']){{disabled}} @endif @endif>
+        @if(isset($expVal)) @if(!$expVal['editable']){{"disabled"}} @endif @endif>
     </div>
     <div class="form-group">
         <label for="wall-time">Wall Time Limit <span>( Max Allowed Wall Time - <span
@@ -44,7 +44,7 @@
             <input type="number" class="form-control" name="wall-time" id="wall-time" min="1"
                    value="@if(isset($expVal)){{$expVal['scheduling']->wallTimeLimit}}@else{{$queueDefaults['wallTimeLimit']}}@endif"
                    required
-            @if(isset($expVal)) @if(!$expVal['editable']){{disabled}} @endif @endif>
+            @if(isset($expVal)) @if(!$expVal['editable']){{"disabled"}} @endif @endif>
             <span class="input-group-addon">minutes</span>
         </div>
     </div>
@@ -55,7 +55,7 @@
         <div class="input-group">
             <input type="number" class="form-control" name="total-physical-memory" id="memory-count" min="0"
                    value="@if(isset($expVal) ){{ $expVal['scheduling']->totalPhysicalMemory }}@endif"
-            @if(isset($expVal)) @if(!$expVal['editable']){{disabled}} @endif @endif>
+            @if(isset($expVal)) @if(!$expVal['editable']){{"disabled"}} @endif @endif>
             <span class="input-group-addon">MB</span>
         </div>
     </div>
