@@ -163,6 +163,45 @@ class CRUtilities
                 return $localSub;
             }
 
+        } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::SSH) {
+            $resourceManager = new ResourceJobManager(array(
+                "resourceJobManagerType" => $inputs["resourceJobManagerType"],
+                "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
+                "jobManagerBinPath" => $inputs["jobManagerBinPath"],
+                "jobManagerCommands" => $inputs["jobManagerCommands"]
+            ));
+            $sshJobSubmission = new SSHJobSubmission(array
+                (
+                    "securityProtocol" => intval($inputs["securityProtocol"]),
+                    "resourceJobManager" => $resourceManager,
+                    "alternativeSSHHostName" => $inputs["alternativeSSHHostName"],
+                    "sshPort" => intval($inputs["sshPort"]),
+                    "monitorMode" => MonitorMode::JOB_EMAIL_NOTIFICATION_MONITOR
+                )
+            );
+            //var_dump( $sshJobSubmission); exit;
+            if ($update) //update Local JSP
+            {
+                $jsiObject = Airavata::getSSHJobSubmission(Session::get('authz-token'), $jsiId);
+
+                //first update resource job manager
+                $rmjId = $jsiObject->resourceJobManager->resourceJobManagerId;
+                Airavata::updateResourceJobManager(Session::get('authz-token'), $rmjId, $resourceManager);
+                $jsiObject = Airavata::getSSHJobSubmission(Session::get('authz-token'), $jsiId);
+
+                $jsiObject->securityProtocol = intval($inputs["securityProtocol"]);
+                $jsiObject->alternativeSSHHostName = $inputs["alternativeSSHHostName"];
+                $jsiObject->sshPort = intval($inputs["sshPort"]);
+                $jsiObject->monitorMode = intval($inputs["monitorMode"]);
+                $jsiObject->resourceJobManager = Airavata::getresourceJobManager(Session::get('authz-token'), $rmjId);
+                //var_dump( $jsiObject); exit;
+                //add updated resource job manager to ssh job submission object.
+                //$sshJobSubmission->resourceJobManager->resourceJobManagerId = $rmjId;
+                $localSub = Airavata::updateSSHJobSubmissionDetails(Session::get('authz-token'), $jsiId, $jsiObject);
+            } else {
+                $sshSub = Airavata::addSSHJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $sshJobSubmission);
+            }
+            return;
         } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::SSH_FORK) {
             $resourceManager = new ResourceJobManager(array(
                 "resourceJobManagerType" => $inputs["resourceJobManagerType"],
@@ -199,7 +238,7 @@ class CRUtilities
                 //$sshJobSubmission->resourceJobManager->resourceJobManagerId = $rmjId;
                 $localSub = Airavata::updateSSHJobSubmissionDetails(Session::get('authz-token'), $jsiId, $jsiObject);
             } else {
-                $sshSub = Airavata::addSSHJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $sshJobSubmission);
+                $sshSub = Airavata::addSSHForkJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $sshJobSubmission);
             }
             return;
         } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::UNICORE) {

@@ -110,7 +110,7 @@ $(document).ready( function(){
     }
 
     //temporary till all protocols are not setup
-    if( selectedVal == "local" || selectedVal == "ssh_fork" || selectedVal == "unicore" )
+    if( selectedVal == "local" || selectedVal == "ssh_fork" || selectedVal == "ssh" || selectedVal == "unicore" )
       $(".jspSubmit").removeClass("hide");
     else
       $(".jspSubmit").addClass("hide");
