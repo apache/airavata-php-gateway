@@ -67,7 +67,7 @@ $(document).ready( function(){
     {
       $(this).after(  parentResDiv + $(".resource-manager-block").html() + "</div>" );
     }
-    else if( selectedVal == "ssh_fork")
+    else if( selectedVal == "ssh_fork" || selectedVal == "ssh")
     {
       $(this).after(  parentResDiv 
                       + $(".ssh-block").html()

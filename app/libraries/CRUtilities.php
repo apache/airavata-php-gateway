@@ -163,7 +163,7 @@ class CRUtilities
                 return $localSub;
             }
 
-        } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::SSH_FORK) /* SSH */ {
+        } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::SSH_FORK) {
             $resourceManager = new ResourceJobManager(array(
                 "resourceJobManagerType" => $inputs["resourceJobManagerType"],
                 "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
@@ -312,7 +312,7 @@ class CRUtilities
         //jsp = job submission protocol type
         if ($jsp == JobSubmissionProtocol::LOCAL)
             return Airavata::getLocalJobSubmission(Session::get('authz-token'), $jobSubmissionInterfaceId);
-        else if ($jsp == JobSubmissionProtocol::SSH)
+        else if ($jsp == JobSubmissionProtocol::SSH || $jsp == JobSubmissionProtocol::SSH_FORK)
             return Airavata::getSSHJobSubmission(Session::get('authz-token'), $jobSubmissionInterfaceId);
         else if ($jsp == JobSubmissionProtocol::UNICORE)
             return Airavata::getUnicoreJobSubmission(Session::get('authz-token'), $jobSubmissionInterfaceId);
