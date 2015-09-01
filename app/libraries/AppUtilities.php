@@ -6,9 +6,9 @@ use Airavata\Model\AppCatalog\AppDeployment\ApplicationModule;
 use Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType;
 use Airavata\Model\AppCatalog\AppDeployment\SetEnvPaths;
 use Airavata\Model\AppCatalog\AppInterface\ApplicationInterfaceDescription;
-use Airavata\Model\AppCatalog\AppInterface\DataType;
-use Airavata\Model\AppCatalog\AppInterface\InputDataObjectType;
-use Airavata\Model\AppCatalog\AppInterface\OutputDataObjectType;
+use Airavata\Model\Application\Io\DataType;
+use Airavata\Model\Application\Io\InputDataObjectType;
+use Airavata\Model\Application\Io\OutputDataObjectType;
 
 
 class AppUtilities

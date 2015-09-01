@@ -99,6 +99,13 @@ class AccountController extends BaseController
                     Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
                     Session::put("password", $_POST["password"]);
 
+                    //creating a default project for user
+                    $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);
+                    if($projects == null || count($projects) == 0){
+                        //creating a default project for user
+                        ProjectUtilities::create_default_project($username);
+                    }
+
                     return Redirect::to("home");
 
                 } else {

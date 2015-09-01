@@ -67,7 +67,7 @@ $(document).ready( function(){
     {
       $(this).after(  parentResDiv + $(".resource-manager-block").html() + "</div>" );
     }
-    else if( selectedVal == "ssh_fork")
+    else if( selectedVal == "ssh_fork" || selectedVal == "ssh")
     {
       $(this).after(  parentResDiv 
                       + $(".ssh-block").html()
@@ -110,7 +110,7 @@ $(document).ready( function(){
     }
 
     //temporary till all protocols are not setup
-    if( selectedVal == "local" || selectedVal == "ssh_fork" || selectedVal == "unicore" )
+    if( selectedVal == "local" || selectedVal == "ssh_fork" || selectedVal == "ssh" || selectedVal == "unicore" )
       $(".jspSubmit").removeClass("hide");
     else
       $(".jspSubmit").addClass("hide");

@@ -502,7 +502,10 @@ class ExperimentUtilities
         foreach ($inputs as $index => $input) {
             $order[$index] = $input->inputOrder;
         }
-        array_multisort($order, SORT_ASC, $inputs);
+        if($inputs != null){
+            array_multisort($order, SORT_ASC, $inputs);
+        }
+
         //var_dump( $inputs); exit;
         foreach ($inputs as $input) {
             switch ($input->type) {
@@ -702,7 +705,7 @@ class ExperimentUtilities
         $expVal["applicationInterface"] = AppUtilities::get_application_interface($experiment->executionId);
 
 
-        switch ($experiment->experimentStatus) {
+        switch (ExperimentState::$__names[$experiment->experimentStatus->state]) {
             case 'CREATED':
             case 'VALIDATED':
             case 'SCHEDULED':
@@ -714,7 +717,7 @@ class ExperimentUtilities
                 break;
         }
 
-        switch ($experiment->experimentStatus) {
+        switch (ExperimentState::$__names[$experiment->experimentStatus->state]) {
             case 'CREATED':
             case 'VALIDATED':
             case 'SCHEDULED':
@@ -811,8 +814,6 @@ class ExperimentUtilities
                         break;
                     case '':
                 }
-            }else{
-                $filters[\Airavata\Model\Experiment\ExperimentSearchFields::EXPERIMENT_NAME] = "*";
             }
 
             $experiments = Airavata::searchExperiments(Session::get('authz-token'),

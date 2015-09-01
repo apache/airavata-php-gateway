@@ -185,7 +185,7 @@
                         </select>
                     </div>
                 </div>
-                @elseif( $selectedJspIndex == $jobSubmissionProtocolsObject::SSH)
+                @elseif( $selectedJspIndex == $jobSubmissionProtocolsObject::SSH || $jobSubmissionProtocolsObject::SSH_FORK)
                 <div class="form-group required">
                     <label>Selected Security Protocol</label>
                     <select disabled="true" name="securityProtocol" required="required">
