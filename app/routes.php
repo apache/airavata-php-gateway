@@ -24,6 +24,8 @@ Route::get("login", "AccountController@loginView");
 
 Route::post("login", "AccountController@loginSubmit");
 
+Route::get("callback-url", "AccountController@oauthCallback");
+
 Route::get("logout", "AccountController@logout");
 
 Route::get("forgot-password", "AccountController@forgotPassword");

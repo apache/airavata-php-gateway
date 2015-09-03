@@ -38,6 +38,11 @@ class UserProfileManager {
         $profile = new UserProfileDTO();
         $fieldValues = array();
 
+        $usernameDTO = new UserFieldDTO();
+        $usernameDTO->claimUri = "http://wso2.org/claims/sub";
+        $usernameDTO->fieldValue = $username;
+        array_push($fieldValues, $usernameDTO);
+
         $emailDTO = new UserFieldDTO();
         $emailDTO->claimUri = "http://wso2.org/claims/emailaddress";
         $emailDTO->fieldValue = $email;

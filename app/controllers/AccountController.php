@@ -60,8 +60,6 @@ class AccountController extends BaseController
             //update user profile
             WSIS::updateUserProfile($username, $email, $first_name, $last_name);
 
-            //creating a default project for user
-            ProjectUtilities::create_default_project($username);
             CommonUtilities::print_success_message('New user created!');
             return View::make('account/login');
         }
@@ -69,7 +67,55 @@ class AccountController extends BaseController
 
     public function loginView()
     {
-        return View::make('account/login');
+        if(Config::get('pga_config.wsis')['auth-mode'] == "oauth"){
+            $url = WSIS::getOAuthRequestCodeUrl();
+            return Redirect::away($url);
+        }else{
+            return View::make('account/login');
+        }
+    }
+
+    public function oauthCallback()
+    {
+        if (!isset($_GET["code"])) {
+            CommonUtilities::print_error_message("Require the code parameter to validate!");
+        }
+
+        $code = $_GET["code"];
+        $response = WSIS::getOAuthToken($code);
+        $accessToken = $response->access_token;
+        $refreshToken = $response->refresh_token;
+        $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
+        $authzToken = new Airavata\Model\Security\AuthzToken();
+        $authzToken->accessToken = $accessToken;
+        Session::put('authz-token',$authzToken);
+        Session::put('oauth-refresh-code',$refreshToken);
+        Session::put('oauth-expiration-time',$expirationTime);
+
+        $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
+        Session::put("user-profile", $userProfile);
+
+        $userRoles = $userProfile['roles'];
+        if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
+            Session::put("admin", true);
+        }
+        if (in_array(Config::get('pga_config.wsis')['read-only-admin'], $userRoles)) {
+            Session::put("admin-read-only", true);
+        }
+
+        $username = $userProfile['username'];
+        CommonUtilities::store_id_in_session($username);
+        CommonUtilities::print_success_message('Login successful! You will be redirected to your home page shortly.');
+        Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
+
+        //creating a default project for user
+        $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);
+        if($projects == null || count($projects) == 0){
+            //creating a default project for user
+            ProjectUtilities::create_default_project($username);
+        }
+
+        return Redirect::to("home");
     }
 
     public function loginSubmit()
@@ -95,9 +141,7 @@ class AccountController extends BaseController
 
                     CommonUtilities::store_id_in_session($username);
                     CommonUtilities::print_success_message('Login successful! You will be redirected to your home page shortly.');
-                    //TODO::If this option is not safe, have to find a better method to send credentials to identity server on every connection.
                     Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
-                    Session::put("password", $_POST["password"]);
 
                     //creating a default project for user
                     $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);

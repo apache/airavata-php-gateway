@@ -6,6 +6,9 @@ use Wsis\Stubs\UserProfileManager;
 use Wsis\Stubs\UserStoreManager;
 use Wsis\Stubs\TenantManager;
 use Wsis\Stubs\UserInformationRecoveryManager;
+use Wsis\Stubs\OAuthManager;
+
+use Illuminate\Support\Facades\Config;
 
 class Wsis {
 
@@ -32,6 +35,12 @@ class Wsis {
      * @access private
      */
     private $userInfoRecoveryManager;
+
+    /**
+     * @var
+     * @access private
+     */
+    private $oauthManger;
 
     /**
      * @var string
@@ -87,6 +96,7 @@ class Wsis {
             $this->tenantManager = new TenantManager($service_url, $parameters);
             $this->userProfileManager = new UserProfileManager($service_url, $parameters);
             $this->userInfoRecoveryManager = new UserInformationRecoveryManager($service_url, $parameters);
+            $this->oauthManger = new OAuthManager(Config::get('pga_config.wsis')['service-url'], $verify_peer, $cafile_path);
         } catch (Exception $ex) {
             throw new Exception("Unable to instantiate WSO2 IS client", 0, $ex);
         }
@@ -139,6 +149,48 @@ class Wsis {
         } catch (Exception $ex) {
             throw new Exception("Unable to authenticate user", 0, $ex);
         }
+    }
+
+    /**
+     * Function to get OAuth request code url
+     * @return mixed
+     */
+    public function getOAuthRequestCodeUrl(){
+        $url = $this->oauthManger->requestAccessCode(Config::get('pga_config.wsis')['oauth-client-key'],
+            Config::get('pga_config.wsis')['oauth-callback-url']);
+        return $url;
+    }
+
+    /**
+     * Function to get OAuth Access token
+     * @return string
+     */
+    public function getOAuthToken($code){
+        $response = $this->oauthManger->getAccessToken(Config::get('pga_config.wsis')['oauth-client-key'],
+            Config::get('pga_config.wsis')['oauth-client-secret'], $code,
+            Config::get('pga_config.wsis')['oauth-callback-url']);
+        return $response;
+    }
+
+    /**
+     * Method to get refreshed access token
+     * @param $refreshToken
+     * @return mixed
+     */
+    public function getRefreshedOAutheToken($refreshToken){
+        $response = $this->oauthManger->getRefreshedAccessToken(Config::get('pga_config.wsis')['oauth-client-key'],
+            Config::get('pga_config.wsis')['oauth-client-secret'], $refreshToken);
+        return $response;
+    }
+
+    /**
+     * Function to get user profile from OAuth token
+     * @param $token
+     */
+    public function getUserProfileFromOAuthToken($token){
+        $userProfile = $this->oauthManger->getUserProfile($token);
+        return array('username'=>$userProfile->sub, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
+            'lastname'=>$userProfile->family_name, 'roles'=>explode(",",$userProfile->roles));
     }
 
     /**

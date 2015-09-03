@@ -12,13 +12,26 @@
 */
 
 App::before(function ($request) {
-    $authzToken = new Airavata\Model\Security\AuthzToken();
-    $authzToken->accessToken = "emptyToken";
-    $apiVersion = Airavata::getAPIVersion($authzToken);
+    //Check Airavata Server is up
+    $apiVersion = Airavata::getAPIVersion();
     if (empty($apiVersion))
         return View::make("server-down");
-    else
-        Session::put('authz-token',$authzToken);
+
+    //Check OAuth token has expired
+    if(Config::get('pga_config.wsis')['auth-mode']=="oauth" && Session::has('authz-token')){
+        $currentTime = time();
+        if($currentTime > Session::get('oauth-expiration-time')){
+            $response = WSIS::getRefreshedOAutheToken(Session::get('oauth-refresh-code'));
+            $accessToken = $response->access_token;
+            $refreshToken = $response->refresh_token;
+            $expirationTime = time()/1000 + $response->expires_in - 300;
+            $authzToken = new Airavata\Model\Security\AuthzToken();
+            $authzToken->accessToken = $accessToken;
+            Session::put('authz-token',$authzToken);
+            Session::put('oauth-refresh-code',$refreshToken);
+            Session::put('oauth-expiration-time',$expirationTime);
+        }
+    }
 });
 
 
