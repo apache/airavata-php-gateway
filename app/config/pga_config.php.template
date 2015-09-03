@@ -26,7 +26,7 @@ return array(
         /**
          * Tenant admin's username
          */
-        'admin-username' => 'master@master.airavata.scigap.org',
+        'admin-username' => 'master@master.airavata',
 
         /**
          * Tenant admin's password
