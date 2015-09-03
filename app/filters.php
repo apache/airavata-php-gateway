@@ -22,14 +22,19 @@ App::before(function ($request) {
         $currentTime = time();
         if($currentTime > Session::get('oauth-expiration-time')){
             $response = WSIS::getRefreshedOAutheToken(Session::get('oauth-refresh-code'));
-            $accessToken = $response->access_token;
-            $refreshToken = $response->refresh_token;
-            $expirationTime = time()/1000 + $response->expires_in - 300;
-            $authzToken = new Airavata\Model\Security\AuthzToken();
-            $authzToken->accessToken = $accessToken;
-            Session::put('authz-token',$authzToken);
-            Session::put('oauth-refresh-code',$refreshToken);
-            Session::put('oauth-expiration-time',$expirationTime);
+            if(isset($response->access_token)){
+                $accessToken = $response->access_token;
+                $refreshToken = $response->refresh_token;
+                $expirationTime = time()/1000 + $response->expires_in - 300;
+                $authzToken = new Airavata\Model\Security\AuthzToken();
+                $authzToken->accessToken = $accessToken;
+                Session::put('authz-token',$authzToken);
+                Session::put('oauth-refresh-code',$refreshToken);
+                Session::put('oauth-expiration-time',$expirationTime);
+            }else{
+                Session::flush();
+                return Redirect::to('home');
+            }
         }
     }
 });
