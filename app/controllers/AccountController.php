@@ -105,7 +105,7 @@ class AccountController extends BaseController
         if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
             Session::put("admin", true);
         }
-        if (in_array(Config::get('pga_config.wsis')['read-only-admin'], $userRoles)) {
+        if (in_array(Config::get('pga_config.wsis')['read-only-admin-role-name'], $userRoles)) {
             Session::put("admin-read-only", true);
         }
 
@@ -113,9 +113,7 @@ class AccountController extends BaseController
         CommonUtilities::store_id_in_session($username);
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
-        $this->initializeWithAiravata($username);
-
-        return Redirect::to("home");
+        return $this->initializeWithAiravata($username);
     }
 
     public function loginSubmit()
@@ -129,8 +127,11 @@ class AccountController extends BaseController
                     if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
                         Session::put("admin", true);
                     }
-                    if (in_array(Config::get('pga_config.wsis')['read-only-admin'], $userRoles)) {
+                    if (in_array(Config::get('pga_config.wsis')['read-only-admin-role-name'], $userRoles)) {
                         Session::put("admin-read-only", true);
+                    }
+                    if (in_array(Config::get('pga_config.wsis')['user-role-name'], $userRoles)) {
+                        Session::put("authorized-user", true);
                     }
 
                     $userProfile = WSIS::getUserProfile($username);
@@ -141,9 +142,7 @@ class AccountController extends BaseController
                     CommonUtilities::store_id_in_session($username);
                     Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
-                    $this->initializeWithAiravata($username);
-
-                    return Redirect::to("home");
+                    return $this->initializeWithAiravata($username);
 
                 } else {
                     return Redirect::to("login")->with("invalid-credentials", true);
@@ -156,22 +155,19 @@ class AccountController extends BaseController
     }
 
     private function initializeWithAiravata($username){
-
         //Check Airavata Server is up
         try{
-            $apiVersion = Airavata::getAPIVersion();
-            if (empty($apiVersion))
-                return View::make("server-down");
+            //creating a default project for user
+            $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);
+            if($projects == null || count($projects) == 0){
+                //creating a default project for user
+                ProjectUtilities::create_default_project($username);
+            }
         }catch (Exception $ex){
-            return View::make("server-down");
+            CommonUtilities::print_error_message("Unable to Connect to the Airavata Server Instance!");
         }
 
-        //creating a default project for user
-        $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);
-        if($projects == null || count($projects) == 0){
-            //creating a default project for user
-            ProjectUtilities::create_default_project($username);
-        }
+        return View::make("home");
     }
 
     public function forgotPassword()

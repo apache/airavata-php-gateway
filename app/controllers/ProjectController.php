@@ -16,6 +16,7 @@ class ProjectController extends BaseController
     public function __construct()
     {
         $this->beforeFilter('verifylogin');
+        $this->beforeFilter('verifyauthorizeduser');
         Session::put("nav-active", "project");
 
     }

@@ -104,6 +104,16 @@ Route::filter('verifylogin', function () {
         return Redirect::to("home")->with("login-alert", true);
 });
 
+Route::filter('verifyauthorizeduser', function () {
+    if (CommonUtilities::verify_login()) {
+        if (!(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user"))) {
+            return Redirect::to("home");
+        }
+    } else
+        return Redirect::to("home")->with("login-alert", true);
+});
+
+
 Route::filter('verifyadmin', function () {
     if (CommonUtilities::verify_login()) {
         if (!(Session::has("admin") || Session::has("admin-read-only"))) {

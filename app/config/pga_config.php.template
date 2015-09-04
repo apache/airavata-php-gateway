@@ -16,7 +16,7 @@ return array(
         /**
          * Read only Admin Role Name
          */
-        'read-only-admin' => 'admin-read-only',
+        'read-only-admin-role-name' => 'admin-read-only',
 
         /**
          * Gateway user role
