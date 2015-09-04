@@ -92,16 +92,19 @@ class AccountController extends BaseController
         $accessToken = $response->access_token;
         $refreshToken = $response->refresh_token;
         $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
+
+        $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
+        $userRoles = $userProfile['roles'];
+        $username = $userProfile['username'];
+
         $authzToken = new Airavata\Model\Security\AuthzToken();
         $authzToken->accessToken = $accessToken;
+        $authzToken->claimsMap = array('userName'=>$username);
         Session::put('authz-token',$authzToken);
         Session::put('oauth-refresh-code',$refreshToken);
         Session::put('oauth-expiration-time',$expirationTime);
-
-        $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
         Session::put("user-profile", $userProfile);
 
-        $userRoles = $userProfile['roles'];
         if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
             Session::put("admin", true);
         }
@@ -112,7 +115,6 @@ class AccountController extends BaseController
             Session::put("authorized-user", true);
         }
 
-        $username = $userProfile['username'];
         CommonUtilities::store_id_in_session($username);
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
