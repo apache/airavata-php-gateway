@@ -21,7 +21,7 @@ return array(
         /**
          * Gateway user role
          */
-        'user-role-name' => 'Internal/everyone',
+        'user-role-name' => 'airavata-user',
 
         /**
          * Tenant admin's username
