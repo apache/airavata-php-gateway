@@ -17,6 +17,7 @@ class OAuthManager
     public function __construct($serverUrl, $verifyPeer, $cafilePath)
     {
         $this->_AuthorizeUrl  = $serverUrl . "oauth2/authorize";
+        $this->_LogoutUrl  = $serverUrl . "commonauth?commonAuthLogout=true&type=oidc2&sessionDataKey=7fa50562-2d0f-4234-8e39-8a7271b9b273";
         $this->_AccessTokenUrl  = $serverUrl . "oauth2/token";
         $this->_UserInfoUrl = $serverUrl . "oauth2/userinfo?schema=openid";
         $this->_verifyPeer = $verifyPeer;
@@ -82,6 +83,13 @@ class OAuthManager
 
         //Parse JSON return object.
         return json_decode($response);
+    }
+
+    // Function to get OAuth logout url
+    // refer http://xacmlinfo.org/2015/01/08/openid-connect-identity-server/ for OpenID Connect logout information
+    public function getOAuthLogoutUrl($redirect_url, $applicationName)
+    {
+        return ($this->_LogoutUrl . "&commonAuthCallerPath=" . $redirect_url . "&relyingParty=" . $applicationName);
     }
 
     private function initCurl($url)

@@ -189,9 +189,18 @@ class Wsis {
      */
     public function getUserProfileFromOAuthToken($token){
         $userProfile = $this->oauthManger->getUserProfile($token);
-        return array('username'=>$userProfile->sub, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
+        return array('username'=>$userProfile->username, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
             'lastname'=>$userProfile->family_name, 'roles'=>explode(",",$userProfile->roles));
     }
+
+    /**
+     * Function to get the OAuth logout url
+     */
+    public function getOAuthLogoutUrl(){
+        return $this->oauthManger->getOAuthLogoutUrl(Config::get('pga_config.wsis')['oauth-callback-url'],
+            Config::get('pga_config.wsis')['oauth-service-provider-id']);
+    }
+
 
     /**
      * Function to check whether username exists

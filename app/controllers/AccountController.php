@@ -61,7 +61,13 @@ class AccountController extends BaseController
             WSIS::updateUserProfile($username, $email, $first_name, $last_name);
 
             CommonUtilities::print_success_message('New user created!');
-            return View::make('account/login');
+
+            if(Config::get('pga_config.wsis')['auth-mode']=="oauth"){
+                return View::make('home');
+            }else{
+                return View::make('account/login');
+            }
+
         }
     }
 
@@ -78,7 +84,7 @@ class AccountController extends BaseController
     public function oauthCallback()
     {
         if (!isset($_GET["code"])) {
-            CommonUtilities::print_error_message("Require the code parameter to validate!");
+            return View::make('home');
         }
 
         $code = $_GET["code"];
@@ -256,6 +262,9 @@ class AccountController extends BaseController
     public function logout()
     {
         Session::flush();
+        if(Config::get('pga_config.wsis')['auth-mode'] == "oauth"){
+            return Redirect::away(WSIS::getOAuthLogoutUrl());
+        }
         return Redirect::to('home');
     }
 
