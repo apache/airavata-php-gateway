@@ -111,22 +111,15 @@ class AccountController extends BaseController
 
         $username = $userProfile['username'];
         CommonUtilities::store_id_in_session($username);
-        CommonUtilities::print_success_message('Login successful! You will be redirected to your home page shortly.');
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
-        //creating a default project for user
-        $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);
-        if($projects == null || count($projects) == 0){
-            //creating a default project for user
-            ProjectUtilities::create_default_project($username);
-        }
+        $this->initializeWithAiravata($username);
 
         return Redirect::to("home");
     }
 
     public function loginSubmit()
     {
-
         if (CommonUtilities::form_submitted()) {
             $username = $_POST['username'];
             $password = $_POST['password'];
@@ -146,15 +139,9 @@ class AccountController extends BaseController
                     }
 
                     CommonUtilities::store_id_in_session($username);
-                    CommonUtilities::print_success_message('Login successful! You will be redirected to your home page shortly.');
                     Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
-                    //creating a default project for user
-                    $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);
-                    if($projects == null || count($projects) == 0){
-                        //creating a default project for user
-                        ProjectUtilities::create_default_project($username);
-                    }
+                    $this->initializeWithAiravata($username);
 
                     return Redirect::to("home");
 
@@ -166,6 +153,25 @@ class AccountController extends BaseController
             }
         }
 
+    }
+
+    private function initializeWithAiravata($username){
+
+        //Check Airavata Server is up
+        try{
+            $apiVersion = Airavata::getAPIVersion();
+            if (empty($apiVersion))
+                return View::make("server-down");
+        }catch (Exception $ex){
+            return View::make("server-down");
+        }
+
+        //creating a default project for user
+        $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);
+        if($projects == null || count($projects) == 0){
+            //creating a default project for user
+            ProjectUtilities::create_default_project($username);
+        }
     }
 
     public function forgotPassword()

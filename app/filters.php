@@ -12,11 +12,6 @@
 */
 
 App::before(function ($request) {
-    //Check Airavata Server is up
-//    $apiVersion = Airavata::getAPIVersion();
-//    if (empty($apiVersion))
-//        return View::make("server-down");
-
     //Check OAuth token has expired
     if(Config::get('pga_config.wsis')['auth-mode']=="oauth" && Session::has('authz-token')){
         $currentTime = time();

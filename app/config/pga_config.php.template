@@ -39,6 +39,11 @@ return array(
         'auth-mode' => 'basic',
 
         /**
+         * WSO2 OAuth Service Provider Application ID
+         */
+        'oauth-service-provider-id' => 'OpenidConnectWebapp-local',
+
+        /**
          * OAuth client key
          */
         'oauth-client-key' => 'iGEREhSBLuGapdcXwMU0b8jEpA4a',
