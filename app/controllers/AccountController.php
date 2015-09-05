@@ -84,11 +84,15 @@ class AccountController extends BaseController
     public function oauthCallback()
     {
         if (!isset($_GET["code"])) {
-            return View::make('home');
+            return Redirect::to('home');
         }
 
         $code = $_GET["code"];
         $response = WSIS::getOAuthToken($code);
+        if(!isset($response->access_token)){
+            return Redirect::to('home');
+        }
+
         $accessToken = $response->access_token;
         $refreshToken = $response->refresh_token;
         $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
