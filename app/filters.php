@@ -21,7 +21,7 @@ App::before(function ($request) {
                 $accessToken = $response->access_token;
                 $refreshToken = $response->refresh_token;
                 $expirationTime = time() + $response->expires_in - 300;
-                $authzToken = new Airavata\Model\Security\AuthzToken();
+                $authzToken = Session::get('authz-token');
                 $authzToken->accessToken = $accessToken;
                 Session::put('authz-token',$authzToken);
                 Session::put('oauth-refresh-code',$refreshToken);
