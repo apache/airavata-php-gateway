@@ -69,14 +69,14 @@ return array(
         'service-url' => 'https://idp.scigap.org:7443/',
 
         /**
-         * Path to the server certificate file
-         */
-        'cafile-path' => app_path() . '/resources/security/idp_scigap_org.pem',
-
-        /**
          * Enable HTTPS server verification
          */
         'verify-peer' => true,
+
+        /**
+         * Path to the server certificate file
+         */
+        'cafile-path' => app_path() . '/resources/security/idp_scigap_org.pem',
 
         /**
          * Allow self signed server certificates
@@ -91,10 +91,12 @@ return array(
      * *****************************************************************
      */
     'airavata' => [
+
         /**
-         * Airavata API server location
+         * Airavata API server location. Use tls:// as the protocol to
+         * connect TLS enabled Airavata
          */
-        'airavata-server' => 'gw111.iu.xsede.org',
+        'airavata-server' => 'gw56.iu.xsede.org',
 
         /**
          * Airavata API server port

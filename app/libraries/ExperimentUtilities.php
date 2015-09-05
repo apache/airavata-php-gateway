@@ -620,7 +620,7 @@ class ExperimentUtilities
             echo "Experiment hasn't completed. Experiment Status is : " . $expStatus;
     }
 
-    public static function get_experiment_summary_values($experimentSummary, $project, $forSearch = false)
+    public static function get_experiment_summary_values($experimentSummary, $forSearch = false)
     {
 //        var_dump( $experimentSummary); exit;
         $expVal = array();
@@ -840,7 +840,7 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_summary_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
+            $expValue = ExperimentUtilities::get_experiment_summary_values($experiment, true);
             $expContainer[$expNum]['experiment'] = $experiment;
             if ($expValue["experimentStatusString"] == "FAILED")
                 $expValue["editable"] = false;
@@ -943,7 +943,7 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_summary_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
+            $expValue = ExperimentUtilities::get_experiment_summary_values($experiment, true);
             $expContainer[$expNum]['experiment'] = $experiment;
             if ($expValue["experimentStatusString"] == "FAILED")
                 $expValue["editable"] = false;
