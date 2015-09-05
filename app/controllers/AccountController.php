@@ -174,9 +174,10 @@ class AccountController extends BaseController
             }
         }catch (Exception $ex){
             CommonUtilities::print_error_message("Unable to Connect to the Airavata Server Instance!");
+            return View::make('home');
         }
 
-        return View::make("home");
+        return Redirect::to("home");
     }
 
     public function forgotPassword()
