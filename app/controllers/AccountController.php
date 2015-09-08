@@ -98,7 +98,12 @@ class AccountController extends BaseController
         $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
 
         $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
-        $userRoles = $userProfile['roles'];
+        $username = $userProfile['username'];
+
+        //Fixme - OpenID profile takes some time to get synced (WSO2 IS Issue)
+        //$userRoles = $userProfile['roles'];
+        $userRoles = (array)WSIS::getUserRoles($username);
+
         $username = $userProfile['username'];
 
         $authzToken = new Airavata\Model\Security\AuthzToken();
