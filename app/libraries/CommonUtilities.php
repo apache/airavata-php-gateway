@@ -132,7 +132,8 @@ class CommonUtilities
             $menus['Help'] = array
             (
                 array('label' => 'Report Issue', 'url' => '#', "nav-active", ""),
-                array('label' => 'Request Feature', 'url' => '#', "nav-active", "")
+                array('label' => 'Request Feature', 'url' => '#', "nav-active", ""),
+                array('label' => 'Forgot Password?', 'url' => URL::to('/') . '/forgot-password', "nav-active" => "")
             );
         }
 

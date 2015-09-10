@@ -741,7 +741,7 @@ class ExperimentUtilities
      */
     public static function get_job_status(ExperimentModel $experiment)
     {
-        //$jobStatus = Airavata::getJobStatuses($experiment->experimentID);
+        $jobStatus = Airavata::getJobStatuses(Session::get('authz-token'), $experiment->experimentId);
         //TODO - implement following logic with new data model.
 /*        if(!empty($experiment->workflowNodeDetailsList)){
             if(!empty($experiment->workflowNodeDetailsList[0]->taskDetailsList)){
@@ -750,8 +750,8 @@ class ExperimentUtilities
                 }
             }
         }*/
-        if (isset($jobStatus)) {
-            $jobState = JobState::$__names[$jobStatus->jobState];
+        if (isset($jobStatus) && count($jobStatus) > 0) {
+            $jobState = JobState::$__names[array_values($jobStatus)[0]->jobState];
         } else {
             $jobState = null;
         }

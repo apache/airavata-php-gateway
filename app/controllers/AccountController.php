@@ -156,6 +156,11 @@ class AccountController extends BaseController
                         Session::put("user-profile", $userProfile);
                     }
 
+                    $authzToken = new Airavata\Model\Security\AuthzToken();
+                    $authzToken->accessToken = "emptyToken";
+                    $authzToken->claimsMap = array('userName'=>$username);
+                    Session::put('authz-token',$authzToken);
+
                     CommonUtilities::store_id_in_session($username);
                     Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
