@@ -38,20 +38,6 @@ class AiravataServiceProvider extends ServiceProvider {
         $this->app['airavata'] = $this->app->share(function($app)
         {
             try{
-//                $options = array();
-//                if(Config::get('pga_config.airavata')['verify-peer']){
-//                    $options = array(
-//                        'verify-peer'=>Config::get('pga_config.airavata')['verify-peer'],
-//                        'certfile'=>Config::get('pga_config.airavata')['cafile-path'],
-//                        'selfsign'=> Config::get('pga_config.airavata')['allow-self-signed-cert']
-//                    );
-//                }
-//
-//                $transport = new TSSLSocket(
-//                    Config::get('pga_config.airavata')['airavata-server'],
-//                    Config::get('pga_config.airavata')['airavata-port'],
-//                    $options
-//                );
                 $transport = new TSocket(
                     Config::get('pga_config.airavata')['airavata-server'],
                     Config::get('pga_config.airavata')['airavata-port']
