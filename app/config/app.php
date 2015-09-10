@@ -123,6 +123,7 @@ return array(
         'Illuminate\Workbench\WorkbenchServiceProvider',
         'Wsis\WsisServiceProvider',
         'Airavata\AiravataServiceProvider',
+        'Teepluss\Theme\ThemeServiceProvider',
     ),
 
     /*
@@ -191,6 +192,7 @@ return array(
         'View' => 'Illuminate\Support\Facades\View',
         'WSIS' => 'Wsis\Facades\Wsis',
         'Airavata' => 'Airavata\Facades\Airavata',
+        'Theme' => 'Teepluss\Theme\Facades\Theme',
     ),
 
 );
