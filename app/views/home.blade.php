@@ -1,68 +1,45 @@
 @extends('layout.basic')
 
-@section('page-header')
-@parent
-@stop
-
 @section('content')
 
+<?php
+
+if (CommonUtilities::id_in_session()) {
+
+    if (Session::has("admin"))
+        $admin = " Admin";
+    else
+        $admin = "";
+
+    echo '<div class="well"><div class="container"><h4>Welcome' . $admin . ', ' . Session::get("username") . '!</h4></div></div>';
+}
+
+?>
+
+<?php 
+if( Session::get("theme") == "base"){?>
 <div class="well">
     <div class="container">
-
-        <?php
-
-        if (CommonUtilities::id_in_session()) {
-            $columnClass = 'col-md-4';
-            if (Session::has("admin"))
-                $admin = " Admin";
-            else
-                $admin = "";
-
-            echo '<h4>Welcome' . $admin . ', ' . Session::get("username") . '!</h4>';
-        } else {
-            $columnClass = 'col-md-6';
-
-            echo '
-                <h1>PHP Gateway with Airavata</h1>
-                <p>
-                    PGA is a science gateway built with the Airavata API. You can reference PGA as you integrate Airavata
-                    into your own gateway, or you can create your gateway on top of PGA by cloning it at the link below.
-                    PGA is known to work well in the Chrome, Firefox, and Internet Explorer browsers.
-                </p>
-                <p><a href="https://github.com/apache/airavata-php-gateway"
-                        target="_blank">See the code <span class="glyphicon glyphicon-new-window"></span></a></p>
-                <p><a href="https://cwiki.apache.org/confluence/display/AIRAVATA/XSEDE+2015+Tutorial"
-                    target="_blank">XSEDE 2015 tutorial documentation <span class="glyphicon glyphicon-new-window"></span></a></p>
-            ';
-        }
-        ?>
+        <h1>PHP Gateway with Airavata</h1>
+        <p>
+            PGA is a science gateway built with the Airavata API. You can reference PGA as you integrate Airavata
+            into your own gateway, or you can create your gateway on top of PGA by cloning it at the link below.
+            PGA is known to work well in the Chrome, Firefox, and Internet Explorer browsers.
+        </p>
+        <p><a href="https://github.com/apache/airavata-php-gateway"
+                target="_blank">See the code <span class="glyphicon glyphicon-new-window"></span></a></p>
+        <p><a href="https://cwiki.apache.org/confluence/display/AIRAVATA/XSEDE+2015+Tutorial"
+            target="_blank">XSEDE 2015 tutorial documentation <span class="glyphicon glyphicon-new-window"></span></a>
+        </p>
     </div>
 </div>
+
 
 <div class="container">
 
     <div class="row">
-        <?php
 
-        if (CommonUtilities::id_in_session()) {
-            echo '
-                <div class="col-md-4">
-                    <h2>PHP Gateway with Airavata</h2>
-                    <p>
-                        PGA is a science gateway built with the Airavata API. You can reference PGA as you integrate
-                        Airavata into your own gateway, or you can create your gateway on top of PGA by cloning it at
-                        the link below. PGA is known to work well in the Chrome, Firefox, and Internet Explorer browsers.
-                    </p>
-                    <p><a href="https://github.com/apache/airavata-php-gateway/"
-                        target="_blank">See the code <span class="glyphicon glyphicon-new-window"></span></a></p>
-                    <p><a href="https://cwiki.apache.org/confluence/display/AIRAVATA/XSEDE+2015+Tutorial"
-                        target="_blank">View the XSEDE 2015 tutorial documentation <span class="glyphicon glyphicon-new-window"></span></a></p>
-                </div>
-            ';
-        }
-
-        ?>
-        <div class="<?php echo $columnClass; ?>">
+        <div class="col-md-6">
             <div class="thumbnail" style="border:none">
                 <img src="assets/scigap-header-logo.png" alt="SciGaP">
 
@@ -85,13 +62,13 @@
                 </div>
             </div>
         </div>
-        <div class="<?php echo $columnClass; ?>">
+        <div class="col-md-6">
             <div class="thumbnail" style="border:none">
                 <img src="assets/PoweredbyAiravata_Small.png" alt="Apache Airavata">
 
                 <div class="caption">
                     <p>
-                        Apache Airavata is a software framework which is dominantly used to build Web-based science
+                        Apache Airavata is a softwar    e framework which is dominantly used to build Web-based science
                         gateways and assist to compose, manage, execute and monitor large scale applications and
                         workflows on distributed computing resources such as local clusters, supercomputers, national
                         grids, academic and commercial clouds. Airavata mainly supports long running applications and
@@ -107,5 +84,13 @@
 
 </div>
 
+<?php 
+}
+else
+{
+    $theme = Theme::uses( Session::get("theme"));
+    echo $theme->partial("template");
+}
+?>
 @stop
 
