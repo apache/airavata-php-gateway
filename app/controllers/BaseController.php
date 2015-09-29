@@ -9,9 +9,10 @@ class BaseController extends Controller {
 	 */
 	protected function setupLayout()
 	{
-		//set your chosen theme here. default is basic.
-		$theme = Theme::uses("base"); 
-		Session::put( "theme", "base");
+		//Theme gets set baesd on the one chosen in pga_config. default is basic.
+		$themeName = Config::get('pga_config.theme')['name'];
+		//$theme = Theme::uses( $themeName); 
+		Session::put( "theme", $themeName);
 
 		
 		if ( ! is_null($this->layout))

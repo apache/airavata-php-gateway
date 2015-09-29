@@ -172,6 +172,18 @@ return array(
          * Life time of app catalog data cache in minutes
          */
         'app-catalog-cache-duration' => 5
-    ]
+    ],
+    /**
+     * *****************************************************************
+     *  Theme Related Configurations
+     * *****************************************************************
+     */
+    'theme' => [
 
+        /**
+         * Set the name of theme in use here
+         */
+        'name' => 'base'
+
+    ]
 );

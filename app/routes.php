@@ -11,6 +11,12 @@
 |
 */
 
+/*
+* Theme Pages Routes
+*/
+Route::get( "pages/{theme_view}", function( $theme_view){
+    return View::make("pages", array("page" => $theme_view) );
+});
 
 /*
  * User Routes
