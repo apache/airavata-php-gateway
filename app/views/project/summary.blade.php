@@ -39,13 +39,13 @@
     echo '<th>Compute Resource</th>';
     echo '<th>Last Modified Time</th>';
     echo '<th>Experiment Status</th>';
-//    echo '<th>Job Status</th>';
+    echo '<th>Job Status</th>';
 
     echo '</tr>';
 
     foreach ($experiments as $experiment) {
         $expValues = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
-//        $expValues["jobState"] = ExperimentUtilities::get_job_status($experiment);
+        $expValues["jobState"] = ExperimentUtilities::get_job_status($experiment);
         $applicationInterface = AppUtilities::get_application_interface($experiment->executionId);
 
         echo '<tr>';
@@ -110,10 +110,10 @@
 
         echo '</td>';
 
-//        if ($expValues["jobState"]) echo '
-//            <td>' . $expValues["jobState"] . '</td>';
-//        else
-//            echo '<td></td>';
+        if ($expValues["jobState"]) echo '
+            <td>' . $expValues["jobState"] . '</td>';
+        else
+            echo '<td></td>';
         echo '</tr>';
     }
 

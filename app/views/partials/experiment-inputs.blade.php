@@ -51,15 +51,15 @@
             <label class="control-label" for="compute-resource">Compute Resource</label>
             @if( count( $expInputs['computeResources']) > 0)
             <select class="form-control" name="compute-resource" id="compute-resource" required="required">
-                {{--<option value="">Select a resource</option>--}}
+                <option value="">Select a resource</option>
                 @foreach ($expInputs['computeResources'] as $id => $name)
                 <option value="{{$id}}"
                 {{ ($expInputs['resourceHostId'] == $id)? ' selected' : '' }}>{{$name}}</option>
                 @endforeach
             </select>
             @else
-            <h4>Application deployed Computational resources are currently unavailable
-                @endif
+            <h4>Application deployed Computational resources are currently unavailable</h4>
+            @endif
         </div>
         <div class="queue-block">
             <div class="loading-img text-center hide">
@@ -104,4 +104,5 @@
             <input type="text" class="form-control" name="userDN" placeholder="user"/>
         </div>
     </div>
-    @endif
+</div>
+@endif
