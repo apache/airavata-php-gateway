@@ -535,13 +535,24 @@ class ExperimentUtilities
                     </div>';
                     break;
                 case DataType::URI:
-                    echo '<div class="form-group">
-                    <label for="experiment-input">' . $input->name . '</label>
-                    <input class="file-input" type="file" name="' . $input->name .
-                        '" id="' . $input->name . '" ' . $required . '>
-                    <p class="help-block">' . $input->userFriendlyDescription . '</p>
-                    </div>';
-                    break;
+                    if(!empty($input->metadata)){
+                        echo '<div class="form-group">
+                            <label for="experiment-input">' . $input->name . '</label>
+                            <input class="file-input" type="text" name="' . $input->name .
+                                    '" id="' . $input->name . '" ' . $required . '>
+                            <p class="help-block">' . $input->userFriendlyDescription . '</p>
+                            </div>';
+                        break;
+                    }else{
+                        echo '<div class="form-group">
+                            <label for="experiment-input">' . $input->name . '</label>
+                            <input class="file-input" type="file" name="' . $input->name .
+                                    '" id="' . $input->name . '" ' . $required . '>
+                            <p class="help-block">' . $input->userFriendlyDescription . '</p>
+                            </div>';
+                        break;
+                    }
+
                 default:
                     CommonUtilities::print_error_message('Input data type not supported!
                     Please file a bug report using the link in the Help menu.');
