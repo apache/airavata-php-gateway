@@ -127,7 +127,7 @@ class AccountController extends BaseController
         CommonUtilities::store_id_in_session($username);
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
-        if(Session::get("admin") || Session::get("admin-read-only") || Session::get("read-only-admin-role-name")){
+        if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
             return $this->initializeWithAiravata($username);
         }
         return Redirect::to("home");
@@ -164,7 +164,7 @@ class AccountController extends BaseController
                     CommonUtilities::store_id_in_session($username);
                     Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
-                    if(Session::get("admin") || Session::get("admin-read-only") || Session::get("read-only-admin-role-name")){
+                    if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
                         return $this->initializeWithAiravata($username);
                     }
                     return Redirect::to("home");

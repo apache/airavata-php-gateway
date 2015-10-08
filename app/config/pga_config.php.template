@@ -101,7 +101,7 @@ return array(
         /**
          * Airavata API server port
          */
-        'airavata-port' => '9930',
+        'airavata-port' => '8930',
 
         /**
          * Airavata API server thrift communication timeout

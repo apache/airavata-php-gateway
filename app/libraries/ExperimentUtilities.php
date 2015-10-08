@@ -77,14 +77,17 @@ class ExperimentUtilities
             }
             //var_dump($matchingAppInput);
 
-            if ($matchingAppInput->type == DataType::URI) {
+            if ($matchingAppInput->type == DataType::URI && empty($input->metaData)) {
                 $explode = explode('/', $input->value);
                 echo '<p><a target="_blank"
                         href="' . URL::to("/") . "/.." . Config::get('pga_config.airavata')['experiment-data-dir']
                     . "/" . $explode[sizeof($explode) - 2] . '/' . $explode[sizeof($explode) - 1] . '">' .
                     $explode[sizeof($explode) - 1] . '
                 <span class="glyphicon glyphicon-new-window"></span></a></p>';
-            } elseif ($matchingAppInput->type == DataType::STRING) {
+            }elseif($matchingAppInput->type == DataType::URI && !empty($input->metaData)
+                && json_decode($input->metaData)->location=="remote"){
+                echo '<p>' . $input->name . ': ' . $input->value . '</p>';
+            }elseif ($matchingAppInput->type == DataType::STRING) {
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
             }
         }
@@ -238,7 +241,9 @@ class ExperimentUtilities
 
             if (($applicationInput->type == DataType::STRING) ||
                 ($applicationInput->type == DataType::INTEGER) ||
-                ($applicationInput->type == DataType::FLOAT)
+                ($applicationInput->type == DataType::FLOAT) ||
+                ($applicationInput->type == DataType::URI && !empty($applicationInput->metaData)
+                    && json_decode($applicationInput->metaData)->location=="remote")
             ) {
                 if (isset($_POST[$applicationInput->name]) && (trim($_POST[$applicationInput->name]) != '')) {
                     $experimentInput->value = $_POST[$applicationInput->name];
@@ -535,10 +540,11 @@ class ExperimentUtilities
                     </div>';
                     break;
                 case DataType::URI:
-                    if(!empty($input->metadata)){
+                    if(!empty($input->metaData) && json_decode($input->metaData)->location == "remote"){
+
                         echo '<div class="form-group">
                             <label for="experiment-input">' . $input->name . '</label>
-                            <input class="file-input" type="text" name="' . $input->name .
+                            <input class="form-control" type="text" name="' . $input->name .
                                     '" id="' . $input->name . '" ' . $required . '>
                             <p class="help-block">' . $input->userFriendlyDescription . '</p>
                             </div>';

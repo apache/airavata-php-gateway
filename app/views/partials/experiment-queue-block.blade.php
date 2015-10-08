@@ -62,12 +62,9 @@
     <div class="form-group">
         <label for="static-working-dir">Static Working Directory<span
                         class="static-working-dir alert-warning"></span></label>
-
-        <div class="input-group">
-            <input type="text" class="form-control" name="static-working-dir" id="static-working-dir"
-                   value="@if(isset($expVal) ){{ $expVal['scheduling']->totalPhysicalMemory }}@endif"
-            @if(isset($expVal)) @if(!$expVal['editable']){{"disabled"}} @endif @endif>
-        </div>
+        <input type="text" class="form-control" name="static-working-dir" id="static-working-dir"
+               value="@if(isset($expVal) ){{ $expVal['scheduling']->staticWorkingDir }}@endif"
+        @if(isset($expVal)) @if(!$expVal['editable']){{"disabled"}} @endif @endif>
     </div>
 </div>
 
