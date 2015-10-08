@@ -81,6 +81,15 @@
                value="@if( isset( $preferences) ){{$preferences->allocationProjectNumber}}@endif"/>
     </div>
 </div>
+
+<div class="form-group">
+    <label class="control-label col-md-3">Resource Specific Credential Store Token</label>
+
+    <div class="col-md-9">
+        <input type="text" name="resourceSpecificCredentialStoreToken" class="form-control"
+               value="@if( isset( $preferences) ){{$preferences->resourceSpecificCredentialStoreToken}}@endif"/>
+    </div>
+</div>
 @if(Session::has("admin"))
 <div class="form-group">
     <input type="submit" class="form-control btn btn-primary" value="Set preferences"/>

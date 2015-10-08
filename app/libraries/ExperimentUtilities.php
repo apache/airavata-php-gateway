@@ -24,8 +24,8 @@ class ExperimentUtilities
     public static function launch_experiment($expId)
     {
         try {
-            $hardCodedToken = Config::get('pga_config.airavata')['credential-store-token'];
-            Airavata::launchExperiment(Session::get('authz-token'), $expId, $hardCodedToken);
+            $gatewayId = Config::get('pga_config.airavata')['gateway-id'];
+            Airavata::launchExperiment(Session::get('authz-token'), $expId, $gatewayId);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem launching the experiment.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -77,14 +77,17 @@ class ExperimentUtilities
             }
             //var_dump($matchingAppInput);
 
-            if ($matchingAppInput->type == DataType::URI) {
+            if ($matchingAppInput->type == DataType::URI && empty($input->metaData)) {
                 $explode = explode('/', $input->value);
                 echo '<p><a target="_blank"
                         href="' . URL::to("/") . "/.." . Config::get('pga_config.airavata')['experiment-data-dir']
                     . "/" . $explode[sizeof($explode) - 2] . '/' . $explode[sizeof($explode) - 1] . '">' .
                     $explode[sizeof($explode) - 1] . '
                 <span class="glyphicon glyphicon-new-window"></span></a></p>';
-            } elseif ($matchingAppInput->type == DataType::STRING) {
+            }elseif($matchingAppInput->type == DataType::URI && !empty($input->metaData)
+                && json_decode($input->metaData)->location=="remote"){
+                echo '<p>' . $input->name . ': ' . $input->value . '</p>';
+            }elseif ($matchingAppInput->type == DataType::STRING) {
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
             }
         }
@@ -143,6 +146,7 @@ class ExperimentUtilities
         $scheduling->wallTimeLimit = $_POST['wall-time'];
         $scheduling->totalPhysicalMemory = $_POST['total-physical-memory'];
         $scheduling->resourceHostId = $_POST['compute-resource'];
+        $scheduling->staticWorkingDir = $_POST['static-working-dir'];
 
         $userConfigData = new UserConfigurationDataModel();
         $userConfigData->computationalResourceScheduling = $scheduling;
@@ -237,7 +241,9 @@ class ExperimentUtilities
 
             if (($applicationInput->type == DataType::STRING) ||
                 ($applicationInput->type == DataType::INTEGER) ||
-                ($applicationInput->type == DataType::FLOAT)
+                ($applicationInput->type == DataType::FLOAT) ||
+                ($applicationInput->type == DataType::URI && !empty($applicationInput->metaData)
+                    && json_decode($applicationInput->metaData)->location=="remote")
             ) {
                 if (isset($_POST[$applicationInput->name]) && (trim($_POST[$applicationInput->name]) != '')) {
                     $experimentInput->value = $_POST[$applicationInput->name];
@@ -455,7 +461,7 @@ class ExperimentUtilities
     {
 
         try {
-            Airavata::terminateExperiment(Session::get('authz-token'), $expId, Config::get('pga_config.airavata')["credential-store-token"]);
+            Airavata::terminateExperiment(Session::get('authz-token'), $expId, Config::get('pga_config.airavata')["gateway-id"]);
 
             CommonUtilities::print_success_message("Experiment canceled!");
         } catch (InvalidRequestException $ire) {
@@ -534,13 +540,25 @@ class ExperimentUtilities
                     </div>';
                     break;
                 case DataType::URI:
-                    echo '<div class="form-group">
-                    <label for="experiment-input">' . $input->name . '</label>
-                    <input class="file-input" type="file" name="' . $input->name .
-                        '" id="' . $input->name . '" ' . $required . '>
-                    <p class="help-block">' . $input->userFriendlyDescription . '</p>
-                    </div>';
-                    break;
+                    if(!empty($input->metaData) && json_decode($input->metaData)->location == "remote"){
+
+                        echo '<div class="form-group">
+                            <label for="experiment-input">' . $input->name . '</label>
+                            <input class="form-control" type="text" name="' . $input->name .
+                                    '" id="' . $input->name . '" ' . $required . '>
+                            <p class="help-block">' . $input->userFriendlyDescription . '</p>
+                            </div>';
+                        break;
+                    }else{
+                        echo '<div class="form-group">
+                            <label for="experiment-input">' . $input->name . '</label>
+                            <input class="file-input" type="file" name="' . $input->name .
+                                    '" id="' . $input->name . '" ' . $required . '>
+                            <p class="help-block">' . $input->userFriendlyDescription . '</p>
+                            </div>';
+                        break;
+                    }
+
                 default:
                     CommonUtilities::print_error_message('Input data type not supported!
                     Please file a bug report using the link in the Help menu.');

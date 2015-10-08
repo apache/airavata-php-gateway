@@ -58,8 +58,8 @@
                 @endforeach
             </select>
             @else
-            <h4>Application deployed Computational resources are currently unavailable
-                @endif
+            <h4>Application deployed Computational resources are currently unavailable</h4>
+            @endif
         </div>
         <div class="queue-block">
             <div class="loading-img text-center hide">
@@ -104,4 +104,5 @@
             <input type="text" class="form-control" name="userDN" placeholder="user"/>
         </div>
     </div>
-    @endif
+</div>
+@endif
