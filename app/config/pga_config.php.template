@@ -139,11 +139,6 @@ return array(
         'advanced-experiment-options' => '',
 
         /**
-         * Credentials Store Token
-         */
-        'credential-store-token' => 'bdc612fe-401e-4684-88e9-317f99409c45',
-
-        /**
          * Default queue name
          */
         'queue-name' => 'long',

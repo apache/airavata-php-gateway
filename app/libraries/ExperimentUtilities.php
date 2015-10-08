@@ -24,8 +24,8 @@ class ExperimentUtilities
     public static function launch_experiment($expId)
     {
         try {
-            $hardCodedToken = Config::get('pga_config.airavata')['credential-store-token'];
-            Airavata::launchExperiment(Session::get('authz-token'), $expId, $hardCodedToken);
+            $gatewayId = Config::get('pga_config.airavata')['gateway-id'];
+            Airavata::launchExperiment(Session::get('authz-token'), $expId, $gatewayId);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem launching the experiment.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -461,7 +461,7 @@ class ExperimentUtilities
     {
 
         try {
-            Airavata::terminateExperiment(Session::get('authz-token'), $expId, Config::get('pga_config.airavata')["credential-store-token"]);
+            Airavata::terminateExperiment(Session::get('authz-token'), $expId, Config::get('pga_config.airavata')["gateway-id"]);
 
             CommonUtilities::print_success_message("Experiment canceled!");
         } catch (InvalidRequestException $ire) {
