@@ -171,12 +171,7 @@ return array(
         /**
          * Life time of app catalog data cache in minutes
          */
-        'app-catalog-cache-duration' => 5,
-
-        /**
-         * For overwriting Airavata's automated directory creation
-         */
-        'static-working-directoy' => ''
+        'app-catalog-cache-duration' => 5
     ],
     /**
      * *****************************************************************
