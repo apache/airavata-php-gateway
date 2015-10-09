@@ -466,6 +466,12 @@ class CRUtilities
         return $gateways;
     }
 
+    public static function updateGatewayProfile( $data){
+        $gatewayResourceProfile = Airavata::getGatewayResourceProfile( Session::get('authz-token'), $data["gateway_id"]);
+        $gatewayResourceProfile->credentialStoreToken = $data["cst"];
+        return Airavata::updateGatewayResourceProfile( Session::get('authz-token'), $data["gateway_id"], $gatewayResourceProfile); 
+    }
+
     public static function add_or_update_CRP($inputs)
     {
         $computeResourcePreferences = new computeResourcePreference($inputs);

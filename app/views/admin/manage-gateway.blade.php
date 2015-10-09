@@ -58,13 +58,28 @@
                         <div class="panel-body">
                             <div class="app-interface-block">
                                 <div class="row">
-                                    @if(Session::has("admin"))
+                                     @if(Session::has("admin"))
+                                    <div class="col-md-10 credential-store-token-change">
+                                        <form>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-12">Credential Store Token</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" name="resourceSpecificCredentialStoreToken"  data-gpid="{{$gp->gatewayId}}" class="form-control credential-store-token"
+                                                           value="@if( isset( $gp->profile->credentialStoreToken) ){{$gp->profile->credentialStoreToken}}@endif"/>
+                                                </div>
+                                                <div class="col-md-3">
+                                                        <input type="submit" class="form-control btn btn-primary" value="Set"/>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
                                     <div class="col-md-10">
                                         <button class="btn btn-default add-cr" data-gpid="{{$gp->gatewayId}}"><span
                                                 class="glyphicon glyphicon-plus"></span> Add a Compute Resource
                                         </button>
                                     </div>
                                     @endif
+                                </div>
                                     <div class="col-md-10">
                                         @if( isset( $gp->profile->computeResourcePreferences) )
                                         <div>
@@ -218,5 +233,23 @@
     //make first tab of accordion open by default.
     //temporary fix
     $("#accordion2").children(".panel").children(".collapse").addClass("in");
+
+    $(".credential-store-token-change > form").submit( function(e){
+        $(this).prepend( "<img id='loading-gif' src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
+        e.preventDefault();
+        cstField = $(".credential-store-token");
+        if( $.trim( cstField.val()) != ""){
+            $.ajax({
+                url: "{{URL::to('/')}}/gp/credential-store-token-change",
+                method: "POST",
+                data: { cst : cstField.val(), gateway_id: cstField.data("gpid") }
+            }).done( function( data){
+                $("#loading-gif").remove();
+                alert( data);
+            });
+        }
+        else
+            alert("Please enter a valid Credential Store Token.");
+    });
 </script>
 @stop

@@ -305,3 +305,7 @@ ul.alert-dropdown {
 } 
 
 /* ------------------- experiment Stages CSS over ---------------- */
+
+.credential-store-token-change{
+    margin-bottom: 15px;
+}
