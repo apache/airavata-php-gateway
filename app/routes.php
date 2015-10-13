@@ -10,14 +10,6 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
-
-/*
-* Theme Pages Routes
-*/
-Route::get( "pages/{theme_view}", function( $theme_view){
-    return View::make("pages", array("page" => $theme_view) );
-});
-
 /*
  * User Routes
 */
@@ -164,6 +156,8 @@ Route::post("gp/add-crp", "GatewayprofileController@modifyCRP");
 
 Route::post("gp/update-crp", "GatewayprofileController@modifyCRP");
 
+Route::post("gp/credential-store-token-change", "GatewayprofileController@cstChange");
+
 //Management Dashboard
 
 Route::get("admin/console", "AdminController@console");
@@ -216,6 +210,18 @@ Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser")
 
 Route::post("admin/add-gateway", "AdminController@addGateway");
 Route::get("admin/add-gateway", "AdminController@addGateway");
+
+Route::get("admin/pages/{page}", function( $page){
+    return Redirect::to("pages/" . $page);
+});
+
+/*
+* Theme Pages Routes
+*/
+Route::get( "pages/{theme_view}", function( $theme_view){
+    return View::make("pages", array("page" => $theme_view) );
+});
+
 
 //Airavata Server Check
 Route::get("airavata/down", function () {

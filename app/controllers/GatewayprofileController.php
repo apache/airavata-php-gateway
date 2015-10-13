@@ -74,6 +74,17 @@ class GatewayprofileController extends BaseController {
 		}
 	}
 
+	public function cstChange(){
+		$inputs = Input::all();
+		
+		if( CRUtilities::updateGatewayProfile( $inputs) )
+		{
+            return "Credential Store Token has been updated";     
+        }
+        else
+            return "An error has occurred. Please try again later or report a bug using the link in the Help menu";
+	}
+
 }
 
 ?>

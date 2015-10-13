@@ -447,7 +447,7 @@ class CRUtilities
             $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
         }
 
-        $gatewayProfiles = Airavata::getAllGatewayComputeResources(Session::get('authz-token'));
+        $gatewayProfiles = Airavata::getAllGatewayResourceProfiles(Session::get('authz-token'));
         //$gatewayProfileIds = array("GatewayTest3_57726e98-313f-4e7c-87a5-18e69928afb5", "GatewayTest4_4fd9fb28-4ced-4149-bdbd-1f276077dad8");
         foreach ($gateways as $key => $gw) {
             $gateways[$key]->profile = array();
@@ -464,6 +464,12 @@ class CRUtilities
         //var_dump( $gatewayProfiles[0]->computeResourcePreferences[0]->crDetails); exit;
 
         return $gateways;
+    }
+
+    public static function updateGatewayProfile( $data){
+        $gatewayResourceProfile = Airavata::getGatewayResourceProfile( Session::get('authz-token'), $data["gateway_id"]);
+        $gatewayResourceProfile->credentialStoreToken = $data["cst"];
+        return Airavata::updateGatewayResourceProfile( Session::get('authz-token'), $data["gateway_id"], $gatewayResourceProfile); 
     }
 
     public static function add_or_update_CRP($inputs)

@@ -56,8 +56,15 @@ var fullName = {{ Session::get("user-profile")["firstname"] . " " . Session::get
 @include('layout/fixed-scripts')
 @show
 
+<style>
+.theme-footer{
+	margin-top: 5%;
+}
+</style>
 @if( isset( $theme))
+<footer class="theme-footer">
 {{ $theme->partial("footer") }}
+</footer>
 @endif
 
 
