@@ -266,7 +266,7 @@ class AccountController extends BaseController
             try{
                 $result = WSIS::confirmUserRegistration($username, $confirmation, Config::get('pga_config.wsis')['tenant-domain']);
                 if($result){
-                    return View::make("account/login");
+                    return Redirect::to("login");
                 }else{
                     return View::make("home");
                 }
