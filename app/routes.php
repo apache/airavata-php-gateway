@@ -42,6 +42,8 @@ Route::post("reset-password", "AccountController@resetPasswordSubmit");
 
 Route::post("forgot-password", "AccountController@forgotPasswordSubmit");
 
+Route::get("confirm-user-registration", "AccountController@confirmAccountCreation");
+
 Route::get("setUserTimezone", function () {
     Session::set("user_timezone", Input::get("timezone"));
 });

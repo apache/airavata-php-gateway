@@ -12,7 +12,7 @@ class AccountController extends BaseController
     {
         $rules = array(
             "username" => "required|min:6",
-            "password" => "required|min:6",
+            "password" => "required|min:6|(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*\W).{6,16})",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
         );
@@ -54,20 +54,24 @@ class AccountController extends BaseController
                 ->withInput(Input::except('password', 'password_confirm'))
                 ->with("username_exists", true);
         } else {
-            WSIS::addUser($username, $password, $first_name, $last_name, $email, $organization,
-                $address, $country, $telephone, $mobile, $im, $url);
+//            WSIS::addUser($username, $password);
+//
+//            //update user profile
+//            WSIS::updateUserProfile($username, $email, $first_name, $last_name);
+//
+//            CommonUtilities::print_success_message('New user created!');
+//
+//            if(Config::get('pga_config.wsis')['auth-mode']=="oauth"){
+//                return View::make('home');
+//            }else{
+//                return View::make('account/login');
+//            }
 
-            //update user profile
-            WSIS::updateUserProfile($username, $email, $first_name, $last_name);
+            WSIS::registerUserAccount($username, $password, $email, $first_name, $last_name,
+                Config::get('pga_config.wsis')['tenant-domain']);
 
-            CommonUtilities::print_success_message('New user created!');
-
-            if(Config::get('pga_config.wsis')['auth-mode']=="oauth"){
-                return View::make('home');
-            }else{
-                return View::make('account/login');
-            }
-
+            CommonUtilities::print_success_message('Account confirmation request was sent to your email account');
+            return View::make('home');
         }
     }
 
@@ -237,7 +241,7 @@ class AccountController extends BaseController
         if(empty($username) || empty($confirmation)){
             return View::make("home");
         }else{
-            $username = $username . "@" . explode("@",Config::get('pga_config.wsis')['admin-username'])[1];
+            $username = $username . "@" . Config::get('pga_config.wsis')['tenant-domain'];
             try{
                 $key = WSIS::validateConfirmationCode($username, $confirmation);
                 if(!empty($key)){
@@ -250,6 +254,27 @@ class AccountController extends BaseController
             }
         }
 
+    }
+
+    public function confirmAccountCreation()
+    {
+        $confirmation = Input::get("confirmation");
+        $username = Input::get("username");
+        if(empty($username) || empty($confirmation)){
+            return View::make("home");
+        }else{
+            try{
+                $result = WSIS::confirmUserRegistration($username, $confirmation, Config::get('pga_config.wsis')['tenant-domain']);
+                if($result){
+                    return View::make("account/login");
+                }else{
+                    return View::make("home");
+                }
+            }catch (Exception $e){
+                var_dump($e);exit;
+                return View::make("home");
+            }
+        }
     }
 
     public function resetPasswordSubmit()

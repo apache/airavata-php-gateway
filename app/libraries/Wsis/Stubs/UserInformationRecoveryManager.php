@@ -1,6 +1,7 @@
 <?php
 namespace Wsis\Stubs;
 
+use Illuminate\Support\Facades\Config;
 use Wsis\Stubs\UserInformationRecoveryStub;
 
 /**
@@ -86,6 +87,68 @@ class UserInformationRecoveryManager {
         $updatePassword->confirmationCode = $key;
         $updatePassword->newPassword = $newPassword;
         $result = $this->serviceStub->updatePassword($updatePassword);
+        return $result->return->verified;
+    }
+
+
+    /**
+     * Function to create a user account. This user account is not activate unless activated by the user
+     * via email
+     * @param $username
+     * @param $password
+     * @param $email
+     * @param $firstName
+     * @param $lastName
+     * @param $tenantDomain
+     * @return mixed
+     */
+    public function registerAccount($username, $password, $email,$firstName, $lastName, $tenantDomain){
+
+        $registerUser =  new registerUser();
+        $registerUser->userName  = $username;
+        $registerUser->password = $password;
+        $registerUser->profileName = "default";
+        $registerUser->tenantDomain = $tenantDomain;
+
+        $fieldValues = array();
+        $usernameDTO = new UserIdentityClaimDTO();
+        $usernameDTO->claimUri = "http://wso2.org/claims/username";
+        $usernameDTO->claimValue = $username;
+        array_push($fieldValues, $usernameDTO);
+
+        $emailDTO = new UserIdentityClaimDTO;
+        $emailDTO->claimUri = "http://wso2.org/claims/emailaddress";
+        $emailDTO->claimValue = $email;
+        array_push($fieldValues, $emailDTO);
+
+        $firstNameDTO = new UserIdentityClaimDTO();
+        $firstNameDTO->claimUri = "http://wso2.org/claims/givenname";
+        $firstNameDTO->claimValue = $firstName;
+        array_push($fieldValues, $firstNameDTO);
+
+        $lastNameDTO = new UserIdentityClaimDTO();
+        $lastNameDTO->claimUri = "http://wso2.org/claims/lastname";
+        $lastNameDTO->claimValue = $lastName;
+        array_push($fieldValues, $lastNameDTO);
+        $registerUser->claims = $fieldValues;
+
+        $result = $this->serviceStub->registerUser($registerUser);
+        return $result->return->verified;
+    }
+
+
+    /**
+     * Function to confirm user registration
+     * @param $userName
+     * @param $tenantDomain
+     */
+    public function confirmUserRegistration($userName, $code, $tenantDomain){
+        $confirmUserSelfRegistration = new confirmUserSelfRegistration();
+        $confirmUserSelfRegistration->username = $userName;
+        $confirmUserSelfRegistration->code = $code;
+        $confirmUserSelfRegistration->tenantDomain = $tenantDomain;
+        $result = $this->serviceStub->confirmUserSelfRegistration($confirmUserSelfRegistration);
+        return $result->return->verified;
         return $result->return->verified;
     }
 }

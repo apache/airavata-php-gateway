@@ -11,6 +11,10 @@
 |
 */
 
+//        To invalidate the SOAP WSDL caches
+//        ini_set('soap.wsdl_cache_enabled',0);
+//        ini_set('soap.wsdl_cache_ttl',0);
+
 App::before(function ($request) {
     //Check OAuth token has expired
     if(Config::get('pga_config.wsis')['auth-mode']=="oauth" && Session::has('authz-token')){

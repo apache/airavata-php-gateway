@@ -40,6 +40,8 @@
 
             <div><input class="form-control" id="password" minlength="6" name="password" placeholder="Password"
                         required="required" title="" type="password"/></div>
+            <div><small>(Password should contain a digit[0-9], a lower case letter[a-z], an upper case letter[A-Z],
+                    one of !@#$%&* characters)</small></div>
         </div>
         <div class="form-group required"><label class="control-label">Password (again)</label>
 
