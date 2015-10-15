@@ -24,6 +24,11 @@ return array(
         'user-role-name' => 'airavata-user',
 
         /**
+         * Tenant Domain
+         */
+        'tenant-domain' => 'master.airavata',
+
+        /**
          * Tenant admin's username
          */
         'admin-username' => 'master@master.airavata',

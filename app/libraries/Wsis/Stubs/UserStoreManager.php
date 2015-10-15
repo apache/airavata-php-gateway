@@ -49,12 +49,12 @@ class UserStoreManager {
      * @param type $userName
      * @param type $password
      */
-    public function addUser($userName, $password, $fullName){
+    public function addUser($userName, $password){
         $parameters = new AddUser();
         $parameters->userName = $userName;
         $parameters->credential = $password;
         $parameters->claims = null;
-        $parameters->profileName = $fullName;
+        $parameters->profileName = "default";
         $parameters->requirePasswordChange = false;
         $parameters->roleList = null;
         $this->serviceStub->addUser($parameters);

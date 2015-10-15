@@ -111,11 +111,32 @@ class Wsis {
      * @return void
      * @throws Exception
      */
-    public function addUser($userName, $password, $fullName) {
+    public function addUser($userName, $password) {
         try {
-            $this->userStoreManager->addUser($userName, $password, $fullName);
+            $this->userStoreManager->addUser($userName, $password);
         } catch (Exception $ex) {
             throw new Exception("Unable to add new user", 0, $ex);
+        }
+    }
+
+
+    /**
+     * Function to create a new user account. This user account is not active unless activates by the user via
+     * his/her email
+     *
+     * @param $userName
+     * @param $password
+     * @param $email
+     * @param $firstName
+     * @param $lastName
+     * @param $tenantDomain
+     * @throws Exception
+     */
+    public function registerAccount($userName, $password, $email, $firstName, $lastName, $tenantDomain){
+        try {
+            $this->userInfoRecoveryManager->registerAccount($userName, $password, $email, $firstName, $lastName, $tenantDomain);
+        } catch (Exception $ex) {
+            throw new Exception("Unable to create a new user account", 0, $ex);
         }
     }
 
@@ -395,6 +416,33 @@ class Wsis {
      */
     public function updateUserProfile($username, $email, $firstName, $lastName){
         $this->userProfileManager->updateUserProfile($username, $email, $firstName, $lastName);
+    }
+
+
+    /**
+     *
+     * Function to create a user account. This user account has to be activated by the user via his
+     * email account
+     * @param $username
+     * @param $password
+     * @param $email
+     * @param $firstName
+     * @param $lastName
+     * @param $tenantDomain
+     */
+    public function registerUserAccount($username, $password, $email, $firstName, $lastName, $tenantDomain)
+    {
+        $this->userInfoRecoveryManager->registerAccount($username, $password, $email, $firstName,
+            $lastName, $tenantDomain);
+    }
+
+    /**
+     * Function to confirm user registration
+     * @param $userName
+     * @param $tenantDomain
+     */
+    public function confirmUserRegistration($userName, $code, $tenantDomain){
+        return $this->userInfoRecoveryManager->confirmUserRegistration($userName, $code, $tenantDomain);
     }
 
     /**
