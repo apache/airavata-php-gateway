@@ -166,7 +166,9 @@ class Wsis {
      */
     public function authenticate($username, $password){
         try {
-            return $this->userStoreManager->authenticate($username, $password);
+//            return $this->userStoreManager->authenticate($username, $password);
+            return $this->oauthManger->getAccessTokenFromPasswordGrantType(Config::get('pga_config.wsis')['oauth-client-key'],
+                Config::get('pga_config.wsis')['oauth-client-secret'], $username, $password);
         } catch (Exception $ex) {
             throw new Exception("Unable to authenticate user", 0, $ex);
         }

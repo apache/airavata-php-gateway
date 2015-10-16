@@ -58,15 +58,42 @@ class OAuthManager
         return json_decode($response);
     }
 
-    // To get a refreshed access token
-    public function getRefreshedAccessToken($client_id, $client_secret, $refresh_token)
+
+    public function getAccessTokenFromPasswordGrantType($client_key, $client_secret, $username, $password)
     {
         // Init cUrl.
         $r = $this->initCurl($this->_AccessTokenUrl);
 
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Basic " . base64_encode($client_id . ":" . $client_secret),
+            "Authorization: Basic " . base64_encode($client_key. ":" . $client_secret)
+        ));
+
+        // Assemble POST parameters for the request.
+        $post_fields = "grant_type=password&username=" . $username . "&password=" . $password . "&scope=openid";
+
+        // Obtain and return the access token from the response.
+        curl_setopt($r, CURLOPT_POST, true);
+        curl_setopt($r, CURLOPT_POSTFIELDS, $post_fields);
+
+        $response = curl_exec($r);
+        if ($response == false) {
+            die("curl_exec() failed. Error: " . curl_error($r));
+        }
+
+        //Parse JSON return object.
+        return json_decode($response);
+    }
+
+    // To get a refreshed access token
+    public function getRefreshedAccessToken($client_key, $client_secret, $refresh_token)
+    {
+        // Init cUrl.
+        $r = $this->initCurl($this->_AccessTokenUrl);
+
+        // Add client ID and client secret to the headers.
+        curl_setopt($r, CURLOPT_HTTPHEADER, array(
+            "Authorization: Basic " . base64_encode($client_key . ":" . $client_secret),
         ));
 
         // Assemble POST parameters for the request.
@@ -107,7 +134,7 @@ class OAuthManager
         curl_setopt($r, CURLOPT_ENCODING, 1);
 
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->_verifyPeer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->_cafilePath);
+//        curl_setopt($r, CURLOPT_CAINFO, $this->_cafilePath);
 
         return ($r);
     }
