@@ -68,6 +68,8 @@
     </div>
 </div>
 
+@section('scripts')
+@parent
 <script>
 
     var selectedQueue = $("#select-queue").val();
@@ -124,3 +126,4 @@
         $(".queue-data").removeClass("hide");
     }
 </script>
+@stop
