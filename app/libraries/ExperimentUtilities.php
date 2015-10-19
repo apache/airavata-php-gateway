@@ -991,10 +991,10 @@ class ExperimentUtilities
 
     public static function apply_changes_to_experiment($experiment, $input)
     {
-        $experiment->name = $input['experiment-name'];
+        $experiment->experimentName = $input['experiment-name'];
         $experiment->description = rtrim($input['experiment-description']);
         $experiment->projectId = $input['project'];
-        //$experiment->applicationId = $_POST['application'];
+//        $experiment->applicationId = $_POST['application'];
 //        $experiment->executionId = $_POST['application'];
 
         $userConfigDataUpdated = $experiment->userConfigurationData;
