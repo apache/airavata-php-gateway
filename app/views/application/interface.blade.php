@@ -48,6 +48,7 @@
                            data-parent="#accordion" href="#collapse-{{$index}}">
                             {{ $interface->applicationName }}
                         </a>
+                        <small>{{ $interface->applicationInterfaceId }}</small>
                         @if(Session::has("admin"))
                         <div class="pull-right col-md-2 interface-options fade">
                             <span class="glyphicon glyphicon-pencil edit-app-interface" style="cursor:pointer;"

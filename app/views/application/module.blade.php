@@ -59,6 +59,7 @@
                            href="#collapse-{{$index}}">
                             {{ $module->appModuleName }}
                         </a>
+                        <small>{{ $module->appModuleId }}</small>
                         @if(Session::has("admin"))
                         <div class="pull-right col-md-2 module-options fade">
                             <span class="glyphicon glyphicon-pencil edit-app-module" style="cursor:pointer;"
