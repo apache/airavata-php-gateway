@@ -12,7 +12,7 @@ class AccountController extends BaseController
     {
         $rules = array(
             "username" => "required|min:6",
-            "password" => "required|min:6|max:12|regex:/^.*(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[@!$#%&]).*$/",
+            "password" => "required|min:6|max:12|regex:/^.*(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[@!$#%&*]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
         );
@@ -97,7 +97,7 @@ class AccountController extends BaseController
             $password = $_POST['password'];
             $response = WSIS::authenticate($username, $password);
             if(!isset($response->access_token)){
-                return Redirect::to('home');
+                return Redirect::to("login")->with("invalid-credentials", true);
             }
 
             $accessToken = $response->access_token;
