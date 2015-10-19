@@ -87,7 +87,8 @@ class ExperimentUtilities
             }elseif($matchingAppInput->type == DataType::URI && !empty($input->metaData)
                 && json_decode($input->metaData)->location=="remote"){
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
-            }elseif ($matchingAppInput->type == DataType::STRING) {
+            }elseif ($matchingAppInput->type == DataType::STRING || $matchingAppInput->type == DataType::INTEGER
+                || $matchingAppInput->type == DataType::FLOAT) {
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
             }
         }
