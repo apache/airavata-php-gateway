@@ -19,8 +19,8 @@ else
         <tr>
             <th>Name</th>
             <th>Application</th>
-            <th>Description</th>
-            <!--<th>Resource</th>-->
+            {{--<th>Description</th>--}}
+            <th>Resource</th>
             <th>Creation Time</th>
             <th>Status</th>
             <!--                    <select class="form-control select-status">-->
@@ -41,6 +41,13 @@ else
                 $description = substr($experiment['experiment']->description, 0, 17) . '<span class="text-muted">...</span>';
             }
 
+            $resource  = $experiment['experiment']->resourceHostId;
+            if(!empty($resource)){
+                $resource = explode("_", $resource)[0];
+            }else{
+                $resource = "";
+            }
+
             echo '<tr>';
             $addEditOption = "";
             if ($experiment['expValue']['editable'])
@@ -50,7 +57,7 @@ else
 
             echo '<td>' . $experiment['expValue']['applicationInterface']->applicationName . '</td>';
 
-            echo '<td>' . $description . '</td>';
+            echo '<td>' . $resource . '</td>';
 
             //echo "<td>$computeResource->hostName</td>";
             echo '<td class="time" unix-time="' . $experiment['experiment']->creationTime / 1000 . '"></td>';
