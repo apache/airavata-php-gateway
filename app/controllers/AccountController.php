@@ -275,10 +275,11 @@ class AccountController extends BaseController
                 if($result){
                     return Redirect::to("login");
                 }else{
+                    CommonUtilities::print_error_message("Account confirmation failed!");
                     return View::make("home");
                 }
             }catch (Exception $e){
-                var_dump($e);exit;
+                CommonUtilities::print_error_message("Account confirmation failed!");
                 return View::make("home");
             }
         }
