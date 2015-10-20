@@ -51,7 +51,9 @@
             <label class="control-label" for="compute-resource">Compute Resource</label>
             @if( count( $expInputs['computeResources']) > 0)
             <select class="form-control" name="compute-resource" id="compute-resource" required="required">
-                <option value="">Select a resource</option>
+                @if(count($expInputs['computeResources']) > 1)
+                    <option value="">Select a resource</option>
+                @endif
                 @foreach ($expInputs['computeResources'] as $id => $name)
                 <option value="{{$id}}"
                 {{ ($expInputs['resourceHostId'] == $id)? ' selected' : '' }}>{{$name}}</option>

@@ -68,13 +68,11 @@
     </div>
 </div>
 
-@section('scripts')
-@parent
-<script>
 
+<script>
+    //To work work with experiment create (Ajax)
     var selectedQueue = $("#select-queue").val();
     getQueueData(selectedQueue);
-
     $("#select-queue").change(function () {
         var selectedQueue = $(this).val();
         getQueueData(selectedQueue);
@@ -125,5 +123,20 @@
         }
         $(".queue-data").removeClass("hide");
     }
+</script>
+
+
+@section('scripts')
+@parent
+<script>
+    //To work with experiment edit (Not Ajax)
+    $( document ).ready(function() {
+        var selectedQueue = $("#select-queue").val();
+        getQueueData(selectedQueue);
+        $("#select-queue").change(function () {
+            var selectedQueue = $(this).val();
+            getQueueData(selectedQueue);
+        });
+    });
 </script>
 @stop
