@@ -21,8 +21,8 @@ $theme = Theme::uses(Session::get("theme"));
 <!-- Getting user info -->
 @if(Session::has("user-profile"))
 <script>
-var email = {{ Session::get("user-profile")["email"] }} . "'\n";
-var fullName = {{ Session::get("user-profile")["firstname"] . " " . Session::get("user-profile")["lastname"] . "'" }}
+var email =  "{{ Session::get("user-profile")["email"] }}";
+var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get("user-profile")["lastname"]}}"
 </script>
 @endif
 
