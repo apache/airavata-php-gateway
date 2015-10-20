@@ -274,7 +274,11 @@ class ExperimentUtilities
                     //
                     // move file to experiment data directory
                     //
-                    $filePath = ExperimentUtilities::$experimentPath . $file['name'];
+                    if(!empty($applicationInput->value)){
+                        $filePath = ExperimentUtilities::$experimentPath . $applicationInput->value;
+                    }else{
+                        $filePath = ExperimentUtilities::$experimentPath . $file['name'];
+                    }
 
                     // check if file already exists
                     if (is_file($filePath)) {
