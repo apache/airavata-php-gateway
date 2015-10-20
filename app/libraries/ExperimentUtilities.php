@@ -662,7 +662,15 @@ class ExperimentUtilities
                 $expVal["computeResource"] = "";
             }
         }
-        $expVal["applicationInterface"] = AppUtilities::get_application_interface($experimentSummary->executionId);
+
+        try{
+            $expVal["applicationInterface"] = AppUtilities::get_application_interface($experimentSummary->executionId);
+        }catch (Exception $ex){
+            //Failed retrieving Application Interface (May be it's deleted) Fix for Airavata-1801
+            $expVal["applicationInterface"] = new ApplicationInterfaceDescription();
+            $expVal["applicationInterface"]->applicationName = substr($experimentSummary->executionId, -8);
+        }
+
 
         switch ($experimentSummary->experimentStatus) {
             case 'CREATED':
@@ -721,7 +729,14 @@ class ExperimentUtilities
                 $expVal["computeResource"] = "";
             }
         }
-        $expVal["applicationInterface"] = AppUtilities::get_application_interface($experiment->executionId);
+
+        try{
+            $expVal["applicationInterface"] = AppUtilities::get_application_interface($experiment->executionId);
+        }catch (Exception $ex){
+            //Failed retrieving Application Interface (May be it's deleted) Fix for Airavata-1801
+            $expVal["applicationInterface"] = new ApplicationInterfaceDescription();
+            $expVal["applicationInterface"]->applicationName = substr($experiment->executionId, -8);
+        }
 
 
         switch (ExperimentState::$__names[$experiment->experimentStatus->state]) {
