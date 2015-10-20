@@ -211,10 +211,6 @@ Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser")
 Route::post("admin/add-gateway", "AdminController@addGateway");
 Route::get("admin/add-gateway", "AdminController@addGateway");
 
-Route::get("admin/pages/{page}", function( $page){
-    return Redirect::to("pages/" . $page);
-});
-
 /*
 * Theme Pages Routes
 */
@@ -235,6 +231,11 @@ Route::get("testjob", function () {
     //print_r( Session::all());
 });
 
+/*handling errors on production */
+App::missing(function($exception)
+{
+    return Response::view('error', array(), 404);
+});
 
 /*
  * Following base Routes need to be at the bottom.

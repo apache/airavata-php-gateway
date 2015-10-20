@@ -121,7 +121,7 @@
         @foreach( (array)$deploymentObject->preJobCommands as $preJobCommand)
         <div class="col-md-12 well">
             <input name="preJobCommand[]" type="text" class="col-md-12" placeholder="Pre Job Command"
-                   value="{{$preJobCommand}}" readonly/>
+                   value="{{ htmlentities( $preJobCommand)}}" readonly/>
         </div>
         @endforeach
         @endif
@@ -136,7 +136,7 @@
         @foreach( (array)$deploymentObject->postJobCommands as $postJobCommand)
         <div class="col-md-12 well">
             <input name="postJobCommand[]" type="text" class="col-md-12" placeholder="Post Job Command"
-                   value="{{$postJobCommand}}" readonly/>
+                   value="{{htmlentities( $postJobCommand )}}" readonly/>
         </div>
         @endforeach
         @endif

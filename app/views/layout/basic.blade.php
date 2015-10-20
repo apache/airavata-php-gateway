@@ -47,15 +47,6 @@ var fullName = {{ Session::get("user-profile")["firstname"] . " " . Session::get
 
 @include('layout/fixed-footer')
 
-</body>
-
-@show
-
-
-@section('scripts')
-@include('layout/fixed-scripts')
-@show
-
 <style>
 .theme-footer{
 	margin-top: 5%;
@@ -67,5 +58,24 @@ var fullName = {{ Session::get("user-profile")["firstname"] . " " . Session::get
 </footer>
 @endif
 
+</body>
+
+@show
+
+
+@section('scripts')
+@include('layout/fixed-scripts')
+<script type="text/javascript">
+	/* keeping a check that footer stays atleast at the bottom of the window.*/
+	var bh = $("body").height();
+	if( bh < $(window).height()/2){
+		$(".theme-footer").css("position", "relative").css("top", $(window).height()/4);
+    }
+    var bw = $("body").width();
+    if( bw > 767){
+        $(".hero-unit").height( bw*0.36);
+    }
+</script>
+@show
 
 </html>
