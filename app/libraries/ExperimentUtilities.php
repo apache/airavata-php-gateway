@@ -6,6 +6,7 @@ use Airavata\API\Error\ExperimentNotFoundException;
 use Airavata\API\Error\InvalidRequestException;
 use Airavata\Facades\Airavata;
 use Airavata\Model\Application\Io\DataType;
+use Airavata\Model\AppCatalog\AppInterface\ApplicationInterfaceDescription;
 use Airavata\Model\Application\Io\InputDataObjectType;
 use Airavata\Model\Scheduling\ComputationalResourceSchedulingModel;
 use Airavata\Model\Experiment\ExperimentModel;
@@ -662,7 +663,15 @@ class ExperimentUtilities
                 $expVal["computeResource"] = "";
             }
         }
-        $expVal["applicationInterface"] = AppUtilities::get_application_interface($experimentSummary->executionId);
+
+        try{
+            $expVal["applicationInterface"] = AppUtilities::get_application_interface($experimentSummary->executionId);
+        }catch (Exception $ex){
+            //Failed retrieving Application Interface (May be it's deleted) Fix for Airavata-1801
+            $expVal["applicationInterface"] = new ApplicationInterfaceDescription();
+            $expVal["applicationInterface"]->applicationName = substr($experimentSummary->executionId, -8);
+        }
+
 
         switch ($experimentSummary->experimentStatus) {
             case 'CREATED':
@@ -721,7 +730,14 @@ class ExperimentUtilities
                 $expVal["computeResource"] = "";
             }
         }
-        $expVal["applicationInterface"] = AppUtilities::get_application_interface($experiment->executionId);
+
+        try{
+            $expVal["applicationInterface"] = AppUtilities::get_application_interface($experiment->executionId);
+        }catch (Exception $ex){
+            //Failed retrieving Application Interface (May be it's deleted) Fix for Airavata-1801
+            $expVal["applicationInterface"] = new ApplicationInterfaceDescription();
+            $expVal["applicationInterface"]->applicationName = substr($experiment->executionId, -8);
+        }
 
 
         switch (ExperimentState::$__names[$experiment->experimentStatus->state]) {
