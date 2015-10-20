@@ -1,5 +1,7 @@
 <?php
 
+use Airavata\Model\Status\JobState;
+
 class ExperimentController extends BaseController
 {
 
@@ -82,8 +84,8 @@ class ExperimentController extends BaseController
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
-            if(isset($jobDetails->jobStatus)){
-                $expVal["jobState"] = JobState::$__names[array_values($jobDetails->jobStatus)];
+            if(isset($jobDetails[0]->jobStatus)){
+                $expVal["jobState"] = JobState::$__names[$jobDetails[0]->jobStatus->jobState];
             }else{
                 $expVal["jobState"] = "";
             }
