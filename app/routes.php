@@ -22,7 +22,7 @@ Route::get("login", "AccountController@loginView");
 
 Route::post("login", "AccountController@loginSubmit");
 
-Route::get("callback-url", "AccountController@oauthCallback");
+//Route::get("callback-url", "AccountController@oauthCallback");
 
 Route::get("logout", "AccountController@logout");
 

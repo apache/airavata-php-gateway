@@ -39,16 +39,6 @@ return array(
         'admin-password' => 'master',
 
         /**
-         * Authentication mode (basic, oauth)
-         */
-        'auth-mode' => 'basic',
-
-        /**
-         * WSO2 OAuth Service Provider Application ID
-         */
-        'oauth-service-provider-id' => 'OpenidConnectWebapp-local',
-
-        /**
          * OAuth client key
          */
         'oauth-client-key' => 'iGEREhSBLuGapdcXwMU0b8jEpA4a',
@@ -57,11 +47,6 @@ return array(
          * OAuth client secret
          */
         'oauth-client-secret' => 'g4Lgp05JIJcNQryJkNKjXJYi8A8a',
-
-        /**
-         * OAuth callback url
-         */
-        'oauth-callback-url' => 'http://localhost/airavata-php-gateway/public/callback-url',
 
         /**
          * Identity server domain

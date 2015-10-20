@@ -53,7 +53,7 @@
 
             <?php
             foreach ($jobDetails as $job) echo '
-                <td>' . $job->jobID . '</td>
+                <td>' . $job->jobId . '</td>
             ';
             ?>
         </tr>

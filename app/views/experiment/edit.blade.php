@@ -17,7 +17,7 @@
 <div class="container">
 
     <div class="col-md-offset-3 col-md-6">
-        <h1>Edit Cloned Experiment</h1>
+        <h1>Edit Experiment</h1>
 
         <form action="{{URL::to('/')}}/experiment/edit" method="POST" role="form" enctype="multipart/form-data">
             <input type="hidden" name="expId" value="<?php echo Input::get('expId'); ?>"/>

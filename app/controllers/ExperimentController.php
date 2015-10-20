@@ -1,5 +1,7 @@
 <?php
 
+use Airavata\Model\Status\JobState;
+
 class ExperimentController extends BaseController
 {
 
@@ -81,10 +83,12 @@ class ExperimentController extends BaseController
         if ($experiment != null) {
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
-            $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
-//            $transferDetails = ExperimentUtilities::get_transfer_details($experiment->experimentId);
-            //var_dump( $jobDetails); exit;
+            if(isset($jobDetails[0]->jobStatus)){
+                $expVal["jobState"] = JobState::$__names[$jobDetails[0]->jobStatus->jobState];
+            }else{
+                $expVal["jobState"] = "";
+            }
             // User should not clone or edit a failed experiment. Only create clones of it.
             if ($expVal["experimentStatusString"] == "FAILED")
                 $expVal["editable"] = false;

@@ -17,7 +17,7 @@
 
 App::before(function ($request) {
     //Check OAuth token has expired
-    if(Config::get('pga_config.wsis')['auth-mode']=="oauth" && Session::has('authz-token')){
+    if(Session::has('authz-token')){
         $currentTime = time();
         if($currentTime > Session::get('oauth-expiration-time')){
             $response = WSIS::getRefreshedOAutheToken(Session::get('oauth-refresh-code'));

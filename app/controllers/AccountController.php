@@ -12,7 +12,7 @@ class AccountController extends BaseController
     {
         $rules = array(
             "username" => "required|min:6",
-            "password" => "required|min:6|regex:/^.*(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!$#%]).*$/",
+            "password" => "required|min:6|max:12|regex:/^.*(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[@!$#%*]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
         );
@@ -23,8 +23,6 @@ class AccountController extends BaseController
 
         $validator = Validator::make(Input::all(), $rules, $messages);
         if ($validator->fails()) {
-            $messages = $validator->messages();
-
             return Redirect::to("create")
                 ->withInput(Input::except('password', 'password_confirm'))
                 ->withErrors($validator);
@@ -36,7 +34,7 @@ class AccountController extends BaseController
         $password = $_POST['password'];
         $email = $_POST['email'];
 
-        //Fixme - Save these user information
+//        Fixme - Save these user information
 //        $organization = $_POST['organization'];
 //        $address = $_POST['address'];
 //        $country = $_POST['country'];
@@ -44,6 +42,7 @@ class AccountController extends BaseController
 //        $mobile = $_POST['mobile'];
 //        $im = $_POST['im'];
 //        $url = $_POST['url'];
+
         $organization = "";
         $address = "";
         $country = "";
@@ -58,6 +57,7 @@ class AccountController extends BaseController
                 ->withInput(Input::except('password', 'password_confirm'))
                 ->with("username_exists", true);
         } else {
+//            We are using account confirmation now
 //            WSIS::addUser($username, $password);
 //
 //            //update user profile
@@ -81,110 +81,113 @@ class AccountController extends BaseController
 
     public function loginView()
     {
-        if(Config::get('pga_config.wsis')['auth-mode'] == "oauth"){
-            $url = WSIS::getOAuthRequestCodeUrl();
-            return Redirect::away($url);
-        }else{
-            return View::make('account/login');
-        }
-    }
-
-    public function oauthCallback()
-    {
-        if (!isset($_GET["code"])) {
-            return Redirect::to('home');
-        }
-
-        $code = $_GET["code"];
-        $response = WSIS::getOAuthToken($code);
-        if(!isset($response->access_token)){
-            return Redirect::to('home');
-        }
-
-        $accessToken = $response->access_token;
-        $refreshToken = $response->refresh_token;
-        $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
-
-        $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
-        $username = $userProfile['username'];
-
-        //Fixme - OpenID profile takes some time to get synced (WSO2 IS Issue)
-        //$userRoles = $userProfile['roles'];
-        $userRoles = (array)WSIS::getUserRoles($username);
-
-        $username = $userProfile['username'];
-
-        $authzToken = new Airavata\Model\Security\AuthzToken();
-        $authzToken->accessToken = $accessToken;
-        $authzToken->claimsMap = array('userName'=>$username);
-        Session::put('authz-token',$authzToken);
-        Session::put('oauth-refresh-code',$refreshToken);
-        Session::put('oauth-expiration-time',$expirationTime);
-        Session::put("user-profile", $userProfile);
-
-        if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
-            Session::put("admin", true);
-        }
-        if (in_array(Config::get('pga_config.wsis')['read-only-admin-role-name'], $userRoles)) {
-            Session::put("admin-read-only", true);
-        }
-        if (in_array(Config::get('pga_config.wsis')['user-role-name'], $userRoles)) {
-            Session::put("authorized-user", true);
-        }
-
-        CommonUtilities::store_id_in_session($username);
-        Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
-
-        if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
-            return $this->initializeWithAiravata($username);
-        }
-        return Redirect::to("home");
+//        if(Config::get('pga_config.wsis')['auth-mode'] == "oauth"){
+//            $url = WSIS::getOAuthRequestCodeUrl();
+//            return Redirect::away($url);
+//        }else{
+//            return View::make('account/login');
+//        }
+        return View::make('account/login');
     }
 
     public function loginSubmit()
     {
         if (CommonUtilities::form_submitted()) {
-            $username = $_POST['username'];
+            $username = $_POST['username'] . "@" . Config::get('pga_config.wsis')['tenant-domain'];
             $password = $_POST['password'];
-            try {
-                if (WSIS::authenticate($username, $password)) {
-                    $userRoles = (array)WSIS::getUserRoles($username);
-                    if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
-                        Session::put("admin", true);
-                    }
-                    if (in_array(Config::get('pga_config.wsis')['read-only-admin-role-name'], $userRoles)) {
-                        Session::put("admin-read-only", true);
-                    }
-                    if (in_array(Config::get('pga_config.wsis')['user-role-name'], $userRoles)) {
-                        Session::put("authorized-user", true);
-                    }
-
-                    $userProfile = WSIS::getUserProfile($username);
-                    if($userProfile != null && !empty($userProfile)){
-                        Session::put("user-profile", $userProfile);
-                    }
-
-                    $authzToken = new Airavata\Model\Security\AuthzToken();
-                    $authzToken->accessToken = "emptyToken";
-                    $authzToken->claimsMap = array('userName'=>$username);
-                    Session::put('authz-token',$authzToken);
-
-                    CommonUtilities::store_id_in_session($username);
-                    Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
-
-                    if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
-                        return $this->initializeWithAiravata($username);
-                    }
-                    return Redirect::to("home");
-                } else {
-                    return Redirect::to("login")->with("invalid-credentials", true);
-                }
-            } catch (Exception $ex) {
+            $response = WSIS::authenticate($username, $password);
+            if(!isset($response->access_token)){
                 return Redirect::to("login")->with("invalid-credentials", true);
             }
+
+            $accessToken = $response->access_token;
+            $refreshToken = $response->refresh_token;
+            $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
+
+            $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
+            $username = $userProfile['username'];
+            $userRoles = (array)WSIS::getUserRoles($username);
+
+            $authzToken = new Airavata\Model\Security\AuthzToken();
+            $authzToken->accessToken = $accessToken;
+            $authzToken->claimsMap = array('userName'=>$username);
+            Session::put('authz-token',$authzToken);
+            Session::put('oauth-refresh-code',$refreshToken);
+            Session::put('oauth-expiration-time',$expirationTime);
+            Session::put("user-profile", $userProfile);
+
+            if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
+                Session::put("admin", true);
+            }
+            if (in_array(Config::get('pga_config.wsis')['read-only-admin-role-name'], $userRoles)) {
+                Session::put("admin-read-only", true);
+            }
+            if (in_array(Config::get('pga_config.wsis')['user-role-name'], $userRoles)) {
+                Session::put("authorized-user", true);
+            }
+
+            CommonUtilities::store_id_in_session($username);
+            Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
+
+            if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
+                return $this->initializeWithAiravata($username);
+            }
+            return Redirect::to("home");
         }
 
     }
+
+//    public function oauthCallback()
+//    {
+//        if (!isset($_GET["code"])) {
+//            return Redirect::to('home');
+//        }
+//
+//        $code = $_GET["code"];
+//        $response = WSIS::getOAuthToken($code);
+//        if(!isset($response->access_token)){
+//            return Redirect::to('home');
+//        }
+//
+//        $accessToken = $response->access_token;
+//        $refreshToken = $response->refresh_token;
+//        $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
+//
+//        $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
+//        $username = $userProfile['username'];
+//
+//        //Fixme - OpenID profile takes some time to get synced (WSO2 IS Issue)
+//        //$userRoles = $userProfile['roles'];
+//        $userRoles = (array)WSIS::getUserRoles($username);
+//
+//        $username = $userProfile['username'];
+//
+//        $authzToken = new Airavata\Model\Security\AuthzToken();
+//        $authzToken->accessToken = $accessToken;
+//        $authzToken->claimsMap = array('userName'=>$username);
+//        Session::put('authz-token',$authzToken);
+//        Session::put('oauth-refresh-code',$refreshToken);
+//        Session::put('oauth-expiration-time',$expirationTime);
+//        Session::put("user-profile", $userProfile);
+//
+//        if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
+//            Session::put("admin", true);
+//        }
+//        if (in_array(Config::get('pga_config.wsis')['read-only-admin-role-name'], $userRoles)) {
+//            Session::put("admin-read-only", true);
+//        }
+//        if (in_array(Config::get('pga_config.wsis')['user-role-name'], $userRoles)) {
+//            Session::put("authorized-user", true);
+//        }
+//
+//        CommonUtilities::store_id_in_session($username);
+//        Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
+//
+//        if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
+//            return $this->initializeWithAiravata($username);
+//        }
+//        return Redirect::to("home");
+//    }
 
     private function initializeWithAiravata($username){
         //Check Airavata Server is up
@@ -272,10 +275,11 @@ class AccountController extends BaseController
                 if($result){
                     return Redirect::to("login");
                 }else{
+                    CommonUtilities::print_error_message("Account confirmation failed!");
                     return View::make("home");
                 }
             }catch (Exception $e){
-                var_dump($e);exit;
+                CommonUtilities::print_error_message("Account confirmation failed!");
                 return View::make("home");
             }
         }
@@ -317,10 +321,13 @@ class AccountController extends BaseController
 
     public function logout()
     {
+//        Session::flush();
+//        if(Config::get('pga_config.wsis')['auth-mode'] == "oauth"){
+//            return Redirect::away(WSIS::getOAuthLogoutUrl());
+//        }
+//        return Redirect::to('home');
+
         Session::flush();
-        if(Config::get('pga_config.wsis')['auth-mode'] == "oauth"){
-            return Redirect::away(WSIS::getOAuthLogoutUrl());
-        }
         return Redirect::to('home');
     }
 

@@ -39,7 +39,7 @@
         <div class="form-group required"><label class="control-label">Password</label>
 
             <div><input class="form-control" id="password" minlength="6" name="password" placeholder="Password"
-                        required="required" title="" type="password" data-container="body" data-toggle="popover" data-placement="left" data-content="Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$%&*"/>
+                        required="required" title="" type="password" data-container="body" data-toggle="popover" data-placement="left" data-content="Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$%*"/>
             </div>
         </div>
         <div class="form-group required"><label class="control-label">Password (again)</label>
