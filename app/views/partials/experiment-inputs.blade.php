@@ -45,7 +45,20 @@
             @else
             {{ ExperimentUtilities::create_inputs($expInputs['application'], true) }}
             @endif
-
+        </div>
+        <!-- Modal to view file inputs-->
+        <div class="modal fade" id="input-file-view" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+             aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div id="byte_range"></div>
+                </div>
+                <div class="modal-body">
+                    <div id="byte_content"></div>
+                </div>
+            </div>
+            </div>
         </div>
         <div class="form-group required">
             <label class="control-label" for="compute-resource">Compute Resource</label>
