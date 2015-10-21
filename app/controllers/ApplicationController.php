@@ -144,6 +144,12 @@ class ApplicationController extends BaseController {
                 case "OPENMP_MPI":
                     $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::OPENMP_MPI;
                     break;
+				case "CRAY_MPI":
+					$appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::CRAY_MPI;
+					break;
+				case "CCM":
+					$appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::CCM;
+					break;
             }
 			AppUtilities::create_or_update_appDeployment( $appDeploymentValues, $update);
 			$message = "Application Deployment has been updated!";
