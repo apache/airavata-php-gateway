@@ -187,6 +187,29 @@ class AppUtilities
             $appDeploymentValues["postJobCommands"] = array_unique(array_filter($appDeploymentValues["postJobCommand"], "trim"));
         }
 
+        if (isset($appDeploymentValues["parallelism"])) {
+            switch($appDeploymentValues["parallelism"]){
+                case "MPI":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::MPI;
+                    break;
+                case "SERIAL":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::SERIAL;
+                    break;
+                case "OPENMP":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::OPENMP;
+                    break;
+                case "OPENMP_MPI":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::OPENMP_MPI;
+                    break;
+                case "CRAY_MPI":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::CRAY_MPI;
+                    break;
+                case "CCM":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::CCM;
+                    break;
+            }
+        }
+
         //var_dump( $appDeploymentValues); exit;
         $appDeployment = new ApplicationDeploymentDescription($appDeploymentValues);
         if ($update)
