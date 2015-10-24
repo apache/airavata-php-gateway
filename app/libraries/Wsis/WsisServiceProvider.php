@@ -33,7 +33,7 @@ class WsisServiceProvider extends ServiceProvider {
         $this->app['wsis'] = $this->app->share(function($app)
         {
             return new Wsis(
-                Config::get('pga_config.wsis')['admin-username'],
+                Config::get('pga_config.wsis')['admin-username'] . "@" . Config::get('pga_config.wsis')['tenant-domain'],
                 Config::get('pga_config.wsis')['admin-password'],
                 Config::get('pga_config.wsis')['server'],
                 Config::get('pga_config.wsis')['service-url'],

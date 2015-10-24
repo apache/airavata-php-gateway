@@ -31,7 +31,7 @@ return array(
         /**
          * Tenant admin's username
          */
-        'admin-username' => 'master@master.airavata',
+        'admin-username' => 'master',
 
         /**
          * Tenant admin's password
@@ -158,17 +158,23 @@ return array(
          */
         'app-catalog-cache-duration' => 5
     ],
+
     /**
      * *****************************************************************
-     *  Theme Related Configurations
+     *  Portal Related Configurations
      * *****************************************************************
      */
-    'theme' => [
+    'portal' => [
 
         /**
          * Set the name of theme in use here
          */
-        'name' => 'base'
+        'theme' => 'base',
 
+        /**
+         * Email address of the portal admin. Portal admin well get email notifications for events
+         * such as new user creation
+         */
+        'admin-email' => 'abc@xyz.com'
     ]
 );

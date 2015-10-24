@@ -165,9 +165,9 @@ class AdminController extends BaseController {
 
         $gateway = AdminUtilities::add_gateway(Input::all());
 
-        $tm = WSIS::createTenant(1, $inputs["admin-username"], $inputs["admin-password"], $inputs["admin-email"],
-                                  $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
-		
+		$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"],
+			$inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
+
 		return $gateway;
 	}
 

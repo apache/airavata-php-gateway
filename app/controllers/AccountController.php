@@ -218,7 +218,7 @@ class AccountController extends BaseController
             CommonUtilities::print_error_message("Please provide a valid username");
             return View::make("account/forgot-password");
         }else{
-            $username = $username . "@" . explode("@",Config::get('pga_config.wsis')['admin-username'])[1];
+            $username = $username . "@" . Config::get('pga_config.wsis')['tenant-domain'];
             try{
                 $key = WSIS::validateUser($username);
                 if(!empty($key)){

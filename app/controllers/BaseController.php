@@ -10,7 +10,7 @@ class BaseController extends Controller {
 	protected function setupLayout()
 	{
 		//Theme gets set baesd on the one chosen in pga_config. default is basic.
-		$themeName = Config::get('pga_config.theme')['name'];
+		$themeName = Config::get('pga_config.portal')['theme'];
 		//$theme = Theme::uses( $themeName); 
 		Session::put( "theme", $themeName);
 
