@@ -175,6 +175,26 @@ return array(
          * Email address of the portal admin. Portal admin well get email notifications for events
          * such as new user creation
          */
-        'admin-email' => 'abc@xyz.com'
+        'admin-emails' => ['xxx@xxx.com','yyy@yyy.com'],
+
+        /**
+         * Email account that the portal should login to send emails
+         */
+        'portal-email-username' => 'xyz@abc.com',
+
+        /**
+         * Password for the portal's email account
+         */
+        'portal-email-password' => 'xxxxxxxxxxx',
+
+        /**
+         * SMTP server on which the portal should connect
+         */
+        'portal-smtp-server-host' => 'smtp.gmail.com',
+
+        /**
+         * SMTP server port on which the portal should connect
+         */
+        'portal-smtp-server-port' => '587'
     ]
 );

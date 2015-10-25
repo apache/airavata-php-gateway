@@ -5,7 +5,8 @@
     "license": "MIT",
     "require": {
         "laravel/framework": "4.2.*",
-        "teepluss/theme": "1.*@dev"
+        "teepluss/theme": "1.*@dev",
+        "phpmailer/phpmailer": "v5.2.13"
     },
     "autoload": {
         "classmap": [

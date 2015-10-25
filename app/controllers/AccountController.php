@@ -273,6 +273,7 @@ class AccountController extends BaseController
             try{
                 $result = WSIS::confirmUserRegistration($username, $confirmation, Config::get('pga_config.wsis')['tenant-domain']);
                 if($result){
+                    $this->sendAccountCreationNotification2Admin($username);
                     return Redirect::to("login");
                 }else{
                     CommonUtilities::print_error_message("Account confirmation failed!");
@@ -283,6 +284,42 @@ class AccountController extends BaseController
                 return View::make("home");
             }
         }
+    }
+
+    private function sendAccountCreationNotification2Admin($username){
+
+        $mail = new PHPMailer;
+
+        $mail->isSMTP();
+        $mail->SMTPDebug = 3;
+        $mail->Host = Config::get('pga_config.portal')['portal-smtp-server-host'];
+
+        $mail->SMTPAuth = true;
+
+        $mail->Username = Config::get('pga_config.portal')['portal-email-username'];
+        $mail->Password = Config::get('pga_config.portal')['portal-email-password'];
+
+        $mail->SMTPSecure = "tls";
+        $mail->Port = intval(Config::get('pga_config.portal')['portal-smtp-server-port']);
+
+        $mail->From = Config::get('pga_config.portal')['portal-email-username'];
+        $mail->FromName = "Airavata PHP Gateway";
+
+        $recipients = Config::get('pga_config.portal')['admin-emails'];
+        foreach($recipients as $recipient){
+            $mail->addAddress($recipient);
+        }
+
+        $mail->isHTML(true);
+
+        $mail->Subject = "New User Account Was Created Successfully";
+        $userProfile = WSIS::getUserProfile($username);
+        $str = "Username: " . $username . "@" . Config::get('pga_config.wsis')['tenant-domain'] . "<br/>";
+        $str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
+        $str = $str . "Email: " . $userProfile["email"];
+
+        $mail->Body = $str;
+        $mail->send();
     }
 
     public function resetPasswordSubmit()
