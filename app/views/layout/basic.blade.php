@@ -3,18 +3,23 @@ $theme = Theme::uses(Session::get("theme"));
 ?>
 
 @section ('page-header')
-
 @include("layout/fixed-header", array(
                             "title" => "PHP Reference Gateway"
                         ))
-
 @show
-
+<style>
+/*z index of sidebar is 100.*/
+.theme-header{
+    position: relative;
+    z-index:101;
+}
+</style>
+<div class="theme-header">
 <!-- Header from theme -->
 @if( isset($theme) )
 {{ $theme->partial("header") }}
 @endif
-
+</div>
 
 <body>
 
@@ -26,8 +31,9 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 </script>
 @endif
 
+<div class="pga-header">
 {{ CommonUtilities::create_nav_bar() }}
-
+</div>
 
 <!-- Handling error on pages --> 
 <!--  Alerts if guests users try to go to the link without signing in. -->
@@ -49,11 +55,11 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 
 <style>
 .theme-footer{
-	margin-top: 5%;
+	margin-top: 20px;
 }
 </style>
 @if( isset( $theme))
-<footer class="theme-footer">
+<footer class="theme-footer pull-left">
 {{ $theme->partial("footer") }}
 </footer>
 @endif
@@ -67,7 +73,7 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 @include('layout/fixed-scripts')
 <script type="text/javascript">
 	/* keeping a check that footer stays atleast at the bottom of the window.*/
-	var bh = $("body").height();
+	var bh = $("html").height();
 	if( bh < $(window).height()/2){
 		$(".theme-footer").css("position", "relative").css("top", $(window).height()/4);
     }
@@ -75,6 +81,25 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
     if( bw > 767){
         $(".hero-unit").height( bw*0.36);
     }
+
+    //put sidebar below all headers in admin dashboards
+    if( $(".side-nav").length > 0){
+        var headerHeight = $(".pga-header").height() + $(".theme-header").height();
+        $(".side-nav").css("padding-top", headerHeight);
+
+        var selectedDashboardHeight = $(window).height() - headerHeight;
+        if( selectedDashboardHeight < $(".side-nav").height())
+        {
+            $(".side-nav").height( selectedDashboardHeight).css("overflow-y", "scroll").css("overflow-x", "none");
+        }
+    }
+
+    $(".floating").click( function(){
+        $('html,body').animate({
+            scrollTop: $(".seagrid-info").offset().top},
+        'slow');
+        $(".seagrid-info").scrollTop( $(window).scrollTop() + 150);
+    })
 </script>
 @show
 

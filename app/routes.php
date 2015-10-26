@@ -215,9 +215,14 @@ Route::get("admin/add-gateway", "AdminController@addGateway");
 * Theme Pages Routes
 */
 Route::get( "pages/{theme_view}", function( $theme_view){
+
+	//In some cases, theme doesn't get loaded in session, so doing that here
+	//as well incase it does not.
+	if(! Session::has("theme")){
+		Session::put("theme", Config::get('pga_config.theme')['name']);
+	}
     return View::make("pages", array("page" => $theme_view) );
 });
-
 
 //Airavata Server Check
 Route::get("airavata/down", function () {
@@ -226,11 +231,11 @@ Route::get("airavata/down", function () {
 /*
  * Test Routes.
 */
-
+/*
 Route::get("testjob", function () {
     //print_r( Session::all());
 });
-
+*/
 /*handling errors on production */
 App::missing(function($exception)
 {

@@ -147,7 +147,9 @@ class CommonUtilities
                        <span class="icon-bar"></span>
                        <span class="icon-bar"></span>
                     </button>
+                    <!--
                     <a class="navbar-brand" href="' . URL::to('home') . '" title="PHP Gateway with Airavata">PGA</a>
+                    -->
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->

@@ -229,7 +229,6 @@
 @parent
 {{ HTML::script('js/gateway.js') }}
 <script>
-
     //make first tab of accordion open by default.
     //temporary fix
     $("#accordion2").children(".panel").children(".collapse").addClass("in");
