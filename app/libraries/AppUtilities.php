@@ -9,6 +9,7 @@ use Airavata\Model\AppCatalog\AppInterface\ApplicationInterfaceDescription;
 use Airavata\Model\Application\Io\DataType;
 use Airavata\Model\Application\Io\InputDataObjectType;
 use Airavata\Model\Application\Io\OutputDataObjectType;
+use Airavata\Model\AppCatalog\AppDeployment\CommandObject;
 
 
 class AppUtilities
@@ -139,11 +140,19 @@ class AppUtilities
 
     public static function create_or_update_appDeployment($inputs, $update = false)
     {
-
         $appDeploymentValues = $inputs;
 
-        if (isset($appDeploymentValues["moduleLoadCmds"]))
-            $appDeploymentValues["moduleLoadCmds"] = array_unique(array_filter($appDeploymentValues["moduleLoadCmds"]));
+        if (isset($appDeploymentValues["moduleLoadCmds"])) {
+            $moduleLoadCmds = array_unique(array_filter($appDeploymentValues["moduleLoadCmds"], "trim"));
+            $processedModuleLoadCommands = array();
+            foreach ($moduleLoadCmds as $index => $loadCmd) {
+                $cmdObject = new CommandObject();
+                $cmdObject->command = $loadCmd;
+                $cmdObject->commandOrder = $index;
+                $processedModuleLoadCommands[] = $cmdObject;
+            }
+            $appDeploymentValues["moduleLoadCmds"] = $processedModuleLoadCommands;
+        }
 
         if (isset($appDeploymentValues["libraryPrependPathName"])) {
             $libPrependPathNames = array_unique(array_filter($appDeploymentValues["libraryPrependPathName"], "trim"));
@@ -175,16 +184,52 @@ class AppUtilities
                     "name" => $envName,
                     "value" => $appDeploymentValues["environmentValue"][$index]
                 ));
+                $envPath->envPathOrder = $index;
                 $appDeploymentValues["setEnvironment"][] = $envPath;
             }
         }
 
         if (isset($appDeploymentValues["preJobCommand"])) {
-            $appDeploymentValues["preJobCommands"] = array_unique(array_filter($appDeploymentValues["preJobCommand"], "trim"));
+            $preJobCmds = array_unique(array_filter($appDeploymentValues["preJobCommand"], "trim"));
+            foreach ($preJobCmds as $index => $preJobCmd) {
+                $cmdObject = new CommandObject();
+                $cmdObject->command = $preJobCmd;
+                $cmdObject->commandOrder = $index;
+                $appDeploymentValues["preJobCommands"][] = $cmdObject;
+            }
         }
 
         if (isset($appDeploymentValues["postJobCommand"])) {
-            $appDeploymentValues["postJobCommands"] = array_unique(array_filter($appDeploymentValues["postJobCommand"], "trim"));
+            $postJobCmds = array_unique(array_filter($appDeploymentValues["postJobCommand"], "trim"));
+            foreach ($postJobCmds as $index => $postJobCmd) {
+                $cmdObject = new CommandObject();
+                $cmdObject->command = $postJobCmd;
+                $cmdObject->commandOrder = $index;
+                $appDeploymentValues["postJobCommands"][] = $cmdObject;
+            }
+        }
+
+        if (isset($appDeploymentValues["parallelism"])) {
+            switch($appDeploymentValues["parallelism"]){
+                case "MPI":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::MPI;
+                    break;
+                case "SERIAL":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::SERIAL;
+                    break;
+                case "OPENMP":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::OPENMP;
+                    break;
+                case "OPENMP_MPI":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::OPENMP_MPI;
+                    break;
+                case "CRAY_MPI":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::CRAY_MPI;
+                    break;
+                case "CCM":
+                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::CCM;
+                    break;
+            }
         }
 
         //var_dump( $appDeploymentValues); exit;

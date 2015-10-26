@@ -54,7 +54,7 @@
         @if( isset( $deploymentObject))
         @foreach( (array)$deploymentObject->moduleLoadCmds as $index => $cmd)
         <input name="moduleLoadCmds[]" type="text" class="form-control" placeholder="Module Load Command"
-               value="{{$cmd}}" readonly/>
+               value="{{$cmd->command}}" readonly/>
         @endforeach
         @endif
     </div>
@@ -121,7 +121,7 @@
         @foreach( (array)$deploymentObject->preJobCommands as $preJobCommand)
         <div class="col-md-12 well">
             <input name="preJobCommand[]" type="text" class="col-md-12" placeholder="Pre Job Command"
-                   value="{{ htmlentities( $preJobCommand)}}" readonly/>
+                   value="{{ htmlentities( $preJobCommand->command)}}" readonly/>
         </div>
         @endforeach
         @endif
@@ -136,7 +136,7 @@
         @foreach( (array)$deploymentObject->postJobCommands as $postJobCommand)
         <div class="col-md-12 well">
             <input name="postJobCommand[]" type="text" class="col-md-12" placeholder="Post Job Command"
-                   value="{{htmlentities( $postJobCommand )}}" readonly/>
+                   value="{{htmlentities( $postJobCommand->command )}}" readonly/>
         </div>
         @endforeach
         @endif

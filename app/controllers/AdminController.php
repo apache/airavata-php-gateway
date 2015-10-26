@@ -165,9 +165,9 @@ class AdminController extends BaseController {
 
         $gateway = AdminUtilities::add_gateway(Input::all());
 
-        $tm = WSIS::createTenant(1, $inputs["admin-username"], $inputs["admin-password"], $inputs["admin-email"],
-                                  $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
-		
+		$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"],
+			$inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
+
 		return $gateway;
 	}
 
@@ -188,7 +188,7 @@ class AdminController extends BaseController {
             $inputs = Input::all();
             $expContainer = AdminUtilities::get_experiments_of_time_range($inputs);
             $expStates = ExperimentUtilities::getExpStates();
-            return View::make("partials/experiment-container", array("expContainer" => array_reverse($expContainer),
+            return View::make("partials/experiment-container", array("expContainer" => $expContainer,
                 "expStates" => $expStates));
         }
     }

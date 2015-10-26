@@ -138,5 +138,45 @@
             getQueueData(selectedQueue);
         });
     });
+
+    //Setting the file input view JS code
+    $( document ).ready(function() {
+        function readBlob(opt_startByte, opt_stopByte, fileId) {
+
+            var files = document.getElementById(fileId).files;
+            if (!files.length) {
+                alert('Please select a file!');
+                return;
+            }
+
+            var file = files[0];
+            var start = 0;
+            var stop = Math.min(512*1024,file.size - 1);
+
+            var reader = new FileReader();
+
+            // If we use onloadend, we need to check the readyState.
+            reader.onloadend = function(evt) {
+                if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                    $('#byte_content').html(evt.target.result.replace(/(?:\r\n|\r|\n)/g, '<br />'));
+                    $('#byte_range').html(
+                            ['Read bytes: ', start + 1, ' - ', stop + 1,
+                                ' of ', file.size, ' byte file'].join(''));
+                }
+            };
+
+            var blob = file.slice(start, stop + 1);
+            reader.readAsBinaryString(blob);
+
+            $('#input-file-view').modal('show');
+        }
+
+        $( ".readBytesButtons" ).click(function() {
+            var startByte = $(this).data('startbyte');
+            var endByte = $(this).data('endbyte');
+            var fileId = $(this).data('file-id');
+            readBlob(startByte, endByte, fileId);
+        });
+    });
 </script>
 @stop

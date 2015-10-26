@@ -558,6 +558,8 @@ class ExperimentUtilities
                     }else{
                         echo '<div class="form-group">
                             <label for="experiment-input">' . $input->name . '</label>
+                            <div data-file-id="' . $input->name . '" class="readBytesButtons btn btn-default btn-xs"
+                             data-toggle="modal" style="float: right">view file</div>
                             <input class="file-input" type="file" name="' . $input->name .
                                     '" id="' . $input->name . '" ' . $required . '>
                             <p class="help-block">' . $input->userFriendlyDescription . '</p>
