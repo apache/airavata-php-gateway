@@ -386,12 +386,20 @@ to be uncommented when actually in use.
     $(".oneDayExp").click( function(){
         var todayDate = getCurrentDate();
         var ydayDate = getCurrentDate(1);
+        $("#datetimepicker9").find("input").val( ydayDate);
+        $("#datetimepicker10").find("input").val( todayDate);
+        todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
+        ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         getExperiments( ydayDate, todayDate);
     });
 
     $(".oneWeekExp").click( function(){
         var todayDate = getCurrentDate();
         var ydayDate = getCurrentDate(7);
+        $("#datetimepicker9").find("input").val( ydayDate);
+        $("#datetimepicker10").find("input").val( todayDate);
+        todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
+        ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         getExperiments( ydayDate, todayDate);
     })
 
@@ -425,10 +433,10 @@ to be uncommented when actually in use.
         var cd =  new Date();
         var hours = cd.getUTCHours();
         month = cd.getMonth() + 1; //getmonth()starts from 0 for some reason
-        var timeOfDay = "am";
+        var timeOfDay = "AM";
         if(hours >= 12)
         {
-            timeOfDay = "pm"
+            timeOfDay = "PM"
             if(hours != 12)
                 hours = hours - 12;
         }
