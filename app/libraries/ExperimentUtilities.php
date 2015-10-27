@@ -179,7 +179,7 @@ class ExperimentUtilities
         $experiment->projectId = $_POST['project'];
         $experiment->userName = Session::get('username');
         $experiment->name = $_POST['experiment-name'];
-        $experiment->gatewayId = "default";
+        $experiment->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
         $experiment->experimentName = $_POST['experiment-name'];
 
         // optional
