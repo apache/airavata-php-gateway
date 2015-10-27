@@ -34,7 +34,6 @@
         </div>
         {{ Session::forget("errorMessage") }}
         @endif
-        @endif
         @if(Session::has("admin"))
         <div class="row">
             <button class="btn btn-default create-app-module" data-toggle="modal" data-target="#new-app-module-block">Create
@@ -42,7 +41,6 @@
             </button>
         </div>
         @endif
-
         @if( count( $modules) )
         <div class="row">
             <div class="col-md-6">
