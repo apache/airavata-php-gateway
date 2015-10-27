@@ -14,7 +14,6 @@
     <div id="page-wrapper">
 <div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-        @if( count( $modules) )
         @if( Session::has("message"))
         <div class="row">
             <div class="alert alert-success alert-dismissible" role="alert">
@@ -42,6 +41,7 @@
             </button>
         </div>
         @endif
+        @if( count( $modules) )
         <div class="row">
             <div class="col-md-6">
                 <h3>Existing Modules :</h3>
