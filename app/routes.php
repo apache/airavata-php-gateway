@@ -219,7 +219,7 @@ Route::get( "pages/{theme_view}", function( $theme_view){
 	//In some cases, theme doesn't get loaded in session, so doing that here
 	//as well incase it does not.
 	if(! Session::has("theme")){
-		Session::put("theme", Config::get('pga_config.theme')['name']);
+		Session::put("theme", Config::get('pga_config.portal')['theme']);
 	}
     return View::make("pages", array("page" => $theme_view) );
 });
