@@ -14,7 +14,6 @@
     <div id="page-wrapper">
 <div class="container-fluid">
     <div class="col-md-offset-2 col-md-8">
-        @if( count( $appInterfaces) )
         @if( Session::has("message"))
         <div class="row">
             <div class="alert alert-success alert-dismissible" role="alert">
@@ -30,6 +29,7 @@
             <button class="btn btn-default create-app-interface">Create a new Application Interface</button>
         </div>
         @endif
+        @if( count( $appInterfaces) )
         <div class="row">
 
             <div class="col-md-6">
