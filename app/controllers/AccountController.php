@@ -12,7 +12,7 @@ class AccountController extends BaseController
     {
         $rules = array(
             "username" => "required|min:6",
-            "password" => "required|min:6|max:12|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#%*]).*$/",
+            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#%*]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
         );
