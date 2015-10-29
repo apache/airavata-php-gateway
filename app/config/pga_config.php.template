@@ -172,7 +172,7 @@ return array(
         'theme' => 'base',
 
         /**
-         * Portal titles
+         * Portal title
          */
         'portal-tile' => 'Airavata PHP Gateway',
 
