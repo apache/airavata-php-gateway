@@ -174,7 +174,7 @@ return array(
         /**
          * Portal title
          */
-        'portal-tile' => 'Airavata PHP Gateway',
+        'portal-title' => 'Airavata PHP Gateway',
 
         /**
          * Email address of the portal admin. Portal admin well get email notifications for events
