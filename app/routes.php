@@ -219,7 +219,7 @@ Route::get( "pages/{theme_view}", function( $theme_view){
 	//In some cases, theme doesn't get loaded in session, so doing that here
 	//as well incase it does not.
 	if(! Session::has("theme")){
-		Session::put("theme", Config::get('pga_config.portal')['theme']);
+		Session::put("x", Config::get('pga_config.portal')['theme']);
 	}
     return View::make("pages", array("page" => $theme_view) );
 });
@@ -231,11 +231,15 @@ Route::get("airavata/down", function () {
 /*
  * Test Routes.
 */
-/*
+
 Route::get("testjob", function () {
-    //print_r( Session::all());
+    if( is_dir( URL::to('/') . '/../themes/seagrid' ) )
+    	print_r("test yes");
+    else
+    	print_r("test no"); 
+    exit;
 });
-*/
+
 /*handling errors on production */
 App::missing(function($exception)
 {
