@@ -172,6 +172,11 @@ return array(
         'theme' => 'base',
 
         /**
+         * Portal title
+         */
+        'portal-title' => 'Airavata PHP Gateway',
+
+        /**
          * Email address of the portal admin. Portal admin well get email notifications for events
          * such as new user creation
          */

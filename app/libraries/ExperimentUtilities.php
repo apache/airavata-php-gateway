@@ -71,25 +71,18 @@ class ExperimentUtilities
         foreach ($experimentInputs as $input) {
             $matchingAppInput = null;
 
-            foreach ($applicationInputs as $applicationInput) {
-                if ($input->name == $applicationInput->name) {
-                    $matchingAppInput = $applicationInput;
-                }
-            }
-            //var_dump($matchingAppInput);
-
-            if ($matchingAppInput->type == DataType::URI && empty($input->metaData)) {
+            if ($input->type == DataType::URI && empty($input->metaData)) {
                 $explode = explode('/', $input->value);
                 echo '<p><a target="_blank"
                         href="' . URL::to("/") . "/.." . Config::get('pga_config.airavata')['experiment-data-dir']
                     . "/" . $explode[sizeof($explode) - 2] . '/' . $explode[sizeof($explode) - 1] . '">' .
                     $explode[sizeof($explode) - 1] . '
                 <span class="glyphicon glyphicon-new-window"></span></a></p>';
-            }elseif($matchingAppInput->type == DataType::URI && !empty($input->metaData)
+            }elseif($input->type == DataType::URI && !empty($input->metaData)
                 && json_decode($input->metaData)->location=="remote"){
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
-            }elseif ($matchingAppInput->type == DataType::STRING || $matchingAppInput->type == DataType::INTEGER
-                || $matchingAppInput->type == DataType::FLOAT) {
+            }elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
+                || $input->type == DataType::FLOAT) {
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
             }
         }

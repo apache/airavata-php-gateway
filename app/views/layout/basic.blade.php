@@ -1,10 +1,11 @@
 <?php 
 $theme = Theme::uses(Session::get("theme"));
+$title = Session::get("portal-title");
 ?>
 
 @section ('page-header')
 @include("layout/fixed-header", array(
-                            "title" => "PHP Reference Gateway"
+                            "title" => $title
                         ))
 @show
 <style>
