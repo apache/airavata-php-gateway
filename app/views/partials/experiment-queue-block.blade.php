@@ -78,14 +78,24 @@
         getQueueData(selectedQueue);
     });
 
+    $("#enable-auto-scheduling").change(function () {
+        var selectedQueue = $("#select-queue").val();
+        getQueueData(selectedQueue);
+    });
+
     function getQueueData(selectedQueue) {
         var queues = $.parseJSON($("#queue-array").val());
+        var veryLargeValue = 9999999;
         console.log(queues);
         for (var i = 0; i < queues.length; i++) {
             if (queues[i]['queueName'] == selectedQueue) {
                 //node-count
                 if (queues[i]['maxNodes'] != 0 && queues[i]['maxNodes'] != null) {
-                    $("#node-count").attr("max", queues[i]['maxNodes']);
+                    if($('#enable-auto-scheduling').prop('checked')){
+                        $("#node-count").attr("max", veryLargeValue);
+                    }else{
+                        $("#node-count").attr("max", queues[i]['maxNodes']);
+                    }
                     $(".node-count").html(queues[i]['maxNodes']);
                     $(".node-count").parent().removeClass("hide");
                 }
@@ -95,7 +105,11 @@
 
                 //core-count
                 if (queues[i]['maxProcessors'] != 0 && queues[i]['maxProcessors'] != null) {
-                    $("#cpu-count").attr("max", queues[i]['maxProcessors']);
+                    if($('#enable-auto-scheduling').prop('checked')){
+                        $("#cpu-count").attr("max", veryLargeValue);
+                    }else {
+                        $("#cpu-count").attr("max", queues[i]['maxProcessors']);
+                    }
                     $(".cpu-count").html(queues[i]['maxProcessors']);
                     $(".cpu-count").parent().removeClass("hide");
                 }
@@ -104,7 +118,11 @@
 
                 //walltime-count
                 if (queues[i]['maxRunTime'] != null && queues[i]['maxRunTime'] != 0) {
-                    $("#wall-time").attr("max", queues[i]['maxRunTime']);
+                    if($('#enable-auto-scheduling').prop('checked')){
+                        $("#wall-time").attr("max", veryLargeValue);
+                    }else {
+                        $("#wall-time").attr("max", queues[i]['maxRunTime']);
+                    }
                     $(".walltime-count").html(queues[i]['maxRunTime']);
                     $(".walltime-count").parent().removeClass("hide");
                 }
@@ -113,7 +131,11 @@
 
                 //memory-count
                 if (queues[i]['maxMemory'] != 0 && queues[i]['maxMemory'] != null) {
-                    $("#memory-count").attr("max", queues[i]['maxMemory']).val(0);
+                    if($('#enable-auto-scheduling').prop('checked')){
+                        $("#memory-count").attr("max", veryLargeValue);
+                    }else {
+                        $("#memory-count").attr("max", queues[i]['maxMemory']).val(0);
+                    }
                     $(".memory-count").html(queues[i]['maxMemory']);
                     $(".memory-count").parent().removeClass("hide");
                 }
@@ -134,9 +156,14 @@
         var selectedQueue = $("#select-queue").val();
         getQueueData(selectedQueue);
         $("#select-queue").change(function () {
-            var selectedQueue = $(this).val();
+            var selectedQueue = $("#select-queue").val();
             getQueueData(selectedQueue);
         });
+    });
+
+    $("#enable-auto-scheduling").change(function () {
+        var selectedQueue = $("#select-queue").val();
+        getQueueData(selectedQueue);
     });
 
     //Setting the file input view JS code

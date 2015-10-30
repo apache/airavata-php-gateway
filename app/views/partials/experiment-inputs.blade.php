@@ -60,6 +60,18 @@
             </div>
             </div>
         </div>
+
+        <div class="form-group">
+            <label class="control-label" for="enable-auto-scheduling">
+                Enable Auto Scheduling&nbsp;&nbsp;
+                    <input name="enable-auto-scheduling" id="enable-auto-scheduling" type="checkbox"
+                    @if(isset($expInputs["autoSchedule"]) && $expInputs["autoSchedule"])
+                        {{" checked"}}
+                    @endif
+                    >
+            </label>
+        </div>
+
         <div class="form-group required">
             <label class="control-label" for="compute-resource">Compute Resource</label>
             @if( count( $expInputs['computeResources']) > 0)

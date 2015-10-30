@@ -106,6 +106,10 @@
             <td class="time" unix-time="<?php echo $expVal["experimentTimeOfStateChange"]; ?>"></td>
         </tr>
         <tr>
+            <td><strong>Enable Auto Schedule</strong></td>
+            <td><?php echo $experiment->userConfigurationData->airavataAutoSchedule==1?"true":"false"; ?></td>
+        </tr>
+        <tr>
             <td><strong>Wall time</strong></td>
             <td><?php echo $experiment->userConfigurationData->computationalResourceScheduling->wallTimeLimit; ?></td>
         </tr>

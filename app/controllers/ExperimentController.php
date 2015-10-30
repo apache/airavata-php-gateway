@@ -175,6 +175,7 @@ class ExperimentController extends BaseController
             "experimentName" => $experiment->experimentName,
             "experimentDescription" => $experiment->description,
             "application" => $experiment->executionId,
+            "autoSchedule" => $experiment->userConfigurationData->airavataAutoSchedule,
             "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
             'experiment' => $experiment,
             "queueDefaults" => $queueDefaults,

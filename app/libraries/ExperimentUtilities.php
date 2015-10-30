@@ -145,6 +145,7 @@ class ExperimentUtilities
 
         $userConfigData = new UserConfigurationDataModel();
         $userConfigData->computationalResourceScheduling = $scheduling;
+        $userConfigData->airavataAutoSchedule = isset($_POST['enable-auto-scheduling']) ? true : false;
         if (isset($_POST["userDN"])) {
             $userConfigData->generateCert = 1;
             $userConfigData->userDN = $_POST["userDN"];
@@ -1040,6 +1041,7 @@ class ExperimentUtilities
         */
 
         $userConfigDataUpdated->computationalResourceScheduling = $schedulingUpdated;
+        $userConfigDataUpdated->airavataAutoSchedule = isset($_POST['enable-auto-scheduling']) ? true : false;
         if (isset($input["userDN"])) {
             $userConfigDataUpdated->generateCert = 1;
             $userConfigDataUpdated->userDN = $input["userDN"];
