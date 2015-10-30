@@ -60,7 +60,7 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 }
 </style>
 @if( isset( $theme))
-<footer class="theme-footer pull-left">
+<footer class="theme-footer">
 {{ $theme->partial("footer") }}
 </footer>
 @endif
@@ -75,8 +75,8 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 <script type="text/javascript">
 	/* keeping a check that footer stays atleast at the bottom of the window.*/
 	var bh = $("html").height();
-	if( bh < $(window).height()/2){
-		$(".theme-footer").css("position", "relative").css("top", $(window).height()/4);
+	if( bh < $(window).height()){
+		$(".theme-footer").css("position", "relative").css("top", $(window).height()*1/3);
     }
     var bw = $("body").width();
     if( bw > 767){

@@ -67,14 +67,13 @@
             ?>
         </tr>
         @endif
-        <?php
-        if ($expVal["jobState"]) echo '
-        <tr>
-            <td><strong>Job Status</strong></td>
-            <td>' . $expVal["jobState"] . '</td>
-        </tr>
-        ';
-        ?>
+
+        @if($expVal["jobState"])
+            <tr>
+                <td><strong>Job Status</strong></td>
+                <td>{{ $expVal["jobState"] }}</td>
+            </tr>
+        @endif
 
         @if( isset($dashboard))
         <tr>

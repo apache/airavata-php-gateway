@@ -43,10 +43,21 @@
 
 <div class="dates row">
     <div class="well col-md-12">
-        <div class="col-md-12">
-            <h4>Select dates between which you want to review experiment statistics.</h4>
-        </div>
         <div class="col-md-10">
+            <div class='col-md-5'>
+                <div class="form-group">
+                        <input type='button' class="oneDayExp form-control btn-primary" value="Get Experiments from Last 24 hours"/>
+                </div>
+            </div>
+            <div class='col-md-5'>
+                <div class="form-group">
+                        <input type='button' class="oneWeekExp form-control btn-primary" value="Get Experiments from Last Week"/>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <h4>Or Select dates between which you want to review experiment statistics.</h4>
+            </div>
             <div class='col-md-5'>
                 <div class="form-group">
                     <div class='input-group date' id='datetimepicker9'>
@@ -66,7 +77,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <button name="getStatistics" id="getStatistics" type="submit" class="btn btn-primary pull-right"
+                <button name="getStatistics" id="getStatistics" type="submit" class="btn btn-primary"
                         value="GetStatistics"><span
                         class="glyphicon glyphicon-search"></span> Get Statistics
                 </button>
@@ -372,6 +383,26 @@ to be uncommented when actually in use.
         $('#datetimepicker9').data("DateTimePicker").setMaxDate(e.date);
     });
 
+    $(".oneDayExp").click( function(){
+        var todayDate = getCurrentDate();
+        var ydayDate = getCurrentDate(1);
+        $("#datetimepicker9").find("input").val( ydayDate);
+        $("#datetimepicker10").find("input").val( todayDate);
+        todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
+        ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
+        getExperiments( ydayDate, todayDate);
+    });
+
+    $(".oneWeekExp").click( function(){
+        var todayDate = getCurrentDate();
+        var ydayDate = getCurrentDate(7);
+        $("#datetimepicker9").find("input").val( ydayDate);
+        $("#datetimepicker10").find("input").val( todayDate);
+        todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
+        ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
+        getExperiments( ydayDate, todayDate);
+    })
+
     $("#getStatistics").click(function () {
         $fromTime = $("#datetimepicker9").find("input").val();
         $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
@@ -380,9 +411,15 @@ to be uncommented when actually in use.
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
-            $(".loading-img-statistics").removeClass("hide");
+            getExperiments( $fromTime, $toTime);
+        }
+    });
+
+    function getExperiments( startTime, endTime){
+        $(".experiment-statistics").html("");
+        $(".loading-img-statistics").removeClass("hide");
             $.ajax({
-                url: 'experimentStatistics?fromTime=' + $fromTime + '&' + 'toTime=' + $toTime,
+                url: 'experimentStatistics?fromTime=' + startTime + '&' + 'toTime=' + endTime,
                 type: 'get',
                 success: function (data) {
                     $(".experiment-statistics").html(data);
@@ -390,7 +427,25 @@ to be uncommented when actually in use.
             }).complete(function () {
                 $(".loading-img-statistics").addClass("hide");
             });
+    }
+
+    function getCurrentDate( subtractDaysFromToday){
+        var cd =  new Date();
+        var hours = cd.getUTCHours();
+        month = cd.getMonth() + 1; //getmonth()starts from 0 for some reason
+        var timeOfDay = "AM";
+        if(hours >= 12)
+        {
+            timeOfDay = "PM"
+            if(hours != 12)
+                hours = hours - 12;
         }
-    });
+        var date = cd.getDate();
+        if( subtractDaysFromToday!= null)
+            date = date - subtractDaysFromToday;
+
+        var todayDate = month + "/" + date + "/" + cd.getFullYear() + " " + hours + ":" + cd.getUTCMinutes() + " " + timeOfDay;
+        return todayDate;
+    }
 </script>
 @stop
