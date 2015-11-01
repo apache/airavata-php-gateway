@@ -74,7 +74,7 @@ class ExperimentUtilities
             if ($input->type == DataType::URI && empty($input->metaData)) {
                 $explode = explode('/', $input->value);
                 echo '<p><a target="_blank"
-                        href="' . URL::to("/") . "/.." . Config::get('pga_config.airavata')['experiment-data-dir']
+                        href="' . URL::to("/") . "/download-file?filePath="
                     . "/" . $explode[sizeof($explode) - 2] . '/' . $explode[sizeof($explode) - 1] . '">' .
                     $explode[sizeof($explode) - 1] . '
                 <span class="glyphicon glyphicon-new-window"></span></a></p>';
@@ -157,14 +157,6 @@ class ExperimentUtilities
         if (ExperimentUtilities::$experimentPath == null) {
             ExperimentUtilities::create_experiment_folder_path();
         }
-
-//        $advHandling = new AdvancedOutputDataHandling();
-        $hostName = $_SERVER['SERVER_NAME'];
-        $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
-
-//        $advHandling->outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-//            $expPathConstant, ExperimentUtilities::$experimentPath);
-//        $userConfigData->advanceOutputDataHandling = $advHandling;
 
         //TODO: replace constructor with a call to airvata to get a prepopulated experiment template
         $experiment = new ExperimentModel();
@@ -340,7 +332,7 @@ class ExperimentUtilities
     public static function create_experiment_folder_path()
     {
         do {
-            ExperimentUtilities::$experimentPath = Config::get('pga_config.airavata')['experiment-data-absolute-path'] .
+            ExperimentUtilities::$experimentPath = Config::get('pga_config.airavata')['data-archive-path'] .
                 "/" . str_replace(' ', '', Session::get('username')) . "/" . md5(rand() * time()) . '/';
         } while (is_dir(ExperimentUtilities::$experimentPath)); // if dir already exists, try again
         // create upload directory
@@ -421,8 +413,8 @@ class ExperimentUtilities
             $experimentInputs = $experiment->experimentInputs;
             ExperimentUtilities::create_experiment_folder_path();
             $hostName = $_SERVER['SERVER_NAME'];
-            $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
-            $outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
+            $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['data-archive-path'];
+            $outputDataDir = str_replace(Config::get('pga_config.airavata')['data-archive-path'],
                 $expPathConstant, ExperimentUtilities::$experimentPath);
             //$experiment->userConfigurationData->advanceOutputDataHandling->outputDataDir = $outputDataDir;
 
@@ -631,15 +623,15 @@ class ExperimentUtilities
                 if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
                     $explode = explode('/', $output->value);
                     //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
-                    $outputPath = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-                        Config::get('pga_config.airavata')['experiment-data-dir'], $output->value);
+                    $outputPath = str_replace(Config::get('pga_config.airavata')['data-archive-path'],
+                        "/download-file?filePath=", $output->value);
 
                     if(file_exists(str_replace('//','/',$output->value))){
                         $outputPathArray = explode("/", $outputPath);
 
                         echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                                href="' . URL::to("/") . "/.." . str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-                                Config::get('pga_config.airavata')['experiment-data-dir'], $output->value) . '">' .
+                                href="' . URL::to("/") . str_replace(Config::get('pga_config.airavata')['data-archive-path'],
+                                "/download-file?filePath=", $output->value) . '">' .
                             $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                     }
                 } elseif ($output->type == DataType::STRING) {

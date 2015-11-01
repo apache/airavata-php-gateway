@@ -11,7 +11,7 @@ class DownloadFileController extends Controller {
     public function downloadFile(){
         if(Input::has("filePath") ){
             $filePath = Input::get("filePath");
-            $file= Config::get('pga_config.airavata')["experiment-data-absolute-path"] . "/" . Session::get("username") . "/" . $filePath;
+            $file= Config::get('pga_config.airavata')["data-archive-path"] . "/" . Session::get("username") . "/" . $filePath;
             $headers = array(
                 'application/octet-stream',
             );
