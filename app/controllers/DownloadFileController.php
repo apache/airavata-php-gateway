@@ -12,10 +12,11 @@ class DownloadFileController extends Controller {
         if(Input::has("filePath") ){
             $filePath = Input::get("filePath");
             $file= Config::get('pga_config.airavata')["data-archive-path"] . "/" . Session::get("username") . "/" . $filePath;
+            $fileName = basename($file);
             $headers = array(
                 'application/octet-stream',
             );
-            return Response::download($file, 'gaussian.in.com', $headers);
+            return Response::download($file, $fileName, $headers);
         }
     }
 }
