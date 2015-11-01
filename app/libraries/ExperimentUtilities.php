@@ -327,20 +327,30 @@ class ExperimentUtilities
         }
     }
 
+    /**
+     * recursively create a long directory path
+     */
+    public static function create_path_recursively($path) {
+        if (is_dir($path)) return true;
+        $prev_path = substr($path, 0, strrpos($path, '/', -2) + 1 );
+        $return = ExperimentUtilities::create_path_recursively($prev_path);
+        return ($return && is_writable($prev_path)) ? mkdir($path) : false;
+    }
 
     public static function create_experiment_folder_path()
     {
         do {
             ExperimentUtilities::$experimentPath = Config::get('pga_config.airavata')['experiment-data-absolute-path'] .
-                "/" . str_replace(' ', '', Session::get('username')) . md5(rand() * time()) . '/';
+                "/" . str_replace(' ', '', Session::get('username')) . "/" . md5(rand() * time()) . '/';
         } while (is_dir(ExperimentUtilities::$experimentPath)); // if dir already exists, try again
         // create upload directory
-        if (!mkdir(ExperimentUtilities::$experimentPath)) {
+        if (! ExperimentUtilities::create_path_recursively(ExperimentUtilities::$experimentPath)) {
             CommonUtilities::print_error_message('<p>Error creating upload directory!
             Please try again later or report a bug using the link in the Help menu.</p>');
             $experimentAssemblySuccessful = false;
         }
     }
+
 
     /**
      * Check the uploaded files for errors

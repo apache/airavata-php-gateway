@@ -206,6 +206,9 @@ Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 
 Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser");
 
+Route::get("download-file", "DownloadFileController@downloadFile");
+
+
 //Super Admin Specific calls
 
 Route::post("admin/add-gateway", "AdminController@addGateway");
