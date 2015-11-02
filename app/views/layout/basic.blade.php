@@ -49,7 +49,9 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 @endif
 
 <!--  PGA UI lies here. Do not touch. -->
-@yield('content')
+<div class="row">
+    @yield('content')
+</div>
 
 
 @include('layout/fixed-footer')
