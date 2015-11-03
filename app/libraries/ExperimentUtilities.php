@@ -628,8 +628,8 @@ class ExperimentUtilities
                         $outputPathArray = explode("/", $outputPath);
 
                         echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                                href="' . URL::to("/") . '/download/' . $outputArray[ count($outputArray)-2] . '/' . 
-                $outputArray[ count($outputArray)-1] . '">' .
+                                href="' . URL::to("/") . '/download/' . $outputPathArray[ count($outputPathArray)-2] . '/' . 
+                $outputPathArray[ count($outputPathArray)-1] . '">' .
                             $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                     }
                 } elseif ($output->type == DataType::STRING) {
