@@ -3,17 +3,19 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
-<script type="text/javascript"
-        src="https://gateways.atlassian.net/s/31280375aecc888d5140f63e1dc78a93-T/en_USmlc07/6328/46/1.4.13/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=b1572922"></script>
-
 <!-- Jira Issue Collector - Request Feature -->
+
 <script type="text/javascript"
-        src="https://gateways.atlassian.net/s/31280375aecc888d5140f63e1dc78a93-T/en_USmlc07/6328/46/1.4.13/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=674243b0"></script>
+        src="{{ Config::get('pga_config.portal')['jira-help']['report-issue-script'] }}"></script>
+
+
+<script type="text/javascript"
+        src="{{ Config::get('pga_config.portal')['jira-help']['request-feature-script'] }}"></script>
 
 
 <script type="text/javascript">
     window.ATL_JQ_PAGE_PROPS = $.extend(window.ATL_JQ_PAGE_PROPS, {
-        "b1572922": {
+        "{{ Config::get('pga_config.portal')['jira-help']['report-issue-collector-id'] }}": {
             "triggerFunction": function (showCollectorDialog) {
                 //Requries that jQuery is available!
                 jQuery("#report-issue").click(function (e) {
@@ -25,7 +27,7 @@
                 fullname : fullName !== 'undefined' ? fullName : ""
             }
         },
-        "674243b0": {
+        "{{ Config::get('pga_config.portal')['jira-help']['request-feature-collector-id'] }}": {
             "triggerFunction": function (showCollectorDialog) {
                 //Requries that jQuery is available!
                 jQuery("#request-feature").click(function (e) {
@@ -38,6 +40,9 @@
             }
         }
     });
+</script>
+
+<script type="text/javascript">
 
     var highest = null;
     $(".nav-tabs a").each(function () {  //find the height of your highest link
