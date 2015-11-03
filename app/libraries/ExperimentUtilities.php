@@ -72,11 +72,11 @@ class ExperimentUtilities
             $matchingAppInput = null;
 
             if ($input->type == DataType::URI && empty($input->metaData)) {
-                $explode = explode('/', $input->value);
+                $inputArray = explode('/', $input->value);
                 echo '<p><a target="_blank"
-                        href="' . URL::to("/") . "/.." . Config::get('pga_config.airavata')['experiment-data-dir']
-                    . "/" . $explode[sizeof($explode) - 2] . '/' . $explode[sizeof($explode) - 1] . '">' .
-                    $explode[sizeof($explode) - 1] . '
+                        href="' . URL::to("/") . '/download/' . $inputArray[ count($inputArray)-2] . '/' . 
+                $inputArray[ count($inputArray)-1] . '">' .
+                    $inputArray[ count($inputArray)-1] . '
                 <span class="glyphicon glyphicon-new-window"></span></a></p>';
             }elseif($input->type == DataType::URI && !empty($input->metaData)
                 && json_decode($input->metaData)->location=="remote"){
@@ -628,8 +628,8 @@ class ExperimentUtilities
                         $outputPathArray = explode("/", $outputPath);
 
                         echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                                href="' . URL::to("/") . "/.." . str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-                                Config::get('pga_config.airavata')['experiment-data-dir'], $output->value) . '">' .
+                                href="' . URL::to("/") . '/download/' . $outputArray[ count($outputArray)-2] . '/' . 
+                $outputArray[ count($outputArray)-1] . '">' .
                             $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                     }
                 } elseif ($output->type == DataType::STRING) {

@@ -87,6 +87,11 @@ Route::get("experiment/getQueueView", "ExperimentController@getQueueView");
 Route::get("experiment/browse", "ExperimentController@browseView");
 
 Route::post("experiment/browse", "ExperimentController@browseView");
+
+Route::get("download/{exp_folder}/{exp_file}", function( $exp_folder, $exp_file){
+    $downloadLink = URL::to('/') . '/..' . Config::get('pga_config.airavata')['experiment-data-dir'] . '/' . $exp_folder . '/' . $exp_file;
+    return Response::download( $downloadLink);
+});
 /*
  * Compute Resources Routes
 */
