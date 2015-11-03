@@ -129,21 +129,24 @@ class CommonUtilities
 //                );
 //            }
 
-            $menus['Help'] = array();
-            if( Config::get('pga_config.portal')['jira-help']['report-issue-script'] != '' 
-                && Config::get('pga_config.portal')['jira-help']['report-issue-collector-id'] != '')
+            if( isset( Config::get('pga_config.portal')['jira-help']))
             {
-                $menus['Help'][] = array('label' => 'Report Issue', 'url' => '#', "nav-active", "");
-            }  
-//                array('label' => 'Forgot Password?', 'url' => URL::to('/') . '/forgot-password', "nav-active" => "")
-            if( Config::get('pga_config.portal')['jira-help']['request-feature-script'] != '' 
-                && Config::get('pga_config.portal')['jira-help']['request-feature-collector-id'] != '')
-            {
-                $menus['Help'][] = array('label' => 'Request Feature', 'url' => '#', "nav-active", "");
-            }
+                $menus['Help'] = array();
+                if( Config::get('pga_config.portal')['jira-help']['report-issue-script'] != '' 
+                    && Config::get('pga_config.portal')['jira-help']['report-issue-collector-id'] != '')
+                {
+                    $menus['Help'][] = array('label' => 'Report Issue', 'url' => '#', "nav-active", "");
+                }  
+    //                array('label' => 'Forgot Password?', 'url' => URL::to('/') . '/forgot-password', "nav-active" => "")
+                if( Config::get('pga_config.portal')['jira-help']['request-feature-script'] != '' 
+                    && Config::get('pga_config.portal')['jira-help']['request-feature-collector-id'] != '')
+                {
+                    $menus['Help'][] = array('label' => 'Request Feature', 'url' => '#', "nav-active", "");
+                }
 
-            if( count( $menus['Help'] ) == 0 )
-                unset( $menus['Help']);
+                if( count( $menus['Help'] ) == 0 )
+                    unset( $menus['Help']);
+            }
         }
 
         echo '<nav class="navbar navbar-inverse navbar-static-top" role="navigation">

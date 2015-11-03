@@ -223,6 +223,17 @@ return array(
              * Collector id at the end of the above script
              */
             'request-feature-collector-id' => ''
-        ]
+        ],
+
+        /**
+         * Set Google Analytics Id here. ID format that generates from  
+         * creating tracker object should be 
+         *
+         * UA-XXXXX-Y 
+         *
+         * for it to be working correctly. Currently it is only set for 
+         * sending pageviews.
+         */
+        'google-analytics-id' => ''
     ]
 );

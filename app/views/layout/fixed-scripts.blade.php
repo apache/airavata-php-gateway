@@ -4,7 +4,7 @@
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
 <!-- Jira Issue Collector - Request Feature -->
-
+@if( isset( Config::get('pga_config.portal')['jira-help']))
 <script type="text/javascript"
         src="{{ Config::get('pga_config.portal')['jira-help']['report-issue-script'] }}"></script>
 
@@ -41,7 +41,7 @@
         }
     });
 </script>
-
+@endif
 <script type="text/javascript">
 
     var highest = null;
