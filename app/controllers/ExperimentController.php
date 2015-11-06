@@ -84,11 +84,24 @@ class ExperimentController extends BaseController
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
+            //var_dump( $jobDetails); exit;
+            foreach( $jobDetails as $index => $jobDetail){
+                if(isset($jobDetail->jobStatus)){
+                    $jobDetails[ $index]->jobStatus->jobStateName = JobState::$__names[$jobDetail->jobStatus->jobState];
+                }
+                else{
+                    $jobDetails[ $index]->jobStatus = new stdClass();
+                    $jobDetails[ $index]->jobStatus->jobStateName = null;
+                }
+            }
+            $expVal["jobDetails"] = $jobDetails;
+            /*
             if(isset($jobDetails[0]->jobStatus)){
                 $expVal["jobState"] = JobState::$__names[$jobDetails[0]->jobStatus->jobState];
             }else{
                 $expVal["jobState"] = "";
             }
+            */
             // User should not clone or edit a failed experiment. Only create clones of it.
             if ($expVal["experimentStatusString"] == "FAILED")
                 $expVal["editable"] = false;

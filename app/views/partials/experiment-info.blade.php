@@ -47,33 +47,23 @@
             <td><strong>Experiment Status</strong></td>
             <td class="exp-status"><?php echo $expVal["experimentStatusString"]; ?></td>
         </tr>
-        @if( isset($dashboard))
-        <tr>
-            <td><strong>Job ID</strong></td>
 
-            <?php
-            foreach ($jobDetails as $job) echo '
-                <td>' . $job->jobId . '</td>
-            ';
-            ?>
-        </tr>
-        <tr>
-            <td><strong>Job Name</strong></td>
-
-            <?php
-            foreach ($jobDetails as $job) echo '
-                <td>' . $job->jobName . '</td>
-            ';
-            ?>
-        </tr>
-        @endif
-
-        @if($expVal["jobState"])
+        @foreach( $expVal["jobDetails"] as $index => $jobDetail)
+            <tr>
+                <th>Job Name : {{$jobDetail->jobName}}</th>
+                <td>Job ID : {{ $jobDetail->jobId}}</td>
+                <td> Status : {{$jobDetail->jobStatus->jobStateName }}</td>
+                <td> Creation Time : {{ date("F j, Y, g:i a", $jobDetail->creationTime )}}</td>
+            </tr>
+        @endforeach
+        <!--
+        @if( isset( $expVal["jobState"]) )
             <tr>
                 <td><strong>Job Status</strong></td>
                 <td>{{ $expVal["jobState"] }}</td>
             </tr>
         @endif
+        -->
 
         @if( isset($dashboard))
         <tr>
@@ -98,11 +88,11 @@
 
         <tr>
             <td><strong>Creation time</strong></td>
-            <td class="time" unix-time="<?php echo $expVal["experimentCreationTime"]; ?>"></td>
+            <td class="time" unix-time="{{ $expVal["experimentCreationTime"] }}"></td>
         </tr>
         <tr>
             <td><strong>Last Modified Time</strong></td>
-            <td class="time" unix-time="<?php echo $expVal["experimentTimeOfStateChange"]; ?>"></td>
+            <td class="time" unix-time="{{ $expVal["experimentTimeOfStateChange"] }}"></td>
         </tr>
         <tr>
             <td><strong>Enable Auto Schedule</strong></td>
