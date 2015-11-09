@@ -200,6 +200,40 @@ return array(
         /**
          * SMTP server port on which the portal should connect
          */
-        'portal-smtp-server-port' => '587'
+        'portal-smtp-server-port' => '587',
+
+        /**
+         * Set JIRA Issue Collector scripts here.
+         */
+        'jira-help' => 
+        [
+            /**
+             * Report Issue Script issued for your app by Atlassian JIRA
+             */
+            'report-issue-script' => '',
+            /**
+             * Collector id at the end of the above script
+             */
+            'report-issue-collector-id' => '',
+            /**
+             * Create Report Script issued for your app by Atlassian JIRA
+             */
+            'request-feature-script' => '',
+            /**
+             * Collector id at the end of the above script
+             */
+            'request-feature-collector-id' => ''
+        ],
+
+        /**
+         * Set Google Analytics Id here. ID format that generates from  
+         * creating tracker object should be 
+         *
+         * UA-XXXXX-Y 
+         *
+         * for it to be working correctly. Currently it is only set for 
+         * sending pageviews.
+         */
+        'google-analytics-id' => ''
     ]
 );
