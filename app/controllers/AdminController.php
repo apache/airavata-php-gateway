@@ -16,20 +16,28 @@ class AdminController extends BaseController {
 		//only for super admin
 		//Session::put("scigap_admin", true);
 
-		$crData = CRUtilities::getEditCRData();
-		$gateways = CRUtilities::getAllGatewayProfilesData();
-
-		$gatewayData = array( 
-														"gateways" => $gateways, 
-														"computeResources" => CRUtilities::getAllCRObjects(),
-														"crData" => $crData);
 		if( Session::has("scigap_admin"))
+		{
+			$crData = CRUtilities::getEditCRData();
+			$gateways = CRUtilities::getAllGatewayProfilesData();
+
+			$gatewayData = array( 
+									"gateways" => $gateways, 
+									"computeResources" => CRUtilities::getAllCRObjects(),
+									"crData" => $crData
+								);
+			
 			$view = "scigap-admin/manage-gateway";
-		else{
-			$view = "admin/manage-gateway";
+
             Session::put("admin-nav", "gateway-prefs");
-        }
 			return View::make( $view, $gatewayData);
+		}
+		else{
+        	Session::put("admin-nav", "exp-statistics");
+			$view = "admin/manage-experiments";
+			return View::make( $view);
+
+        }
 	}
 
 	public function addAdminSubmit(){
@@ -68,6 +76,27 @@ class AdminController extends BaseController {
         Session::put("admin-nav", "manage-users");
         return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 
+    }
+
+    public function gatewayView(){
+    	//only for super admin
+		//Session::put("scigap_admin", true);
+		$crData = CRUtilities::getEditCRData();
+		$gateways = CRUtilities::getAllGatewayProfilesData();
+		$gatewayData = array( 
+								"gateways" => $gateways, 
+								"computeResources" => CRUtilities::getAllCRObjects(),
+								"crData" => $crData
+							);
+		//var_dump( $gateways); exit;
+		if( Session::has("scigap_admin"))
+			$view = "scigap-admin/manage-gateway";
+		else{
+			$view = "admin/manage-gateway";
+        }
+
+        Session::put("admin-nav", "gateway-prefs");
+		return View::make( $view, $gatewayData);
     }
 
 	public function addGatewayAdminSubmit(){
@@ -188,8 +217,11 @@ class AdminController extends BaseController {
             $inputs = Input::all();
             $expContainer = AdminUtilities::get_experiments_of_time_range($inputs);
             $expStates = ExperimentUtilities::getExpStates();
-            return View::make("partials/experiment-container", array("expContainer" => $expContainer,
-                "expStates" => $expStates));
+            return View::make("partials/experiment-container", 
+            	array(	"expContainer" => $expContainer,
+                		"expStates" => $expStates,
+                		"dashboard" => true
+                	));
         }
     }
 

@@ -62,7 +62,7 @@
                                     <div class="col-md-10 credential-store-token-change">
                                         <form>
                                             <div class="form-group">
-                                                <label class="control-label col-md-12">Credential Store Token</label>
+                                                <label class="control-label col-md-12">{{ Session::get('theme') }} Credential Store Token</label>
                                                 <div class="col-md-9">
                                                     <input type="text" name="resourceSpecificCredentialStoreToken"  data-gpid="{{$gp->gatewayId}}" class="form-control credential-store-token"
                                                            value="@if( isset( $gp->profile->credentialStoreToken) ){{$gp->profile->credentialStoreToken}}@endif"/>
@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="col-md-10">
                                         <button class="btn btn-default add-cr" data-gpid="{{$gp->gatewayId}}"><span
-                                                class="glyphicon glyphicon-plus"></span> Add a Compute Resource
+                                                class="glyphicon glyphicon-plus"></span> Add a Compute Resource Preference
                                         </button>
                                     </div>
                                     @endif
@@ -83,7 +83,7 @@
                                     <div class="col-md-10">
                                         @if( isset( $gp->profile->computeResourcePreferences) )
                                         <div>
-                                            <h3>Existing Compute Resources :</h3>
+                                            <h3>Compute Resources Preferences :</h3>
                                         </div>
                                         <div class="accordion-inner">
                                             <div class="panel-group" id="accordion-{{$indexGP}}">

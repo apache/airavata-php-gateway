@@ -621,9 +621,8 @@ class ExperimentUtilities
                 if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
                     $explode = explode('/', $output->value);
                     //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
-                    $outputPath = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-                        Config::get('pga_config.airavata')['experiment-data-dir'], $output->value);
-
+                    $outputPath = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'], Config::get('pga_config.airavata')['experiment-data-dir'], $output->value);
+                    //print_r( $output->value); 
                     if(file_exists(str_replace('//','/',$output->value))){
                         $outputPathArray = explode("/", $outputPath);
 
@@ -632,9 +631,16 @@ class ExperimentUtilities
                 $outputPathArray[ count($outputPathArray)-1] . '">' .
                             $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                     }
-                } elseif ($output->type == DataType::STRING) {
+                    else
+                        echo 'Output paths are not correctly defined for : <br/>' . $output->name . '<br/><br/> Please report this issue to the admin<br/><br/>';
+                
+                } 
+                elseif ($output->type == DataType::STRING) {
                     echo '<p>' . $output->value . '</p>';
                 }
+                else
+                    echo 'output : '. $output;
+                //echo 'output-type : ' . $output->type;
             }
         } else
             echo "Experiment hasn't completed. Experiment Status is : " . $expStatus;

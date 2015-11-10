@@ -38,9 +38,6 @@
     </div>
 </div>
 
-<hr/>
-<br/>
-
 <div class="dates row">
     <div class="well col-md-12">
         <div class="col-md-10">

@@ -87,7 +87,7 @@ class ExperimentController extends BaseController
             //var_dump( $jobDetails); exit;
             foreach( $jobDetails as $index => $jobDetail){
                 if(isset($jobDetail->jobStatus)){
-                    $jobDetails[ $index]->jobStatus->jobStateName = JobState::$__names[$jobDetail->jobStatus->jobState];
+                      $jobDetails[ $index]->jobStatus->jobStateName = JobState::$__names[$jobDetail->jobStatus->jobState];
                 }
                 else{
                     $jobDetails[ $index]->jobStatus = new stdClass();

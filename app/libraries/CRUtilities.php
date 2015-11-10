@@ -448,6 +448,7 @@ class CRUtilities
         }
 
         $gatewayProfiles = Airavata::getAllGatewayResourceProfiles(Session::get('authz-token'));
+        //var_dump( $gatewayProfiles); exit;
         //$gatewayProfileIds = array("GatewayTest3_57726e98-313f-4e7c-87a5-18e69928afb5", "GatewayTest4_4fd9fb28-4ced-4149-bdbd-1f276077dad8");
         foreach ($gateways as $key => $gw) {
             $gateways[$key]->profile = array();
