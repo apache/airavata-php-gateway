@@ -19,7 +19,7 @@
         {{ Session::forget("message") }}
         @endif
 
-        @if( Session::has('admin') )
+        @if( Session::has('authorized-user') || Session::has('admin') )
         <div class="row text-center breathing-space">
             <h1>Let's get started!</h1>
         </div>
