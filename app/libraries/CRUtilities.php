@@ -582,6 +582,20 @@ class CRUtilities
         return $computeResources;
     }
 
+    /**
+    * Get a list of all Data Storages available 
+    * @param null
+    * @return 
+    **/
+
+    public static function getAllDataStoragePreferences( $gateways){
+        $dspArray = array();
+        foreach( $gateways as $gateway){
+            $dspArray[] = Airavata::getAllGatewayDataStoragePreferences( Session::get('authz-token'), $gateway->gatewayId);
+        }
+        return $dspArray;
+    }
+
 }
 
 ?>

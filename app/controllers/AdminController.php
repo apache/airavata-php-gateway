@@ -33,9 +33,7 @@ class AdminController extends BaseController {
 			return View::make( $view, $gatewayData);
 		}
 		else{
-        	Session::put("admin-nav", "exp-statistics");
-			$view = "admin/manage-experiments";
-			return View::make( $view);
+        	return View::make("admin/dashboard");
 
         }
 	}
@@ -83,6 +81,7 @@ class AdminController extends BaseController {
 		//Session::put("scigap_admin", true);
 		$crData = CRUtilities::getEditCRData();
 		$gateways = CRUtilities::getAllGatewayProfilesData();
+		//$dsData = CRUtilities::getAllDataStoragePreferences( $gateways);
 		$gatewayData = array( 
 								"gateways" => $gateways, 
 								"computeResources" => CRUtilities::getAllCRObjects(),

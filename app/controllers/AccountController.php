@@ -203,7 +203,7 @@ class AccountController extends BaseController
             return View::make('home');
         }
 
-        return Redirect::to("home");
+        return Redirect::to("admin/console");
     }
 
     public function forgotPassword()

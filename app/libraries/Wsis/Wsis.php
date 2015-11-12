@@ -94,8 +94,10 @@ class Wsis {
         try {
             $this->userStoreManager = new UserStoreManager($service_url, $parameters);
             $this->tenantManager = new TenantManager($service_url, $parameters);
+            /*
             $this->userProfileManager = new UserProfileManager($service_url, $parameters);
             $this->userInfoRecoveryManager = new UserInformationRecoveryManager($service_url, $parameters);
+            */
             $this->oauthManger = new OAuthManager(Config::get('pga_config.wsis')['service-url'], $verify_peer, $cafile_path);
         } catch (Exception $ex) {
             throw new Exception("Unable to instantiate WSO2 IS client", 0, $ex);

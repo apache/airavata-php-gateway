@@ -13,16 +13,9 @@
 @include( 'partials/dashboard-block')
 <div id="page-wrapper">
 <div class="col-md-12">
-    <h3>Experiments</h3>
+    <h2>Experiments</h2>
 </div>
 <div class="container-fluid">
-
-<div class="row">
-    <!--
-        <div class="well col-md-2 text-center">
-            Total 500
-        </div>
-    -->
 
     <div class="well form-group form-horizontal col-md-12">
         <label class="col-md-3">Enter Experiment Id to View Summary :</label>
@@ -36,9 +29,7 @@
         <div class="experiment-info col-md-12">
         </div>
     </div>
-</div>
 
-<div class="dates row">
     <div class="well col-md-12">
         <div class="col-md-10">
             <div class='col-md-5'>
@@ -83,7 +74,6 @@
     </div>
     <div class="experiment-statistics"></div>
     <div class="loading-img-statistics hide text-center"><img src="{{URL::to('/')}}/assets/ajax-loader.gif"/></div>
-</div>
 
 <!--<div class="row">-->
 <!--    <div class="col-lg-12">-->
@@ -387,7 +377,8 @@ to be uncommented when actually in use.
         $("#datetimepicker10").find("input").val( todayDate);
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
-        getExperiments( ydayDate, todayDate);
+        var msg = "Experiments statistics from last 24 hours";
+        getExperiments( ydayDate, todayDate, msg);
     });
 
     $(".oneWeekExp").click( function(){
@@ -397,7 +388,8 @@ to be uncommented when actually in use.
         $("#datetimepicker10").find("input").val( todayDate);
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
-        getExperiments( ydayDate, todayDate);
+        var msg = "Experiments statistics from last week";
+        getExperiments( ydayDate, todayDate, msg);
     })
 
     $("#getStatistics").click(function () {
@@ -412,14 +404,19 @@ to be uncommented when actually in use.
         }
     });
 
-    function getExperiments( startTime, endTime){
+    // Load experiments from the last 24 hours on page load.
+    $(".oneDayExp").click();
+
+    function getExperiments( startTime, endTime, msg){
         $(".experiment-statistics").html("");
         $(".loading-img-statistics").removeClass("hide");
             $.ajax({
                 url: 'experimentStatistics?fromTime=' + startTime + '&' + 'toTime=' + endTime,
                 type: 'get',
                 success: function (data) {
-                    $(".experiment-statistics").html(data);
+                    if( msg == null)
+                        msg = "Experiment Statistics from " + startTime + " to " + endTime;
+                    $(".experiment-statistics").html( "<h2 class='text-center'>" + msg + "</h2><hr/>" + data);
                 }
             }).complete(function () {
                 $(".loading-img-statistics").addClass("hide");

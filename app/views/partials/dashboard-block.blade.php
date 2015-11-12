@@ -5,17 +5,17 @@
         <li
             @if( Session::has("admin-nav") && Session::get("admin-nav") == "exp-statistics") class="active" @endif>
             <a class="dashboard-link"  href="{{ URL::to('/')}}/admin/dashboard/experiments">
-                <i class="fa fa-fw fa-experiments"></i>Experiment Statistics
+                <span class="glyphicon glyphicon-off"></span>&nbsp; Experiment Statistics
             </a>
         </li>
 
         <li
         @if( Session::has("admin-nav") && Session::get("admin-nav") == "manage-users") class="active" @endif>
-            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/users"><i class="fa fa-fw fa-bar-chart-o"></i> Users</a>
+            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/users"><span class="glyphicon glyphicon-user"></span>&nbsp; Users</a>
         </li>
         <li
          @if( Session::has("admin-nav") && Session::get("admin-nav") == "manage-roles") class="active" @endif>
-            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/roles"><i class="fa fa-fw fa-table"></i>Roles</a>
+            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/roles"><span class="glyphicon glyphicon-eye-open"></span>&nbsp; Roles</a>
         </li>
 
 <!--        <li-->
@@ -24,7 +24,7 @@
 <!--                Store</a>-->
 <!--        </li>-->
         <li>
-            <a><i class="fa fa-fw fa-table"></i>Compute Resources</a>
+            <a><span class="glyphicon glyphicon-briefcase"></span>&nbsp; Compute Resources</a>
             <ul>
                 @if(Session::has("admin"))
                 <li
@@ -42,7 +42,7 @@
 
         </li>
         <li>
-            <a><i class="fa fa-fw fa-table"></i>App Catalog</a>
+            <a><span class="glyphicon glyphicon-tasks"></span>&nbsp; App Catalog</a>
             <ul>
                 @if(Session::has("admin") || Session::has("admin-read-only"))
                 <li
@@ -64,7 +64,7 @@
 
         <li
             @if( Session::has("admin-nav") && Session::get("admin-nav") == "gateway-prefs") class="active" @endif>
-            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/gateway"><i class="fa fa-fw fa-dashboard"></i>@if(
+            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/gateway"><span class="glyphicon glyphicon-sort"></span>&nbsp; @if(
                 Session::has("scigap_admin"))Gateways @else Gateway Preferences @endif</a>
         </li>
 <!--        <li>-->

@@ -17,6 +17,10 @@ body {
     }
 }
 
+.console-icon{
+    font-size: 3em;
+}
+
 #wrapper {
     padding-left: 0;
 }

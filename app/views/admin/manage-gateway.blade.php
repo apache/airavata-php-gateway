@@ -80,10 +80,11 @@
                                     </div>
                                     @endif
                                 </div>
+                                    
                                     <div class="col-md-10">
                                         @if( isset( $gp->profile->computeResourcePreferences) )
                                         <div>
-                                            <h3>Compute Resources Preferences :</h3>
+                                            <h3>Compute Resource Preferences :</h3>
                                         </div>
                                         <div class="accordion-inner">
                                             <div class="panel-group" id="accordion-{{$indexGP}}">
@@ -150,6 +151,71 @@
                                             </div>
                                         </form>
                                         -->
+                                    </div>
+
+                                    <div class="col-md-10">
+                                        <button class="btn btn-default add-dsp" data-gpid="{{$gp->gatewayId}}"><span
+                                                class="glyphicon glyphicon-plus"></span> Add a Data Storage Preference
+                                        </button>
+                                    </div>
+
+                                    <div class="col-md-10">
+                                        @if( isset( $gp->profile->dataStoragePreferences) )
+                                        <div>
+                                            <h3>Data Storage Preferences :</h3>
+                                        </div>
+
+                                        <div class="accordion-inner">
+                                            <div class="panel-group" id="accordion-{{$indexGP}}">
+                                                @foreach( (array)$gp->profile->dataStoragePreferences as $indexDSP
+                                                => $dsp )
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed gateway-name"
+                                                               data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse-dsp-{{$indexGP}}-{{$indexDSP}}">
+                                                                {{ $dsp->dataMovememtResourceId }}
+                                                            </a>
+                                                            @if(Session::has("admin"))
+                                                            <div class="pull-right col-md-2 gateway-options fade">
+                                                                <span class="glyphicon glyphicon-remove remove-resource"
+                                                                      style="cursor:pointer;" data-toggle="modal"
+                                                                      data-target="#remove-resource-block"
+                                                                      data-dsp-id="{{$ds->computeResourceId}}"
+                                                                      data-gp-id="{{ $gp->gatewayId }}"></span>
+                                                            </div>
+                                                            @endif
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse-dsp-{{$indexGP}}-{{$indexDSP}}"
+                                                         class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div class="app-data-storage-preferences-block">
+                                                                <form action="{{URL::to('/')}}/gp/update-dsp"
+                                                                      method="POST">
+                                                                    <input type="hidden" name="gatewayId" id="gatewayId"
+                                                                           value="{{$gp->gatewayId}}">
+                                                                    <input type="hidden" name="dataStorageId"
+                                                                           id="gatewayId"
+                                                                           value="{{$crp->dataMovememtResourceId}}">
+
+                                                                    <div class="form-horizontal">
+                                                                        @include('partials/gateway-preferences',
+                                                                        array('computeResource' => $crp->crDetails,
+                                                                        'crData' => $crData, 'preferences'=>$crp,
+                                                                        'show'=>true))
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        @endif
+
                                     </div>
                                 </div>
                             </div>

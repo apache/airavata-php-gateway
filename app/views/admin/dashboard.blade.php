@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/admin.css')}}
 @stop
 
 @section('content')
@@ -19,15 +20,26 @@
         @endif
 
         <div class="row text-center">
-            <h1>Admin Console</h1>
+            <h1>Let's get started!</h1>
         </div>
         <div class="row text-center admin-options">
 
             <div class="row">
-                <a href="{{URL::to('/')}}/manage/users">
+                <a href="{{URL::to('/')}}/admin/dashboard/experiments">
                     <div class="col-md-3 well">
                         <div class="col-md-12">
-                            <span class="glyphicon glyphicon-user"></span>
+                            <span class="glyphicon glyphicon-off console-icon"></span>
+                        </div>
+                        <div class="col-md-12">
+                            Experiments
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{{URL::to('/')}}/admin/dashboard/users">
+                    <div class=" col-md-offset-1 col-md-3 well">
+                        <div class="col-md-12">
+                            <span class="glyphicon glyphicon-user  console-icon"></span>
                         </div>
                         <div class="col-md-12">
                             Users
@@ -35,33 +47,35 @@
                     </div>
                 </a>
 
-                <a href="{{URL::to('/')}}/admin/dashboard">
+                <a href="{{URL::to('/')}}/admin/dashboard/roles">
                     <div class=" col-md-offset-1 col-md-3 well">
                         <div class="col-md-12">
-                            <span class="glyphicon glyphicon-eye-open"></span>
+                            <span class="glyphicon glyphicon-eye-open  console-icon"></span>
                         </div>
                         <div class="col-md-12">
-                            Admins
+                            Roles
                         </div>
                     </div>
                 </a>
 
+            </div>
+
+            <div class="row">
+
                 <a href="{{URL::to('/')}}/cr/browse">
-                    <div class=" col-md-offset-1 col-md-3 well">
+                    <div class="col-md-3 well">
                         <div class="col-md-12">
-                            <span class="glyphicon glyphicon-briefcase"></span>
+                            <span class="glyphicon glyphicon-briefcase  console-icon"></span>
                         </div>
                         <div class="col-md-12">
                             Resources
                         </div>
                     </div>
                 </a>
-            </div>
 
-            <div class="row">
-                <div class="col-md-3 well">
+                <div class="col-md-offset-1 col-md-3 well">
                     <div class="col-md-12">
-                        <span class="glyphicon glyphicon-tasks"></span>
+                        <span class="glyphicon glyphicon-tasks  console-icon"></span>
                     </div>
                     <div class="col-md-12">
                         Application Catalog
@@ -76,7 +90,7 @@
 
                 <div class=" col-md-offset-1 col-md-3 well">
                     <div class="col-md-12">
-                        <span class="glyphicon glyphicon-sort"></span>
+                        <span class="glyphicon glyphicon-sort console-icon"></span>
                     </div>
                     <div class="col-md-12">
                         Gateways
@@ -87,10 +101,10 @@
                         <option value="{{URL::to('/')}}/gp/browse">Browse</option>
                     </select>
                 </div>
-
+                <!--
                 <div class=" col-md-offset-1 col-md-3 well">
                     <div class="col-md-12">
-                        <span class="glyphicon glyphicon-list-alt"></span>
+                        <span class="glyphicon glyphicon-list-alt console-icon"></span>
                     </div>
                     <div class="col-md-12">
                         Reports
@@ -101,13 +115,14 @@
             <div class="row">
                 <div class="col-md-3 well">
                     <div class="col-md-12">
-                        <span class="glyphicon glyphicon-question-sign"></span>
+                        <span class="glyphicon glyphicon-question-sign console-icon"></span>
                     </div>
                     <div class="col-md-12">
                         Support
                     </div>
                 </div>
             </div>
+            -->
 
         </div>
     </div>

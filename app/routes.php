@@ -169,7 +169,7 @@ Route::get("admin/console", "AdminController@console");
 
 Route::get("admin/dashboard", "AdminController@dashboard");
 
-Route::get("admin/dashboard/gateway", "AdminController@dashboard");
+Route::get("admin/dashboard/gateway", "AdminController@gatewayView");
 
 Route::get("admin/dashboard/users", "AdminController@usersView");
 
