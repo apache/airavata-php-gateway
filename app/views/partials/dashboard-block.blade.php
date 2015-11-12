@@ -41,6 +41,26 @@
             </ul>
 
         </li>
+
+        <li>
+            <a><span class="glyphicon glyphicon-folder-open"></span>&nbsp; Data Storages</a>
+            <ul>
+                @if(Session::has("admin"))
+                <li
+                @if( Session::has("admin-nav") && Session::get("admin-nav") == "cr-create") class="active" @endif>
+                    <a class="dashboard-link" href="{{ URL::to('/')}}/ds/create"><i class="fa fa-fw fa-table"></i>Register</a>
+                </li>
+                @endif
+                @if(Session::has("admin") || Session::has("admin-read-only"))
+                <li
+                @if( Session::has("admin-nav") && Session::get("admin-nav") == "cr-browse") class="active" @endif>
+                    <a class="dashboard-link" href="{{ URL::to('/')}}/ds/browse"><i class="fa fa-fw fa-table"></i>Browse</a>
+                </li>
+                @endif
+            </ul>
+
+        </li>
+
         <li>
             <a><span class="glyphicon glyphicon-tasks"></span>&nbsp; App Catalog</a>
             <ul>

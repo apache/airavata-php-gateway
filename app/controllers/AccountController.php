@@ -132,7 +132,7 @@ class AccountController extends BaseController
             if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
                 return $this->initializeWithAiravata($username);
             }
-            return Redirect::to("home");
+            return View::make("account/dashboard");
         }
 
     }
@@ -203,7 +203,7 @@ class AccountController extends BaseController
             return View::make('home');
         }
 
-        return Redirect::to("admin/console");
+        return View::make("account/dashboard");
     }
 
     public function forgotPassword()

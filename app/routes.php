@@ -165,8 +165,6 @@ Route::post("gp/credential-store-token-change", "GatewayprofileController@cstCha
 
 //Management Dashboard
 
-Route::get("admin/console", "AdminController@console");
-
 Route::get("admin/dashboard", "AdminController@dashboard");
 
 Route::get("admin/dashboard/gateway", "AdminController@gatewayView");

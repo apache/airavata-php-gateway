@@ -8,10 +8,6 @@ class AdminController extends BaseController {
 		Session::put("nav-active", "user-console");
 	}
 
-	public function console(){
-		return View::make("admin/dashboard");
-	}
-
 	public function dashboard(){
 		//only for super admin
 		//Session::put("scigap_admin", true);
@@ -33,7 +29,7 @@ class AdminController extends BaseController {
 			return View::make( $view, $gatewayData);
 		}
 		else{
-        	return View::make("admin/dashboard");
+        	return View::make("account/dashboard");
 
         }
 	}
