@@ -127,6 +127,45 @@ class ExperimentUtilities
     }
 
     /**
+     * Get the experiment tree including all nested structures such as proesses, jobs, tasks etc
+     * @param $expId
+     * @return null
+     */
+    public static function get_detailed_experiment_tree($expId)
+    {
+
+        try {
+            return Airavata::getDetailedExperimentTree(Session::get('authz-token'), $expId);
+        } catch (InvalidRequestException $ire) {
+            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
+            Please try again later or submit a bug report using the link in the Help menu.</p>' .
+                '<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
+        } catch (ExperimentNotFoundException $enf) {
+            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
+            Please try again later or submit a bug report using the link in the Help menu.</p>' .
+                '<p>ExperimentNotFoundException: ' . $enf->getMessage() . '</p>');
+        } catch (AiravataClientException $ace) {
+            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
+            Please try again later or submit a bug report using the link in the Help menu.</p>' .
+                '<p>AiravataClientException: ' . $ace->getMessage() . '</p>');
+        } catch (AiravataSystemException $ase) {
+            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
+            Please try again later or submit a bug report using the link in the Help menu.</p>' .
+                '<p>AiravataSystemException: ' . $ase->getMessage() . '</p>');
+        } catch (TTransportException $tte) {
+            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
+            Please try again later or submit a bug report using the link in the Help menu.</p>' .
+                '<p>TTransportException: ' . $tte->getMessage() . '</p>');
+        } catch (Exception $e) {
+            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
+            Please try again later or submit a bug report using the link in the Help menu.</p>' .
+                '<p>Exception: ' . $e->getMessage() . '</p>');
+        }
+
+    }
+
+
+    /**
      * Create and configure a new Experiment
      * @return Experiment
      */

@@ -79,7 +79,7 @@ class ExperimentController extends BaseController
 
     public function summary()
     {
-        $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
+        $experiment = ExperimentUtilities::get_detailed_experiment_tree($_GET['expId']);
         if ($experiment != null) {
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
