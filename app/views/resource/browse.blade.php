@@ -23,19 +23,18 @@
 
     @if ( isset( $allCRs) )
     @if (sizeof($allCRs) == 0)
-    {{ CommonUtilities::print_warning_message('No Compute Resources are registered. Please use "Register Compute
-    Resource" to
-    register a new resources.') }}
+    <?php $registerDataStorageURL = URL::to('/') . "/ds/create";?>
+    {{ CommonUtilities::print_warning_message('No Data Storage Resources are registered. <br/> <a href="{{$registerDataStorageURL}}" class="btn btn-primary"></a>') }}
     @else
     <br/>
     <div class="col-md-12">
         <div class="panel panel-default form-inline">
             <div class="panel-heading">
-                <h3 style="margin:0;">Search Compute Resources</h3>
+                <h3 style="margin:0;">Search Data Storage Resources</h3>
             </div>
             <div class="panel-body">
                 <div class="form-group search-text-block">
-                    <label>Compute Resource Name </label>
+                    <label>Data Storage Resource Name </label>
                     <input type="search" class="form-control filterinput"/>
                 </div>
             </div>
@@ -46,11 +45,11 @@
                 <table class="table">
 
                     <tr>
-
-                        <th>Name</th>
                         <th>Id</th>
+                        <th>Login Username</th>
+                        <th>File System Root Location</th>
+                        <th>Resource Specific Credential Store Token</th>
                         @if(Session::has("admin"))
-                        <th>Enabled</th>
                         <th>Edit</th>
                         @endif
                         <th>View</th>
@@ -59,44 +58,34 @@
                         @endif
                     </tr>
 
-                    @foreach($allCRs as $resource)
+                    @foreach($allDSRs as $resource)
                     <?php
-                        $crId = $resource->computeResourceId;
-                        $crName = $resource->hostName;
-                        $enabled = $resource->enabled;
+                        $dsId = $resource->dataMovememtResourceId;
+                        $userName = $resource->loginUserName;
+                        $fileSystemRootLocation = $resource->fileSystemRootLocation;
+                        $resourceSpecificCredentialStoreToken = $resource->resourceSpecificCredentialStoreToken;
                     ?>
-                    <tr id="crDetails">
-                        <td>{{ $crName }}</td>
-                        <td>{{ $crId }}</td>
+                    <tr id="dsDetails">
+                        <td>{{ $dsId }}</td>
+                        <td>{{ $userName }}</td>
+                        <td>{{ $fileSystemRootLocation }}</td>
+                        <td>{{ resourceSpecificCredentialStoreToken }}</td>
                         @if(Session::has("admin"))
-                        <td>
-                            @if(!$enabled)
-                            <div class="checkbox">
-                                <input class="resource-status" resourceId="{{$crId}}" type="checkbox">
-                            </div>
-                            @else
-                            <div class="checkbox">
-                                <input class="resource-status" type="checkbox" resourceId="{{$crId}}" checked>
-                            </div>
-                            @endif
-                        </td>
-                        <td><a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
+                        <td><a href="{{URL::to('/')}}/ds/edit?crId={{ $dsId }}" title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
                         </td>
                         @endif
                         <td>
-                            <a href="{{URL::to('/')}}/cr/view?crId={{ $crId }}" title="Edit">
+                            <a href="{{URL::to('/')}}/ds/view?crId={{ $crId }}" title="Edit">
                             <span class="glyphicon glyphicon-list"></span>
                             </a>
                         </td>
                         @if(Session::has("admin"))
                         <td>
                             <a href="#" title="Delete">
-                                <span class="glyphicon glyphicon-trash del-cr" data-toggle="modal"
-                                      data-target="#delete-cr-block" data-delete-cr-name="{{$crName}}"
-                                      data-deployment-count="{{$connectedDeployments[$crId]}}"
-                                      data-crid="{{$crId}}"></span>
+                                <span class="glyphicon glyphicon-trash del-ds" data-toggle="modal"
+                                      data-target="#delete-ds-block" data-dsid="{{$dsId}}"></span>
                             </a>
                         </td>
                         @endif
@@ -109,20 +98,17 @@
         @endif
         @endif
 
-        <div class="modal fade" id="delete-cr-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+        <div class="modal fade" id="delete-ds-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
              aria-hidden="true">
             <div class="modal-dialog">
-
-                <form action="{{URL::to('/')}}/cr/delete-cr" method="POST">
+                <form action="{{URL::to('/')}}/ds/delete-ds" method="POST">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h3 class="text-center">Delete Compute Resource Confirmation</h3>
+                            <h3 class="text-center">Delete Data Storage Resource Confirmation</h3>
                         </div>
                         <div class="modal-body">
                             <input type="hidden" class="form-control delete-crId" name="del-crId"/>
-                            The Compute Resource, <span class="delete-cr-name"></span> is connected to <span
-                                class="deploymentCount">0</span> deployments.
-                            Do you really want to delete it? This action cannot be undone.
+                            Do you really want to delete Data Storage Resource, <span class="delete-ds-id"></span>? This action cannot be undone.
                         </div>
                         <div class="modal-footer">
                             <div class="form-group">
@@ -169,45 +155,9 @@
             return false;
         });
 
-        $(".del-cr").click(function () {
-            $(".delete-cr-name").html("'" + $(this).data("delete-cr-name") + "'");
-            $(".delete-crId").val($(this).data("crid"));
-            $(".deploymentCount").html($(this).data("deployment-count"));
-        });
-
-        $('.resource-status').click(function() {
-            var $this = $(this);
-            if ($this.is(':checked')) {
-                //enable compute resource
-                $resourceId = $this.attr("resourceId");
-                $.ajax({
-                    type: 'POST',
-                    url: "{{URL::to('/')}}/admin/enable-cr",
-                    data: {
-                        'resourceId': $resourceId
-                    },
-                    async: true,
-                    success: function (data) {
-                        console.log("enabled cr " + $resourceId);
-                        $(".success-message").html("<span class='alert alert-success col-md-12'>Successfully enabled compute resource</span>");
-                    }
-                });
-            } else {
-                //disabled compute resource
-                $resourceId = $this.attr("resourceId");
-                $.ajax({
-                    type: 'POST',
-                    url: "{{URL::to('/')}}/admin/disable-cr",
-                    data: {
-                        'resourceId': $resourceId
-                    },
-                    async: true,
-                    success: function (data) {
-                        console.log("disabled cr " + $resourceId);
-                        $(".success-message").html("<span class='alert alert-success col-md-12'>Successfully disabled compute resource</span>");
-                    }
-                });
-            }
+        $(".del-ds").click(function () {
+            $(".delete-ds-id").html("'" + $(this).data("delete-ds-id") + "'");
+            $(".delete-dsId").val($(this).data("dsid"));
         });
     </script>
     @stop

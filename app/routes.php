@@ -117,6 +117,33 @@ Route::post("cr/delete-jsi", "ComputeResourceController@deleteActions");
 Route::post("cr/delete-dmi", "ComputeResourceController@deleteActions");
 
 Route::post("cr/delete-cr", "ComputeResourceController@deleteActions");
+
+/*
+ * Data Storage Resources Routes
+*/
+
+Route::get("ds/create", function () {
+    return Redirect::to("cr/create/step1");
+});
+
+Route::get("ds/create", "DatastorageController@createView");
+
+Route::post("ds/create", "DatastorageController@createSubmit");
+
+Route::get("ds/edit", "DatastorageController@editView");
+
+Route::post("ds/edit", "DatastorageController@editSubmit");
+
+Route::get("ds/view", "DatastorageController@viewView");
+
+Route::get("ds/browse", "DatastorageController@browseView");
+
+Route::post("ds/delete-jsi", "DatastorageController@deleteActions");
+
+Route::post("ds/delete-dmi", "DatastorageController@deleteActions");
+
+Route::post("ds/delete-cr", "DatastorageController@deleteActions");
+
 /*
  * Application Catalog Routes
 */
