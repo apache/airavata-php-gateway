@@ -122,27 +122,27 @@ Route::post("cr/delete-cr", "ComputeResourceController@deleteActions");
  * Data Storage Resources Routes
 */
 
-Route::get("ds/create", function () {
-    return Redirect::to("cr/create/step1");
+Route::get("sr/create", function () {
+    return Redirect::to("sr/create/step1");
 });
 
-Route::get("ds/create", "DatastorageController@createView");
+Route::get("sr/create", "StorageResourceController@createView");
 
-Route::post("ds/create", "DatastorageController@createSubmit");
+Route::post("sr/create", "StorageResourceController@createSubmit");
 
-Route::get("ds/edit", "DatastorageController@editView");
+Route::get("sr/edit", "StorageResourceController@editView");
 
-Route::post("ds/edit", "DatastorageController@editSubmit");
+Route::post("sr/edit", "StorageResourceController@editSubmit");
 
-Route::get("ds/view", "DatastorageController@viewView");
+Route::get("sr/view", "StorageResourceController@viewView");
 
-Route::get("ds/browse", "DatastorageController@browseView");
+Route::get("sr/browse", "StorageResourceController@browseView");
 
-Route::post("ds/delete-jsi", "DatastorageController@deleteActions");
+Route::post("sr/delete-jsi", "StorageResourceController@deleteActions");
 
-Route::post("ds/delete-dmi", "DatastorageController@deleteActions");
+Route::post("sr/delete-dmi", "StorageResourceController@deleteActions");
 
-Route::post("ds/delete-cr", "DatastorageController@deleteActions");
+Route::post("sr/delete-cr", "StorageResourceController@deleteActions");
 
 /*
  * Application Catalog Routes

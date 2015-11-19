@@ -19,7 +19,7 @@
 <input type="hidden" class="base-url" value="{{URL::to('/')}}"/>
 
 <div class="well">
-    <h4>Compute Resource : {{ $computeResource->hostName }}</h4>
+    <h4>Storage Resource : {{ $storageResource->hostName }}</h4>
 </div>
 @if( Session::has("message"))
 <span class="alert alert-success col-md-12">{{Session::get("message")}}</span>
@@ -29,9 +29,11 @@
 <div class="col-md-12">
     <ul class="nav nav-tabs nav-justified" id="tabs" role="tablist">
         <li class="active"><a href="#tab-desc" data-toggle="tab">Description</a></li>
+    <!--
         <li><a href="#tab-queues" data-toggle="tab">Queues</a></a></li>
         <li><a href="#tab-filesystem" data-toggle="tab">FileSystem</a></li>
         <li><a href="#tab-jobSubmission" data-toggle="tab">Job Submission Interfaces</a></li>
+    -->
         <li><a href="#tab-dataMovement" data-toggle="tab">Data Movement Interfaces</a></li>
     </ul>
 </div>
@@ -40,46 +42,19 @@
 
 <div class="tab-pane active" id="tab-desc">
 
-    <form role="form" method="POST" action="{{ URL::to('/') }}/cr/edit">
-        <input type="hidden" name="crId" value="{{Input::get('crId') }}"/>
-        <input type="hidden" name="cr-edit" value="resDesc"/>
+    <form role="form" method="POST" action="{{ URL::to('/') }}/sr/edit">
+        <input type="hidden" name="srId" value="{{Input::get('srId') }}"/>
+        <input type="hidden" name="sr-edit" value="resDesc"/>
 
         <div class="form-group required">
             <label class="control-label">Host Name</label>
-            <input class="form-control hostName" value="{{ $computeResource->hostName }}" maxlength="100"
+            <input class="form-control hostName" value="{{ $storageResource->hostName }}" maxlength="100"
                    name="hostname" required="required"/>
         </div>
         <div class="form-group">
-            <label class="control-label">Host Aliases</label>
-            @if( count( $computeResource->hostAliases) )
-            @foreach( $computeResource->hostAliases as $hostAlias )
-            <input class="form-control" value="{{$hostAlias}}" maxlength="30" name="hostaliases[]"/>
-            @endforeach
-            @else
-            <input class="form-control" value="" maxlength="30" name="hostaliases[]"/>
-            @endif
-            <button type="button" class="btn btn-sm btn-default add-alias">Add Aliases</button>
-        </div>
-        <div class="form-group">
-            <label class="control-label">IP Addresses</label>
-            @if( count( $computeResource->ipAddresses))
-            @foreach( $computeResource->ipAddresses as $ip )
-            <input class="form-control" value="{{ $ip }}" maxlength="30" name="ips[]"/>
-            @endforeach
-            @else
-            <input class="form-control" value="" maxlength="30" name="ips[]"/>
-            @endif
-            <button type="button" class="btn btn-sm btn-default add-ip">Add IP Addresses</button>
-        </div>
-        <div class="form-group">
             <label class="control-label">Resource Description</label>
-            <textarea class="form-control" maxlength="255" name="description">{{ $computeResource->resourceDescription
+            <textarea class="form-control" maxlength="255" name="description">{{ $storageResource->resourceDescription
                 }}</textarea>
-        </div>
-        <div class="form-group">
-            <label class="control-label">Maximum Memory Per Node ( In MB )</label>
-            <input type="number" min="0" class="form-control" value="{{ $computeResource->maxMemoryPerNode }}"
-                   maxlength="30" name="maxMemoryPerNode"/>
         </div>
         <div class="form-group">
             <input type="submit" class="btn btn-primary" name="step1" value="Save changes"/>
@@ -89,13 +64,14 @@
 
 </div>
 
+<!--
 <div class="tab-pane" id="tab-queues">
 
-    @if( is_array( $computeResource->batchQueues) )
+    @if( is_array( $storageResource->batchQueues) )
     <h3>Existing Queues :</h3>
 
     <div class="panel-group" id="accordion">
-        @foreach( $computeResource->batchQueues as $index => $queue)
+        @foreach( $storageResource->batchQueues as $index => $queue)
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
@@ -177,7 +153,7 @@
             @foreach( $fileSystems as $index => $fileSystem)
             <label class="control-label">{{ $fileSystem }}</label>
             <input class="form-control" name="fileSystems[{{ $index }}]" placeholder="{{ $fileSystem }}"
-                   value="@if( isset( $computeResource->fileSystems[ $index]) ){{ $computeResource->fileSystems[ $index] }} @endif"/>
+                   value="@if( isset( $storageResource->fileSystems[ $index]) ){{ $storageResource->fileSystems[ $index] }} @endif"/>
             @endforeach
             </select>
         </div>
@@ -210,7 +186,7 @@
                 <input type="hidden" name="crId" value="{{Input::get('crId') }}"/>
                 <input type="hidden" name="cr-edit" value="edit-jsp"/>
                 <input type="hidden" name="jsiId" value="{{ $JSI->jobSubmissionInterfaceId }}"/>
-                <?php $selectedJspIndex = $computeResource->jobSubmissionInterfaces[$index]->jobSubmissionProtocol; ?>
+                <?php $selectedJspIndex = $storageResource->jobSubmissionInterfaces[$index]->jobSubmissionProtocol; ?>
 
                 <h4>Job Submission Protocol : {{ $jobSubmissionProtocols[ $selectedJspIndex] }}
                     <button type='button' class='close delete-jsi' data-toggle="modal" data-target="#confirm-delete-jsi"
@@ -369,6 +345,8 @@
 
 </div>
 
+-->
+
 <div class="tab-pane" id="tab-dataMovement">
 
     <div class="form-group">
@@ -386,12 +364,12 @@
     <div class="job-edit-info">
         @foreach( $dataMovementInterfaces as $index => $DMI )
         <div class="data-movement-block">
-            <form role="form" method="POST" action="{{ URL::to('/') }}/cr/edit">
-                <input type="hidden" name="crId" class="crId" value="{{Input::get('crId') }}"/>
-                <input type="hidden" name="cr-edit" value="edit-dmi"/>
+            <form role="form" method="POST" action="{{ URL::to('/') }}/sr/edit">
+                <input type="hidden" name="srId" class="srId" value="{{Input::get('srId') }}"/>
+                <input type="hidden" name="sr-edit" value="edit-dmi"/>
                 <input type="hidden" name="dmiId" value="{{ $DMI->dataMovementInterfaceId }}"/>
 
-                <?php $selectedDMIIndex = $computeResource->dataMovementInterfaces[$index]->dataMovementProtocol; ?>
+                <?php $selectedDMIIndex = $storageResource->dataMovementInterfaces[$index]->dataMovementProtocol; ?>
 
                 <h4>Data Movement Protocol : {{ $dataMovementProtocols[ $selectedDMIIndex] }}
                     <button type='button' class='close delete-dmi' data-toggle="modal" data-target="#confirm-delete-dmi"
@@ -508,9 +486,9 @@
     @endif
     <div class="select-data-movement hide">
 
-        <form role="form" method="POST" action="{{ URL::to('/') }}/cr/edit">
-            <input type="hidden" name="crId" class="crId" value="{{Input::get('crId') }}"/>
-            <input type="hidden" name="cr-edit" value="dmp"/>
+        <form role="form" method="POST" action="{{ URL::to('/') }}/sr/edit">
+            <input type="hidden" name="srId" class="srId" value="{{Input::get('srId') }}"/>
+            <input type="hidden" name="sr-edit" value="dmp"/>
             <h4>
                 Select the Data Movement Protocol
             </h4>
@@ -641,13 +619,13 @@
 </div>
 
 <!-- modals -->
-
+<!--
 <div class="modal fade" id="confirm-delete-jsi" tabindex="-1" role="dialog" aria-labelledby="delete-modal"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{{ URL::to('cr/delete-jsi') }}" method="POST">
-                <input type="hidden" name="crId" value="{{Input::get('crId') }}"/>
+            <form action="{{ URL::to('sr/delete-jsi') }}" method="POST">
+                <input type="hidden" name="srId" value="{{Input::get('srId') }}"/>
                 <input type="hidden" name="jsiId" value="" class="delete-jsi-confirm"/>
 
                 <div class="modal-header">
@@ -665,13 +643,14 @@
         </div>
     </div>
 </div>
+-->
 
 <div class="modal fade" id="confirm-delete-dmi" tabindex="-1" role="dialog" aria-labelledby="delete-modal"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{{ URL::to('cr/delete-jsi') }}" method="POST">
-                <input type="hidden" name="crId" value="{{Input::get('crId') }}"/>
+            <form action="{{ URL::to('sr/delete-jsi') }}" method="POST">
+                <input type="hidden" name="srId" value="{{Input::get('srId') }}"/>
                 <input type="hidden" name="dmiId" value="" class="delete-dmi-confirm"/>
 
                 <div class="modal-header">
@@ -688,7 +667,7 @@
     </div>
 </div>
 
-
+<!--
 <div class="modal fade" id="add-jsi" tabindex="-1" role="dialog" aria-labelledby="add-modal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -711,13 +690,12 @@
                 Update the Priority Order
             </div>
             <div class="modal-body">
-                <!-- dirty hack to avoid some code that removes the form tag below this. Needs better fix. -->
                 <form></form>
 
                 <form action="{{URL::to('/')}}/cr/edit" method="POST" id="jsi-priority-form">
                     <input type="hidden" name="crId" value="{{Input::get('crId') }}"/>
                     <input type="hidden" name="cr-edit" value="jsi-priority"/>
-                    @foreach( $computeResource->jobSubmissionInterfaces as $index => $JSI )
+                    @foreach( $storageResource->jobSubmissionInterfaces as $index => $JSI )
                     <div class="row">
                         <div class="col-md-offset-1 col-md-5">
                             <label>
@@ -744,6 +722,7 @@
     </div>
 </div>
 @endif
+-->
 
 <div class="modal fade" id="add-dmi" tabindex="-1" role="dialog" aria-labelledby="add-modal" aria-hidden="true">
     <div class="modal-dialog">
@@ -767,10 +746,10 @@
                 Update the Priority Order
             </div>
             <div class="modal-body">
-                <form action="{{URL::to('/')}}/cr/edit" method="POST" id="dmi-priority-form">
-                    <input type="hidden" name="crId" value="{{Input::get('crId') }}"/>
-                    <input type="hidden" name="cr-edit" value="dmi-priority"/>
-                    @foreach( $computeResource->dataMovementInterfaces as $index => $DMI )
+                <form action="{{URL::to('/')}}/sr/edit" method="POST" id="dmi-priority-form">
+                    <input type="hidden" name="srId" value="{{Input::get('srId') }}"/>
+                    <input type="hidden" name="sr-edit" value="dmi-priority"/>
+                    @foreach( $storageResource->dataMovementInterfaces as $index => $DMI )
                     <div class="row">
                         <div class="col-md-offset-1 col-md-5">
                             <label>
@@ -796,11 +775,10 @@
 </div>
 @endif
 
-
+<!--
 <div class="modal fade" id="delete-queue" tabindex="-1" role="dialog" aria-labelledby="add-modal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <!-- dirty hack to neutralise form problem in code by just adding an empty form tag before the actual form. Needs fix.-->
             <form></form>
             <form action="{{URL::to('/')}}/cr/edit" method="POST"/>
             <input type="hidden" name="crId" value="{{Input::get('crId') }}"/>
@@ -822,15 +800,10 @@
     </div>
 </div>
 @stop
+-->
 
 @section('scripts')
 @parent
 {{ HTML::script('js/script.js') }}
 
-<script type="text/javascript">
-    $(".delete-queue").click(function () {
-        $(".delete-queueName").val($(this).data("queue-name"));
-        $(".delete-queueName").html($(this).data("queue-name"));
-    })
-</script>
 @stop

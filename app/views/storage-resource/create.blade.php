@@ -17,23 +17,13 @@
     <div class="col-md-offset-2 col-md-8">
         <h3>Create a Resource</h3>
 
-        <form role="form" method="POST" action="{{ URL::to('/') }}/cr/create">
+        <form role="form" method="POST" action="{{ URL::to('/') }}/sr/create">
             <div class="form-group required">
                 <label class="control-label">Host Name</label>
                 <input class="form-control hostName" maxlength="100" name="hostname" required="required"/>
             </div>
             <div class="form-group">
-                <label class="control-label">Host Aliases</label>
-                <input class="form-control" maxlength="30" name="hostaliases[]"/>
-                <button type="button" class="btn btn-sm btn-default add-alias">Add More Aliases</button>
-            </div>
-            <div class="form-group">
-                <label class="control-label">IP Addresses</label>
-                <input class="form-control" maxlength="30" name="ips[]"/>
-                <button type="button" class="btn btn-sm btn-default add-ip">Add More IP Addresses</button>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Resource Description</label>
+                <label class="control-label">Stoage Resource Description</label>
                 <textarea class="form-control" maxlength="255" name="description"></textarea>
             </div>
             <div class="form-group">

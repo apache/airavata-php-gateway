@@ -3,30 +3,15 @@
 
 //Airavata classes - loaded from app/libraries/Airavata
 //Compute Resource classes
-use Airavata\Model\AppCatalog\ComputeResource\BatchQueue;
-use Airavata\Model\AppCatalog\ComputeResource\ComputeResourceDescription;
 use Airavata\Model\AppCatalog\ComputeResource\DataMovementProtocol;
-use Airavata\Model\AppCatalog\ComputeResource\FileSystems;
-use Airavata\Model\AppCatalog\ComputeResource\GridFTPDataMovement;
-use Airavata\Model\AppCatalog\ComputeResource\JobManagerCommand;
-use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
-use Airavata\Model\AppCatalog\ComputeResource\LOCALDataMovement;
-use Airavata\Model\AppCatalog\ComputeResource\LOCALSubmission;
-use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
-use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManager;
-use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManagerType;
-use Airavata\Model\AppCatalog\ComputeResource\SCPDataMovement;
-use Airavata\Model\AppCatalog\ComputeResource\SecurityProtocol;
-use Airavata\Model\AppCatalog\ComputeResource\SSHJobSubmission;
-use Airavata\Model\AppCatalog\ComputeResource\UnicoreDataMovement;
-use Airavata\Model\AppCatalog\ComputeResource\UnicoreJobSubmission;
+use Airavata\Model\AppCatalog\StorageResource\StorageResourceDescription;
 use Airavata\Model\AppCatalog\GatewayProfile\ComputeResourcePreference;
 use Airavata\Model\AppCatalog\GatewayProfile\GatewayResourceProfile;
 
 //Gateway Classes
 
 
-class DSUtilities
+class SRUtilities
 {
     /**
      * Basic utility functions
@@ -37,10 +22,10 @@ class DSUtilities
     /**
      * Define configuration constants
      */
-    public static function register_or_update_compute_resource($computeDescription, $update = false)
+    public static function register_or_update_storage_resource($storageResourceDesc, $update = false)
     {
         if ($update) {
-            $computeResourceId = $computeDescription->computeResourceId;
+            $storageResourceId = $storageDescription->storageResourceId;
             if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
                 if (Cache::has('CR-' . $computeResourceId)) {
                     Cache::forget('CR-' . $computeResourceId);
@@ -54,17 +39,11 @@ class DSUtilities
                 print_r("Something went wrong while updating!");
             exit;
         } else {
-            /*
-            $fileSystems = new FileSystems();
-            foreach( $fileSystems as $fileSystem)
-                $computeDescription["fileSystems"][$fileSystem] = "";
-            */
-            $cd = new ComputeResourceDescription($computeDescription);
-            $computeResourceId = Airavata::registerComputeResource(Session::get('authz-token'), $cd);
+            $sr = new StorageResourceDescription( $storageResourceDesc);
+            $storageResourceId = Airavata::registerStorageResource(Session::get('authz-token'), $sr);
         }
-
-        $computeResource = Airavata::getComputeResource(Session::get('authz-token'), $computeResourceId);
-        return $computeResource;
+        $storageResource = Airavata::getStorageResource(Session::get('authz-token'), $storageResourceId);
+        return $storageResource;
 
     }
 
@@ -72,32 +51,17 @@ class DSUtilities
      * Getting data for Compute resource inputs
     */
 
-    public static function getEditCRData()
+    public static function getEditSRData()
     {
-        $files = new FileSystems();
-        $jsp = new JobSubmissionProtocol();
-        $rjmt = new ResourceJobManagerType();
-        $sp = new SecurityProtocol();
         $dmp = new DataMovementProtocol();
-        $jmc = new JobManagerCommand();
-        $mm = new MonitorMode();
         return array(
-            "fileSystemsObject" => $files,
-            "fileSystems" => $files::$__names,
-            "jobSubmissionProtocolsObject" => $jsp,
-            "jobSubmissionProtocols" => $jsp::$__names,
-            "resourceJobManagerTypesObject" => $rjmt,
-            "resourceJobManagerTypes" => $rjmt::$__names,
-            "securityProtocolsObject" => $sp,
-            "securityProtocols" => $sp::$__names,
             "dataMovementProtocolsObject" => $dmp,
-            "dataMovementProtocols" => $dmp::$__names,
-            "jobManagerCommands" => $jmc::$__names,
-            "monitorModes" => $mm::$__names
+            "dataMovementProtocols" => $dmp::$__names
         );
     }
 
 
+    /*
     public static function createQueueObject($queue)
     {
         $queueObject = new BatchQueue($queue);
@@ -113,11 +77,6 @@ class DSUtilities
         }
         Airavata::deleteBatchQueue(Session::get('authz-token'), $computeResourceId, $queueName);
     }
-
-
-    /*
-     * Creating Job Submission Interface.
-    */
 
     public static function create_or_update_JSIObject($inputs, $update = false)
     {
@@ -257,10 +216,11 @@ class DSUtilities
             } else {
                 $unicoreSub = Airavata::addUNICOREJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $unicoreJobSubmission);
             }
-        } else /* Globus does not work currently */ {
+        } else {
             print_r("Whoops! We haven't coded for this Job Submission Protocol yet. Still working on it. Please click <a href='" . URL::to('/') . "/cr/edit'>here</a> to go back to edit page for compute resource.");
         }
     }
+    */
 
     /*
      * Creating Data Movement Interface Object.
@@ -268,11 +228,11 @@ class DSUtilities
     public static function create_or_update_DMIObject($inputs, $update = false)
     {
 
-        $computeResource = CRUtilities::get_compute_resource($inputs["crId"]);
+        $computeResource = SRUtilities::get_compute_resource($inputs["srId"]);
 
         if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
-            if (Cache::has('CR-' . $inputs["crId"])) {
-                Cache::forget('CR-' . $inputs["crId"]);
+            if (Cache::has('SR-' . $inputs["srId"])) {
+                Cache::forget('SR-' . $inputs["srId"]);
             }
         }
 
@@ -322,27 +282,28 @@ class DSUtilities
         }
     }
 
-    public static function getAllDSObjects($onlyName = false)
+    public static function getAllSRObjects($onlyName = false)
     {
-        $dsNames = Airavata::getAllStorageResourceNames(Session::get('authz-token'));
+        $srNames = Airavata::getAllStorageResourceNames(Session::get('authz-token'));
+
         if ($onlyName)
-            return $dsNames;
+            return $srNames;
         else {
-            $dsObjects = array();
-            foreach ($dsNames as $id => $dsName) {
-                array_push($dsObjects, Airavata::getStorageResource(Session::get('authz-token'), $id));
+            $srObjects = array();
+            foreach ($srNames as $id => $srName) {
+                array_push($srObjects, Airavata::getStorageResource(Session::get('authz-token'), $id));
             }
-            return $dsObjects;
+            return $srObjects;
         }
 
     }
 
-    public static function getBrowseDSData($onlyNames)
+    public static function getBrowseSRData($onlyNames)
     {   /*
         $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), 
                                                                         Session::get("gateway_id"));
         */
-        return array('crObjects' => DSUtilities::getAllDSObjects($onlyNames));
+        return array('srObjects' => SRUtilities::getAllSRObjects($onlyNames) );
     }
 
     public static function getJobSubmissionDetails($jobSubmissionInterfaceId, $jsp)
@@ -509,11 +470,11 @@ class DSUtilities
      * @param $id
      * @return null
      */
-    public static function get_compute_resource($id)
+    public static function get_storage_resource($id)
     {
         $computeResource = null;
-
         try {
+            /*
             if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
                 if (Cache::has('CR-' . $id)) {
                     return Cache::get('CR-' . $id);
@@ -523,19 +484,22 @@ class DSUtilities
                     return $computeResource;
                 }
             } else {
-                return $computeResource = Airavata::getComputeResource(Session::get('authz-token'), $id);
+            */
+                return Airavata::getStorageResource(Session::get('authz-token'), $id);
+            /*
             }
+            */
 
         } catch (InvalidRequestException $ire) {
-            CommonUtilities::print_error_message('<p>There was a problem getting the compute resource.
+            CommonUtilities::print_error_message('<p>There was a problem getting the storage resource.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
                 '<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
         } catch (AiravataClientException $ace) {
-            CommonUtilities::print_error_message('<p>There was a problem getting the compute resource.
+            CommonUtilities::print_error_message('<p>There was a problem getting the storage resource.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
                 '<p>Airavata Client Exception: ' . $ace->getMessage() . '</p>');
         } catch (AiravataSystemException $ase) {
-            CommonUtilities::print_error_message('<p>There was a problem getting the compute resource.
+            CommonUtilities::print_error_message('<p>There was a problem getting the storage resource.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
                 '<p>Airavata System Exception: ' . $ase->getMessage() . '</p>');
         }
@@ -588,11 +552,11 @@ class DSUtilities
     **/
 
     public static function getAllDataStoragePreferences( $gateways){
-        $dspArray = array();
+        $srpArray = array();
         foreach( $gateways as $gateway){
-            $dspArray[] = Airavata::getAllGatewayDataStoragePreferences( Session::get('authz-token'), $gateway->gatewayId);
+            $srpArray[] = Airavata::getAllGatewayDataStoragePreferences( Session::get('authz-token'), $gateway->gatewayId);
         }
-        return $dspArray;
+        return $srpArray;
     }
 
 }

@@ -9,6 +9,7 @@ class ResourceController extends BaseController
 
     public function __construct()
     {
+        print_r("test"); exit;
         $this->beforeFilter('verifyadmin');
         Session::put("nav-active", "compute-resource");
 
@@ -37,7 +38,6 @@ class ResourceController extends BaseController
 
     public function editView()
     {
-
         $data = CRUtilities::getEditCRData();
         $computeResourceId = "";
         if (Input::has("crId"))

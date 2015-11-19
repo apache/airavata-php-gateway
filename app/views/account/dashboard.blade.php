@@ -94,7 +94,7 @@
 
             <div class="row well">
 
-                <h3>Manage Computing and Data Storage Services and Preferences for your Gateway</h3>
+                <h3>Manage Computing and Storage Resouces and Preferences for your Gateway</h3>
 
                 <a href="{{URL::to('/')}}/cr/browse">
                     <div class=" col-md-4 well">
@@ -118,13 +118,13 @@
                     </div>
                 </a>
 
-                <a href="{{URL::to('/')}}/ds/browse">
+                <a href="{{URL::to('/')}}/sr/browse">
                     <div class=" col-md-4 well">
                         <div class="col-md-12">
                             <span class="glyphicon glyphicon-folder-open console-icon"></span>
                         </div>
                         <div class="col-md-12">
-                            <h4>Browse Data Storage Resources</h4>
+                            <h4>Browse Storage Resources</h4>
                         </div>
                     </div>
                 </a>
