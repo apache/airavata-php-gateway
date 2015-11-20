@@ -8,6 +8,18 @@ use Airavata\Model\AppCatalog\StorageResource\StorageResourceDescription;
 use Airavata\Model\AppCatalog\GatewayProfile\ComputeResourcePreference;
 use Airavata\Model\AppCatalog\GatewayProfile\GatewayResourceProfile;
 
+use Airavata\Model\AppCatalog\ComputeResource\GridFTPDataMovement;
+use Airavata\Model\AppCatalog\ComputeResource\JobManagerCommand;
+use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
+use Airavata\Model\AppCatalog\ComputeResource\LOCALDataMovement;
+use Airavata\Model\AppCatalog\ComputeResource\LOCALSubmission;
+use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
+use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManager;
+use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManagerType;
+use Airavata\Model\AppCatalog\ComputeResource\SCPDataMovement;
+use Airavata\Model\AppCatalog\ComputeResource\SecurityProtocol;
+use Airavata\Model\AppCatalog\ComputeResource\SSHJobSubmission;
+use Airavata\Model\AppCatalog\ComputeResource\UnicoreDataMovement;
 //Gateway Classes
 
 
@@ -25,16 +37,11 @@ class SRUtilities
     public static function register_or_update_storage_resource($storageResourceDesc, $update = false)
     {
         if ($update) {
-            $storageResourceId = $storageDescription->storageResourceId;
-            if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
-                if (Cache::has('CR-' . $computeResourceId)) {
-                    Cache::forget('CR-' . $computeResourceId);
-                }
-            }
-
-            if (Airavata::updateComputeResource(Session::get('authz-token'), $computeResourceId, $computeDescription)) {
-                $computeResource = Airavata::getComputeResource(Session::get('authz-token'), $computeResourceId);
-                return $computeResource;
+            $storageResourceId = $storageResourceDesc->storageResourceId;
+            
+            if (Airavata::updateStorageResource(Session::get('authz-token'), $storageResourceId, $storageResourceDesc)) {
+                $storageResource = Airavata::getStorageResource(Session::get('authz-token'), $storageResourceId);
+                return $storageResource;
             } else
                 print_r("Something went wrong while updating!");
             exit;
@@ -53,174 +60,22 @@ class SRUtilities
 
     public static function getEditSRData()
     {
+        $rjmt = new ResourceJobManagerType();
+        $sp = new SecurityProtocol();
         $dmp = new DataMovementProtocol();
+        $jmc = new JobManagerCommand();
+        $mm = new MonitorMode();
         return array(
+            "resourceJobManagerTypesObject" => $rjmt,
+            "resourceJobManagerTypes" => $rjmt::$__names,
+            "securityProtocolsObject" => $sp,
+            "securityProtocols" => $sp::$__names,
             "dataMovementProtocolsObject" => $dmp,
-            "dataMovementProtocols" => $dmp::$__names
+            "dataMovementProtocols" => $dmp::$__names,
+            "jobManagerCommands" => $jmc::$__names,
+            "monitorModes" => $mm::$__names
         );
     }
-
-
-    /*
-    public static function createQueueObject($queue)
-    {
-        $queueObject = new BatchQueue($queue);
-        return $queueObject;
-    }
-
-    public static function deleteQueue($computeResourceId, $queueName)
-    {
-        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
-            if (Cache::has('CR-' . $computeResourceId)) {
-                Cache::forget('CR-' . $computeResourceId);
-            }
-        }
-        Airavata::deleteBatchQueue(Session::get('authz-token'), $computeResourceId, $queueName);
-    }
-
-    public static function create_or_update_JSIObject($inputs, $update = false)
-    {
-
-        $computeResource = CRUtilities::get_compute_resource($inputs["crId"]);
-
-        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
-            if (Cache::has('CR-' . $inputs["crId"])) {
-                Cache::forget('CR-' . $inputs["crId"]);
-            }
-        }
-
-        $jsiId = null;
-        if (isset($inputs["jsiId"]))
-            $jsiId = $inputs["jsiId"];
-
-        if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::LOCAL) {
-
-            //print_r( $jsiObject->resourceJobManager->resourceJobManagerId);
-            $resourceManager = new ResourceJobManager(array(
-                "resourceJobManagerType" => $inputs["resourceJobManagerType"],
-                "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
-                "jobManagerBinPath" => $inputs["jobManagerBinPath"],
-                "jobManagerCommands" => $inputs["jobManagerCommands"]
-            ));
-
-            //$rmId = $jsiObject->resourceJobManager->resourceJobManagerId;
-            //$rm = $airavataclient->updateResourceJobManager($rmId, $resourceManager);
-            //print_r( $rm); exit;
-            $localJobSubmission = new LOCALSubmission(array(
-                    "resourceJobManager" => $resourceManager
-                )
-            );
-
-            if ($update) //update Local JSP
-            {
-                $jsiObject = Airavata::getLocalJobSubmission(Session::get('authz-token'), $jsiId);
-                $localSub = Airavata::updateResourceJobManager(Session::get('authz-token'), $jsiObject->resourceJobManager->resourceJobManagerId, $resourceManager);
-                //$localSub = $airavataclient->updateLocalSubmissionDetails( $jsiId, $localJobSubmission);
-            } else // create Local JSP
-            {
-                $localSub = Airavata::addLocalSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $localJobSubmission);
-                return $localSub;
-            }
-
-        } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::SSH) {
-            $resourceManager = new ResourceJobManager(array(
-                "resourceJobManagerType" => $inputs["resourceJobManagerType"],
-                "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
-                "jobManagerBinPath" => $inputs["jobManagerBinPath"],
-                "jobManagerCommands" => $inputs["jobManagerCommands"]
-            ));
-            $sshJobSubmission = new SSHJobSubmission(array
-                (
-                    "securityProtocol" => intval($inputs["securityProtocol"]),
-                    "resourceJobManager" => $resourceManager,
-                    "alternativeSSHHostName" => $inputs["alternativeSSHHostName"],
-                    "sshPort" => intval($inputs["sshPort"]),
-                    "monitorMode" => MonitorMode::JOB_EMAIL_NOTIFICATION_MONITOR
-                )
-            );
-            //var_dump( $sshJobSubmission); exit;
-            if ($update) //update Local JSP
-            {
-                $jsiObject = Airavata::getSSHJobSubmission(Session::get('authz-token'), $jsiId);
-
-                //first update resource job manager
-                $rmjId = $jsiObject->resourceJobManager->resourceJobManagerId;
-                Airavata::updateResourceJobManager(Session::get('authz-token'), $rmjId, $resourceManager);
-                $jsiObject = Airavata::getSSHJobSubmission(Session::get('authz-token'), $jsiId);
-
-                $jsiObject->securityProtocol = intval($inputs["securityProtocol"]);
-                $jsiObject->alternativeSSHHostName = $inputs["alternativeSSHHostName"];
-                $jsiObject->sshPort = intval($inputs["sshPort"]);
-                $jsiObject->monitorMode = intval($inputs["monitorMode"]);
-                $jsiObject->resourceJobManager = Airavata::getresourceJobManager(Session::get('authz-token'), $rmjId);
-                //var_dump( $jsiObject); exit;
-                //add updated resource job manager to ssh job submission object.
-                //$sshJobSubmission->resourceJobManager->resourceJobManagerId = $rmjId;
-                $localSub = Airavata::updateSSHJobSubmissionDetails(Session::get('authz-token'), $jsiId, $jsiObject);
-            } else {
-                $sshSub = Airavata::addSSHJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $sshJobSubmission);
-            }
-            return;
-        } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::SSH_FORK) {
-            $resourceManager = new ResourceJobManager(array(
-                "resourceJobManagerType" => $inputs["resourceJobManagerType"],
-                "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
-                "jobManagerBinPath" => $inputs["jobManagerBinPath"],
-                "jobManagerCommands" => $inputs["jobManagerCommands"]
-            ));
-            $sshJobSubmission = new SSHJobSubmission(array
-                (
-                    "securityProtocol" => intval($inputs["securityProtocol"]),
-                    "resourceJobManager" => $resourceManager,
-                    "alternativeSSHHostName" => $inputs["alternativeSSHHostName"],
-                    "sshPort" => intval($inputs["sshPort"]),
-                    "monitorMode" => MonitorMode::FORK
-                )
-            );
-            //var_dump( $sshJobSubmission); exit;
-            if ($update) //update Local JSP
-            {
-                $jsiObject = Airavata::getSSHJobSubmission(Session::get('authz-token'), $jsiId);
-
-                //first update resource job manager
-                $rmjId = $jsiObject->resourceJobManager->resourceJobManagerId;
-                Airavata::updateResourceJobManager(Session::get('authz-token'), $rmjId, $resourceManager);
-                $jsiObject = Airavata::getSSHJobSubmission(Session::get('authz-token'), $jsiId);
-
-                $jsiObject->securityProtocol = intval($inputs["securityProtocol"]);
-                $jsiObject->alternativeSSHHostName = $inputs["alternativeSSHHostName"];
-                $jsiObject->sshPort = intval($inputs["sshPort"]);
-                $jsiObject->monitorMode = intval($inputs["monitorMode"]);
-                $jsiObject->resourceJobManager = Airavata::getresourceJobManager(Session::get('authz-token'), $rmjId);
-                //var_dump( $jsiObject); exit;
-                //add updated resource job manager to ssh job submission object.
-                //$sshJobSubmission->resourceJobManager->resourceJobManagerId = $rmjId;
-                $localSub = Airavata::updateSSHJobSubmissionDetails(Session::get('authz-token'), $jsiId, $jsiObject);
-            } else {
-                $sshSub = Airavata::addSSHForkJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $sshJobSubmission);
-            }
-            return;
-        } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::UNICORE) {
-            $unicoreJobSubmission = new UnicoreJobSubmission(array
-                (
-                    "securityProtocol" => intval($inputs["securityProtocol"]),
-                    "unicoreEndPointURL" => $inputs["unicoreEndPointURL"]
-                )
-            );
-            if ($update) {
-                $jsiObject = Airavata::getUnicoreJobSubmission(Session::get('authz-token'), $jsiId);
-                $jsiObject->securityProtocol = intval($inputs["securityProtocol"]);
-                $jsiObject->unicoreEndPointURL = $inputs["unicoreEndPointURL"];
-
-                $unicoreSub = Airavata::updateUnicoreJobSubmissionDetails(Session::get('authz-token'), $jsiId, $jsiObject);
-            } else {
-                $unicoreSub = Airavata::addUNICOREJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $unicoreJobSubmission);
-            }
-        } else {
-            print_r("Whoops! We haven't coded for this Job Submission Protocol yet. Still working on it. Please click <a href='" . URL::to('/') . "/cr/edit'>here</a> to go back to edit page for compute resource.");
-        }
-    }
-    */
 
     /*
      * Creating Data Movement Interface Object.
@@ -228,35 +83,24 @@ class SRUtilities
     public static function create_or_update_DMIObject($inputs, $update = false)
     {
 
-        $computeResource = SRUtilities::get_compute_resource($inputs["srId"]);
-
-        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
-            if (Cache::has('SR-' . $inputs["srId"])) {
-                Cache::forget('SR-' . $inputs["srId"]);
-            }
-        }
+        $storageResource = SRUtilities::get_storage_resource($inputs["srId"]);
 
         if ($inputs["dataMovementProtocol"] == DataMovementProtocol::LOCAL) /* LOCAL */ {
             $localDataMovement = new LOCALDataMovement();
-            $localdmp = Airavata::addLocalDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $localDataMovement);
+            $localdmp = Airavata::addLocalDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, 0, $localDataMovement);
 
-            if ($localdmp)
-                print_r("The Local Data Movement has been added. Edit UI for the Local Data Movement Interface is yet to be made.
-                Please click <a href='" . URL::to('/') . "/cr/edit'>here</a> to go back to edit page for compute resource.");
         } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::SCP) /* SCP */ {
-            //var_dump( $inputs); exit;
             $scpDataMovement = new SCPDataMovement(array(
                     "securityProtocol" => intval($inputs["securityProtocol"]),
                     "alternativeSCPHostName" => $inputs["alternativeSSHHostName"],
                     "sshPort" => intval($inputs["sshPort"])
                 )
-
             );
 
             if ($update)
                 $scpdmp = Airavata::updateSCPDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $scpDataMovement);
             else
-                $scpdmp = Airavata::addSCPDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $scpDataMovement);
+                $scpdmp = Airavata::addSCPDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, 0, $scpDataMovement);
         } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::GridFTP) /* GridFTP */ {
             $gridFTPDataMovement = new GridFTPDataMovement(array(
                 "securityProtocol" => $inputs["securityProtocol"],
@@ -265,7 +109,7 @@ class SRUtilities
             if ($update)
                 $gridftpdmp = Airavata::updateGridFTPDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $gridFTPDataMovement);
             else
-                $gridftpdmp = Airavata::addGridFTPDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $gridFTPDataMovement);
+                $gridftpdmp = Airavata::addGridFTPDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, 0, $gridFTPDataMovement);
         } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::UNICORE_STORAGE_SERVICE) /* Unicore Storage Service */ {
             $unicoreDataMovement = new UnicoreDataMovement(array
                 (
@@ -276,7 +120,7 @@ class SRUtilities
             if ($update)
                 $unicoredmp = Airavata::updateUnicoreDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $unicoreDataMovement);
             else
-                $unicoredmp = Airavata::addUnicoreDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $unicoreDataMovement);
+                $unicoredmp = Airavata::addUnicoreDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, 0, $unicoreDataMovement);
         } else /* other data movement protocols */ {
             print_r("Whoops! We haven't coded for this Data Movement Protocol yet. Still working on it. Please click <a href='" . URL::to('/') . "/cr/edit'>here</a> to go back to edit page for compute resource.");
         }
@@ -285,7 +129,6 @@ class SRUtilities
     public static function getAllSRObjects($onlyName = false)
     {
         $srNames = Airavata::getAllStorageResourceNames(Session::get('authz-token'));
-
         if ($onlyName)
             return $srNames;
         else {

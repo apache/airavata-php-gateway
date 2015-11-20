@@ -39,7 +39,7 @@
             @if( isset( $expInputs['cloning']))
             <div class="form-group">
                 <p><strong>Current inputs</strong></p>
-                {{ ExperimentUtilities::list_input_files($expInputs['experiment']) }}
+                {{ ExperimentUtilities::list_input_files($expInputs['experiment']->experimentInputs) }}
             </div>
             {{ ExperimentUtilities::create_inputs($expInputs['application'], false) }}
             @else

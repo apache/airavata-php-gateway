@@ -28,7 +28,7 @@ class StorageresourceController extends BaseController
         //Compute resource is by default enabled
         $storageDescription = array(
             "hostName" => trim(Input::get("hostname")),
-            "storageResourceDescription" => trim(Input::get("hostname")),
+            "storageResourceDescription" => trim(Input::get("description")),
             "enabled" => true
         );
         $storageResource = SRUtilities::register_or_update_storage_resource($storageDescription);
@@ -52,17 +52,18 @@ class StorageresourceController extends BaseController
             $dataMovementInterfaces = array();
             $addedDMI = array();
             //var_dump( CRUtilities::getJobSubmissionDetails( $data["computeResource"]->jobSubmissionInterfaces[0]->jobSubmissionInterfaceId, 1) ); exit;
+            
             if (count($storageResource->dataMovementInterfaces)) {
                 foreach ($storageResource->dataMovementInterfaces as $DMI) {
                     $dataMovementInterfaces[] = SRUtilities::getDataMovementDetails($DMI->dataMovementInterfaceId, $DMI->dataMovementProtocol);
                     $addedDMI[] = $DMI->dataMovementProtocol;
                 }
             }
-
+            
             $data["storageResource"] = $storageResource;
             $data["dataMovementInterfaces"] = $dataMovementInterfaces;
             $data["addedDMI"] = $addedDMI;
-            return View::make("resource/edit", $data);
+            return View::make("storage-resource/edit", $data);
         } else{
             Session::put("message", "Unable to retrieve this Storage Resource. Please try again later or submit a bug report using the link in the Help menu.");
             return View::make("storage-resource/browse");
@@ -80,69 +81,21 @@ class StorageresourceController extends BaseController
             $storageResourceDescription->resourceDescription = Input::get("description");
             //var_dump( $computeDescription); exit;
 
-            $storageResource = SRUtilities::register_or_update_compute_resource($storageResourceDescription, true);
+            $storageResource = SRUtilities::register_or_update_storage_resource($storageResourceDescription, true);
 
             $tabName = "#tab-desc";
         }
-        /*
-        if (Input::get("sr-edit") == "queue"){
-            $queue = array("queueName" => Input::get("qname"),
-                "queueDescription" => Input::get("qdesc"),
-                "maxRunTime" => Input::get("qmaxruntime"),
-                "maxNodes" => Input::get("qmaxnodes"),
-                "maxProcessors" => Input::get("qmaxprocessors"),
-                "maxJobsInQueue" => Input::get("qmaxjobsinqueue"),
-                "maxMemory" => Input::get("qmaxmemoryinqueue")
-            );
 
-            $storageResourceDescription = SRUtilities::get_storage_resource(Input::get("crId"));
-            $storageResourceDescription->batchQueues[] = CRUtilities::createQueueObject($queue);
-            $computeResource = CRUtilities::register_or_update_compute_resource($computeDescription, true);
-            //var_dump( $computeResource); exit;
-            $tabName = "#tab-queues";
-        } else if (Input::get("cr-edit") == "delete-queue") {
-            CRUtilities::deleteQueue(Input::get("crId"), Input::get("queueName"));
-            $tabName = "#tab-queues";
-        } else if (Input::get("cr-edit") == "fileSystems") {
-            $computeDescription = CRUtilities::get_compute_resource(Input::get("crId"));
-            $computeDescription->fileSystems = array_filter(Input::get("fileSystems"), "trim");
-            $computeResource = CRUtilities::register_or_update_compute_resource($computeDescription, true);
-
-            $tabName = "#tab-filesystem";
-        } else if (Input::get("cr-edit") == "jsp" || Input::get("cr-edit") == "edit-jsp")  {
+        if (Input::get("sr-edit") == "dmp" || Input::get("sr-edit") == "edit-dmi") /* Add / Modify a Data Movement Interface */ {
             $update = false;
-            if (Input::get("cr-edit") == "edit-jsp")
-                $update = true;
-
-            $jobSubmissionInterface = CRUtilities::create_or_update_JSIObject(Input::all(), $update);
-
-            $tabName = "#tab-jobSubmission";
-        } else if (Input::get("cr-edit") == "jsi-priority") {
-            $inputs = Input::all();
-            $computeDescription = CRUtilities::get_compute_resource(Input::get("crId"));
-            foreach ($computeDescription->jobSubmissionInterfaces as $index => $jsi) {
-                foreach ($inputs["jsi-id"] as $idIndex => $jsiId) {
-                    if ($jsiId == $jsi->jobSubmissionInterfaceId) {
-                        $computeDescription->jobSubmissionInterfaces[$index]->priorityOrder = $inputs["jsi-priority"][$idIndex];
-                        break;
-                    }
-                }
-            }
-            $computeResource = CRUtilities::register_or_update_compute_resource($computeDescription, true);
-
-            return 1; //currently done by ajax.
-        } else
-        */
-        if (Input::get("cr-edit") == "dmp" || Input::get("cr-edit") == "edit-dmi") /* Add / Modify a Data Movement Interface */ {
-            $update = false;
-            if (Input::get("cr-edit") == "edit-dmi")
+            if (Input::get("sr-edit") == "edit-dmi")
                 $update = true;
             $dataMovementInterface = SRUtilities::create_or_update_DMIObject(Input::all(), $update);
 
             $tabName = "#tab-dataMovement";
-        } else if (Input::get("cr-edit") == "dmi-priority") {
+        } else if (Input::get("sr-edit") == "dmi-priority") {
             $inputs = Input::all();
-            $storageDescription = CRUtilities::get_storage_resource(Input::get("srId"));
+            $storageDescription = SRUtilities::get_storage_resource(Input::get("srId"));
             foreach ($storageDescription->dataMovementInterfaces as $index => $dmi) {
                 foreach ($inputs["dmi-id"] as $idIndex => $dmiId) {
                     if ($dmiId == $dmi->dataMovementInterfaceId) {
@@ -151,12 +104,12 @@ class StorageresourceController extends BaseController
                     }
                 }
             }
-            $storageResource = CRUtilities::register_or_update_storage_resource($storageDescription, true);
+            $storageResource = SRUtilities::register_or_update_storage_resource($storageDescription, true);
 
             return 1; //currently done by ajax.
         }
 
-        return Redirect::to("se/edit?srId=" . Input::get("srId") . $tabName);
+        return Redirect::to("sr/edit?srId=" . Input::get("srId") . $tabName);
     }
 
     public function viewView()
@@ -227,7 +180,7 @@ class StorageresourceController extends BaseController
         $data = SRUtilities::getBrowseSRData(false);
         $allSRs = $data["srObjects"];
 
-        Session::put("admin-nav", "cr-browse");
+        Session::put("admin-nav", "sr-browse");
         return View::make("storage-resource/browse", array(
             "allSRs" => $allSRs
         ));

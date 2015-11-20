@@ -80,6 +80,8 @@ class ExperimentController extends BaseController
     public function summary()
     {
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
+        $detailedExperiment = ExperimentUtilities::get_detailed_experiment( $_GET['expId']);
+        //var_dump( $detailedExperiment); exit;
         if ($experiment != null) {
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
@@ -115,7 +117,8 @@ class ExperimentController extends BaseController
                 "experiment" => $experiment,
                 "project" => $project,
                 "jobDetails" => $jobDetails,
-                "expVal" => $expVal
+                "expVal" => $expVal,
+                "detailedExperiment" => $detailedExperiment
             );
 
             if (Request::ajax()) {
