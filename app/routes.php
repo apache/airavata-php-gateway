@@ -263,11 +263,7 @@ Route::get("airavata/down", function () {
 */
 
 Route::get("testjob", function () {
-    if( is_dir( URL::to('/') . '/../themes/seagrid' ) )
-    	print_r("test yes");
-    else
-    	print_r("test no"); 
-    exit;
+    return Markdown::render( View::make('edit-mode'));
 });
 
 /*handling errors on production */
