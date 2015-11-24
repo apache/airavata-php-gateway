@@ -47,9 +47,7 @@
 
                         <tr>
                             <th>Id</th>
-                            <th>Login Username</th>
-                            <th>File System Root Location</th>
-                            <th>Resource Specific Credential Store Token</th>
+                            <th>Hostname</th>
                             @if(Session::has("admin"))
                             <th>Edit</th>
                             @endif
@@ -59,18 +57,14 @@
                             @endif
                         </tr>
 
-                        @foreach($allSRRs as $resource)
+                        @foreach($allSRs as $resource)
                         <?php
-                            $srId = $resource->dataMovememtResourceId;
-                            $userName = $resource->loginUserName;
-                            $fileSystemRootLocation = $resource->fileSystemRootLocation;
-                            $resourceSpecificCredentialStoreToken = $resource->resourceSpecificCredentialStoreToken;
+                            $srId = $resource->storageResourceId;
+                            $hostName = $resource->hostName;
                         ?>
                         <tr id="srDetails">
                             <td>{{ $srId }}</td>
-                            <td>{{ $userName }}</td>
-                            <td>{{ $fileSystemRootLocation }}</td>
-                            <td>{{ resourceSpecificCredentialStoreToken }}</td>
+                            <td>{{ $hostName }}</td>
                             @if(Session::has("admin"))
                             <td><a href="{{URL::to('/')}}/sr/edit?srId={{ $srId }}" title="Edit">
                                     <span class="glyphicon glyphicon-pencil"></span>

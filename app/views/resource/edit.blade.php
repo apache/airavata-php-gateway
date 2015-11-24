@@ -18,9 +18,10 @@
 
 <input type="hidden" class="base-url" value="{{URL::to('/')}}"/>
 
-<div class="well">
-    <h4>Compute Resource : {{ $computeResource->hostName }}</h4>
-</div>
+<ol class="breadcrumb">
+    <li><a href="{{URL::to('/')}}/cr/browse">Compute Resources</a></li>
+    <li class="active">{{ $computeResource->hostName }}</li>
+</ol>
 @if( Session::has("message"))
 <span class="alert alert-success col-md-12">{{Session::get("message")}}</span>
 {{Session::forget("message") }}
@@ -414,7 +415,8 @@
                         @endforeach
                     </select>
                 </div>
-{{--                <div class="form-group">
+<!--
+                <div class="form-group">
                     <label class="control-label">Select Monitoring Mode</label>
                     <select name="monitorMode">
                         @foreach( $monitorModes as $index => $mode)
@@ -422,7 +424,8 @@
                         @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
                         @endforeach
                     </select>
-                </div>--}}
+                </div>
+-->
                 <div class="form-group">
                     <label class="control-label">Alternate SSH Host Name</label>
                     <input class='form-control' name='alternativeSSHHostName'
@@ -445,7 +448,8 @@
                         @endforeach
                     </select>
                 </div>
-{{--                <div class="form-group">
+<!--
+                <div class="form-group">
                     <label class="control-label">Select Monitoring Mode</label>
                     <select name="monitorMode">
                         @foreach( $monitorModes as $index => $mode)
@@ -453,7 +457,8 @@
                         @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
                         @endforeach
                     </select>
-                </div>--}}
+                </div>
+-->
 
                 <div>
                     <div class="form-group required">
@@ -480,7 +485,8 @@
                         @endforeach
                     </select>
                 </div>
-{{--                <div class="form-group">
+<!--
+                <div class="form-group">
                     <label class="control-label">Select Monitoring Mode</label>
                     <select name="monitorMode">
                         @foreach( $monitorModes as $index => $mode)
@@ -488,7 +494,8 @@
                         @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
                         @endforeach
                     </select>
-                </div>--}}
+                </div>
+-->
 
                 <div>
                     <div class="form-group required">
