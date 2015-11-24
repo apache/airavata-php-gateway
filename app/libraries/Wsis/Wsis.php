@@ -212,7 +212,7 @@ class Wsis {
      */
     public function getUserProfileFromOAuthToken($token){
         $userProfile = $this->oauthManger->getUserProfile($token);
-        return array('username'=>$userProfile->username, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
+        return array('username'=>$userProfile->sub, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
             'lastname'=>$userProfile->family_name, 'roles'=>explode(",",$userProfile->roles));
     }
 
