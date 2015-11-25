@@ -185,7 +185,7 @@
         </div>
     </form>
     @endif
-    <input type="hidden" id="expObj" value="{{ htmlentities( json_encode( $experiment)) }}"/>
+    <input type="hidden" id="expObj" value="{{ htmlentities( json_encode( $experiment, JSON_UNESCAPED_UNICODE)) }}"/>
 
     <!-- check of correct experiment Id ends here -->
     @endif
