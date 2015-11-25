@@ -26,7 +26,15 @@
                 @endif
 
                 <h1 class="text-center">SSH Keys</h1>
-
+                @if(Session::has("admin"))
+                <table class="table">
+                    <tr class="text-center table-condensed">
+                        <td>
+                            <button class="btn btn-default generate-ssh">Generate a new token</button>
+                        </td>
+                    </tr>
+                </table>
+                @endif
                 <table class="table table-bordered table-condensed">
                     <tr>
                         <th class="text-center">
@@ -54,16 +62,9 @@
                         </td>
                     </tr>
                 </table>
-                @if(Session::has("admin"))
-                <table class="table">
-                    <tr class="text-center table-condensed">
-                        <td>
-                            <button class="btn btn-default">Generate a new token</button>
-                        </td>
-                    </tr>
-                </table>
-                @endif
+                
 
+                <!--
                 @if(Session::has("admin"))
                 <div class="row">
                     <h1 class="text-center">My Proxy Credentials</h1>
@@ -93,6 +94,7 @@
                     </div>
                 </div>
                 @endif
+                -->
 
                 <h1 class="text-center">Amazon Credentials</h1>
 
@@ -147,28 +149,16 @@
 @section('scripts')
 @parent
 <script>
-    $(".toggle-add-role").click(function () {
-        $(".add-role").slideDown();
-    });
-
-    $(".edit-role-name").click(function () {
-        var roleNameSpace = $(this).parent().parent().find(".role-name");
-        if (roleNameSpace.find(".edit-role-form").length) {
-            roleNameSpace.html(roleNameSpace.find(".original-role-name").val());
-        }
-        else {
-            var role = roleNameSpace.html();
-            roleNameSpace.html($(".edit-role").html());
-            roleNameSpace.find(".original-role-name").val(role);
-            roleNameSpace.find(".new-role-name").val(role);
-        }
-    });
-
-    $(".delete-role").click(function () {
-        $("#delete-role-block").modal("show");
-        var roleName = $(this).parent().parent().find(".role-name").html();
-        $(".delete-role-name").html(roleName);
-        $(".delete-roleName").val(roleName);
-    })
+   $(".generate-ssh").click( function(){
+        $.ajax({
+          type: "POST",
+          url: "{{URL::to('/')}}/gp/create-ssh-token"
+        }).success( function( data){
+            
+        }).fail( function( data){
+            failureObject = $.parseJSON( data.responseText);
+            $(".generate-ssh").after("<div class='alert alert-danger'>" + failureObject.error.message + "</div>");
+        });
+   });
 </script>
 @stop

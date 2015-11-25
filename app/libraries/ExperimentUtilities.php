@@ -650,8 +650,8 @@ class ExperimentUtilities
         if( $process)
         {
             $processStatusVal = array_search($status, ProcessState::$__names);
-            if ($processStatusVal != ProcessState::COMPLETED)
-            echo "Process hasn't completed. Process Status is : " . $status . '<br/>';
+            if ($status != ProcessState::COMPLETED)
+                echo "Process hasn't completed. Process Status is : " . $status . '<br/>';
         }
         else
         {
@@ -754,15 +754,21 @@ class ExperimentUtilities
     public static function get_experiment_values($experiment, $project, $forSearch = false)
     {
         $expVal = array();
-        $expVal["experimentStatusString"] = "";
+        //$expVal["experimentStatusString"] = "";
         $expVal["experimentTimeOfStateChange"] = "";
         $expVal["experimentCreationTime"] = "";
 
+        $expVal["experimentStates"] = ExperimentState::$__names;
+        $expVal["processStates"] = ProcessState::$__names;
+        $expVal["jobStates"] = JobState::$__names;
+
         if ($experiment->experimentStatus != null) {
             $experimentStatus = $experiment->experimentStatus;
+            /*
             $experimentState = $experimentStatus->state;
             $experimentStatusString = ExperimentState::$__names[$experimentState];
             $expVal["experimentStatusString"] = $experimentStatusString;
+            */
             $expVal["experimentTimeOfStateChange"] = $experimentStatus->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
             $expVal["experimentCreationTime"] = $experiment->creationTime / 1000; // divide by 1000 since creationTime is in ms
         }

@@ -188,6 +188,8 @@ Route::post("gp/add-crp", "GatewayprofileController@modifyCRP");
 
 Route::post("gp/update-crp", "GatewayprofileController@modifyCRP");
 
+Route::post("gp/create-ssh-token", "GatewayprofileController@createSSH");
+
 Route::post("gp/credential-store-token-change", "GatewayprofileController@cstChange");
 
 //Management Dashboard

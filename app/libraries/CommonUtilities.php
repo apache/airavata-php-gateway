@@ -256,5 +256,9 @@ class CommonUtilities
             throw new Exception('Error: Cannot open tokens database!');
         }
     }
+
+    public static function create_ssh_token(){
+        return Airavata::generateAndRegisterSSHKeys( Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"));
+    }
 }
 

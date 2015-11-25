@@ -17,12 +17,6 @@
          @if( Session::has("admin-nav") && Session::get("admin-nav") == "manage-roles") class="active" @endif>
             <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/roles"><span class="glyphicon glyphicon-eye-open"></span>&nbsp; Roles</a>
         </li>
-
-<!--        <li-->
-<!--        @if( Session::has("admin-nav") && Session::get("admin-nav") == "credential-store") class="active" @endif>-->
-<!--            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/credential-store"><i class="fa fa-fw fa-table"></i>Credential-->
-<!--                Store</a>-->
-<!--        </li>-->
         <li>
             <a><span class="glyphicon glyphicon-briefcase"></span>&nbsp; Compute Resources</a>
             <ul>
@@ -86,6 +80,12 @@
             @if( Session::has("admin-nav") && Session::get("admin-nav") == "gateway-prefs") class="active" @endif>
             <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/gateway"><span class="glyphicon glyphicon-sort"></span>&nbsp; @if(
                 Session::has("scigap_admin"))Gateways @else Gateway Preferences @endif</a>
+        </li>
+
+        <li
+            @if( Session::has("admin-nav") && Session::get("admin-nav") == "credential-store") class="active" @endif>
+            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/credential-store"><span class="glyphicon glyphicon-lock"></span>&nbspCredential
+                Store</a>
         </li>
 <!--        <li>-->
 <!--            <a href="forms.html"><i class="fa fa-fw fa-edit"></i> Settings</a>-->

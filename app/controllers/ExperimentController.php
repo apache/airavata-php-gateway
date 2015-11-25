@@ -105,7 +105,7 @@ class ExperimentController extends BaseController
             }
             */
             // User should not clone or edit a failed experiment. Only create clones of it.
-            if ($expVal["experimentStatusString"] == "FAILED")
+            if ( $expVal["experimentStates"][$experiment->experimentStatus->state] == "FAILED")
                 $expVal["editable"] = false;
 
             $expVal["cancelable"] = false;

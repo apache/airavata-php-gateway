@@ -85,6 +85,10 @@ class GatewayprofileController extends BaseController {
             return "An error has occurred. Please try again later or report a bug using the link in the Help menu";
 	}
 
+	public function createSSH(){
+		return CommonUtilities::create_ssh_token();
+	}
+
 }
 
 ?>

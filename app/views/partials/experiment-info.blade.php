@@ -126,9 +126,11 @@
         <tr>
             <td><strong>Errors</strong></td>
             <td>
-                @foreach( (array)$experiment->errors as $error)
+            @if( $detailedExperiment->errors != null)
+                @foreach( (array)$detailedExperiment->errors as $error)
                 {{ $error->actualErrorMessage }}
                 @endforeach
+            @endif
             </td>
         </tr>
         @endif
@@ -226,11 +228,15 @@
                 @endforeach
                 <li>
                     <span class="alert"><i class="icon-time"></i>
-                        Errors<br/>
-                        @foreach( $detailedExperiment->errors as $error)
-                            Error Id : {{ $error->errorId}}<br/>
-                            Error Message : {{ $error->actualErrorMessage}}
-                        @endforeach
+                        Errors : <br/>
+                        @if( $detailedExperiment->errors != null)
+                            @foreach( $detailedExperiment->errors as $error)
+                                Error Id : {{ $error->errorId}}<br/>
+                                Error Message : {{ $error->actualErrorMessage}}
+                            @endforeach
+                        @else
+                            No errors
+                        @endif
                     </span>
                 </li>
             </ul>
