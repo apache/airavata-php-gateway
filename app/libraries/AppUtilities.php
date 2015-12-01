@@ -324,6 +324,8 @@ class AppUtilities
             CommonUtilities::print_error_message('<p>There was a problem getting the application interface.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
                 '<p>Airavata System Exception: ' . $ase->getMessage() . '</p>');
+        } catch(Exception $ex){
+            return null;
         }
     }
 
