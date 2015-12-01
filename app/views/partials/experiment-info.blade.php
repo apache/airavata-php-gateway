@@ -185,7 +185,7 @@
         </div>
     </form>
     @endif
-    <input type="hidden" id="expObj" value="{{ htmlentities( json_encode( $experiment, JSON_UNESCAPED_UNICODE)) }}"/>
+    <input type="hidden" id="lastModifiedTime" value="{{ $expVal['experimentTimeOfStateChange'] }}"/>
 
     <!-- check of correct experiment Id ends here -->
     @endif

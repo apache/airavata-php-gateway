@@ -19,8 +19,10 @@
                 type: "GET",
                 url: "{{URL::to('/') }}/experiment/summary",
                 data: {expId: "{{ Input::get('expId') }}" },
-                success: function (exp) {
-                    if ($.trim($("#expObj").val()) != $.trim(exp)) {
+                success: function ( data) {
+                    data = $.parseJSON( data);
+                    //if ($.trim($("#expObj").val()) != $.trim(exp)) {
+                    if ($.trim($("#lastModifiedTime").val()) != $.trim( data.expVal["experimentTimeOfStateChange"])) {
                         $continue = false;
                         $(".refresh-exp").click();
                     }
