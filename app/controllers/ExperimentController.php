@@ -79,7 +79,11 @@ class ExperimentController extends BaseController
 
     public function summary()
     {
-        $experiment = ExperimentUtilities::get_detailed_experiment_tree($_GET['expId']);
+        if (Input::has("dashboard"))
+            $experiment = ExperimentUtilities::get_detailed_experiment_tree($_GET['expId']);
+        else
+            $experiment = ExperimentUtilities::get_experiment( $_GET['expId']);
+
         if ($experiment != null) {
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
@@ -111,7 +115,7 @@ class ExperimentController extends BaseController
                     $data["dashboard"] = true;
                     return View::make("partials/experiment-info", $data);
                 } else
-                    return json_encode($experiment);
+                    return json_encode($data);
             } else {
                 return View::make("experiment/summary", $data);
             }
