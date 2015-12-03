@@ -77,11 +77,14 @@ class AdminController extends BaseController {
 		//Session::put("scigap_admin", true);
 		$crData = CRUtilities::getEditCRData();
 		$gateways = CRUtilities::getAllGatewayProfilesData();
+		$tokens = AdminUtilities::get_ssh_tokens();
+
 		//$dsData = CRUtilities::getAllDataStoragePreferences( $gateways);
 		$gatewayData = array( 
 								"gateways" => $gateways, 
 								"computeResources" => CRUtilities::getAllCRObjects(),
-								"crData" => $crData
+								"crData" => $crData,
+								"tokens" => $tokens
 							);
 		//var_dump( $gateways); exit;
 		if( Session::has("scigap_admin"))

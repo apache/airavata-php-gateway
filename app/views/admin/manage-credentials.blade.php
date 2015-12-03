@@ -42,13 +42,13 @@
                         </th>
                         <th class="text-center">Public Key</th>
                     </tr>
-                    @foreach( $tokens as $user => $token)
+                    @foreach( $tokens as $token => $publicKey)
                     <tr>
                         <td class="">
-                            <button class="btn btn-default">Copy Key</button>
+                            {{ $token }}
                         </td>
                         <td class="public-key">
-                            {{ $token }}
+                            {{ $publicKey }}
                         </td>
                     </tr>
                     @endforeach

@@ -64,8 +64,20 @@
                                             <div class="form-group">
                                                 <label class="control-label col-md-12">{{ Session::get('theme') }} Credential Store Token</label>
                                                 <div class="col-md-9">
+                                                    <select class="form-control gateway-credential-store-token" name="resourceSpecificCredentialStoreToken"  data-gpid="{{$gp->gatewayId}}" >
+                                                        @if( isset( $gp->profile->credentialStoreToken) )
+                                                        <option value="{{$gp->profile->credentialStoreToken}}">{{$gp->profile->credentialStoreToken}}</option>
+                                                        @else
+                                                        <option value="">Select a Credential Token from Store</option>
+                                                        @endif
+                                                        @foreach( $tokens as $token => $publicKey)
+                                                        <option value="{{$token}}">{{$token}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <!--
                                                     <input type="text" name="resourceSpecificCredentialStoreToken"  data-gpid="{{$gp->gatewayId}}" class="form-control credential-store-token"
                                                            value="@if( isset( $gp->profile->credentialStoreToken) ){{$gp->profile->credentialStoreToken}}@endif"/>
+                                                    -->
                                                 </div>
                                                 <div class="col-md-3">
                                                         <input type="submit" class="form-control btn btn-primary" value="Set"/>
@@ -302,7 +314,7 @@
     $(".credential-store-token-change > form").submit( function(e){
         $(this).prepend( "<img id='loading-gif' src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
         e.preventDefault();
-        cstField = $(".credential-store-token");
+        cstField = $(".gateway-credential-store-token");
         if( $.trim( cstField.val()) != ""){
             $.ajax({
                 url: "{{URL::to('/')}}/gp/credential-store-token-change",
