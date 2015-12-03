@@ -188,8 +188,6 @@ Route::post("gp/add-crp", "GatewayprofileController@modifyCRP");
 
 Route::post("gp/update-crp", "GatewayprofileController@modifyCRP");
 
-Route::post("gp/create-ssh-token", "GatewayprofileController@createSSH");
-
 Route::post("gp/credential-store-token-change", "GatewayprofileController@cstChange");
 
 //Management Dashboard
@@ -237,6 +235,8 @@ Route::post("admin/disable-cr", "AdminController@disableComputeResource");
 Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 
 Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser");
+
+Route::post("create-ssh-token", "AdminController@createSSH");
 
 //Super Admin Specific calls
 

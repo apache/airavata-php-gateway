@@ -35,32 +35,23 @@
                     </tr>
                 </table>
                 @endif
-                <table class="table table-bordered table-condensed">
+                <table class="table table-bordered table-condensed" style="word-wrap: break-word;">
                     <tr>
                         <th class="text-center">
                             Token
                         </th>
                         <th class="text-center">Public Key</th>
                     </tr>
-                    @foreach( $tokens as $token)
+                    @foreach( $tokens as $user => $token)
                     <tr>
-                        <td class="role-name">{{ $token }}</td>
-                        <td>
-                            {{ $public-key }}
+                        <td class="">
+                            <button class="btn btn-default">Copy Key</button>
+                        </td>
+                        <td class="public-key">
+                            {{ $token }}
                         </td>
                     </tr>
                     @endforeach
-                    <tr>
-                        <td>Some token</td>
-                        <td>$ cat ~/.ssh/id_rsa.pub
-                            ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU
-                            GPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3
-                            Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XA
-                            t3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/En
-                            mZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbx
-                            NrRFi9wrf+M7Q== schacon@mylaptop.local
-                        </td>
-                    </tr>
                 </table>
                 
 
@@ -152,7 +143,7 @@
    $(".generate-ssh").click( function(){
         $.ajax({
           type: "POST",
-          url: "{{URL::to('/')}}/gp/create-ssh-token"
+          url: "{{URL::to('/')}}/create-ssh-token"
         }).success( function( data){
             
         }).fail( function( data){

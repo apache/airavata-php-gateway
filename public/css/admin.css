@@ -313,3 +313,10 @@ ul.alert-dropdown {
 .credential-store-token-change{
     margin-bottom: 15px;
 }
+
+/* ------------------- credential store --------------------------- */
+
+.public-key{
+    word-wrap:break-word;
+    word-break:break-word;
+}

@@ -14,7 +14,7 @@
     </h1>
 
 
-    <table class="table">
+    <table class="table table-bordered">
         <tr>
             <td><strong>Experiment Id</strong></td>
             <td><?php echo $experiment->experimentId; ?></td>
@@ -120,14 +120,15 @@
         </tr>
         <tr>
             <td><strong>Outputs</strong></td>
-            <td><?php ExperimentUtilities::list_output_files($experiment->experimentOutputs, $expVal["experimentStatusString"], false); ?></td>
+            <td><?php ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus->state, false); ?></td>
         </tr>
-        @if( $expVal["experimentStatusString"] == "FAILED")
+        <!-- an experiment is editable only when it has not failed. otherwise, show errors. -->
+        @if( $expVal["editable"] == false)
         <tr>
             <td><strong>Errors</strong></td>
             <td>
-            @if( $detailedExperiment->errors != null)
-                @foreach( (array)$detailedExperiment->errors as $error)
+            @if( $experiment->errors != null)
+                @foreach( (array)$experiment->errors as $error)
                 {{ $error->actualErrorMessage }}
                 @endforeach
             @endif
@@ -177,7 +178,7 @@
         </div>
     </form>
     @endif
-    <input type="hidden" id="expObj" value="{{ htmlentities( json_encode( $experiment)) }}"/>
+    <input type="hidden" id="lastModifiedTime" value="{{ $expVal['experimentTimeOfStateChange'] }}"/>
 
     <!-- check of correct experiment Id ends here -->
     @endif
@@ -206,9 +207,9 @@
                             </span>
 
                                 @foreach( $process->tasks as $task)
-                                    <br/>Task Id : {{ $task->taskId}}
-                                    <br/>Task Type : {{ $task->taskType }}
-                                    <br/>Task Status : {{ $task->taskStatus->state}}
+                                    <br/>Task Id : {{ $task->taskId }}
+                                    <br/>Task Type : {{ $expVal["taskTypes"][$task->taskType] }}
+                                    <br/>Task Status : {{ $expVal["taskStates"][$task->taskStatus->state] }}
                                     <br/>Jobs : {{ count( $task->jobs)}}
                                     <br/>@foreach( $task->jobs as $jobIndex => $job)
                                             Job No. : {{ $jobIndex}}

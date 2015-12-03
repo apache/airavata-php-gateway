@@ -80,7 +80,6 @@ class ExperimentController extends BaseController
     public function summary()
     {
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
-        $detailedExperiment = ExperimentUtilities::get_detailed_experiment( $_GET['expId']);
         //var_dump( $detailedExperiment); exit;
         if ($experiment != null) {
             $project = ProjectUtilities::get_project($experiment->projectId);
@@ -97,29 +96,20 @@ class ExperimentController extends BaseController
                 }
             }
             $expVal["jobDetails"] = $jobDetails;
-            /*
-            if(isset($jobDetails[0]->jobStatus)){
-                $expVal["jobState"] = JobState::$__names[$jobDetails[0]->jobStatus->jobState];
-            }else{
-                $expVal["jobState"] = "";
-            }
-            */
-            // User should not clone or edit a failed experiment. Only create clones of it.
-            if ( $expVal["experimentStates"][$experiment->experimentStatus->state] == "FAILED")
-                $expVal["editable"] = false;
 
-            $expVal["cancelable"] = false;
-            if ($expVal["experimentStatusString"] == "LAUNCHED" || $expVal["experimentStatusString"] == "EXECUTING")
-                $expVal["cancelable"] = true;
-
+            
             $data = array(
                 "expId" => Input::get("expId"),
                 "experiment" => $experiment,
                 "project" => $project,
                 "jobDetails" => $jobDetails,
-                "expVal" => $expVal,
-                "detailedExperiment" => $detailedExperiment
+                "expVal" => $expVal
             );
+            if( Input::has("dashboard"))
+            {
+                $detailedExperiment = ExperimentUtilities::get_detailed_experiment( $_GET['expId']);
+                $data["detailedExperiment"] = $detailedExperiment;
+            }
 
             if (Request::ajax()) {
                 //admin wants to see an experiment summary
@@ -127,7 +117,7 @@ class ExperimentController extends BaseController
                     $data["dashboard"] = true;
                     return View::make("partials/experiment-info", $data);
                 } else
-                    return json_encode($experiment);
+                    return json_encode($data);
             } else {
                 return View::make("experiment/summary", $data);
             }

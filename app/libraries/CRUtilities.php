@@ -5,20 +5,20 @@
 //Compute Resource classes
 use Airavata\Model\AppCatalog\ComputeResource\BatchQueue;
 use Airavata\Model\AppCatalog\ComputeResource\ComputeResourceDescription;
-use Airavata\Model\AppCatalog\ComputeResource\DataMovementProtocol;
+use Airavata\Model\Data\Movement\DataMovementProtocol;
 use Airavata\Model\AppCatalog\ComputeResource\FileSystems;
-use Airavata\Model\AppCatalog\ComputeResource\GridFTPDataMovement;
+use Airavata\Model\Data\Movement\GridFTPDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\JobManagerCommand;
 use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
-use Airavata\Model\AppCatalog\ComputeResource\LOCALDataMovement;
+use Airavata\Model\Data\Movement\LOCALDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\LOCALSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManager;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManagerType;
-use Airavata\Model\AppCatalog\ComputeResource\SCPDataMovement;
-use Airavata\Model\AppCatalog\ComputeResource\SecurityProtocol;
+use Airavata\Model\Data\Movement\SCPDataMovement;
+use Airavata\Model\Data\Movement\SecurityProtocol;
 use Airavata\Model\AppCatalog\ComputeResource\SSHJobSubmission;
-use Airavata\Model\AppCatalog\ComputeResource\UnicoreDataMovement;
+use Airavata\Model\Data\Movement\UnicoreDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\UnicoreJobSubmission;
 use Airavata\Model\AppCatalog\GatewayProfile\ComputeResourcePreference;
 use Airavata\Model\AppCatalog\GatewayProfile\GatewayResourceProfile;

@@ -170,7 +170,9 @@ class AdminController extends BaseController {
 
 	public function credentialStoreView(){
         Session::put("admin-nav", "credential-store");
-		return View::make("admin/manage-credentials", array("tokens" => array()) );
+        $tokens = AdminUtilities::get_ssh_tokens();
+        //var_dump( $tokens); exit;
+		return View::make("admin/manage-credentials", array("tokens" => $tokens ) );
 	}
 
 	public function updateUserRoles(){
@@ -233,4 +235,9 @@ class AdminController extends BaseController {
         $computeResource->enabled = false;
         CRUtilities::register_or_update_compute_resource($computeResource, true);
     }
+
+	public function createSSH(){
+		return AdminUtilities::create_ssh_token();
+	}
+
 }

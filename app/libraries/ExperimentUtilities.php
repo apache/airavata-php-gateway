@@ -13,6 +13,8 @@ use Airavata\Model\Experiment\ExperimentModel;
 use Airavata\Model\Status\ExperimentState;
 use Airavata\Model\Status\ProcessState;
 use Airavata\Model\Status\JobState;
+use Airavata\Model\Status\TaskState;
+use Airavata\Model\Task\TaskTypes;
 use Airavata\Model\Experiment\UserConfigurationDataModel;
 
 class ExperimentUtilities
@@ -651,13 +653,13 @@ class ExperimentUtilities
         {
             $processStatusVal = array_search($status, ProcessState::$__names);
             if ($status != ProcessState::COMPLETED)
-                echo "Process hasn't completed. Process Status is : " . $status . '<br/>';
+                echo "Process hasn't completed. Process Status is : " . ProcessState::$__names[ $status] . '<br/>';
         }
         else
         {
             $expStatusVal = array_search($status, ExperimentState::$__names);
-            if ($expStatusVal != ExperimentState::COMPLETED)
-            echo "Experiment hasn't completed. Experiment Status is : " . $status . '<br/>';
+            if ( $status != ExperimentState::COMPLETED)
+                echo "Experiment hasn't completed. Experiment Status is : " .  ExperimentState::$__names[ $status] . '<br/>';
         }
         //$outputs = $experiment->experimentOutputs;
         //print_r( $outputs); exit;
@@ -761,6 +763,19 @@ class ExperimentUtilities
         $expVal["experimentStates"] = ExperimentState::$__names;
         $expVal["processStates"] = ProcessState::$__names;
         $expVal["jobStates"] = JobState::$__names;
+        $expVal["taskStates"] = TaskState::$__names;
+        $expVal["taskTypes"] = TaskTypes::$__names;
+
+        $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus->state];
+        $expVal["experimentStatusString"] = $experimentStatusString;
+        if ( $experimentStatusString == ExperimentState::FAILED)
+            $expVal["editable"] = false;
+
+        $expVal["cancelable"] = false;
+        if ( $experimentStatusString == ExperimentState::LAUNCHED 
+            || $experimentStatusString == ExperimentState::EXECUTING)
+            $expVal["cancelable"] = true;
+
 
         if ($experiment->experimentStatus != null) {
             $experimentStatus = $experiment->experimentStatus;
