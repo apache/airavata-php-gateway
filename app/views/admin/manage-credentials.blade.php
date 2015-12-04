@@ -42,6 +42,7 @@
                         </th>
                         <th class="text-center">Public Key</th>
                     </tr>
+                    <tbody class="token-values">
                     @foreach( $tokens as $token => $publicKey)
                     <tr>
                         <td class="">
@@ -52,6 +53,7 @@
                         </td>
                     </tr>
                     @endforeach
+                    </tbody>
                 </table>
                 
 
@@ -145,7 +147,14 @@
           type: "POST",
           url: "{{URL::to('/')}}/create-ssh-token"
         }).success( function( data){
-            
+
+            var tokenJson = data;
+
+            $(".token-values").html("");
+            $.each(tokenJson, function( token, pubkey){
+                $(".token-values").append("<tr><td>" + token + "</td><td class='public-key'>" + pubkey + "</td></<tr>");
+            });
+
         }).fail( function( data){
             failureObject = $.parseJSON( data.responseText);
             $(".generate-ssh").after("<div class='alert alert-danger'>" + failureObject.error.message + "</div>");

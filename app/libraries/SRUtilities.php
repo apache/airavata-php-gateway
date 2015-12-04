@@ -3,7 +3,7 @@
 
 //Airavata classes - loaded from app/libraries/Airavata
 //Compute Resource classes
-use Airavata\Model\AppCatalog\ComputeResource\DataMovementProtocol;
+use Airavata\Model\Data\Movement\DataMovementProtocol;
 use Airavata\Model\AppCatalog\StorageResource\StorageResourceDescription;
 use Airavata\Model\AppCatalog\GatewayProfile\ComputeResourcePreference;
 use Airavata\Model\AppCatalog\GatewayProfile\GatewayResourceProfile;
@@ -11,13 +11,14 @@ use Airavata\Model\AppCatalog\GatewayProfile\GatewayResourceProfile;
 use Airavata\Model\AppCatalog\ComputeResource\GridFTPDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\JobManagerCommand;
 use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
-use Airavata\Model\AppCatalog\ComputeResource\LOCALDataMovement;
+use Airavata\Model\Data\Movement\LOCALDataMovement;
+use Airavata\Model\Data\Movement\DMType;
 use Airavata\Model\AppCatalog\ComputeResource\LOCALSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManager;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManagerType;
 use Airavata\Model\AppCatalog\ComputeResource\SCPDataMovement;
-use Airavata\Model\AppCatalog\ComputeResource\SecurityProtocol;
+use Airavata\Model\Data\Movement\SecurityProtocol;
 use Airavata\Model\AppCatalog\ComputeResource\SSHJobSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\UnicoreDataMovement;
 //Gateway Classes
@@ -87,7 +88,7 @@ class SRUtilities
 
         if ($inputs["dataMovementProtocol"] == DataMovementProtocol::LOCAL) /* LOCAL */ {
             $localDataMovement = new LOCALDataMovement();
-            $localdmp = Airavata::addLocalDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, 0, $localDataMovement);
+            $localdmp = Airavata::addLocalDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, DMType::STORAGE_RESOURCE, 0, $localDataMovement);
 
         } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::SCP) /* SCP */ {
             $scpDataMovement = new SCPDataMovement(array(
@@ -100,7 +101,7 @@ class SRUtilities
             if ($update)
                 $scpdmp = Airavata::updateSCPDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $scpDataMovement);
             else
-                $scpdmp = Airavata::addSCPDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, 0, $scpDataMovement);
+                $scpdmp = Airavata::addSCPDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, DMType::STORAGE_RESOURCE, 0, $scpDataMovement);
         } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::GridFTP) /* GridFTP */ {
             $gridFTPDataMovement = new GridFTPDataMovement(array(
                 "securityProtocol" => $inputs["securityProtocol"],
@@ -109,7 +110,7 @@ class SRUtilities
             if ($update)
                 $gridftpdmp = Airavata::updateGridFTPDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $gridFTPDataMovement);
             else
-                $gridftpdmp = Airavata::addGridFTPDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, 0, $gridFTPDataMovement);
+                $gridftpdmp = Airavata::addGridFTPDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, DMType::STORAGE_RESOURCE, 0, $gridFTPDataMovement);
         } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::UNICORE_STORAGE_SERVICE) /* Unicore Storage Service */ {
             $unicoreDataMovement = new UnicoreDataMovement(array
                 (
@@ -120,7 +121,7 @@ class SRUtilities
             if ($update)
                 $unicoredmp = Airavata::updateUnicoreDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $unicoreDataMovement);
             else
-                $unicoredmp = Airavata::addUnicoreDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, 0, $unicoreDataMovement);
+                $unicoredmp = Airavata::addUnicoreDataMovementDetails(Session::get('authz-token'), $storageResource->storageResourceId, DMType::STORAGE_RESOURCE, 0, $unicoreDataMovement);
         } else /* other data movement protocols */ {
             print_r("Whoops! We haven't coded for this Data Movement Protocol yet. Still working on it. Please click <a href='" . URL::to('/') . "/cr/edit'>here</a> to go back to edit page for compute resource.");
         }

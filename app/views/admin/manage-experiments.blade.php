@@ -26,10 +26,19 @@
         <button class="col-md-3 btn btn-primary get-experiment">Get</button>
         <div class="loading-img hide text-center"><img src="{{URL::to('/')}}/assets/ajax-loader.gif"/></div>
 
-        <div class="experiment-info col-md-12">
         </div>
     </div>
 
+    <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist" id="myTabs">
+    <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+    <!--
+    <li role="presentation"><a href="#expsummary" aria-controls="expsummary" role="tab" data-toggle="tab">Experiment Summary</a></li>
+    -->
+  </ul>
+
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="overview">
     <div class="well col-md-12">
         <div class="col-md-10">
             <div class='col-md-5'>
@@ -277,6 +286,15 @@
 <!--        </ul>-->
 <!--    </div>-->
 <!--</div>-->
+
+
+    </div>
+    <!--
+    <div role="tabpanel" class="tab-pane" id="expsummary">
+        <div class="experiment-info col-md-12">
+    </div>
+    -->
+    </div>
 </div>
 <!-- /.container-fluid -->
 
@@ -343,7 +361,13 @@ to be uncommented when actually in use.
             url: 'experiment/summary?expId=' + $(".experimentId").val(),
             type: 'get',
             success: function (data) {
-                $(".experiment-info").html(data);
+                //$(".experiment-info").html(data);
+                $("#myTabs").append('<li role="presentation"><a href="#' + $(".experimentId").val() + '" aria-controls="' + $(".experimentId").val() + '" role="tab" data-toggle="tab">' + $(".experimentId").val() + '</a></li>');
+                $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + $(".experimentId").val() + '">' + data + '</div>');
+                $('#myTabs a[href="#' + $(".experimentId").val() + '"]').tab('show') // Select tab by name
+                
+                //$('#myTabs a[href="#expsummary"]').tab('show') // Select tab by name
+                
                 //from time-conversion.js
                 updateTime();
             }

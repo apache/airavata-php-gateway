@@ -11,6 +11,7 @@ use Airavata\Model\Data\Movement\GridFTPDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\JobManagerCommand;
 use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
 use Airavata\Model\Data\Movement\LOCALDataMovement;
+use Airavata\Model\Data\Movement\DMType;
 use Airavata\Model\AppCatalog\ComputeResource\LOCALSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManager;
@@ -278,7 +279,7 @@ class CRUtilities
 
         if ($inputs["dataMovementProtocol"] == DataMovementProtocol::LOCAL) /* LOCAL */ {
             $localDataMovement = new LOCALDataMovement();
-            $localdmp = Airavata::addLocalDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $localDataMovement);
+            $localdmp = Airavata::addLocalDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, DMType::COMPUTE_RESOURCE, 0, $localDataMovement);
 
             if ($localdmp)
                 print_r("The Local Data Movement has been added. Edit UI for the Local Data Movement Interface is yet to be made.
@@ -296,7 +297,7 @@ class CRUtilities
             if ($update)
                 $scpdmp = Airavata::updateSCPDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $scpDataMovement);
             else
-                $scpdmp = Airavata::addSCPDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $scpDataMovement);
+                $scpdmp = Airavata::addSCPDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, DMType::COMPUTE_RESOURCE, 0, $scpDataMovement);
         } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::GridFTP) /* GridFTP */ {
             $gridFTPDataMovement = new GridFTPDataMovement(array(
                 "securityProtocol" => $inputs["securityProtocol"],
@@ -305,7 +306,7 @@ class CRUtilities
             if ($update)
                 $gridftpdmp = Airavata::updateGridFTPDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $gridFTPDataMovement);
             else
-                $gridftpdmp = Airavata::addGridFTPDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $gridFTPDataMovement);
+                $gridftpdmp = Airavata::addGridFTPDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, DMType::COMPUTE_RESOURCE, 0, $gridFTPDataMovement);
         } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::UNICORE_STORAGE_SERVICE) /* Unicore Storage Service */ {
             $unicoreDataMovement = new UnicoreDataMovement(array
                 (
@@ -316,7 +317,7 @@ class CRUtilities
             if ($update)
                 $unicoredmp = Airavata::updateUnicoreDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $unicoreDataMovement);
             else
-                $unicoredmp = Airavata::addUnicoreDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $unicoreDataMovement);
+                $unicoredmp = Airavata::addUnicoreDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, DMType::COMPUTE_RESOURCE, 0, $unicoreDataMovement);
         } else /* other data movement protocols */ {
             print_r("Whoops! We haven't coded for this Data Movement Protocol yet. Still working on it. Please click <a href='" . URL::to('/') . "/cr/edit'>here</a> to go back to edit page for compute resource.");
         }

@@ -97,18 +97,18 @@
                 <h3>Manage Computing and Storage Resouces and Preferences for your Gateway</h3>
 
                 <a href="{{URL::to('/')}}/cr/browse">
-                    <div class=" col-md-4 well">
+                    <div class=" col-md-3 well">
                         <div class="col-md-12">
                             <span class="glyphicon glyphicon-briefcase  console-icon"></span>
                         </div>
                         <div class="col-md-12">
-                            <h4>Browse Compute Resources</h4>
+                            <h4>Compute Resources</h4>
                         </div>
                     </div>
                 </a>
 
                 <a href="{{URL::to('/')}}/admin/dashboard/gateway">
-                    <div class=" col-md-4 well">
+                    <div class=" col-md-3 well">
                         <div class="col-md-12">
                             <span class="glyphicon glyphicon-sort console-icon"></span>
                         </div>
@@ -119,12 +119,23 @@
                 </a>
 
                 <a href="{{URL::to('/')}}/sr/browse">
-                    <div class=" col-md-4 well">
+                    <div class=" col-md-3 well">
                         <div class="col-md-12">
                             <span class="glyphicon glyphicon-folder-open console-icon"></span>
                         </div>
                         <div class="col-md-12">
-                            <h4>Browse Storage Resources</h4>
+                            <h4>Storage Resources</h4>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{{URL::to('/')}}/admin/dashboard/credential-store">
+                    <div class=" col-md-3 well">
+                        <div class="col-md-12">
+                            <span class="glyphicon glyphicon-lock console-icon"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <h4>Credential Store</h4>
                         </div>
                     </div>
                 </a>
