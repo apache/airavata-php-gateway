@@ -70,4 +70,24 @@ class AdminUtilities
 
         return $expContainer;
     }
+
+    public static function create_ssh_token(){
+        try{
+            $token = Airavata::generateAndRegisterSSHKeys( Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"));
+            return Airavata::getAllUserSSHPubKeys( Session::get('authz-token'), Session::get("username") );
+        } catch (InvalidRequestException $ire) {
+            CommonUtilities::print_error_message('p>Error in creating SSH Handshake. You might have to enable TLS in pga_config. </p>' .
+                '<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
+        } catch (AiravataClientException $ace) {
+            CommonUtilities::print_error_message('<p>Error in creating SSH Handshake. You might have to enable TLS in pga_config.  </p>' .
+                '<p>Airavata Client Exception: ' . $ace->getMessage() . '</p>');
+        } catch (AiravataSystemException $ase) {
+            CommonUtilities::print_error_message('p>Error in creating SSH Handshake. You might have to enable TLS in pga_config.  </p>' .
+                '<p>Airavata System Exception: ' . $ase->getMessage() . '</p>');
+        }
+    }
+
+    public static function get_ssh_tokens(){
+        return Airavata::getAllUserSSHPubKeys( Session::get('authz-token'), Session::get("username") );
+    }
 }

@@ -6,7 +6,9 @@
     "require": {
         "laravel/framework": "4.2.*",
         "teepluss/theme": "1.*@dev",
-        "phpmailer/phpmailer": "v5.2.13"
+        "phpmailer/phpmailer": "v5.2.13",
+        "moon/properties": "0.1",
+        "graham-campbell/markdown": "*"
     },
     "autoload": {
         "classmap": [

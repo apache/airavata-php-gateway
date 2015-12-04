@@ -26,44 +26,38 @@
                 @endif
 
                 <h1 class="text-center">SSH Keys</h1>
-
-                <table class="table table-bordered table-condensed">
+                @if(Session::has("admin"))
+                <table class="table">
+                    <tr class="text-center table-condensed">
+                        <td>
+                            <button class="btn btn-default generate-ssh">Generate a new token</button>
+                        </td>
+                    </tr>
+                </table>
+                @endif
+                <table class="table table-bordered table-condensed" style="word-wrap: break-word;">
                     <tr>
                         <th class="text-center">
                             Token
                         </th>
                         <th class="text-center">Public Key</th>
                     </tr>
-                    @foreach( $tokens as $token)
+                    <tbody class="token-values">
+                    @foreach( $tokens as $token => $publicKey)
                     <tr>
-                        <td class="role-name">{{ $token }}</td>
-                        <td>
-                            {{ $public-key }}
+                        <td class="">
+                            {{ $token }}
+                        </td>
+                        <td class="public-key">
+                            {{ $publicKey }}
                         </td>
                     </tr>
                     @endforeach
-                    <tr>
-                        <td>Some token</td>
-                        <td>$ cat ~/.ssh/id_rsa.pub
-                            ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU
-                            GPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3
-                            Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XA
-                            t3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/En
-                            mZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbx
-                            NrRFi9wrf+M7Q== schacon@mylaptop.local
-                        </td>
-                    </tr>
+                    </tbody>
                 </table>
-                @if(Session::has("admin"))
-                <table class="table">
-                    <tr class="text-center table-condensed">
-                        <td>
-                            <button class="btn btn-default">Generate a new token</button>
-                        </td>
-                    </tr>
-                </table>
-                @endif
+                
 
+                <!--
                 @if(Session::has("admin"))
                 <div class="row">
                     <h1 class="text-center">My Proxy Credentials</h1>
@@ -93,6 +87,7 @@
                     </div>
                 </div>
                 @endif
+                -->
 
                 <h1 class="text-center">Amazon Credentials</h1>
 
@@ -147,28 +142,23 @@
 @section('scripts')
 @parent
 <script>
-    $(".toggle-add-role").click(function () {
-        $(".add-role").slideDown();
-    });
+   $(".generate-ssh").click( function(){
+        $.ajax({
+          type: "POST",
+          url: "{{URL::to('/')}}/create-ssh-token"
+        }).success( function( data){
 
-    $(".edit-role-name").click(function () {
-        var roleNameSpace = $(this).parent().parent().find(".role-name");
-        if (roleNameSpace.find(".edit-role-form").length) {
-            roleNameSpace.html(roleNameSpace.find(".original-role-name").val());
-        }
-        else {
-            var role = roleNameSpace.html();
-            roleNameSpace.html($(".edit-role").html());
-            roleNameSpace.find(".original-role-name").val(role);
-            roleNameSpace.find(".new-role-name").val(role);
-        }
-    });
+            var tokenJson = data;
 
-    $(".delete-role").click(function () {
-        $("#delete-role-block").modal("show");
-        var roleName = $(this).parent().parent().find(".role-name").html();
-        $(".delete-role-name").html(roleName);
-        $(".delete-roleName").val(roleName);
-    })
+            $(".token-values").html("");
+            $.each(tokenJson, function( token, pubkey){
+                $(".token-values").append("<tr><td>" + token + "</td><td class='public-key'>" + pubkey + "</td></<tr>");
+            });
+
+        }).fail( function( data){
+            failureObject = $.parseJSON( data.responseText);
+            $(".generate-ssh").after("<div class='alert alert-danger'>" + failureObject.error.message + "</div>");
+        });
+   });
 </script>
 @stop

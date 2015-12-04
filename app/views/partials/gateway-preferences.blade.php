@@ -86,8 +86,20 @@
     <label class="control-label col-md-3">Resource Specific Credential Store Token</label>
 
     <div class="col-md-9">
+        <select class="form-control gateway-credential-store-token" name="resourceSpecificCredentialStoreToken" >
+            @if( isset( $preferences) )
+            <option value="{{$preferences->resourceSpecificCredentialStoreToken}}">{{$preferences->resourceSpecificCredentialStoreToken}}</option>
+            @else
+            <option value="">Select a Credential Token from Store</option>
+            @endif
+            @foreach( $tokens as $token => $publicKey)
+            <option value="{{$token}}">{{$token}}</option>
+            @endforeach
+        </select>
+        <!--
         <input type="text" name="resourceSpecificCredentialStoreToken" class="form-control"
                value="@if( isset( $preferences) ){{$preferences->resourceSpecificCredentialStoreToken}}@endif"/>
+        -->
     </div>
 </div>
 @if(Session::has("admin"))

@@ -29,13 +29,11 @@ class GatewayprofileController extends BaseController {
 
 	public function browseView()
 	{
-		$crObjects = CRUtilities::getAllCRObjects();
-		$crData = CRUtilities::getEditCRData();
 		//var_dump( $crObjects[0]); exit;
 		return View::make("gateway/browse", array(	"gatewayProfiles" => CRUtilities::getAllGatewayProfilesData(),
 													"computeResources" => CRUtilities::getAllCRObjects(),
 													"crData" => CRUtilities::getEditCRData()
-												));
+ 												));
 	}
 
 	public function modifyCRP()
@@ -84,7 +82,6 @@ class GatewayprofileController extends BaseController {
         else
             return "An error has occurred. Please try again later or report a bug using the link in the Help menu";
 	}
-
 }
 
 ?>

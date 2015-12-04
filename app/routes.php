@@ -117,6 +117,33 @@ Route::post("cr/delete-jsi", "ComputeResourceController@deleteActions");
 Route::post("cr/delete-dmi", "ComputeResourceController@deleteActions");
 
 Route::post("cr/delete-cr", "ComputeResourceController@deleteActions");
+
+/*
+ * Data Storage Resources Routes
+*/
+
+Route::get("sr/create", function () {
+    return Redirect::to("sr/create/step1");
+});
+
+Route::get("sr/create", "StorageResourceController@createView");
+
+Route::post("sr/create", "StorageResourceController@createSubmit");
+
+Route::get("sr/edit", "StorageResourceController@editView");
+
+Route::post("sr/edit", "StorageResourceController@editSubmit");
+
+Route::get("sr/view", "StorageResourceController@viewView");
+
+Route::get("sr/browse", "StorageResourceController@browseView");
+
+Route::post("sr/delete-jsi", "StorageResourceController@deleteActions");
+
+Route::post("sr/delete-dmi", "StorageResourceController@deleteActions");
+
+Route::post("sr/delete-cr", "StorageResourceController@deleteActions");
+
 /*
  * Application Catalog Routes
 */
@@ -165,11 +192,9 @@ Route::post("gp/credential-store-token-change", "GatewayprofileController@cstCha
 
 //Management Dashboard
 
-Route::get("admin/console", "AdminController@console");
-
 Route::get("admin/dashboard", "AdminController@dashboard");
 
-Route::get("admin/dashboard/gateway", "AdminController@dashboard");
+Route::get("admin/dashboard/gateway", "AdminController@gatewayView");
 
 Route::get("admin/dashboard/users", "AdminController@usersView");
 
@@ -211,6 +236,8 @@ Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 
 Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser");
 
+Route::post("create-ssh-token", "AdminController@createSSH");
+
 //Super Admin Specific calls
 
 Route::post("admin/add-gateway", "AdminController@addGateway");
@@ -238,11 +265,7 @@ Route::get("airavata/down", function () {
 */
 
 Route::get("testjob", function () {
-    if( is_dir( URL::to('/') . '/../themes/seagrid' ) )
-    	print_r("test yes");
-    else
-    	print_r("test no"); 
-    exit;
+    return Markdown::render( View::make('edit-mode'));
 });
 
 /*handling errors on production */

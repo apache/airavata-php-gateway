@@ -62,10 +62,22 @@
                                     <div class="col-md-10 credential-store-token-change">
                                         <form>
                                             <div class="form-group">
-                                                <label class="control-label col-md-12">Credential Store Token</label>
+                                                <label class="control-label col-md-12">{{ Session::get('theme') }} Credential Store Token</label>
                                                 <div class="col-md-9">
+                                                    <select class="form-control gateway-credential-store-token" name="resourceSpecificCredentialStoreToken"  data-gpid="{{$gp->gatewayId}}" >
+                                                        @if( isset( $gp->profile->credentialStoreToken) )
+                                                        <option value="{{$gp->profile->credentialStoreToken}}">{{$gp->profile->credentialStoreToken}}</option>
+                                                        @else
+                                                        <option value="">Select a Credential Token from Store</option>
+                                                        @endif
+                                                        @foreach( $tokens as $token => $publicKey)
+                                                        <option value="{{$token}}">{{$token}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <!--
                                                     <input type="text" name="resourceSpecificCredentialStoreToken"  data-gpid="{{$gp->gatewayId}}" class="form-control credential-store-token"
                                                            value="@if( isset( $gp->profile->credentialStoreToken) ){{$gp->profile->credentialStoreToken}}@endif"/>
+                                                    -->
                                                 </div>
                                                 <div class="col-md-3">
                                                         <input type="submit" class="form-control btn btn-primary" value="Set"/>
@@ -75,15 +87,16 @@
                                     </div>
                                     <div class="col-md-10">
                                         <button class="btn btn-default add-cr" data-gpid="{{$gp->gatewayId}}"><span
-                                                class="glyphicon glyphicon-plus"></span> Add a Compute Resource
+                                                class="glyphicon glyphicon-plus"></span> Add a Compute Resource Preference
                                         </button>
                                     </div>
                                     @endif
                                 </div>
+                                    
                                     <div class="col-md-10">
                                         @if( isset( $gp->profile->computeResourcePreferences) )
                                         <div>
-                                            <h3>Existing Compute Resources :</h3>
+                                            <h3>Compute Resource Preferences :</h3>
                                         </div>
                                         <div class="accordion-inner">
                                             <div class="panel-group" id="accordion-{{$indexGP}}">
@@ -150,6 +163,71 @@
                                             </div>
                                         </form>
                                         -->
+                                    </div>
+
+                                    <div class="col-md-10">
+                                        <button class="btn btn-default add-dsp" data-gpid="{{$gp->gatewayId}}"><span
+                                                class="glyphicon glyphicon-plus"></span> Add a Data Storage Preference
+                                        </button>
+                                    </div>
+
+                                    <div class="col-md-10">
+                                        @if( isset( $gp->profile->dataStoragePreferences) )
+                                        <div>
+                                            <h3>Data Storage Preferences :</h3>
+                                        </div>
+
+                                        <div class="accordion-inner">
+                                            <div class="panel-group" id="accordion-{{$indexGP}}">
+                                                @foreach( (array)$gp->profile->dataStoragePreferences as $indexDSP
+                                                => $dsp )
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed gateway-name"
+                                                               data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse-dsp-{{$indexGP}}-{{$indexDSP}}">
+                                                                {{ $dsp->dataMovememtResourceId }}
+                                                            </a>
+                                                            @if(Session::has("admin"))
+                                                            <div class="pull-right col-md-2 gateway-options fade">
+                                                                <span class="glyphicon glyphicon-remove remove-resource"
+                                                                      style="cursor:pointer;" data-toggle="modal"
+                                                                      data-target="#remove-resource-block"
+                                                                      data-dsp-id="{{$ds->computeResourceId}}"
+                                                                      data-gp-id="{{ $gp->gatewayId }}"></span>
+                                                            </div>
+                                                            @endif
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse-dsp-{{$indexGP}}-{{$indexDSP}}"
+                                                         class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div class="app-data-storage-preferences-block">
+                                                                <form action="{{URL::to('/')}}/gp/update-dsp"
+                                                                      method="POST">
+                                                                    <input type="hidden" name="gatewayId" id="gatewayId"
+                                                                           value="{{$gp->gatewayId}}">
+                                                                    <input type="hidden" name="dataStorageId"
+                                                                           id="gatewayId"
+                                                                           value="{{$crp->dataMovememtResourceId}}">
+
+                                                                    <div class="form-horizontal">
+                                                                        @include('partials/gateway-preferences',
+                                                                        array('computeResource' => $crp->crDetails,
+                                                                        'crData' => $crData, 'preferences'=>$crp,
+                                                                        'show'=>true))
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        @endif
+
                                     </div>
                                 </div>
                             </div>
@@ -236,7 +314,7 @@
     $(".credential-store-token-change > form").submit( function(e){
         $(this).prepend( "<img id='loading-gif' src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
         e.preventDefault();
-        cstField = $(".credential-store-token");
+        cstField = $(".gateway-credential-store-token");
         if( $.trim( cstField.val()) != ""){
             $.ajax({
                 url: "{{URL::to('/')}}/gp/credential-store-token-change",

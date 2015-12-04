@@ -13,16 +13,9 @@
 @include( 'partials/dashboard-block')
 <div id="page-wrapper">
 <div class="col-md-12">
-    <h3>Experiments</h3>
+    <h2>Experiments</h2>
 </div>
 <div class="container-fluid">
-
-<div class="row">
-    <!--
-        <div class="well col-md-2 text-center">
-            Total 500
-        </div>
-    -->
 
     <div class="well form-group form-horizontal col-md-12">
         <label class="col-md-3">Enter Experiment Id to View Summary :</label>
@@ -33,15 +26,19 @@
         <button class="col-md-3 btn btn-primary get-experiment">Get</button>
         <div class="loading-img hide text-center"><img src="{{URL::to('/')}}/assets/ajax-loader.gif"/></div>
 
-        <div class="experiment-info col-md-12">
         </div>
     </div>
-</div>
 
-<hr/>
-<br/>
+    <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist" id="myTabs">
+    <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+    <!--
+    <li role="presentation"><a href="#expsummary" aria-controls="expsummary" role="tab" data-toggle="tab">Experiment Summary</a></li>
+    -->
+  </ul>
 
-<div class="dates row">
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="overview">
     <div class="well col-md-12">
         <div class="col-md-10">
             <div class='col-md-5'>
@@ -86,7 +83,6 @@
     </div>
     <div class="experiment-statistics"></div>
     <div class="loading-img-statistics hide text-center"><img src="{{URL::to('/')}}/assets/ajax-loader.gif"/></div>
-</div>
 
 <!--<div class="row">-->
 <!--    <div class="col-lg-12">-->
@@ -290,6 +286,15 @@
 <!--        </ul>-->
 <!--    </div>-->
 <!--</div>-->
+
+
+    </div>
+    <!--
+    <div role="tabpanel" class="tab-pane" id="expsummary">
+        <div class="experiment-info col-md-12">
+    </div>
+    -->
+    </div>
 </div>
 <!-- /.container-fluid -->
 
@@ -356,7 +361,13 @@ to be uncommented when actually in use.
             url: 'experiment/summary?expId=' + $(".experimentId").val(),
             type: 'get',
             success: function (data) {
-                $(".experiment-info").html(data);
+                //$(".experiment-info").html(data);
+                $("#myTabs").append('<li role="presentation"><a href="#' + $(".experimentId").val() + '" aria-controls="' + $(".experimentId").val() + '" role="tab" data-toggle="tab">' + $(".experimentId").val() + '</a></li>');
+                $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + $(".experimentId").val() + '">' + data + '</div>');
+                $('#myTabs a[href="#' + $(".experimentId").val() + '"]').tab('show') // Select tab by name
+                
+                //$('#myTabs a[href="#expsummary"]').tab('show') // Select tab by name
+                
                 //from time-conversion.js
                 updateTime();
             }
@@ -390,7 +401,8 @@ to be uncommented when actually in use.
         $("#datetimepicker10").find("input").val( todayDate);
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
-        getExperiments( ydayDate, todayDate);
+        var msg = "Experiments statistics from last 24 hours";
+        getExperiments( ydayDate, todayDate, msg);
     });
 
     $(".oneWeekExp").click( function(){
@@ -400,7 +412,8 @@ to be uncommented when actually in use.
         $("#datetimepicker10").find("input").val( todayDate);
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
-        getExperiments( ydayDate, todayDate);
+        var msg = "Experiments statistics from last week";
+        getExperiments( ydayDate, todayDate, msg);
     })
 
     $("#getStatistics").click(function () {
@@ -415,14 +428,19 @@ to be uncommented when actually in use.
         }
     });
 
-    function getExperiments( startTime, endTime){
+    // Load experiments from the last 24 hours on page load.
+    $(".oneDayExp").click();
+
+    function getExperiments( startTime, endTime, msg){
         $(".experiment-statistics").html("");
         $(".loading-img-statistics").removeClass("hide");
             $.ajax({
                 url: 'experimentStatistics?fromTime=' + startTime + '&' + 'toTime=' + endTime,
                 type: 'get',
                 success: function (data) {
-                    $(".experiment-statistics").html(data);
+                    if( msg == null)
+                        msg = "Experiment Statistics from " + startTime + " to " + endTime;
+                    $(".experiment-statistics").html( "<h2 class='text-center'>" + msg + "</h2><hr/>" + data);
                 }
             }).complete(function () {
                 $(".loading-img-statistics").addClass("hide");

@@ -44,6 +44,7 @@
 @endif
 <script type="text/javascript">
 
+$( document).ready( function(){
     var highest = null;
     $(".nav-tabs a").each(function () {  //find the height of your highest link
         var h = $(this).height();
@@ -73,4 +74,5 @@
             }
         });
     }
+});
 </script>

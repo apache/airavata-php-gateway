@@ -79,28 +79,25 @@ class ExperimentController extends BaseController
 
     public function summary()
     {
-        if (Input::has("dashboard"))
-            $experiment = ExperimentUtilities::get_detailed_experiment_tree($_GET['expId']);
-        else
-            $experiment = ExperimentUtilities::get_experiment( $_GET['expId']);
-
+        $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
+        //var_dump( $detailedExperiment); exit;
         if ($experiment != null) {
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
-            if(isset($jobDetails[0]->jobStatus)){
-                $expVal["jobState"] = JobState::$__names[$jobDetails[0]->jobStatus->jobState];
-            }else{
-                $expVal["jobState"] = "";
+            //var_dump( $jobDetails); exit;
+            foreach( $jobDetails as $index => $jobDetail){
+                if(isset($jobDetail->jobStatus)){
+                      $jobDetails[ $index]->jobStatus->jobStateName = JobState::$__names[$jobDetail->jobStatus->jobState];
+                }
+                else{
+                    $jobDetails[ $index]->jobStatus = new stdClass();
+                    $jobDetails[ $index]->jobStatus->jobStateName = null;
+                }
             }
-            // User should not clone or edit a failed experiment. Only create clones of it.
-            if ($expVal["experimentStatusString"] == "FAILED")
-                $expVal["editable"] = false;
+            $expVal["jobDetails"] = $jobDetails;
 
-            $expVal["cancelable"] = false;
-            if ($expVal["experimentStatusString"] == "LAUNCHED" || $expVal["experimentStatusString"] == "EXECUTING")
-                $expVal["cancelable"] = true;
-
+            
             $data = array(
                 "expId" => Input::get("expId"),
                 "experiment" => $experiment,
@@ -108,6 +105,11 @@ class ExperimentController extends BaseController
                 "jobDetails" => $jobDetails,
                 "expVal" => $expVal
             );
+            if( Input::has("dashboard"))
+            {
+                $detailedExperiment = ExperimentUtilities::get_detailed_experiment( $_GET['expId']);
+                $data["detailedExperiment"] = $detailedExperiment;
+            }
 
             if (Request::ajax()) {
                 //admin wants to see an experiment summary

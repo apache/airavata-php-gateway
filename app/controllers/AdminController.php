@@ -8,28 +8,30 @@ class AdminController extends BaseController {
 		Session::put("nav-active", "user-console");
 	}
 
-	public function console(){
-		return View::make("admin/dashboard");
-	}
-
 	public function dashboard(){
 		//only for super admin
 		//Session::put("scigap_admin", true);
 
-		$crData = CRUtilities::getEditCRData();
-		$gateways = CRUtilities::getAllGatewayProfilesData();
-
-		$gatewayData = array( 
-														"gateways" => $gateways, 
-														"computeResources" => CRUtilities::getAllCRObjects(),
-														"crData" => $crData);
 		if( Session::has("scigap_admin"))
+		{
+			$crData = CRUtilities::getEditCRData();
+			$gateways = CRUtilities::getAllGatewayProfilesData();
+
+			$gatewayData = array( 
+									"gateways" => $gateways, 
+									"computeResources" => CRUtilities::getAllCRObjects(),
+									"crData" => $crData
+								);
+			
 			$view = "scigap-admin/manage-gateway";
-		else{
-			$view = "admin/manage-gateway";
+
             Session::put("admin-nav", "gateway-prefs");
-        }
 			return View::make( $view, $gatewayData);
+		}
+		else{
+        	return View::make("account/dashboard");
+
+        }
 	}
 
 	public function addAdminSubmit(){
@@ -68,6 +70,31 @@ class AdminController extends BaseController {
         Session::put("admin-nav", "manage-users");
         return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 
+    }
+
+    public function gatewayView(){
+    	//only for super admin
+		//Session::put("scigap_admin", true);
+		$crData = CRUtilities::getEditCRData();
+		$gateways = CRUtilities::getAllGatewayProfilesData();
+		$tokens = AdminUtilities::get_ssh_tokens();
+
+		//$dsData = CRUtilities::getAllDataStoragePreferences( $gateways);
+		$gatewayData = array( 
+								"gateways" => $gateways, 
+								"computeResources" => CRUtilities::getAllCRObjects(),
+								"crData" => $crData,
+								"tokens" => $tokens
+							);
+		//var_dump( $gateways); exit;
+		if( Session::has("scigap_admin"))
+			$view = "scigap-admin/manage-gateway";
+		else{
+			$view = "admin/manage-gateway";
+        }
+
+        Session::put("admin-nav", "gateway-prefs");
+		return View::make( $view, $gatewayData);
     }
 
 	public function addGatewayAdminSubmit(){
@@ -146,7 +173,9 @@ class AdminController extends BaseController {
 
 	public function credentialStoreView(){
         Session::put("admin-nav", "credential-store");
-		return View::make("admin/manage-credentials", array("tokens" => array()) );
+        $tokens = AdminUtilities::get_ssh_tokens();
+        //var_dump( $tokens); exit;
+		return View::make("admin/manage-credentials", array("tokens" => $tokens ) );
 	}
 
 	public function updateUserRoles(){
@@ -188,8 +217,11 @@ class AdminController extends BaseController {
             $inputs = Input::all();
             $expContainer = AdminUtilities::get_experiments_of_time_range($inputs);
             $expStates = ExperimentUtilities::getExpStates();
-            return View::make("partials/experiment-container", array("expContainer" => $expContainer,
-                "expStates" => $expStates));
+            return View::make("partials/experiment-container", 
+            	array(	"expContainer" => $expContainer,
+                		"expStates" => $expStates,
+                		"dashboard" => true
+                	));
         }
     }
 
@@ -206,4 +238,9 @@ class AdminController extends BaseController {
         $computeResource->enabled = false;
         CRUtilities::register_or_update_compute_resource($computeResource, true);
     }
+
+	public function createSSH(){
+		return AdminUtilities::create_ssh_token();
+	}
+
 }

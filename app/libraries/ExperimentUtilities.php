@@ -11,7 +11,10 @@ use Airavata\Model\Application\Io\InputDataObjectType;
 use Airavata\Model\Scheduling\ComputationalResourceSchedulingModel;
 use Airavata\Model\Experiment\ExperimentModel;
 use Airavata\Model\Status\ExperimentState;
+use Airavata\Model\Status\ProcessState;
 use Airavata\Model\Status\JobState;
+use Airavata\Model\Status\TaskState;
+use Airavata\Model\Task\TaskTypes;
 use Airavata\Model\Experiment\UserConfigurationDataModel;
 
 class ExperimentUtilities
@@ -54,12 +57,9 @@ class ExperimentUtilities
      * List the experiment's input files
      * @param $experiment
      */
-    public static function list_input_files($experiment)
+    public static function list_input_files($experimentInputs)
     {
-        $applicationInputs = AppUtilities::get_application_inputs($experiment->executionId);
-
-        $experimentInputs = $experiment->experimentInputs;
-
+        //$experimentInputs = $experiment->experimentInputs;
 
         //showing experiment inputs in the order defined by the admins.
         $order = array();
@@ -127,11 +127,11 @@ class ExperimentUtilities
     }
 
     /**
-     * Get the experiment tree including all nested structures such as proesses, jobs, tasks etc
+     * Get the detailed tree of an experiment with the given ID
      * @param $expId
      * @return null
      */
-    public static function get_detailed_experiment_tree($expId)
+    public static function get_detailed_experiment($expId)
     {
 
         try {
@@ -163,7 +163,6 @@ class ExperimentUtilities
         }
 
     }
-
 
     /**
      * Create and configure a new Experiment
@@ -648,35 +647,47 @@ class ExperimentUtilities
      *
     */
 
-    public static function list_output_files($experiment, $expStatus)
+    public static function list_output_files($outputs, $status, $process)
     {
+        if( $process)
+        {
+            $processStatusVal = array_search($status, ProcessState::$__names);
+            if ($status != ProcessState::COMPLETED)
+                echo "Process hasn't completed. Process Status is : " . ProcessState::$__names[ $status] . '<br/>';
+        }
+        else
+        {
+            $expStatusVal = array_search($status, ExperimentState::$__names);
+            if ( $status != ExperimentState::COMPLETED)
+                echo "Experiment hasn't completed. Experiment Status is : " .  ExperimentState::$__names[ $status] . '<br/>';
+        }
+        //$outputs = $experiment->experimentOutputs;
+        //print_r( $outputs); exit;
+        foreach ((array)$outputs as $output) {
+            if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
+                $explode = explode('/', $output->value);
+                //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
+                $outputPath = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'], Config::get('pga_config.airavata')['experiment-data-dir'], $output->value);
+                //print_r( $output->value); 
+                if(file_exists(str_replace('//','/',$output->value))){
+                    $outputPathArray = explode("/", $outputPath);
 
-        $expStatusVal = array_search($expStatus, ExperimentState::$__names);
-
-        if ($expStatusVal == ExperimentState::COMPLETED) {
-            $experimentOutputs = $experiment->experimentOutputs;
-
-            foreach ((array)$experimentOutputs as $output) {
-                if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
-                    $explode = explode('/', $output->value);
-                    //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
-                    $outputPath = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-                        Config::get('pga_config.airavata')['experiment-data-dir'], $output->value);
-
-                    if(file_exists(str_replace('//','/',$output->value))){
-                        $outputPathArray = explode("/", $outputPath);
-
-                        echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                                href="' . URL::to("/") . '/download/' . $outputPathArray[ count($outputPathArray)-2] . '/' . 
-                $outputPathArray[ count($outputPathArray)-1] . '">' .
-                            $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
-                    }
-                } elseif ($output->type == DataType::STRING) {
-                    echo '<p>' . $output->value . '</p>';
+                    echo '<p>' . $output->name . ' : ' . '<a target="_blank"
+                            href="' . URL::to("/") . '/download/' . $outputPathArray[ count($outputPathArray)-2] . '/' . 
+            $outputPathArray[ count($outputPathArray)-1] . '">' .
+                        $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
+                else
+                    echo 'Output paths are not correctly defined for : <br/>' . $output->name . '<br/><br/> Please report this issue to the admin<br/><br/>';
+            
+            } 
+            elseif ($output->type == DataType::STRING) {
+                echo '<p>' . $output->value . '</p>';
             }
-        } else
-            echo "Experiment hasn't completed. Experiment Status is : " . $expStatus;
+            else
+                echo 'output : '. $output;
+            //echo 'output-type : ' . $output->type;
+        }
     }
 
     public static function get_experiment_summary_values($experimentSummary, $forSearch = false)
@@ -745,15 +756,34 @@ class ExperimentUtilities
     public static function get_experiment_values($experiment, $project, $forSearch = false)
     {
         $expVal = array();
-        $expVal["experimentStatusString"] = "";
+        //$expVal["experimentStatusString"] = "";
         $expVal["experimentTimeOfStateChange"] = "";
         $expVal["experimentCreationTime"] = "";
 
+        $expVal["experimentStates"] = ExperimentState::$__names;
+        $expVal["processStates"] = ProcessState::$__names;
+        $expVal["jobStates"] = JobState::$__names;
+        $expVal["taskStates"] = TaskState::$__names;
+        $expVal["taskTypes"] = TaskTypes::$__names;
+
+        $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus->state];
+        $expVal["experimentStatusString"] = $experimentStatusString;
+        if ( $experimentStatusString == ExperimentState::FAILED)
+            $expVal["editable"] = false;
+
+        $expVal["cancelable"] = false;
+        if ( $experimentStatusString == ExperimentState::LAUNCHED 
+            || $experimentStatusString == ExperimentState::EXECUTING)
+            $expVal["cancelable"] = true;
+
+
         if ($experiment->experimentStatus != null) {
             $experimentStatus = $experiment->experimentStatus;
+            /*
             $experimentState = $experimentStatus->state;
             $experimentStatusString = ExperimentState::$__names[$experimentState];
             $expVal["experimentStatusString"] = $experimentStatusString;
+            */
             $expVal["experimentTimeOfStateChange"] = $experimentStatus->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
             $expVal["experimentCreationTime"] = $experiment->creationTime / 1000; // divide by 1000 since creationTime is in ms
         }
@@ -815,20 +845,7 @@ class ExperimentUtilities
      */
     public static function get_job_status(ExperimentModel $experiment)
     {
-        try{
-            $jobStatus = Airavata::getJobStatuses(Session::get('authz-token'), $experiment->experimentId);
-            if (isset($jobStatus) && count($jobStatus) > 0) {
-                $jobState = JobState::$__names[array_values($jobStatus)[0]->jobState];
-            } else {
-                $jobState = null;
-            }
-            return $jobState;
-        }catch (\Thrift\Exception\TException $ex){
-            return null;
-        }catch (Exception $ex){
-            return null;
-        }
-
+        $jobStatus = Airavata::getJobStatuses(Session::get('authz-token'), $experiment->experimentId);
         //TODO - implement following logic with new data model.
 /*        if(!empty($experiment->workflowNodeDetailsList)){
             if(!empty($experiment->workflowNodeDetailsList[0]->taskDetailsList)){
@@ -837,7 +854,13 @@ class ExperimentUtilities
                 }
             }
         }*/
+        if (isset($jobStatus) && count($jobStatus) > 0) {
+            $jobState = JobState::$__names[array_values($jobStatus)[0]->jobState];
+        } else {
+            $jobState = null;
+        }
 
+        return $jobState;
     }
 
 

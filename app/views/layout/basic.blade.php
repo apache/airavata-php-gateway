@@ -49,7 +49,12 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 @endif
 
 <!--  PGA UI lies here. Do not touch. -->
-<div class="row">
+<style>
+.content-area{
+    margin:0;
+}
+</style>
+<div class="row content-area">
     @yield('content')
 </div>
 
@@ -78,7 +83,7 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 	/* keeping a check that footer stays atleast at the bottom of the window.*/
 	var bh = $("html").height();
 	if( bh < $(window).height()){
-//		$(".theme-footer").css("position", "relative").css("top", $(window).height()/4);
+		$(".theme-footer").css("position", "relative").css("top", $(window).height()/4);
     }
     var bw = $("body").width();
     if( bw > 767){

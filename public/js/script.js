@@ -25,17 +25,25 @@ $(document).ready( function(){
   $('a[href="#' + openTab + '"]').click();
   //tab open code ends here.
 
+  /* list additions for compute resources create ui */
 	$(".add-queue").click( function(){
 		$(this).before( $(".queue-block").html() );
 	});
 
+  /* list additions for compute resources create ui */
   $(".add-alias").click( function(){
     $(this).before( '<input class="form-control" maxlength="30" name="hostaliases[]"/>');
   });
 
+  /* list additions for compute resources create ui */
   $(".add-ip").click( function(){
     $(this).before( '<input class="form-control" maxlength="30" name="ips[]"/>');
   })
+
+  /* list additions for storage resources create ui */
+  $(".add-datamovementinterface").click( function(){
+    $(this).before( '<input class="form-control" maxlength="30" name="dataMovementInterfaces[]"/>');
+  });
 
   /* 
    * code that relates to Job Submission Protocol Interface starts here.

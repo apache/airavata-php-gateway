@@ -124,6 +124,7 @@ return array(
         'Wsis\WsisServiceProvider',
         'Airavata\AiravataServiceProvider',
         'Teepluss\Theme\ThemeServiceProvider',
+        'GrahamCampbell\Markdown\MarkdownServiceProvider',
     ),
 
     /*
@@ -193,6 +194,7 @@ return array(
         'WSIS' => 'Wsis\Facades\Wsis',
         'Airavata' => 'Airavata\Facades\Airavata',
         'Theme' => 'Teepluss\Theme\Facades\Theme',
+        'Markdown' => 'GrahamCampbell\Markdown\Facades\Markdown',
     ),
 
 );
