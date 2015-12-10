@@ -32,14 +32,19 @@ class WsisServiceProvider extends ServiceProvider {
         //registering service provider
         $this->app['wsis'] = $this->app->share(function($app)
         {
+            $wsisConfig = Config::get('pga_config.wsis');
+            if( $wsisConfig['tenant-domain'] == "")
+                $adminUsername = $wsisConfig['admin-username'];
+            else
+                $adminUsername = $wsisConfig['admin-username'] . "@" . $wsisConfig['tenant-domain'];
             return new Wsis(
-                Config::get('pga_config.wsis')['admin-username'] . "@" . Config::get('pga_config.wsis')['tenant-domain'],
-                Config::get('pga_config.wsis')['admin-password'],
-                Config::get('pga_config.wsis')['server'],
-                Config::get('pga_config.wsis')['service-url'],
-                Config::get('pga_config.wsis')['cafile-path'],
-                Config::get('pga_config.wsis')['verify-peer'],
-                Config::get('pga_config.wsis')['allow-self-signed-cert']
+                $adminUsername,
+                $wsisConfig['admin-password'],
+                $wsisConfig['server'],
+                $wsisConfig['service-url'],
+                $wsisConfig['cafile-path'],
+                $wsisConfig['verify-peer'],
+                $wsisConfig['allow-self-signed-cert']
             );
         });
 

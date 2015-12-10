@@ -93,7 +93,12 @@ class AccountController extends BaseController
     public function loginSubmit()
     {
         if (CommonUtilities::form_submitted()) {
-            $username = $_POST['username'] . "@" . Config::get('pga_config.wsis')['tenant-domain'];
+            $wsisConfig = Config::get('pga_config.wsis');
+            if( $wsisConfig['tenant-domain'] == "")
+                $username = $wsisConfig['admin-username'];
+            else
+                $username = $wsisConfig['admin-username'] . "@" . $wsisConfig['tenant-domain'];
+
             $password = $_POST['password'];
             $response = WSIS::authenticate($username, $password);
             if(!isset($response->access_token)){
@@ -218,7 +223,11 @@ class AccountController extends BaseController
             CommonUtilities::print_error_message("Please provide a valid username");
             return View::make("account/forgot-password");
         }else{
-            $username = $username . "@" . Config::get('pga_config.wsis')['tenant-domain'];
+            $wsisConfig = Config::get('pga_config.wsis');
+            if( $wsisConfig['tenant-domain'] == "")
+                $username = $wsisConfig['admin-username'];
+            else
+                $username = $wsisConfig['admin-username'] . "@" . $wsisConfig['tenant-domain'];
             try{
                 $key = WSIS::validateUser($username);
                 if(!empty($key)){
@@ -248,7 +257,11 @@ class AccountController extends BaseController
         if(empty($username) || empty($confirmation)){
             return View::make("home");
         }else{
-            $username = $username . "@" . Config::get('pga_config.wsis')['tenant-domain'];
+            $wsisConfig = Config::get('pga_config.wsis');
+            if( $wsisConfig['tenant-domain'] == "")
+                $username = $wsisConfig['admin-username'];
+            else
+                $username = $wsisConfig['admin-username'] . "@" . $wsisConfig['tenant-domain'];
             try{
                 $key = WSIS::validateConfirmationCode($username, $confirmation);
                 if(!empty($key)){
@@ -314,7 +327,13 @@ class AccountController extends BaseController
 
         $mail->Subject = "New User Account Was Created Successfully";
         $userProfile = WSIS::getUserProfile($username);
-        $str = "Username: " . $username . "@" . Config::get('pga_config.wsis')['tenant-domain'] . "<br/>";
+        $wsisConfig = Config::get('pga_config.wsis');
+        if( $wsisConfig['tenant-domain'] == "")
+            $username = $wsisConfig['admin-username'];
+        else
+            $username = $wsisConfig['admin-username'] . "@" . $wsisConfig['tenant-domain'];
+
+        $str = "Username: " . $username ."<br/>";
         $str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
         $str = $str . "Email: " . $userProfile["email"];
 
