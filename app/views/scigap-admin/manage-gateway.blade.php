@@ -59,7 +59,7 @@
                 </tr>
                 @endforeach
             </table>
-            <form id="add-tenant-form">
+            <form id="add-tenant-form" action="{{ URL::to("/") }}/admin/add-gateway">
                 <div class="col-md-12">
                     <button type="button" class="btn btn-default toggle-add-tenant"><span
                             class="glyphicon glyphicon-plus"></span>Add a new gateway
@@ -171,7 +171,7 @@
         $(".add-tenant").slideDown();
     });
 
-    $("#add-tenant-form").submit(function (event) {
+    /*$("#add-tenant-form").submit(function (event) {
         event.preventDefault();
         event.stopPropagation();
         var formData = $("#add-tenant-form").serialize();
@@ -179,13 +179,17 @@
         $.ajax({
             type: "POST",
             data: formData,
-            url: '{{ URL::to(' / ') }}/admin/add-gateway',
+            url: '{{ URL::to("/") }}/admin/add-gateway',
             success: function (data) {
-                $(".gateway-error").html(data).removeClass("hide");
+                
+            },
+            error: function( data){
+                var error = $.parseJSON( data.responseText);
+                $(".gateway-error").html(error.message).removeClass("hide");
             }
         }).complete(function () {
             $("#add-gateway-loading").modal("hide");
         });
-    });
+    });*/
 </script>
 @stop

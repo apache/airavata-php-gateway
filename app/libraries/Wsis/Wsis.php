@@ -401,11 +401,7 @@ class Wsis {
             return $this->tenantManager->addTenant($active, $adminUsername, $adminPassword, $email,
                 $firstName, $lastName, $tenantDomain);
         } catch (Exception $ex) {
-            /**
-             * Fixme -  There is an issue in the Remote IS which throws an exception when called this method
-             * But the tenant creation works. Therefore ignores the exception for the moment.
-             */
-            //throw new Exception("Unable to create Tenant.", 0, $ex);
+            throw new Exception("Unable to create Tenant.", 0, $ex);
         }
     }
 
