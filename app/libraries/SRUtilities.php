@@ -17,7 +17,7 @@ use Airavata\Model\AppCatalog\ComputeResource\LOCALSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManager;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManagerType;
-use Airavata\Model\Data\Movement\SCPDataMovement;
+use Airavata\Model\AppCatalog\ComputeResource\SCPDataMovement;
 use Airavata\Model\Data\Movement\SecurityProtocol;
 use Airavata\Model\AppCatalog\ComputeResource\SSHJobSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\UnicoreDataMovement;
