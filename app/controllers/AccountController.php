@@ -97,7 +97,7 @@ class AccountController extends BaseController
             if( $wsisConfig['tenant-domain'] == "")
                 $username = $wsisConfig['admin-username'];
             else
-                $username = $wsisConfig['admin-username'] . "@" . $wsisConfig['tenant-domain'];
+                $username = Input::get("username") . "@" . $wsisConfig['tenant-domain'];
 
             $password = $_POST['password'];
             $response = WSIS::authenticate($username, $password);
@@ -227,7 +227,7 @@ class AccountController extends BaseController
             if( $wsisConfig['tenant-domain'] == "")
                 $username = $wsisConfig['admin-username'];
             else
-                $username = $wsisConfig['admin-username'] . "@" . $wsisConfig['tenant-domain'];
+                $username = $username . "@" . $wsisConfig['tenant-domain'];
             try{
                 $key = WSIS::validateUser($username);
                 if(!empty($key)){
@@ -261,7 +261,7 @@ class AccountController extends BaseController
             if( $wsisConfig['tenant-domain'] == "")
                 $username = $wsisConfig['admin-username'];
             else
-                $username = $wsisConfig['admin-username'] . "@" . $wsisConfig['tenant-domain'];
+                $username = $username . "@" . $wsisConfig['tenant-domain'];
             try{
                 $key = WSIS::validateConfirmationCode($username, $confirmation);
                 if(!empty($key)){
@@ -331,7 +331,7 @@ class AccountController extends BaseController
         if( $wsisConfig['tenant-domain'] == "")
             $username = $wsisConfig['admin-username'];
         else
-            $username = $wsisConfig['admin-username'] . "@" . $wsisConfig['tenant-domain'];
+            $username = $username . "@" . $wsisConfig['tenant-domain'];
 
         $str = "Username: " . $username ."<br/>";
         $str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
