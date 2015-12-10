@@ -51,11 +51,11 @@
                         <th>Id</th>
                         @if(Session::has("admin"))
                         <th>Enabled</th>
-                        <th>Edit</th>
+                        <!--<th>Edit</th>-->
                         @endif
                         <th>View</th>
                         @if(Session::has("admin"))
-                        <th>Delete</th>
+                        <!--<th>Delete</th>-->
                         @endif
                     </tr>
 
@@ -66,7 +66,7 @@
                         $enabled = $resource->enabled;
                     ?>
                     <tr id="crDetails">
-                        <td>{{ $crName }}</td>
+                        <td><a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">{{ $crName }}</a></td>
                         <td>{{ $crId }}</td>
                         @if(Session::has("admin"))
                         <td>
@@ -80,17 +80,20 @@
                             </div>
                             @endif
                         </td>
+                        <!--
                         <td><a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
                         </td>
+                        -->
                         @endif
                         <td>
-                            <a href="{{URL::to('/')}}/cr/view?crId={{ $crId }}" title="Edit">
+                            <a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
                             <span class="glyphicon glyphicon-list"></span>
                             </a>
                         </td>
                         @if(Session::has("admin"))
+                        <!--
                         <td>
                             <a href="#" title="Delete">
                                 <span class="glyphicon glyphicon-trash del-cr" data-toggle="modal"
@@ -99,6 +102,7 @@
                                       data-crid="{{$crId}}"></span>
                             </a>
                         </td>
+                        -->
                         @endif
                     </tr>
                     @endforeach
@@ -209,5 +213,5 @@
                 });
             }
         });
-    </script>
+        </script>
     @stop
