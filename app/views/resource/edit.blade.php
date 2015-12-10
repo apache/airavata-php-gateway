@@ -14,7 +14,7 @@
 <div id="page-wrapper">
 
 <div class="container-fluid">
-<div class="col-md-offset-2 col-md-8">
+<div class="col-md-offset-2 col-md-8 compute-resource-properties">
 
 <input type="hidden" class="base-url" value="{{URL::to('/')}}"/>
 
@@ -840,4 +840,28 @@
         $(".delete-queueName").html($(this).data("queue-name"));
     })
 </script>
+
+@if(! Session::has('scigap_admin'))
+    <script>
+    function disableInputs( elem){
+        elem.find("input").each( function( i,e){
+            if( $(e).attr("type")=='submit' || $(e).attr("type")=='button'  )
+                $(e).attr("disabled", "true");
+             else
+                $(e).prop("readonly", "true");
+        });
+        elem.find("textarea").prop("readonly", "true");
+        elem.find("select").attr("disabled", "true");
+        elem.find(".hide").prop("readonly", "true");
+        elem.find("button").attr("disabled", "true");
+        //remove previously created input/output blocks
+        elem.find(".app-inputs").html("");
+        elem.find(".app-outputs").html("");
+        $(".glyphicon").hide();
+    }
+
+    disableInputs( $(".compute-resource-properties"));
+    </script>
+@endif
+
 @stop

@@ -69,13 +69,13 @@ class TenantManager {
         $tenantInfoBean->admin = $adminUsername;
         $tenantInfoBean->adminPassword = $adminPassword;
         $tenantInfoBean->email = $email;
-        $tenantInfoBean->firstName = $firstName;
-        $tenantInfoBean->lastName = $lastName;
+        $tenantInfoBean->firstname = $firstName;
+        $tenantInfoBean->lastname = $lastName;
         $tenantInfoBean->tenantDomain = $tenantDomain;
 
         $addTenant  = new addTenant();
         $addTenant->tenantInfoBean = $tenantInfoBean;
-        $this->serviceStub->addTenant($addTenant);
+        return $this->serviceStub->addTenant($addTenant);
     }
 
     /**
