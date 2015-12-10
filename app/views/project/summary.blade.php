@@ -44,7 +44,7 @@
     echo '</tr>';
 
     foreach ($experiments as $experiment) {
-        $expValues = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
+        $expValues = ExperimentUtilities::get_experiment_values($experiment, $project, true);
         $expValues["jobState"] = ExperimentUtilities::get_job_status($experiment);
         $applicationInterface = AppUtilities::get_application_interface($experiment->executionId);
 
@@ -105,7 +105,7 @@
 
         echo '<td><div class="' . $textClass . '">' . $expValues["experimentStatusString"] . '</div></td>';
 
-        if ($expValues["jobState"]) echo '
+        if (isset($expValues["jobState"])) echo '
             <td>' . $expValues["jobState"] . '</td>';
         else
             echo '<td></td>';
