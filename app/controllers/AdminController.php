@@ -5,12 +5,33 @@ class AdminController extends BaseController {
 	public function __construct()
 	{
         $this->beforeFilter('verifyadmin');
-		Session::put("scigap_admin", true);
 		Session::put("nav-active", "user-console");
 	}
 
 	public function dashboard(){
-    	return View::make("account/dashboard");
+		//only for super admin
+		//Session::put("scigap_admin", true);
+
+		if( Session::has("scigap_admin"))
+		{
+			$crData = CRUtilities::getEditCRData();
+			$gateways = CRUtilities::getAllGatewayProfilesData();
+
+			$gatewayData = array( 
+									"gateways" => $gateways, 
+									"computeResources" => CRUtilities::getAllCRObjects(),
+									"crData" => $crData
+								);
+			
+			$view = "scigap-admin/manage-gateway";
+
+            Session::put("admin-nav", "gateway-prefs");
+			return View::make( $view, $gatewayData);
+		}
+		else{
+        	return View::make("account/dashboard");
+
+        }
 	}
 
 	public function addAdminSubmit(){
@@ -52,7 +73,8 @@ class AdminController extends BaseController {
     }
 
     public function gatewayView(){
-
+    	//only for super admin
+		//Session::put("scigap_admin", true);
 		$crData = CRUtilities::getEditCRData();
 		$gateways = CRUtilities::getAllGatewayProfilesData();
 		$tokens = AdminUtilities::get_ssh_tokens();
@@ -65,11 +87,11 @@ class AdminController extends BaseController {
 								"tokens" => $tokens
 							);
 		//var_dump( $gateways); exit;
-		/*if( Session::has("scigap_admin"))
+		if( Session::has("scigap_admin"))
 			$view = "scigap-admin/manage-gateway";
 		else{
-		*/
 			$view = "admin/manage-gateway";
+        }
 
         Session::put("admin-nav", "gateway-prefs");
 		return View::make( $view, $gatewayData);
@@ -170,12 +192,12 @@ class AdminController extends BaseController {
 
 		$inputs = Input::all();
 
-		$tm = WSIS::createTenant(true, $inputs["admin-username"], $inputs["admin-password"],
-			$inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
-
         $gateway = AdminUtilities::add_gateway(Input::all());
 
-		return Redirect::to("admin/dashboard/gateway")->with("message", "Gateway has been registered successfully.");
+		$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"],
+			$inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
+
+		return $gateway;
 	}
 
 
