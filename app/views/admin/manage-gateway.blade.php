@@ -120,6 +120,7 @@
                                                         @else
                                                         <option value="">Select a Credential Token from Store</option>
                                                         @endif
+                                                        <option value="">null</option>
                                                         @foreach( $tokens as $token => $publicKey)
                                                         <option value="{{$token}}">{{$token}}</option>
                                                         @endforeach
