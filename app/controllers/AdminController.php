@@ -10,7 +10,7 @@ class AdminController extends BaseController {
 
 	public function dashboard(){
 		//only for super admin
-		if(  Config::get('pga_config.wsis')['tenant-domain']) == "")
+		if(  Config::get('pga_config.wsis')['tenant-domain'] == "")
 			Session::put("scigap_admin", true);
 
 		if( Session::has("scigap_admin"))
