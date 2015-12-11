@@ -236,7 +236,9 @@ Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 
 Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser");
 
-Route::post("create-ssh-token", "AdminController@createSSH");
+Route::post("admin/create-ssh-token", "AdminController@createSSH");
+
+Route::post("admin/remove-ssh-token", "AdminController@removeSSH");
 
 //Super Admin Specific calls
 

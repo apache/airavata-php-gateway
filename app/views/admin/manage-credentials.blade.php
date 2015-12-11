@@ -44,6 +44,7 @@
                             Token
                         </th>
                         <th class="text-center">Public Key</th>
+                        <th>Delete</th>
                     </tr>
                     <tbody class="token-values">
                     @foreach( $tokens as $token => $publicKey)
@@ -53,6 +54,9 @@
                         </td>
                         <td class="public-key">
                             {{ $publicKey }}
+                        </td>
+                        <td>
+                            <span data-token="{{$token}}" class="glyphicon glyphicon-trash remove-token"></span>
                         </td>
                     </tr>
                     @endforeach
@@ -140,6 +144,30 @@
 </div>
 
 
+<!-- Remove a Compute Resource from a Gateway -->
+<div class="modal fade" id="remove-token-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-center">Remove SSH Key Confirmation</h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" class="form-control remove-crId" name="rem-crId"/>
+                <input type="hidden" class="form-control cr-gpId" name="gpId"/>
+
+                Are you sure, you want to remove the SSH Key?<span class="remove-token-name"> </span>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <input type="submit" class="btn btn-danger" value="Remove"/>
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -149,7 +177,7 @@
         $(".loading-img").removeClass("hide");
         $.ajax({
           type: "POST",
-          url: "{{URL::to('/')}}/create-ssh-token"
+          url: "{{URL::to('/')}}/admin/create-ssh-token"
         }).success( function( data){
 
             var tokenJson = data;
@@ -157,7 +185,7 @@
             //$(".token-values").html("");
             $(".generate-ssh").after("<div class='alert alert-success new-token-msg'>New Token has been generated.</div>");
 
-            $(".token-values").prepend("<tr class='alert alert-success'><td>" + tokenJson.token + "</td><td class='public-key'>" + tokenJson.pubkey + "</td></<tr>");
+            $(".token-values").prepend("<tr class='alert alert-success'><td>" + tokenJson.token + "</td><td class='public-key'>" + tokenJson.pubkey + "</td>" + "<td><a href=''><span data-token='"+tokenJson.token+"' class='glyphicon glyphicon-trash remove-token'></span></a></td></<tr>");
             $(".loading-img").addClass("hide");
             
             setInterval( function(){
@@ -168,6 +196,25 @@
 
             failureObject = $.parseJSON( data.responseText);
             $(".generate-ssh").after("<div class='alert alert-danger'>" + failureObject.error.message + "</div>");
+        });
+   });
+
+   $(".remove-token").click( function(){
+        var removeSpan = $(this);
+        var tokenToRemove = removeSpan.data("token");
+        $(".loading-img").removeClass("hide");
+        $.ajax({
+          type: "POST",
+          data:{ "token" : tokenToRemove},
+          url: "{{URL::to('/')}}/admin/remove-ssh-token"
+          }).success( function( data){
+            if( data.responseText == 1)
+                removeSpan.parent().parent().addClass("alert").addClass("alert-danger");
+                setTimeout( function(){
+                    removeSpan.parent().parent().slideUp(1000);
+                }, 2000);
+        }).fail( function( data){
+            removeSpan.parent().parent().after("<tr class='alert alert-danger'><td></td><td>Error occurred : " + $.parseJSON( data.responseText).error.message + "</td><td></td></tr>");
         });
    });
 </script>
