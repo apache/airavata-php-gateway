@@ -201,21 +201,39 @@
 
    $(".remove-token").click( function(){
         var removeSpan = $(this);
+        var tr = removeSpan.parent().parent();
         var tokenToRemove = removeSpan.data("token");
-        $(".loading-img").removeClass("hide");
-        $.ajax({
-          type: "POST",
-          data:{ "token" : tokenToRemove},
-          url: "{{URL::to('/')}}/admin/remove-ssh-token"
-          }).success( function( data){
-            if( data.responseText == 1)
-                removeSpan.parent().parent().addClass("alert").addClass("alert-danger");
-                setTimeout( function(){
-                    removeSpan.parent().parent().slideUp(1000);
-                }, 2000);
-        }).fail( function( data){
-            removeSpan.parent().parent().after("<tr class='alert alert-danger'><td></td><td>Error occurred : " + $.parseJSON( data.responseText).error.message + "</td><td></td></tr>");
+        var publicKey = tr.children(".public-key").html();
+        tr.children(".public-key").html("<div class='alert alert-danger'>Do you really want to remove the token? This action cannot be undone.<br/>" +
+                                                                    "<span class='btn-group'>"+
+                                                                    "<input type='button' class='btn btn-default remove-token-confirmation' value='Yes'/>" +
+                                                                    "<input type='button' class='btn btn-default remove-token-cancel' value='Cancel'/>"+
+                                                                    "</span></div>");
+
+        
+        tr.find( ".remove-token-confirmation").click( function(){
+            $(".loading-img").removeClass("hide");
+            $.ajax({
+              type: "POST",
+              data:{ "token" : tokenToRemove},
+              url: "{{URL::to('/')}}/admin/remove-ssh-token"
+              }).success( function( data){
+                if( data.responseText == 1)
+                    tr.addClass("alert").addClass("alert-danger");
+                    setTimeout( function(){
+                        tr.slideUp(1000);
+                    }, 2000);
+            }).fail( function( data){
+                tr.after("<tr class='alert alert-danger'><td></td><td>Error occurred : " + $.parseJSON( data.responseText).error.message + "</td><td></td></tr>");
+            }).complete( function(){
+                $(".loading-img").addClass("hide");
+
+            });
         });
+        tr.find( ".remove-token-cancel").click( function(){
+            tr.children(".public-key").html( publicKey);
+        });
+        
    });
 </script>
 @stop
