@@ -77,7 +77,7 @@ class AdminController extends BaseController {
 		//Session::put("scigap_admin", true);
 		$crData = CRUtilities::getEditCRData();
 		$gateways = CRUtilities::getAllGatewayProfilesData();
-		$tokens = AdminUtilities::get_ssh_tokens();
+		$tokens = AdminUtilities::get_all_ssh_tokens();
 
 		//$dsData = CRUtilities::getAllDataStoragePreferences( $gateways);
 		$gatewayData = array( 
@@ -173,7 +173,7 @@ class AdminController extends BaseController {
 
 	public function credentialStoreView(){
         Session::put("admin-nav", "credential-store");
-        $tokens = AdminUtilities::get_ssh_tokens();
+        $tokens = AdminUtilities::get_all_ssh_tokens();
         //var_dump( $tokens); exit;
 		return View::make("admin/manage-credentials", array("tokens" => $tokens ) );
 	}
@@ -240,7 +240,10 @@ class AdminController extends BaseController {
     }
 
 	public function createSSH(){
-		return AdminUtilities::create_ssh_token();
+		$newToken = AdminUtilities::create_ssh_token();
+		$pubkey = AdminUtilities::get_pubkey_from_token( $newToken);
+		return Response::json( array( "token" => $newToken, "pubkey" => $pubkey));
+
 	}
 
 }

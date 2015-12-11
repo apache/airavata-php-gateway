@@ -74,6 +74,18 @@ class AccountController extends BaseController
             WSIS::registerUserAccount($username, $password, $email, $first_name, $last_name,
                 Config::get('pga_config.wsis')['tenant-domain']);
 
+            /*add user to role - user_pending */
+
+            $allRoles = WSIS::getAllRoles();
+            if(! in_array( "user_pending", $allRoles)){
+                WSIS::addRole( "user_pending");
+            }
+            //$userRoles = (array)WSIS::getUserRoles( $username);
+
+            $userRoles["new"] = "user_pending";
+            $userRoles["deleted"] = array();
+            WSIS::updateUserRoles( $username, $userRoles);
+
             CommonUtilities::print_success_message('Account confirmation request was sent to your email account');
             return View::make('home');
         }

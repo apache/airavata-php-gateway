@@ -73,8 +73,7 @@ class AdminUtilities
 
     public static function create_ssh_token(){
         try{
-            $token = Airavata::generateAndRegisterSSHKeys( Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"));
-            return AdminUtilities::get_ssh_tokens();
+            return $newToken = Airavata::generateAndRegisterSSHKeys( Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"));
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('p>Error in creating SSH Handshake. You might have to enable TLS in pga_config. </p>' .
                 '<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
@@ -87,7 +86,11 @@ class AdminUtilities
         }
     }
 
-    public static function get_ssh_tokens(){
+    public static function get_all_ssh_tokens(){
         return Airavata::getAllGatewaySSHPubKeys( Session::get('authz-token'), Session::get("gateway_id") );
+    }
+
+    public static function get_pubkey_from_token( $token){
+        return Airavata::getSSHPubKey( Session::get('authz-token'), $token, Session::get("gateway_id"));
     }
 }
