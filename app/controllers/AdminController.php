@@ -13,26 +13,7 @@ class AdminController extends BaseController {
 		if(  Config::get('pga_config.wsis')['tenant-domain'] == "")
 			Session::put("scigap_admin", true);
 
-		if( Session::has("scigap_admin"))
-		{
-			$crData = CRUtilities::getEditCRData();
-			$gateways = CRUtilities::getAllGatewayProfilesData();
-
-			$gatewayData = array( 
-									"gateways" => $gateways, 
-									"computeResources" => CRUtilities::getAllCRObjects(),
-									"crData" => $crData
-								);
-			
-			$view = "scigap-admin/manage-gateway";
-
-            Session::put("admin-nav", "gateway-prefs");
-			return View::make( $view, $gatewayData);
-		}
-		else{
         	return View::make("account/dashboard");
-
-        }
 	}
 
 	public function addAdminSubmit(){
