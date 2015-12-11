@@ -9,11 +9,7 @@ class AdminController extends BaseController {
 	}
 
 	public function dashboard(){
-		//only for super admin
-		if(  Config::get('pga_config.wsis')['tenant-domain'] == "")
-			Session::put("scigap_admin", true);
-
-        	return View::make("account/dashboard");
+		return View::make("account/dashboard");
 	}
 
 	public function addAdminSubmit(){
@@ -68,12 +64,7 @@ class AdminController extends BaseController {
 								"crData" => $crData,
 								"tokens" => $tokens
 							);
-		//var_dump( $gateways); exit;
-		if( Session::has("scigap_admin"))
-			$view = "scigap-admin/manage-gateway";
-		else{
-			$view = "admin/manage-gateway";
-        }
+		$view = "admin/manage-gateway";
 
         Session::put("admin-nav", "gateway-prefs");
 		return View::make( $view, $gatewayData);
@@ -179,7 +170,9 @@ class AdminController extends BaseController {
 		$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"],
 			$inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
 
-		return $gateway;
+		Session::put("message", "Gateway " . $inputs["gatewayName"] . " has been added.");
+		return Response::json( $tm);
+		//return Redirect::to("admin/dashboard/gateway")->with("message", "Gateway has been successfully added.");
 	}
 
 
