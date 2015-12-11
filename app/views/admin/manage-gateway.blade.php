@@ -31,10 +31,57 @@
                     <h3>Gateway Preferences</h3>
                 </div>
                 @if( Session::has("scigap_admin"))
-                <div class="col-md-6" style="margin-top:3.5%">
+                <div class="col-md-6" style="margin-top:2%">
                     <input type="text" class="col-md-12 filterinput" placeholder="Search by Gateway Name"/>
                 </div>
-                @endif
+                <form id="add-tenant-form" action="{{ URL::to("/") }}/admin/add-gateway">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-default toggle-add-tenant"><span
+                                class="glyphicon glyphicon-plus"></span>Add a new gateway
+                        </button>
+                    </div>
+                    <div class="add-tenant col-md-6">
+                        <div class="form-group required">
+                            <label class="control-label">Enter Domain Name</label>
+                            <input type="text" name="domain" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Desired Gateway Name</label>
+                            <input type="text" name="gatewayName" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Admin Email Address</label>
+                            <input type="text" name="admin-email" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Admin First Name</label>
+                            <input type="text" name="admin-firstname" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Admin Last Name</label>
+                            <input type="text" name="admin-lastname" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Admin Username</label>
+                            <input type="text" name="admin-username" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Enter Admin Password</label>
+                            <input type="password" name="admin-password" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <label class="control-label">Re-enter Admin Password</label>
+                            <input type="password" name="admin-password-confirm" class="form-control" required="required"/>
+                        </div>
+                        <div class="form-group required">
+                            <input type="submit" class="col-md-2 form-control btn btn-primary" value="Register"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6 loading-gif hide"><img  src='{{URL::to('/')}}/assets/ajax-loader.gif'/></div>
+                    <div class="col-md-6 alert alert-danger gateway-error hide"></div>
+                    <div class="col-md-6 alert alert-success gateway-success hide"></div>
+                </form>
+                 @endif
             </div>
             <div class="panel-group" id="accordion2">
                 @foreach( $gateways as $indexGP => $gp )
@@ -46,11 +93,14 @@
                                 {{ $gp->gatewayName }}
                             </a>
                             @if(Session::has("admin"))
+                            <!-- Backend needs to be added for this
+                            
                             <div class="pull-right col-md-2 gateway-options fade">
                                 <span class="glyphicon glyphicon-pencil edit-gateway" style="cursor:pointer;"
                                       data-toggle="modal" data-target="#edit-gateway-block"
                                       data-gp-id="{{ $gp->gatewayId }}" data-gp-name="{{ $gp->gatewayName }}"></span>
                             </div>
+                            -->
                             @endif
                         </h4>
                     </div>
@@ -233,56 +283,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
-                @if( Session::has("scigap_admin"))
-                <form id="add-tenant-form" action="{{ URL::to("/") }}/admin/add-gateway">
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-default toggle-add-tenant"><span
-                                class="glyphicon glyphicon-plus"></span>Add a new gateway
-                        </button>
-                    </div>
-                    <div class="add-tenant col-md-6">
-                        <div class="form-group required">
-                            <label class="control-label">Enter Domain Name</label>
-                            <input type="text" name="domain" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Desired Gateway Name</label>
-                            <input type="text" name="gatewayName" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Email Address</label>
-                            <input type="text" name="admin-email" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin First Name</label>
-                            <input type="text" name="admin-firstname" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Last Name</label>
-                            <input type="text" name="admin-lastname" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Username</label>
-                            <input type="text" name="admin-username" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Password</label>
-                            <input type="password" name="admin-password" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Re-enter Admin Password</label>
-                            <input type="password" name="admin-password-confirm" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <input type="submit" class="col-md-2 form-control btn btn-primary" value="Register"/>
-                        </div>
-                    </div>
-                    <div class="col-md-6 alert alert-danger gateway-error hide">
-                    </div>
-                </form>
-                @endif
+                </div>
             </div>
         </div>
         <!-- /.container-fluid -->
@@ -342,6 +344,22 @@
     </div>
 </div>
 
+<!-- Add a Gateway -->
+<div class="modal fade" id="add-gateway-loading" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+     aria-hidden="true" data-backdrop="static">
+<div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-center">Registering the gateway</h3>
+            </div>
+            <div class="modal-body text-center">
+                <h5>Please DO NOT reload the page. This can take a couple of minutes.</h5>
+                <img src="{{URL::to('/')}}/assets/ajax-loader.gif"/>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- contains all compute resource choices that might get selected on adding a new one to a gateway -->
 @foreach( (array)$computeResources as $index => $cr)
 @include('partials/gateway-preferences', array('computeResource' => $cr, 'crData' => $crData))
@@ -357,7 +375,7 @@
 <script>
     //make first tab of accordion open by default.
     //temporary fix
-    $("#accordion2").children(".panel").children(".collapse").addClass("in");
+    $("#accordion2 #collapse-gateway-0").addClass("in");
 
     $(".credential-store-token-change > form").submit( function(e){
         $(this).prepend( "<img id='loading-gif' src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
@@ -385,6 +403,32 @@
             scrollTop: $(".toggle-add-tenant").offset().top
         }, 500);
         $(".add-tenant").slideDown();
+    });
+
+    $("#add-tenant-form").submit(function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var formData = $("#add-tenant-form").serialize();
+        $("#add-gateway-loading").modal("show");
+        $(".loading-gif").removeClass("hide");
+        $.ajax({
+            type: "POST",
+            data: formData,
+            url: '{{ URL::to("/") }}/admin/add-gateway',
+            success: function (data) {
+                $(".gateway-success").html("Gateway has been added. The page will be reloaded in a moment.").removeClass("hide");
+                setTimeout( function(){
+                    location.reload();
+                }, 2000);
+            },
+            error: function( data){
+                var error = $.parseJSON( data.responseText);
+                $(".gateway-error").html(error.error.message).removeClass("hide");
+            }
+        }).complete(function () {
+            $("#add-gateway-loading").modal("hide");
+            $(".loading-gif").addClass("hide");
+        });
     });
 
 </script>
