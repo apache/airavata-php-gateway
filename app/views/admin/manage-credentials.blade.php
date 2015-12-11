@@ -220,9 +220,7 @@
               }).success( function( data){
                 if( data.responseText == 1)
                     tr.addClass("alert").addClass("alert-danger");
-                    setTimeout( function(){
-                        tr.slideUp(1000);
-                    }, 2000);
+                        tr.fadeOut(1000);
             }).fail( function( data){
                 tr.after("<tr class='alert alert-danger'><td></td><td>Error occurred : " + $.parseJSON( data.responseText).error.message + "</td><td></td></tr>");
             }).complete( function(){

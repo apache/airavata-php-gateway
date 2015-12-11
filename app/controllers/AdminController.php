@@ -223,7 +223,10 @@ class AdminController extends BaseController {
 
 	public function removeSSH(){
 		$removeToken = Input::get("token");
-		return AdminUtilities::remove_ssh_token( $removeToken);
+		if( AdminUtilities::remove_ssh_token( $removeToken) )
+			return 1;
+		else
+			return 0;
 
 	}
 
