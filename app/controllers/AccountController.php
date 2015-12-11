@@ -107,7 +107,7 @@ class AccountController extends BaseController
         if (CommonUtilities::form_submitted()) {
             $wsisConfig = Config::get('pga_config.wsis');
             if( $wsisConfig['tenant-domain'] == "")
-                $username = $wsisConfig['admin-username'];
+                $username = Input::get("username");
             else
                 $username = Input::get("username") . "@" . $wsisConfig['tenant-domain'];
 
@@ -237,7 +237,7 @@ class AccountController extends BaseController
         }else{
             $wsisConfig = Config::get('pga_config.wsis');
             if( $wsisConfig['tenant-domain'] == "")
-                $username = $wsisConfig['admin-username'];
+                $username = $username;
             else
                 $username = $username . "@" . $wsisConfig['tenant-domain'];
             try{
@@ -271,7 +271,7 @@ class AccountController extends BaseController
         }else{
             $wsisConfig = Config::get('pga_config.wsis');
             if( $wsisConfig['tenant-domain'] == "")
-                $username = $wsisConfig['admin-username'];
+                $username = $username;
             else
                 $username = $username . "@" . $wsisConfig['tenant-domain'];
             try{
@@ -341,7 +341,7 @@ class AccountController extends BaseController
         $userProfile = WSIS::getUserProfile($username);
         $wsisConfig = Config::get('pga_config.wsis');
         if( $wsisConfig['tenant-domain'] == "")
-            $username = $wsisConfig['admin-username'];
+            $username = $username;
         else
             $username = $username . "@" . $wsisConfig['tenant-domain'];
 
