@@ -34,6 +34,9 @@
                         </td>
                     </tr>
                 </table>
+                <div class="loading-img text-center hide">
+                   <img src="../../assets/ajax-loader.gif"/>
+                </div>
                 @endif
                 <table class="table table-bordered table-condensed" style="word-wrap: break-word;">
                     <tr>
@@ -143,6 +146,7 @@
 @parent
 <script>
    $(".generate-ssh").click( function(){
+        $(".loading-img").removeClass("hide");
         $.ajax({
           type: "POST",
           url: "{{URL::to('/')}}/create-ssh-token"
@@ -150,12 +154,18 @@
 
             var tokenJson = data;
 
-            $(".token-values").html("");
-            $.each(tokenJson, function( token, pubkey){
-                $(".token-values").append("<tr><td>" + token + "</td><td class='public-key'>" + pubkey + "</td></<tr>");
-            });
+            //$(".token-values").html("");
+            $(".generate-ssh").after("<div class='alert alert-success new-token-msg'>New Token has been generated.</div>");
 
+            $(".token-values").prepend("<tr class='alert alert-success'><td>" + tokenJson.token + "</td><td class='public-key'>" + tokenJson.pubkey + "</td></<tr>");
+            $(".loading-img").addClass("hide");
+            
+            setInterval( function(){
+                $(".new-token-msg").fadeOut();
+            }, 3000);
         }).fail( function( data){
+        $(".loading-img").addClass("hide");
+
             failureObject = $.parseJSON( data.responseText);
             $(".generate-ssh").after("<div class='alert alert-danger'>" + failureObject.error.message + "</div>");
         });
