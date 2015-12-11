@@ -143,13 +143,18 @@ class AccountController extends BaseController
                 Session::put("authorized-user", true);
             }
 
+            //only for super admin
+            if(  Config::get('pga_config.wsis')['tenant-domain'] == ""){
+                Session::put("scigap_admin", true);
+            }
+
             CommonUtilities::store_id_in_session($username);
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
             if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
                 return $this->initializeWithAiravata($username);
             }
-            return View::make("account/dashboard");
+            return Redirect::to("admin/dashboard");
         }
 
     }
@@ -220,7 +225,7 @@ class AccountController extends BaseController
             return View::make('home');
         }
 
-        return View::make("account/dashboard");
+        return Redirect::to("admin/dashboard");
     }
 
     public function forgotPassword()
