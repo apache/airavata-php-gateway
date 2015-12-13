@@ -186,7 +186,7 @@
                                                                            value="{{$crp->computeResourceId}}">
 
                                                                     <div class="form-horizontal">
-                                                                        @include('partials/gateway-preferences',
+                                                                        @include('partials/compute-resource-preferences',
                                                                         array('computeResource' => $crp->crDetails,
                                                                         'crData' => $crData, 'preferences'=>$crp,
                                                                         'show'=>true))
@@ -200,20 +200,61 @@
                                             </div>
                                         </div>
                                         @endif
-                                        <!--
-                                        Adding a user as admin will shift to roles. Removing from here.
-                                        <h4><span class="glyphicon glyphicon-plus"></span> Add a user as Admin to this Gateway</h4>
-                                        <form action="{{URL::to('/')}}/admin/addgatewayadmin" method="POST" role="form" enctype="multipart/form-data">
-                                            <div class="form-group required">
-                                                <label for="experiment-name" class="control-label">Enter Username</label>
-                                                <input type="text" class="form-control" name="username" id="experiment-name" placeholder="username" autofocus required="required">
-                                                <input type="hidden" name="gateway_name" value="{{ $gp->gatewayName }}"/>
+                                        @if( isset( $gp->profile->storagePreferences) )
+                                        <div>
+                                            <h3>Storage Resource Preferences :</h3>
+                                        </div>
+                                        <div class="accordion-inner">
+                                            <div class="panel-group" id="accordion-{{$indexGP}}">
+                                                @foreach( (array)$gp->profile->storagePreferences as $indexSRP
+                                                => $srp )
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed gateway-name"
+                                                               data-toggle="collapse" data-parent="#accordion"
+                                                               href="#collapse-srp-{{$indexGP}}-{{$indexSRP}}">
+                                                                {{ $srp->srDetails->hostName }}
+                                                            </a>
+                                                            @if(Session::has("admin"))
+                                                            <div class="pull-right col-md-2 gateway-options fade">
+                                                                <span class="glyphicon glyphicon-remove remove-storage-resource"
+                                                                      style="cursor:pointer;" data-toggle="modal"
+                                                                      data-target="#remove-storage-resource-block"
+                                                                      data-sr-name="{{$srp->srDetails->hostName}}"
+                                                                      data-sr-id="{{$srp->storageResourceId}}"
+                                                                      data-sr-id="{{ $gp->gatewayId }}"></span>
+                                                            </div>
+                                                            @endif
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse-srp-{{$indexGP}}-{{$indexSRP}}"
+                                                         class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div class="app-compute-resource-preferences-block">
+                                                                <form action="{{URL::to('/')}}/gp/update-srp"
+                                                                      method="POST">
+                                                                    <input type="hidden" name="gatewayId" id="gatewayId"
+                                                                           value="{{$gp->gatewayId}}">
+                                                                    <input type="hidden" name="storageResourceId"
+                                                                           id="gatewayId"
+                                                                           value="{{$crp->storageResourceId}}">
+
+                                                                    <div class="form-horizontal">
+                                                                        @include('partials/storage-resource-preferences',
+                                                                        array('storageResource' => $srp->srDetails,
+                                                                        'srData' => $srData, 'preferences'=>$srp,
+                                                                        'show'=>true))
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
                                             </div>
-                                            <div class="btn-toolbar">
-                                                <input name="add" type="submit" class="btn btn-primary" value="Add Admin"/>
-                                            </div>
-                                        </form>
-                                        -->
+                                        </div>
+                                        @endif
                                     </div>
 
                                     <div class="col-md-10">
@@ -264,7 +305,7 @@
                                                                            value="{{$crp->dataMovememtResourceId}}">
 
                                                                     <div class="form-horizontal">
-                                                                        @include('partials/gateway-preferences',
+                                                                        @include('partials/compute-resource-preferences',
                                                                         array('computeResource' => $crp->crDetails,
                                                                         'crData' => $crData, 'preferences'=>$crp,
                                                                         'show'=>true))
@@ -363,7 +404,7 @@
 
 <!-- contains all compute resource choices that might get selected on adding a new one to a gateway -->
 @foreach( (array)$computeResources as $index => $cr)
-@include('partials/gateway-preferences', array('computeResource' => $cr, 'crData' => $crData))
+@include('partials/compute-resource-preferences', array('computeResource' => $cr, 'crData' => $crData))
 @endforeach
 
 

@@ -56,12 +56,15 @@ class AdminController extends BaseController {
 		$crData = CRUtilities::getEditCRData();
 		$gateways = CRUtilities::getAllGatewayProfilesData();
 		$tokens = AdminUtilities::get_all_ssh_tokens();
+		$srData = SRUtilities::getEditSRData();
 
 		//$dsData = CRUtilities::getAllDataStoragePreferences( $gateways);
 		$gatewayData = array( 
 								"gateways" => $gateways, 
 								"computeResources" => CRUtilities::getAllCRObjects(),
 								"crData" => $crData,
+								"storageResources" => SRUtilities::getAllSRObjects(),
+								"srData" => $srData,
 								"tokens" => $tokens
 							);
 		$view = "admin/manage-gateway";
