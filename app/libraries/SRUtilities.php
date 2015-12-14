@@ -13,13 +13,10 @@ use Airavata\Model\AppCatalog\ComputeResource\JobManagerCommand;
 use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
 use Airavata\Model\Data\Movement\LOCALDataMovement;
 use Airavata\Model\Data\Movement\DMType;
-use Airavata\Model\AppCatalog\ComputeResource\LOCALSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
-use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManager;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManagerType;
 use Airavata\Model\Data\Movement\SCPDataMovement;
 use Airavata\Model\Data\Movement\SecurityProtocol;
-use Airavata\Model\AppCatalog\ComputeResource\SSHJobSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\UnicoreDataMovement;
 //Gateway Classes
 

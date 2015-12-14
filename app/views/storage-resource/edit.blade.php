@@ -110,15 +110,6 @@
                             @endforeach
                         </select>
                     </div>
-    <!--                <div class="form-group">
-                        <label class="control-label">Select Monitoring Mode</label>
-                        <select name="monitorMode">
-                            @foreach( $monitorModes as $index => $mode)
-                            <option value="{{ $index }}"
-                            @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
-                            @endforeach
-                        </select>
-                    </div>-->
                     <div class="form-group">
                         <label class="control-label">Alternate SSH Host Name</label>
                         <input class='form-control' name='alternativeSSHHostName'
@@ -141,15 +132,6 @@
                             @endforeach
                         </select>
                     </div>
-    <!--                <div class="form-group">
-                        <label class="control-label">Select Monitoring Mode</label>
-                        <select name="monitorMode">
-                            @foreach( $monitorModes as $index => $mode)
-                            <option value="{{ $index }}"
-                            @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
-                            @endforeach
-                        </select>
-                    </div>-->
 
                     <div>
                         <div class="form-group required">
@@ -176,15 +158,6 @@
                             @endforeach
                         </select>
                     </div>
-    <!--                <div class="form-group">
-                        <label class="control-label">Select Monitoring Mode</label>
-                        <select name="monitorMode">
-                            @foreach( $monitorModes as $index => $mode)
-                            <option value="{{ $index }}"
-                            @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
-                            @endforeach
-                        </select>
-                    </div>-->
 
                     <div>
                         <div class="form-group required">
