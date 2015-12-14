@@ -238,7 +238,7 @@
                                                                            value="{{$gp->gatewayId}}">
                                                                     <input type="hidden" name="storageResourceId"
                                                                            id="gatewayId"
-                                                                           value="{{$crp->storageResourceId}}">
+                                                                           value="{{$srp->storageResourceId}}">
 
                                                                     <div class="form-horizontal">
                                                                         @include('partials/storage-resource-preferences',
