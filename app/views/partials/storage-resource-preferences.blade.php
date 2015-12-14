@@ -16,11 +16,11 @@ dmi preference might be needed in the future
 
     <div class="col-md-9">
         <select name="preferredDataMovementProtocol" class="form-control">
-            @foreach( (array)$computeResource->dataMovementInterfaces as $index => $dmi)
-            <option value="{{ $dmi->dataMovementProtocol}}"
-            @if( isset( $preferences) ) @if( $preferences->preferredDataMovementProtocol == $dmi->dataMovementProtocol)
-            selected @endif @endif>{{ $crData["dataMovementProtocols"][$dmi->dataMovementProtocol] }}</option>
-            @endforeach
+{{--            @foreach( (array)$computeResource->dataMovementInterfaces as $index => $dmi)--}}
+            {{--<option value="{{ $dmi->dataMovementProtocol}}"--}}
+{{--            @if( isset( $preferences) ) @if( $preferences->preferredDataMovementProtocol == $dmi->dataMovementProtocol)--}}
+{{--            selected @endif @endif>{{ $crData["dataMovementProtocols"][$dmi->dataMovementProtocol] }}</option>--}}
+            {{--@endforeach--}}
         </select>
     </div>
 </div>

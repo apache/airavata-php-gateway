@@ -188,6 +188,10 @@ Route::post("gp/add-crp", "GatewayprofileController@modifyCRP");
 
 Route::post("gp/update-crp", "GatewayprofileController@modifyCRP");
 
+Route::post("gp/add-dsp", "GatewayprofileController@modifyDSP");
+
+Route::post("gp/update-dsp", "GatewayprofileController@modifyDSP");
+
 Route::post("gp/credential-store-token-change", "GatewayprofileController@cstChange");
 
 //Management Dashboard

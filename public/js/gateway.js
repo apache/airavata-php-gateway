@@ -39,12 +39,25 @@ $(document).ready(function () {
 			$(this).after( $(".add-compute-resource-block").html() );
 		});
 
+		$(".add-dsp").click( function(){
+
+			$(".add-data-storage-preference-block").find("#gatewayId").val( $(this).data("gpid"));
+			$(this).after( $(".add-data-storage-preference-block").html() );
+		});
+
 		$("body").on("change", ".cr-select", function(){
 			crId = $(this).val();
 			//This is done as Jquery creates problems when using period(.) in id or class.
 			crId = crId.replace(/\./g,"_");
             $(".pref-space").html($("#cr-" + crId).html());
         });
+
+		$("body").on("change", ".sr-select", function(){
+			srId = $(this).val();
+			//This is done as Jquery creates problems when using period(.) in id or class.
+			srId = srId.replace(/\./g,"_");
+			$(".pref-space").html($("#sr-" + srId).html());
+		});
 
 		$(".edit-gateway").click( function(){
 			$(".edit-gp-name").val( $(this).data("gp-name") );

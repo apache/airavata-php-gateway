@@ -356,6 +356,24 @@
     </div>
 </div>
 
+<div class="add-data-storage-preference-block hide">
+    <div class="well">
+        <form action="{{URL::to('/')}}/gp/add-dsp" method="POST">
+            <input type="hidden" name="gatewayId" id="gatewayId" value="">
+
+            <div class="input-group">
+                <select name="storageResourceId" class="sr-select form-control">
+                    <option value="">Select a Data Storage Resource and set its preferences</option>
+                    @foreach( (array)$storageResources as $index => $sr)
+                        <option value="{{ $sr->storageResourceId}}">{{ $sr->hostName }}</option>
+                    @endforeach
+                </select>
+                <span class="input-group-addon remove-cr" style="cursor:pointer;">x</span>
+            </div>
+            <div class="pref-space form-horizontal"></div>
+        </form>
+    </div>
+</div>
 
 <!-- Remove a Compute Resource from a Gateway -->
 <div class="modal fade" id="remove-resource-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
@@ -407,6 +425,10 @@
 @include('partials/compute-resource-preferences', array('computeResource' => $cr, 'crData' => $crData))
 @endforeach
 
+<!-- contains all storage resource choices that might get selected on adding a new one to a gateway -->
+@foreach( (array)$storageResources as $index => $sr)
+    @include('partials/storage-resource-preferences', array('storageResource' => $sr, 'srData' => $srData))
+@endforeach
 
 @stop
 
