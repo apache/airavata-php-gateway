@@ -350,7 +350,8 @@ class AccountController extends BaseController
         else
             $username = $username . "@" . $wsisConfig['tenant-domain'];
 
-        $str = "Username: " . $username ."<br/>";
+        $str = "Gateway Portal: " . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] ."<br/>";
+        $str = $str . "Username: " . $username ."<br/>";
         $str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
         $str = $str . "Email: " . $userProfile["email"];
 
