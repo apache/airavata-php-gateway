@@ -154,7 +154,12 @@ class AccountController extends BaseController
             if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
                 return $this->initializeWithAiravata($username);
             }
-            return Redirect::to("admin/dashboard");
+
+            if(Session::get("admin") || Session::get("admin-read-only")){
+                return Redirect::to("admin/dashboard");
+            }else{
+                return Redirect::to("home");
+            }
         }
 
     }
