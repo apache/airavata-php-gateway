@@ -156,13 +156,8 @@ class TBufferedTransport extends TTransport {
 
   public function flush() {
     if (TStringFuncFactory::create()->strlen($this->wBuf_) > 0) {
-      $out = $this->wBuf_;
-
-      // Note that we clear the internal wBuf_ prior to the underlying write
-      // to ensure we're in a sane state (i.e. internal buffer cleaned)
-      // if the underlying write throws up an exception
+      $this->transport_->write($this->wBuf_);
       $this->wBuf_ = '';
-      $this->transport_->write($out);
     }
     $this->transport_->flush();
   }
