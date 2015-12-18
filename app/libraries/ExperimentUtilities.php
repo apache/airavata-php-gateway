@@ -183,6 +183,7 @@ class ExperimentUtilities
 
         $userConfigData = new UserConfigurationDataModel();
         $userConfigData->computationalResourceScheduling = $scheduling;
+        $userConfigData->storageId =  Config::get('pga_config.airavata')['gateway-data-store-resource-id'];
         $userConfigData->airavataAutoSchedule = isset($_POST['enable-auto-scheduling']) ? true : false;
         if (isset($_POST["userDN"])) {
             $userConfigData->generateCert = 1;
@@ -195,18 +196,7 @@ class ExperimentUtilities
         if (ExperimentUtilities::$experimentPath == null) {
             ExperimentUtilities::create_experiment_folder_path();
         }
-
-//        $advHandling = new AdvancedOutputDataHandling();
-        $hostName = $_SERVER['SERVER_NAME'];
-        $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
-
-//        $advHandling->outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-//            $expPathConstant, ExperimentUtilities::$experimentPath);
-//        $userConfigData->advanceOutputDataHandling = $advHandling;
-
-        //TODO: replace constructor with a call to airvata to get a prepopulated experiment template
         $experiment = new ExperimentModel();
-
         // required
         $experiment->projectId = $_POST['project'];
         $experiment->userName = Session::get('username');

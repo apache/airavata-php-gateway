@@ -156,7 +156,12 @@ return array(
         /**
          * Life time of app catalog data cache in minutes
          */
-        'app-catalog-cache-duration' => 5
+        'app-catalog-cache-duration' => 5,
+
+        /**
+         * Gateway data store resource id
+         */
+         'gateway-data-store-resource-id' => ''
     ],
 
     /**
