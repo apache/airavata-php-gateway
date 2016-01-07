@@ -74,28 +74,34 @@
                         <td>
                             @if(!$enabled)
                             <div class="checkbox">
-                                <input class="resource-status" resourceId="{{$crId}}" type="checkbox">
+                                <input class="resource-status" resourceId="{{$crId}}" type="checkbox"
+                                @if(!Session::has("scigap_admin"))
+                                   disabled="disabled"
+                                @endif
+                                >
                             </div>
                             @else
                             <div class="checkbox">
-                                <input class="resource-status" type="checkbox" resourceId="{{$crId}}" checked>
+                                <input class="resource-status" type="checkbox" resourceId="{{$crId}}" checked
+                                   @if(!Session::has("scigap_admin"))
+                                       disabled="disabled"
+                                   @endif
+                                   >
                             </div>
                             @endif
                         </td>
-                        <td><a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
-                                <span class="glyphicon glyphicon-pencil"></span>
+                        <td><a href="{{URL::to('/')}}/cr/view?crId={{ $crId }}" title="View">
+                                <span class="glyphicon glyphicon-list"></span>
                             </a>
                         </td>
                         @endif
                         @if(Session::has("scigap_admin"))
-                        <td>
-                            <a href="{{URL::to('/')}}/cr/view?crId={{ $crId }}" title="View">
-                            <span class="glyphicon glyphicon-list"></span>
-                            </a>
-                        </td>
-                        @endif
-                        @if(Session::has("scigap_admin"))
-                        <td>
+                            <td>
+                                <a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                            </td>
+                            <td>
                             <a href="#" title="Delete">
                                 <span class="glyphicon glyphicon-trash del-cr" data-toggle="modal"
                                       data-target="#delete-cr-block" data-delete-cr-name="{{$crName}}"
