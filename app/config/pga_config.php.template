@@ -2,7 +2,7 @@
 return array(
     /**
      * *****************************************************************
-     *  These are WSO2 Identity Server Related Configurations
+     *  WSO2 Identity Server Client Configurations
      * *****************************************************************
      */
 
@@ -51,12 +51,12 @@ return array(
         /**
          * Identity server domain
          */
-        'server' => 'idp.scigap.org',
+        'server' => 'localhost',
 
         /**
          * Identity server url
          */
-        'service-url' => 'https://idp.scigap.org:7443/',
+        'service-url' => 'https://localhost:7443/',
 
         /**
          * Enable HTTPS server verification
@@ -77,7 +77,7 @@ return array(
 
     /**
      * *****************************************************************
-     *  These are Airavata Related Configurations
+     *  Airavata Client Configurations
      * *****************************************************************
      */
     'airavata' => [
@@ -86,7 +86,7 @@ return array(
          * Airavata API server location. Use tls:// as the protocol to
          * connect TLS enabled Airavata
          */
-        'airavata-server' => 'gw56.iu.xsede.org',
+        'airavata-server' => 'localhost',
 
         /**
          * Airavata API server port
