@@ -163,9 +163,9 @@
                                                             </a>
                                                             @if(Session::has("admin"))
                                                             <div class="pull-right col-md-2 gateway-options fade">
-                                                                <span class="glyphicon glyphicon-remove remove-resource"
+                                                                <span class="glyphicon glyphicon-remove remove-compute-resource"
                                                                       style="cursor:pointer;" data-toggle="modal"
-                                                                      data-target="#remove-resource-block"
+                                                                      data-target="#remove-compute-resource-block"
                                                                       data-cr-name="{{$crp->crDetails->hostName}}"
                                                                       data-cr-id="{{$crp->computeResourceId}}"
                                                                       data-gp-id="{{ $gp->gatewayId }}"></span>
@@ -223,7 +223,7 @@
                                                                       data-target="#remove-storage-resource-block"
                                                                       data-sr-name="{{$srp->srDetails->hostName}}"
                                                                       data-sr-id="{{$srp->storageResourceId}}"
-                                                                      data-sr-id="{{ $gp->gatewayId }}"></span>
+                                                                      data-gp-id="{{ $gp->gatewayId }}"></span>
                                                             </div>
                                                             @endif
                                                         </h4>
@@ -283,9 +283,9 @@
                                                             </a>
                                                             @if(Session::has("admin"))
                                                             <div class="pull-right col-md-2 gateway-options fade">
-                                                                <span class="glyphicon glyphicon-remove remove-resource"
+                                                                <span class="glyphicon glyphicon-remove remove-storage-resource"
                                                                       style="cursor:pointer;" data-toggle="modal"
-                                                                      data-target="#remove-resource-block"
+                                                                      data-target="#remove-storage-resource-block"
                                                                       data-dsp-id="{{$ds->computeResourceId}}"
                                                                       data-gp-id="{{ $gp->gatewayId }}"></span>
                                                             </div>
@@ -376,7 +376,7 @@
 </div>
 
 <!-- Remove a Compute Resource from a Gateway -->
-<div class="modal fade" id="remove-resource-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+<div class="modal fade" id="remove-compute-resource-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
      aria-hidden="true">
     <div class="modal-dialog">
 
@@ -389,7 +389,36 @@
                     <input type="hidden" class="form-control remove-crId" name="rem-crId"/>
                     <input type="hidden" class="form-control cr-gpId" name="gpId"/>
 
-                    Do you really want to remove the Compute Resource, <span class="remove-cr-name"> </span>from the
+                    Do you really want to remove the Compute Resource, <span class="remove-cr-name"> </span> from the
+                    selected Gateway?
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-danger" value="Remove"/>
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Remove a Storage Resource from a Gateway -->
+<div class="modal fade" id="remove-storage-resource-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+
+        <form action="{{URL::to('/')}}/gp/remove-sr" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-center">Remove Storage Resource Confirmation</h3>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" class="form-control remove-srId" name="rem-srId"/>
+                    <input type="hidden" class="form-control sr-gpId" name="gpId"/>
+
+                    Do you really want to remove the Storage Resource, <span class="remove-sr-name"> </span> from the
                     selected Gateway?
                 </div>
                 <div class="modal-footer">

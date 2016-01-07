@@ -509,6 +509,18 @@ class CRUtilities
         return Airavata::deleteGatewayComputeResourcePreference(Session::get('authz-token'), $inputs["gpId"], $inputs["rem-crId"]);
     }
 
+    public static function deleteSR($inputs)
+    {
+        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+            $id = $inputs["rem-srId"];
+            if (Cache::has('SR-' . $id)) {
+                Cache::forget('SR-' . $id);
+            }
+        }
+
+        return Airavata::deleteGatewayStoragePreference(Session::get('authz-token'), $inputs["gpId"], $inputs["rem-srId"]);
+    }
+
     /**
      * Get the ComputeResourceDescription with the given ID
      * @param $id

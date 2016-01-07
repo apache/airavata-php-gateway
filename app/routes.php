@@ -192,6 +192,8 @@ Route::post("gp/add-dsp", "GatewayprofileController@modifyDSP");
 
 Route::post("gp/update-dsp", "GatewayprofileController@modifyDSP");
 
+Route::post("gp/remove-sr", "GatewayprofileController@delete");
+
 Route::post("gp/credential-store-token-change", "GatewayprofileController@cstChange");
 
 //Management Dashboard

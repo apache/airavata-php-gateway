@@ -70,10 +70,15 @@ $(document).ready(function () {
 			$(".delete-gpId").val( $(this).data("gp-id") );
 		});
 
-		$(".remove-resource").click( function(){
+		$(".remove-compute-resource").click( function(){
 			$(".remove-cr-name").html( $(this).data("cr-name") );
 			$(".remove-crId").val( $(this).data("cr-id") );
 			$(".cr-gpId").val( $(this).data("gp-id") );
 		});
 
+		$(".remove-storage-resource").click( function(){
+			$(".remove-sr-name").html( $(this).data("sr-name") );
+			$(".remove-srId").val( $(this).data("sr-id") );
+			$(".sr-gpId").val( $(this).data("gp-id") );
+		});
 });
