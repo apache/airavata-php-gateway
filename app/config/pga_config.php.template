@@ -170,6 +170,10 @@ return array(
      * *****************************************************************
      */
     'portal' => [
+        /**
+         * Whether this portal is the SciGaP admin portal
+         */
+        'scigap-admin-portal' => false,
 
         /**
          * Set the name of theme in use here

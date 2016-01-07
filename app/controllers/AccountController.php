@@ -144,7 +144,7 @@ class AccountController extends BaseController
             }
 
             //only for super admin
-            if(  Config::get('pga_config.wsis')['tenant-domain'] == ""){
+            if(  Config::get('pga_config.portal')['scigap-admin-portal'] == true){
                 Session::put("scigap_admin", true);
             }
 
