@@ -51,11 +51,13 @@
                         <th>Id</th>
                         @if(Session::has("admin"))
                         <th>Enabled</th>
-                        <!--<th>Edit</th>-->
+                        @if(Session::has("scigap_admin"))
+                            <th>Edit</th>
+                        @endif
                         @endif
                         <th>View</th>
-                        @if(Session::has("admin"))
-                        <!--<th>Delete</th>-->
+                        @if(Session::has("scigap_admin"))
+                            <th>Delete</th>
                         @endif
                     </tr>
 
@@ -80,20 +82,19 @@
                             </div>
                             @endif
                         </td>
-                        <!--
                         <td><a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </a>
                         </td>
-                        -->
                         @endif
+                        @if(Session::has("scigap_admin"))
                         <td>
-                            <a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
+                            <a href="{{URL::to('/')}}/cr/view?crId={{ $crId }}" title="View">
                             <span class="glyphicon glyphicon-list"></span>
                             </a>
                         </td>
-                        @if(Session::has("admin"))
-                        <!--
+                        @endif
+                        @if(Session::has("scigap_admin"))
                         <td>
                             <a href="#" title="Delete">
                                 <span class="glyphicon glyphicon-trash del-cr" data-toggle="modal"
@@ -102,7 +103,6 @@
                                       data-crid="{{$crId}}"></span>
                             </a>
                         </td>
-                        -->
                         @endif
                     </tr>
                     @endforeach
