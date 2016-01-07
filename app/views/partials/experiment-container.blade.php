@@ -1,6 +1,6 @@
 @if ( isset($expContainer))
     @if (sizeof($expContainer) == 0)
-        @if (isset($pageNo) && $pageNo == 1) {
+        @if (isset($pageNo) && $pageNo == 1)
             {{ CommonUtilities::print_warning_message('No results found. Please try again.') }}
         @else
             {{ CommonUtilities::print_warning_message('No more results found.') }}
