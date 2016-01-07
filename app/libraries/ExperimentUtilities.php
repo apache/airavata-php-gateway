@@ -812,7 +812,6 @@ class ExperimentUtilities
         }
 
         switch (ExperimentState::$__names[$experiment->experimentStatus->state]) {
-            case 'CREATED':
             case 'VALIDATED':
             case 'SCHEDULED':
             case 'LAUNCHED':
