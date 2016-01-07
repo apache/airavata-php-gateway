@@ -52,7 +52,7 @@ class AdminController extends BaseController {
 
     public function gatewayView(){
     	//only for super admin
-		//Session::put("scigap_admin", true);
+		//Session::put("super-admin", true);
 		$crData = CRUtilities::getEditCRData();
 		$gateways = CRUtilities::getAllGatewayProfilesData();
 		$tokens = AdminUtilities::get_all_ssh_tokens();

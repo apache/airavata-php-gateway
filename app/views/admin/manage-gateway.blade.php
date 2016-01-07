@@ -30,7 +30,7 @@
                 <div class="col-md-6">
                     <h3>Gateway Preferences</h3>
                 </div>
-                @if( Session::has("scigap_admin"))
+                @if( Session::has("super-admin"))
                 <div class="col-md-6" style="margin-top:2%">
                     <input type="text" class="col-md-12 filterinput" placeholder="Search by Gateway Name"/>
                 </div>

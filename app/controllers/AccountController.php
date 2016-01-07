@@ -144,8 +144,8 @@ class AccountController extends BaseController
             }
 
             //only for super admin
-            if(  Config::get('pga_config.portal')['scigap-admin-portal'] == true){
-                Session::put("scigap_admin", true);
+            if(  Config::get('pga_config.portal')['super-admin-portal'] == true){
+                Session::put("super-admin", true);
             }
 
             CommonUtilities::store_id_in_session($username);

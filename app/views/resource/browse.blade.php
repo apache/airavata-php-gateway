@@ -51,12 +51,12 @@
                         <th>Id</th>
                         @if(Session::has("admin"))
                         <th>Enabled</th>
-                        @if(Session::has("scigap_admin"))
+                        @if(Session::has("super-admin"))
                             <th>Edit</th>
                         @endif
                         @endif
                         <th>View</th>
-                        @if(Session::has("scigap_admin"))
+                        @if(Session::has("super-admin"))
                             <th>Delete</th>
                         @endif
                     </tr>
@@ -75,7 +75,7 @@
                             @if(!$enabled)
                             <div class="checkbox">
                                 <input class="resource-status" resourceId="{{$crId}}" type="checkbox"
-                                @if(!Session::has("scigap_admin"))
+                                @if(!Session::has("super-admin"))
                                    disabled="disabled"
                                 @endif
                                 >
@@ -83,7 +83,7 @@
                             @else
                             <div class="checkbox">
                                 <input class="resource-status" type="checkbox" resourceId="{{$crId}}" checked
-                                   @if(!Session::has("scigap_admin"))
+                                   @if(!Session::has("super-admin"))
                                        disabled="disabled"
                                    @endif
                                    >
@@ -95,7 +95,7 @@
                             </a>
                         </td>
                         @endif
-                        @if(Session::has("scigap_admin"))
+                        @if(Session::has("super-admin"))
                             <td>
                                 <a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
                                     <span class="glyphicon glyphicon-pencil"></span>

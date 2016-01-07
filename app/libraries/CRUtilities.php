@@ -442,7 +442,7 @@ class CRUtilities
     public static function getAllGatewayProfilesData()
     {
 
-        if (Session::has("scigap_admin"))
+        if (Session::has("super-admin"))
             $gateways = Airavata::getAllGateways(Session::get('authz-token'));
         else {
             $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));

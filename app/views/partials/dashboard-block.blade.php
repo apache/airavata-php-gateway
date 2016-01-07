@@ -20,7 +20,7 @@
         <li>
             <a><span class="glyphicon glyphicon-briefcase"></span>&nbsp; Compute Resources</a>
             <ul>
-                @if(Session::has("scigap_admin"))
+                @if(Session::has("super-admin"))
                 <li
                 @if( Session::has("admin-nav") && Session::get("admin-nav") == "cr-create") class="active" @endif>
                     <a class="dashboard-link" href="{{ URL::to('/')}}/cr/create"><i class="fa fa-fw fa-table"></i>Register</a>
@@ -39,7 +39,7 @@
         <li>
             <a><span class="glyphicon glyphicon-folder-open"></span>&nbsp; Storage Resources</a>
             <ul>
-                @if(Session::has("scigap_admin"))
+                @if(Session::has("super-admin"))
                 <li
                 @if( Session::has("admin-nav") && Session::get("admin-nav") == "sr-create") class="active" @endif>
                     <a class="dashboard-link" href="{{ URL::to('/')}}/sr/create"><i class="fa fa-fw fa-table"></i>Register</a>

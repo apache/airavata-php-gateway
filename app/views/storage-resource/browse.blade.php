@@ -48,11 +48,11 @@
                         <tr>
                             <th>Id</th>
                             <th>Hostname</th>
-                            @if(Session::has("scigap_admin"))
+                            @if(Session::has("super-admin"))
                             <th>Edit</th>
                             @endif
                             <th>View</th>
-                            @if(Session::has("scigap_admin"))
+                            @if(Session::has("super-admin"))
                             <th>Delete</th>
                             @endif
                         </tr>
@@ -65,7 +65,7 @@
                         <tr id="srDetails">
                             <td>{{ $srId }}</td>
                             <td>{{ $hostName }}</td>
-                            @if(Session::has("scigap_admin"))
+                            @if(Session::has("super-admin"))
                             <td><a href="{{URL::to('/')}}/sr/edit?srId={{ $srId }}" title="Edit">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
@@ -76,7 +76,7 @@
                                 <span class="glyphicon glyphicon-list"></span>
                                 </a>
                             </td>
-                            @if(Session::has("scigap_admin"))
+                            @if(Session::has("super-admin"))
                             <td>
                                 <a href="#" title="Delete">
                                     <span class="glyphicon glyphicon-trash del-sr" data-toggle="modal"
