@@ -54,7 +54,6 @@ class GatewayprofileController extends BaseController {
 
 	public function delete()
 	{
-		//var_dump( Input::all()); exit;
 		$error = false;
 		if( Input::has("del-gpId")) // if Gateway has to be deleted
 		{
@@ -66,6 +65,13 @@ class GatewayprofileController extends BaseController {
 		else if( Input::has("rem-crId")) // if Compute Resource has to be removed from Gateway
 		{
 			if(CRUtilities::deleteCR( Input::all()) )
+				return Redirect::to("admin/dashboard/gateway")->with("message", "The selected Compute Resource has been successfully removed");
+			else
+				$error = true;
+		}
+		else if( Input::has("rem-srId")) // if Compute Resource has to be removed from Gateway
+		{
+			if(CRUtilities::deleteSR( Input::all()) )
 				return Redirect::to("admin/dashboard/gateway")->with("message", "The selected Compute Resource has been successfully removed");
 			else
 				$error = true;
