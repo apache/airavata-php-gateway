@@ -10,6 +10,11 @@
         @if( !isset($dashboard))
         <small><a href="{{ URL::to('/') }}/experiment/summary?expId={{ $experiment->experimentId }}"
                   title="Refresh"><span class="glyphicon glyphicon-refresh refresh-exp"></span></a></small>
+            <small><small>Enable Auto Refresh </small></small>
+            <div class="btn-group btn-toggle">
+                <button class="btn btn-xs btn-default">ON</button>
+                <button class="btn btn-xs btn-primary active">OFF</button>
+            </div>
         @endif
     </h1>
 
