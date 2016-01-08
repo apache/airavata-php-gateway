@@ -360,10 +360,10 @@ class ExperimentUtilities
     {
         do {
             ExperimentUtilities::$experimentPath = Config::get('pga_config.airavata')['experiment-data-absolute-path'] .
-                "/" . str_replace(' ', '', Session::get('username')) . md5(rand() * time()) . '/';
+                "/" . Session::get('username') . "/" . md5(rand() * time()) . '/';
         } while (is_dir(ExperimentUtilities::$experimentPath)); // if dir already exists, try again
         // create upload directory
-        if (!mkdir(ExperimentUtilities::$experimentPath)) {
+        if (!mkdir(ExperimentUtilities::$experimentPath, 0755, true)) {
             CommonUtilities::print_error_message('<p>Error creating upload directory!
             Please try again later or report a bug using the link in the Help menu.</p>');
             $experimentAssemblySuccessful = false;
@@ -439,10 +439,6 @@ class ExperimentUtilities
             $experimentInputs = $experiment->experimentInputs;
             ExperimentUtilities::create_experiment_folder_path();
             $hostName = $_SERVER['SERVER_NAME'];
-            $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
-            $outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-                $expPathConstant, ExperimentUtilities::$experimentPath);
-            //$experiment->userConfigurationData->advanceOutputDataHandling->outputDataDir = $outputDataDir;
 
             foreach ($experimentInputs as $experimentInput) {
                 if ($experimentInput->type == DataType::URI) {
