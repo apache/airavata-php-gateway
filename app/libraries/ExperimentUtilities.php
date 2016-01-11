@@ -657,15 +657,11 @@ class ExperimentUtilities
         //print_r( $outputs); exit;
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
-                $explode = explode('/', $output->value);
-                //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
-                $outputPath = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'], Config::get('pga_config.airavata')['experiment-data-dir'], $output->value);
-                //print_r( $output->value); 
                 if(file_exists(str_replace('//','/',$output->value))){
-                    $outputPathArray = explode("/", $outputPath);
+                    $outputPathArray = explode("/", $output->value);
 
                     echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                            href="' . URL::to("/") . '/download/' . $outputPathArray[ count($outputPathArray)-2] . '/' . 
+                            href="' . URL::to("/") . '/download/' . $outputPathArray[ count($outputPathArray)-3] . "/" . $outputPathArray[ count($outputPathArray)-2] . '/' .
             $outputPathArray[ count($outputPathArray)-1] . '">' .
                         $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
