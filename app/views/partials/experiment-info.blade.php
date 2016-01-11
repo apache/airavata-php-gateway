@@ -128,7 +128,7 @@
             <td><?php ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus->state, false); ?></td>
         </tr>
         <!-- an experiment is editable only when it has not failed. otherwise, show errors. -->
-        @if( $expVal["editable"] == false)
+{{--        @if( $expVal["editable"] == false)--}}
         <tr>
             <td><strong>Errors</strong></td>
             <td>
@@ -139,7 +139,7 @@
             @endif
             </td>
         </tr>
-        @endif
+        {{--@endif--}}
 
     </table>
 

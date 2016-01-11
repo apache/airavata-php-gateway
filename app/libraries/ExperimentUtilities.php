@@ -663,8 +663,8 @@ class ExperimentUtilities
             $outputPathArray[ count($outputPathArray)-1] . '">' .
                         $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
-                else
-                    echo 'Output paths are not correctly defined for : <br/>' . $output->name . '<br/><br/> Please report this issue to the admin<br/><br/>';
+//                else
+//                    echo 'Output paths are not correctly defined for : <br/>' . $output->name . '<br/><br/> Please report this issue to the admin<br/><br/>';
             
             } 
             elseif ($output->type == DataType::STRING) {
