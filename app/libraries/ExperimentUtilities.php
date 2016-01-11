@@ -21,6 +21,8 @@ class ExperimentUtilities
 {
     private static $experimentPath;
 
+    private static $relativeExperimentDataDir;
+
     /**
      * Launch the experiment with the given ID
      * @param $expId
@@ -196,7 +198,7 @@ class ExperimentUtilities
         if (ExperimentUtilities::$experimentPath == null) {
             ExperimentUtilities::create_experiment_folder_path();
         }
-        $userConfigData->experimentDataDir = ExperimentUtilities::$experimentPath;
+        $userConfigData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
 
         $experiment = new ExperimentModel();
         // required
@@ -361,8 +363,9 @@ class ExperimentUtilities
     public static function create_experiment_folder_path()
     {
         do {
+            ExperimentUtilities::$relativeExperimentDataDir = "/" . Session::get('username') . "/" . md5(rand() * time()) . '/';
             ExperimentUtilities::$experimentPath = Config::get('pga_config.airavata')['experiment-data-absolute-path'] .
-                "/" . Session::get('username') . "/" . md5(rand() * time()) . '/';
+                ExperimentUtilities::$relativeExperimentDataDir;
         } while (is_dir(ExperimentUtilities::$experimentPath)); // if dir already exists, try again
         // create upload directory
         if (!mkdir(ExperimentUtilities::$experimentPath, 0755, true)) {
@@ -454,7 +457,7 @@ class ExperimentUtilities
                     $experimentInput->value = $hostPathConstant . $newInputPath;
                 }
             }
-            $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
+            $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
             return $cloneId;
         } catch (InvalidRequestException $ire) {
@@ -1111,7 +1114,7 @@ class ExperimentUtilities
         $experimentInputs = $experiment->experimentInputs; // get current inputs
         //var_dump($experimentInputs);
         $experimentInputs = ExperimentUtilities::process_inputs($applicationInputs, $experimentInputs); // get new inputs
-        $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
+        $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
         //var_dump($experimentInputs);
 
         if ($experimentInputs) {
