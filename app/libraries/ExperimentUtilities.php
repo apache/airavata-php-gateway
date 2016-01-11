@@ -636,7 +636,7 @@ class ExperimentUtilities
      *
     */
 
-    public static function list_ouatput_files($outputs, $status, $process)
+    public static function list_output_files($outputs, $status, $process)
     {
         if( $process)
         {
