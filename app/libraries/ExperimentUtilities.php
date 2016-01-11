@@ -196,6 +196,8 @@ class ExperimentUtilities
         if (ExperimentUtilities::$experimentPath == null) {
             ExperimentUtilities::create_experiment_folder_path();
         }
+        $userConfigData->experimentDataDir = ExperimentUtilities::$experimentPath;
+
         $experiment = new ExperimentModel();
         // required
         $experiment->projectId = $_POST['project'];
@@ -452,6 +454,7 @@ class ExperimentUtilities
                     $experimentInput->value = $hostPathConstant . $newInputPath;
                 }
             }
+            $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
             return $cloneId;
         } catch (InvalidRequestException $ire) {
@@ -633,7 +636,7 @@ class ExperimentUtilities
      *
     */
 
-    public static function list_output_files($outputs, $status, $process)
+    public static function list_ouatput_files($outputs, $status, $process)
     {
         if( $process)
         {
@@ -1108,6 +1111,7 @@ class ExperimentUtilities
         $experimentInputs = $experiment->experimentInputs; // get current inputs
         //var_dump($experimentInputs);
         $experimentInputs = ExperimentUtilities::process_inputs($applicationInputs, $experimentInputs); // get new inputs
+        $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
         //var_dump($experimentInputs);
 
         if ($experimentInputs) {
