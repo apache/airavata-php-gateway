@@ -112,6 +112,10 @@ class CommonUtilities
                 (
                     array('label' => 'Create', 'url' => URL::to('/') . '/experiment/create', "nav-active" => "experiment"),
                     array('label' => 'Browse', 'url' => URL::to('/') . '/experiment/browse', "nav-active" => "experiment")
+                ),
+                'Data' => array
+                (
+                    array('label' => 'Browse', 'url' => URL::to('/') . '/data/browse', "nav-active" => "experiment")
                 )
             );
 

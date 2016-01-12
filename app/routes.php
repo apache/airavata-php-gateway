@@ -1,5 +1,11 @@
 <?php
 
+
+/**
+ * Data Manager Related Routes
+ */
+Route::get("data/browse", "DataController@browseView");
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes

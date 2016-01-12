@@ -2,7 +2,7 @@
 return array(
     /**
      * *****************************************************************
-     *  WSO2 Identity Server Client Configurations
+     *  These are WSO2 Identity Server Related Configurations
      * *****************************************************************
      */
 
@@ -11,7 +11,7 @@ return array(
         /**
          * Admin Role Name
          */
-        'admin-role-name' => 'admin',
+        'admin-role-name' => 'Internal/everyone',
 
         /**
          * Read only Admin Role Name
@@ -41,22 +41,22 @@ return array(
         /**
          * OAuth client key
          */
-        'oauth-client-key' => 'iGEREhSBLuGapdcXwMU0b8jEpA4a',
+        'oauth-client-key' => 'O3iUdkkVYyHgzWPiVTQpY_tb96Ma',
 
         /**
          * OAuth client secret
          */
-        'oauth-client-secret' => 'g4Lgp05JIJcNQryJkNKjXJYi8A8a',
+        'oauth-client-secret' => '6Ck1jZoa2oRtrzodSqkUZ2iINkUa',
 
         /**
          * Identity server domain
          */
-        'server' => 'localhost',
+        'server' => 'idp.scigap.org',
 
         /**
          * Identity server url
          */
-        'service-url' => 'https://localhost:7443/',
+        'service-url' => 'https://idp.scigap.org:7443/',
 
         /**
          * Enable HTTPS server verification
@@ -77,7 +77,7 @@ return array(
 
     /**
      * *****************************************************************
-     *  Airavata Client Configurations
+     *  These are Airavata Related Configurations
      * *****************************************************************
      */
     'airavata' => [
@@ -86,7 +86,7 @@ return array(
          * Airavata API server location. Use tls:// as the protocol to
          * connect TLS enabled Airavata
          */
-        'airavata-server' => 'localhost',
+        'airavata-server' => 'gw77.iu.xsede.org',
 
         /**
          * Airavata API server port
@@ -116,7 +116,7 @@ return array(
         /**
          * PGA Gateway ID
          */
-        'gateway-id' => 'default',
+        'gateway-id' => 'seagrid',
 
         /**
          * Maximum size of a file which is allowed to upload to the server
@@ -126,7 +126,7 @@ return array(
         /**
          * absolute path of the data dir
          */
-        'experiment-data-absolute-path' => '/var/www/experimentData',
+        'experiment-data-absolute-path' => '/Library/WebServer/Documents/experimentData',
 
         /**
          * username for the user for accessing the experiment data over ssh
@@ -173,17 +173,17 @@ return array(
          */
          'gateway-data-store-resource-id' => ''
     ],
-
     /**
      * *****************************************************************
      *  Portal Related Configurations
      * *****************************************************************
      */
     'portal' => [
+
         /**
-         * Whether this portal is the SciGaP admin portal
+         * Whether this portal is the super admin portal
          */
-        'super-admin-portal' => false,
+        'super-admin-portal' => true,
 
         /**
          * Set the name of theme in use here
@@ -191,25 +191,25 @@ return array(
         'theme' => 'base',
 
         /**
-         * Portal title
+         * Portal titles
          */
         'portal-title' => 'Airavata PHP Gateway',
 
         /**
-         * Email address of the portal admin. Portal admin well get email notifications for events
+         * Email addresses of the portal admins. Portal admins well get email notifications for events
          * such as new user creation
          */
-        'admin-emails' => ['xxx@xxx.com','yyy@yyy.com'],
+        'admin-emails' => ['eroma.abeysinghe@gmail.com','supun.nakandala@gmail.com'],
 
         /**
          * Email account that the portal should login to send emails
          */
-        'portal-email-username' => 'xyz@abc.com',
+        'portal-email-username' => 'pga.airavata@gmail.com',
 
         /**
          * Password for the portal's email account
          */
-        'portal-email-password' => 'xxxxxxxxxxx',
+        'portal-email-password' => 'airavata12',
 
         /**
          * SMTP server on which the portal should connect
@@ -219,40 +219,6 @@ return array(
         /**
          * SMTP server port on which the portal should connect
          */
-        'portal-smtp-server-port' => '587',
-
-        /**
-         * Set JIRA Issue Collector scripts here.
-         */
-        'jira-help' => 
-        [
-            /**
-             * Report Issue Script issued for your app by Atlassian JIRA
-             */
-            'report-issue-script' => '',
-            /**
-             * Collector id at the end of the above script
-             */
-            'report-issue-collector-id' => '',
-            /**
-             * Create Report Script issued for your app by Atlassian JIRA
-             */
-            'request-feature-script' => '',
-            /**
-             * Collector id at the end of the above script
-             */
-            'request-feature-collector-id' => ''
-        ],
-
-        /**
-         * Set Google Analytics Id here. ID format that generates from  
-         * creating tracker object should be 
-         *
-         * UA-XXXXX-Y 
-         *
-         * for it to be working correctly. Currently it is only set for 
-         * sending pageviews.
-         */
-        'google-analytics-id' => ''
+        'portal-smtp-server-port' => '587'
     ]
 );
