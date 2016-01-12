@@ -1108,10 +1108,7 @@ class ExperimentUtilities
         $applicationInputs = AppUtilities::get_application_inputs($experiment->executionId);
 
         $experimentInputs = $experiment->experimentInputs; // get current inputs
-        //var_dump($experimentInputs);
         $experimentInputs = ExperimentUtilities::process_inputs($applicationInputs, $experimentInputs); // get new inputs
-        $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
-        //var_dump($experimentInputs);
 
         if ($experimentInputs) {
             $experiment->experimentInputs = $experimentInputs;
