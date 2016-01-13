@@ -368,11 +368,13 @@ class ExperimentUtilities
                 ExperimentUtilities::$relativeExperimentDataDir;
         } while (is_dir(ExperimentUtilities::$experimentPath)); // if dir already exists, try again
         // create upload directory
+        $old_umask = umask(0);
         if (!mkdir(ExperimentUtilities::$experimentPath, 0777, true)) {
             CommonUtilities::print_error_message('<p>Error creating upload directory!
             Please try again later or report a bug using the link in the Help menu.</p>');
             $experimentAssemblySuccessful = false;
         }
+        umask($old_umask);
     }
 
     /**
