@@ -181,7 +181,7 @@ class ExperimentUtilities
         $scheduling->wallTimeLimit = $_POST['wall-time'];
         $scheduling->totalPhysicalMemory = $_POST['total-physical-memory'];
         $scheduling->resourceHostId = $_POST['compute-resource'];
-        $scheduling->staticWorkingDir = $_POST['static-working-dir'];
+//        $scheduling->staticWorkingDir = $_POST['static-working-dir'];
 
         $userConfigData = new UserConfigurationDataModel();
         $userConfigData->computationalResourceScheduling = $scheduling;
