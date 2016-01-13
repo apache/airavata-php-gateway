@@ -140,7 +140,15 @@
             </td>
         </tr>
         {{--@endif--}}
-
+        @foreach( $expVal["jobDetails"] as $index => $jobDetail)
+            @if($experiment->experimentStatus->state == \Airavata\Model\Status\ExperimentState::FAILED
+                    || $jobDetail->jobStatus->jobStateName == "FAILED")
+            <tr>
+                <th>Job Submission Response</th>
+                <td>{{$jobDetail->stdOut}}</td>
+            </tr>
+            @endif
+        @endforeach
     </table>
 
     @if( !isset( $dashboard))
