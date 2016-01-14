@@ -38,7 +38,11 @@
                         @endif
                     </td>
                     <!-- Application Name -->
+                    @if(isset($experiment['expValue']['applicationInterface']))
                     <td>{{ $experiment['expValue']['applicationInterface']->applicationName }}</td>
+                    @else
+                    <td></td>
+                    @endif
                     <!-- User Names visible to admin -->
                 @if( isset($dashboard))
                     <td>{{$experiment['experiment']->userName}}</td>
