@@ -150,7 +150,7 @@ Route::post("sr/delete-jsi", "StorageResourceController@deleteActions");
 
 Route::post("sr/delete-dmi", "StorageResourceController@deleteActions");
 
-Route::post("sr/delete-cr", "StorageResourceController@deleteActions");
+Route::post("sr/delete-sr", "StorageResourceController@deleteActions");
 
 /*
  * Application Catalog Routes
