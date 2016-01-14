@@ -134,23 +134,19 @@
 </div>
 
 
-<!-- Remove a Compute Resource from a Gateway -->
+<!-- Add a Gateway -->
 <div class="modal fade" id="add-gateway-loading" tabindex="-1" role="dialog" aria-labelledby="add-modal"
      aria-hidden="true" data-backdrop="static">
 <div class="modal-dialog">
-
-        <form action="{{URL::to('/')}}/gp/remove-cr" method="POST">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="text-center">Registering the gateway</h3>
-                </div>
-                <div class="modal-body text-center">
-                    <h5>Please DO NOT reload the page. This can take a couple of minutes.</h5>
-                    <img src="{{URL::to('/')}}/assets/ajax-loader.gif"/>
-                </div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-center">Registering the gateway</h3>
             </div>
-
-        </form>
+            <div class="modal-body text-center">
+                <h5>Please DO NOT reload the page. This can take a couple of minutes.</h5>
+                <img src="{{URL::to('/')}}/assets/ajax-loader.gif"/>
+            </div>
+        </div>
     </div>
 </div>
 

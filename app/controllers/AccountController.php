@@ -74,6 +74,18 @@ class AccountController extends BaseController
             WSIS::registerUserAccount($username, $password, $email, $first_name, $last_name,
                 Config::get('pga_config.wsis')['tenant-domain']);
 
+            /*add user to role - user_pending */
+
+            $allRoles = WSIS::getAllRoles();
+            if(! in_array( "user_pending", $allRoles)){
+                WSIS::addRole( "user_pending");
+            }
+            //$userRoles = (array)WSIS::getUserRoles( $username);
+
+            $userRoles["new"] = "user_pending";
+            $userRoles["deleted"] = array();
+            WSIS::updateUserRoles( $username, $userRoles);
+
             CommonUtilities::print_success_message('Account confirmation request was sent to your email account');
             return View::make('home');
         }
@@ -93,7 +105,12 @@ class AccountController extends BaseController
     public function loginSubmit()
     {
         if (CommonUtilities::form_submitted()) {
-            $username = $_POST['username'] . "@" . Config::get('pga_config.wsis')['tenant-domain'];
+            $wsisConfig = Config::get('pga_config.wsis');
+            if( $wsisConfig['tenant-domain'] == "")
+                $username = Input::get("username");
+            else
+                $username = Input::get("username") . "@" . $wsisConfig['tenant-domain'];
+
             $password = $_POST['password'];
             $response = WSIS::authenticate($username, $password);
             if(!isset($response->access_token)){
@@ -126,13 +143,23 @@ class AccountController extends BaseController
                 Session::put("authorized-user", true);
             }
 
+            //only for super admin
+            if(  Config::get('pga_config.portal')['super-admin-portal'] == true){
+                Session::put("super-admin", true);
+            }
+
             CommonUtilities::store_id_in_session($username);
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
             if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
                 return $this->initializeWithAiravata($username);
             }
-            return View::make("account/dashboard");
+
+            if(Session::get("admin") || Session::get("admin-read-only")){
+                return Redirect::to("admin/dashboard");
+            }else{
+                return Redirect::to("home");
+            }
         }
 
     }
@@ -203,7 +230,7 @@ class AccountController extends BaseController
             return View::make('home');
         }
 
-        return View::make("account/dashboard");
+        return Redirect::to("admin/dashboard");
     }
 
     public function forgotPassword()
@@ -218,7 +245,11 @@ class AccountController extends BaseController
             CommonUtilities::print_error_message("Please provide a valid username");
             return View::make("account/forgot-password");
         }else{
-            $username = $username . "@" . Config::get('pga_config.wsis')['tenant-domain'];
+            $wsisConfig = Config::get('pga_config.wsis');
+            if( $wsisConfig['tenant-domain'] == "")
+                $username = $username;
+            else
+                $username = $username . "@" . $wsisConfig['tenant-domain'];
             try{
                 $key = WSIS::validateUser($username);
                 if(!empty($key)){
@@ -248,7 +279,11 @@ class AccountController extends BaseController
         if(empty($username) || empty($confirmation)){
             return View::make("home");
         }else{
-            $username = $username . "@" . Config::get('pga_config.wsis')['tenant-domain'];
+            $wsisConfig = Config::get('pga_config.wsis');
+            if( $wsisConfig['tenant-domain'] == "")
+                $username = $username;
+            else
+                $username = $username . "@" . $wsisConfig['tenant-domain'];
             try{
                 $key = WSIS::validateConfirmationCode($username, $confirmation);
                 if(!empty($key)){
@@ -314,7 +349,14 @@ class AccountController extends BaseController
 
         $mail->Subject = "New User Account Was Created Successfully";
         $userProfile = WSIS::getUserProfile($username);
-        $str = "Username: " . $username . "@" . Config::get('pga_config.wsis')['tenant-domain'] . "<br/>";
+        $wsisConfig = Config::get('pga_config.wsis');
+        if( $wsisConfig['tenant-domain'] == "")
+            $username = $username;
+        else
+            $username = $username . "@" . $wsisConfig['tenant-domain'];
+
+        $str = "Gateway Portal: " . $_SERVER['SERVER_NAME'] ."<br/>";
+        $str = $str . "Username: " . $username ."<br/>";
         $str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
         $str = $str . "Email: " . $userProfile["email"];
 

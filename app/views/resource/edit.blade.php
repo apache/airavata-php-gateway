@@ -841,7 +841,7 @@
     })
 </script>
 
-@if(! Session::has('scigap_admin'))
+@if(! Session::has('super-admin'))
     <script>
     function disableInputs( elem){
         elem.find("input").each( function( i,e){

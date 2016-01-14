@@ -5,7 +5,7 @@
 //Compute Resource classes
 use Airavata\Model\Data\Movement\DataMovementProtocol;
 use Airavata\Model\AppCatalog\StorageResource\StorageResourceDescription;
-use Airavata\Model\AppCatalog\GatewayProfile\ComputeResourcePreference;
+use Airavata\Model\AppCatalog\GatewayProfile\StoragePreference;
 use Airavata\Model\AppCatalog\GatewayProfile\GatewayResourceProfile;
 
 use Airavata\Model\AppCatalog\ComputeResource\GridFTPDataMovement;
@@ -13,13 +13,10 @@ use Airavata\Model\AppCatalog\ComputeResource\JobManagerCommand;
 use Airavata\Model\AppCatalog\ComputeResource\JobSubmissionProtocol;
 use Airavata\Model\Data\Movement\LOCALDataMovement;
 use Airavata\Model\Data\Movement\DMType;
-use Airavata\Model\AppCatalog\ComputeResource\LOCALSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
-use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManager;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManagerType;
 use Airavata\Model\Data\Movement\SCPDataMovement;
 use Airavata\Model\Data\Movement\SecurityProtocol;
-use Airavata\Model\AppCatalog\ComputeResource\SSHJobSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\UnicoreDataMovement;
 //Gateway Classes
 
@@ -245,7 +242,7 @@ class SRUtilities
     public static function getAllGatewayProfilesData()
     {
 
-        if (Session::has("scigap_admin"))
+        if (Session::has("super-admin"))
             $gateways = Airavata::getAllGateways(Session::get('authz-token'));
         else {
             $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
@@ -277,18 +274,19 @@ class SRUtilities
         return Airavata::updateGatewayResourceProfile( Session::get('authz-token'), $data["gateway_id"], $gatewayResourceProfile); 
     }
 
-    public static function add_or_update_CRP($inputs)
+    public static function add_or_update_DSP($inputs)
     {
-        $computeResourcePreferences = new computeResourcePreference($inputs);
+        $storagePreference = new StoragePreference($inputs);
 
         if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
-            if (Cache::has('CR-' . $inputs["computeResourceId"])) {
-                Cache::forget('CR-' . $inputs["computeResourceId"]);
+            if (Cache::has('SR-' . $inputs["storageResourceId"])) {
+                Cache::forget('SR-' . $inputs["storageResourceId"]);
             }
         }
 
         //var_dump( $inputs); exit;
-        return Airavata::addGatewayComputeResourcePreference(Session::get('authz-token'), $inputs["gatewayId"], $inputs["computeResourceId"], $computeResourcePreferences);
+        return Airavata::addGatewayStoragePreference(Session::get('authz-token'), $inputs["gatewayId"], $inputs["storageResourceId"],
+            $storagePreference);
 
     }
 

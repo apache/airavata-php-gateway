@@ -442,7 +442,7 @@ class CRUtilities
     public static function getAllGatewayProfilesData()
     {
 
-        if (Session::has("scigap_admin"))
+        if (Session::has("super-admin"))
             $gateways = Airavata::getAllGateways(Session::get('authz-token'));
         else {
             $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
@@ -458,6 +458,9 @@ class CRUtilities
                 if ($gw->gatewayId == $gp->gatewayID) {
                     foreach ((array)$gp->computeResourcePreferences as $i => $crp) {
                         $gatewayProfiles[$index]->computeResourcePreferences[$i]->crDetails = Airavata::getComputeResource(Session::get('authz-token'), $crp->computeResourceId);
+                    }
+                    foreach( (array)$gp->storagePreferences as $j => $srp){
+                        $gatewayProfiles[$index]->storagePreferences[$j]->srDetails = Airavata::getStorageResource( Session::get('authz-token'), $srp->storageResourceId);
                     }
                     $gateways[$key]->profile = $gatewayProfiles[$index];
                 }
@@ -504,6 +507,18 @@ class CRUtilities
         }
 
         return Airavata::deleteGatewayComputeResourcePreference(Session::get('authz-token'), $inputs["gpId"], $inputs["rem-crId"]);
+    }
+
+    public static function deleteSR($inputs)
+    {
+        if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
+            $id = $inputs["rem-srId"];
+            if (Cache::has('SR-' . $id)) {
+                Cache::forget('SR-' . $id);
+            }
+        }
+
+        return Airavata::deleteGatewayStoragePreference(Session::get('authz-token'), $inputs["gpId"], $inputs["rem-srId"]);
     }
 
     /**

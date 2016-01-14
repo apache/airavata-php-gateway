@@ -21,6 +21,8 @@ class ExperimentUtilities
 {
     private static $experimentPath;
 
+    private static $relativeExperimentDataDir;
+
     /**
      * Launch the experiment with the given ID
      * @param $expId
@@ -179,10 +181,11 @@ class ExperimentUtilities
         $scheduling->wallTimeLimit = $_POST['wall-time'];
         $scheduling->totalPhysicalMemory = $_POST['total-physical-memory'];
         $scheduling->resourceHostId = $_POST['compute-resource'];
-        $scheduling->staticWorkingDir = $_POST['static-working-dir'];
+//        $scheduling->staticWorkingDir = $_POST['static-working-dir'];
 
         $userConfigData = new UserConfigurationDataModel();
         $userConfigData->computationalResourceScheduling = $scheduling;
+        $userConfigData->storageId =  Config::get('pga_config.airavata')['gateway-data-store-resource-id'];
         $userConfigData->airavataAutoSchedule = isset($_POST['enable-auto-scheduling']) ? true : false;
         if (isset($_POST["userDN"])) {
             $userConfigData->generateCert = 1;
@@ -195,18 +198,9 @@ class ExperimentUtilities
         if (ExperimentUtilities::$experimentPath == null) {
             ExperimentUtilities::create_experiment_folder_path();
         }
+        $userConfigData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
 
-//        $advHandling = new AdvancedOutputDataHandling();
-        $hostName = $_SERVER['SERVER_NAME'];
-        $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
-
-//        $advHandling->outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-//            $expPathConstant, ExperimentUtilities::$experimentPath);
-//        $userConfigData->advanceOutputDataHandling = $advHandling;
-
-        //TODO: replace constructor with a call to airvata to get a prepopulated experiment template
         $experiment = new ExperimentModel();
-
         // required
         $experiment->projectId = $_POST['project'];
         $experiment->userName = Session::get('username');
@@ -369,15 +363,18 @@ class ExperimentUtilities
     public static function create_experiment_folder_path()
     {
         do {
+            ExperimentUtilities::$relativeExperimentDataDir = "/" . Session::get('username') . "/" . md5(rand() * time()) . '/';
             ExperimentUtilities::$experimentPath = Config::get('pga_config.airavata')['experiment-data-absolute-path'] .
-                "/" . str_replace(' ', '', Session::get('username')) . md5(rand() * time()) . '/';
+                ExperimentUtilities::$relativeExperimentDataDir;
         } while (is_dir(ExperimentUtilities::$experimentPath)); // if dir already exists, try again
         // create upload directory
-        if (!mkdir(ExperimentUtilities::$experimentPath)) {
+        $old_umask = umask(0);
+        if (!mkdir(ExperimentUtilities::$experimentPath, 0777, true)) {
             CommonUtilities::print_error_message('<p>Error creating upload directory!
             Please try again later or report a bug using the link in the Help menu.</p>');
             $experimentAssemblySuccessful = false;
         }
+        umask($old_umask);
     }
 
     /**
@@ -449,10 +446,6 @@ class ExperimentUtilities
             $experimentInputs = $experiment->experimentInputs;
             ExperimentUtilities::create_experiment_folder_path();
             $hostName = $_SERVER['SERVER_NAME'];
-            $expPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . Config::get('pga_config.airavata')['experiment-data-absolute-path'];
-            $outputDataDir = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'],
-                $expPathConstant, ExperimentUtilities::$experimentPath);
-            //$experiment->userConfigurationData->advanceOutputDataHandling->outputDataDir = $outputDataDir;
 
             foreach ($experimentInputs as $experimentInput) {
                 if ($experimentInput->type == DataType::URI) {
@@ -466,6 +459,7 @@ class ExperimentUtilities
                     $experimentInput->value = $hostPathConstant . $newInputPath;
                 }
             }
+            $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
             return $cloneId;
         } catch (InvalidRequestException $ire) {
@@ -665,20 +659,16 @@ class ExperimentUtilities
         //print_r( $outputs); exit;
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
-                $explode = explode('/', $output->value);
-                //echo '<p>' . $output->key .  ': <a href="' . $output->value . '">' . $output->value . '</a></p>';
-                $outputPath = str_replace(Config::get('pga_config.airavata')['experiment-data-absolute-path'], Config::get('pga_config.airavata')['experiment-data-dir'], $output->value);
-                //print_r( $output->value); 
                 if(file_exists(str_replace('//','/',$output->value))){
-                    $outputPathArray = explode("/", $outputPath);
+                    $outputPathArray = explode("/", $output->value);
 
                     echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                            href="' . URL::to("/") . '/download/' . $outputPathArray[ count($outputPathArray)-2] . '/' . 
+                            href="' . URL::to("/") . '/download/' . $outputPathArray[ count($outputPathArray)-3] . "/" . $outputPathArray[ count($outputPathArray)-2] . '/' .
             $outputPathArray[ count($outputPathArray)-1] . '">' .
                         $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
-                else
-                    echo 'Output paths are not correctly defined for : <br/>' . $output->name . '<br/><br/> Please report this issue to the admin<br/><br/>';
+//                else
+//                    echo 'Output paths are not correctly defined for : <br/>' . $output->name . '<br/><br/> Please report this issue to the admin<br/><br/>';
             
             } 
             elseif ($output->type == DataType::STRING) {
@@ -822,7 +812,6 @@ class ExperimentUtilities
         }
 
         switch (ExperimentState::$__names[$experiment->experimentStatus->state]) {
-            case 'CREATED':
             case 'VALIDATED':
             case 'SCHEDULED':
             case 'LAUNCHED':
@@ -1121,9 +1110,7 @@ class ExperimentUtilities
         $applicationInputs = AppUtilities::get_application_inputs($experiment->executionId);
 
         $experimentInputs = $experiment->experimentInputs; // get current inputs
-        //var_dump($experimentInputs);
         $experimentInputs = ExperimentUtilities::process_inputs($applicationInputs, $experimentInputs); // get new inputs
-        //var_dump($experimentInputs);
 
         if ($experimentInputs) {
             $experiment->experimentInputs = $experimentInputs;

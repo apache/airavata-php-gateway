@@ -34,6 +34,9 @@
                         </td>
                     </tr>
                 </table>
+                <div class="loading-img text-center hide">
+                   <img src="../../assets/ajax-loader.gif"/>
+                </div>
                 @endif
                 <table class="table table-bordered table-condensed" style="word-wrap: break-word;">
                     <tr>
@@ -41,6 +44,7 @@
                             Token
                         </th>
                         <th class="text-center">Public Key</th>
+                        <th>Delete</th>
                     </tr>
                     <tbody class="token-values">
                     @foreach( $tokens as $token => $publicKey)
@@ -50,6 +54,9 @@
                         </td>
                         <td class="public-key">
                             {{ $publicKey }}
+                        </td>
+                        <td>
+                            <span data-token="{{$token}}" class="glyphicon glyphicon-trash remove-token"></span>
                         </td>
                     </tr>
                     @endforeach
@@ -137,28 +144,94 @@
 </div>
 
 
+<!-- Remove a Compute Resource from a Gateway -->
+<div class="modal fade" id="remove-token-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-center">Remove SSH Key Confirmation</h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" class="form-control remove-crId" name="rem-crId"/>
+                <input type="hidden" class="form-control cr-gpId" name="gpId"/>
+
+                Are you sure, you want to remove the SSH Key?<span class="remove-token-name"> </span>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <input type="submit" class="btn btn-danger" value="Remove"/>
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @stop
 
 @section('scripts')
 @parent
 <script>
    $(".generate-ssh").click( function(){
+        $(".loading-img").removeClass("hide");
         $.ajax({
           type: "POST",
-          url: "{{URL::to('/')}}/create-ssh-token"
+          url: "{{URL::to('/')}}/admin/create-ssh-token"
         }).success( function( data){
 
             var tokenJson = data;
 
-            $(".token-values").html("");
-            $.each(tokenJson, function( token, pubkey){
-                $(".token-values").append("<tr><td>" + token + "</td><td class='public-key'>" + pubkey + "</td></<tr>");
-            });
+            //$(".token-values").html("");
+            $(".generate-ssh").after("<div class='alert alert-success new-token-msg'>New Token has been generated.</div>");
 
+            $(".token-values").prepend("<tr class='alert alert-success'><td>" + tokenJson.token + "</td><td class='public-key'>" + tokenJson.pubkey + "</td>" + "<td><a href=''><span data-token='"+tokenJson.token+"' class='glyphicon glyphicon-trash remove-token'></span></a></td></<tr>");
+            $(".loading-img").addClass("hide");
+            
+            setInterval( function(){
+                $(".new-token-msg").fadeOut();
+            }, 3000);
         }).fail( function( data){
+        $(".loading-img").addClass("hide");
+
             failureObject = $.parseJSON( data.responseText);
             $(".generate-ssh").after("<div class='alert alert-danger'>" + failureObject.error.message + "</div>");
         });
+   });
+
+   $(".remove-token").click( function(){
+        var removeSpan = $(this);
+        var tr = removeSpan.parent().parent();
+        var tokenToRemove = removeSpan.data("token");
+        var publicKey = tr.children(".public-key").html();
+        tr.children(".public-key").html("<div class='alert alert-danger'>Do you really want to remove the token? This action cannot be undone.<br/>" +
+                                                                    "<span class='btn-group'>"+
+                                                                    "<input type='button' class='btn btn-default remove-token-confirmation' value='Yes'/>" +
+                                                                    "<input type='button' class='btn btn-default remove-token-cancel' value='Cancel'/>"+
+                                                                    "</span></div>");
+
+        
+        tr.find( ".remove-token-confirmation").click( function(){
+            $(".loading-img").removeClass("hide");
+            $.ajax({
+              type: "POST",
+              data:{ "token" : tokenToRemove},
+              url: "{{URL::to('/')}}/admin/remove-ssh-token"
+              }).success( function( data){
+                if( data.responseText == 1)
+                    tr.addClass("alert").addClass("alert-danger");
+                        tr.fadeOut(1000);
+            }).fail( function( data){
+                tr.after("<tr class='alert alert-danger'><td></td><td>Error occurred : " + $.parseJSON( data.responseText).error.message + "</td><td></td></tr>");
+            }).complete( function(){
+                $(".loading-img").addClass("hide");
+
+            });
+        });
+        tr.find( ".remove-token-cancel").click( function(){
+            tr.children(".public-key").html( publicKey);
+        });
+        
    });
 </script>
 @stop

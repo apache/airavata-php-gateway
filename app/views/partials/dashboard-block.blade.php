@@ -20,7 +20,7 @@
         <li>
             <a><span class="glyphicon glyphicon-briefcase"></span>&nbsp; Compute Resources</a>
             <ul>
-                @if(Session::has("admin"))
+                @if(Session::has("super-admin"))
                 <li
                 @if( Session::has("admin-nav") && Session::get("admin-nav") == "cr-create") class="active" @endif>
                     <a class="dashboard-link" href="{{ URL::to('/')}}/cr/create"><i class="fa fa-fw fa-table"></i>Register</a>
@@ -39,7 +39,7 @@
         <li>
             <a><span class="glyphicon glyphicon-folder-open"></span>&nbsp; Storage Resources</a>
             <ul>
-                @if(Session::has("admin"))
+                @if(Session::has("super-admin"))
                 <li
                 @if( Session::has("admin-nav") && Session::get("admin-nav") == "sr-create") class="active" @endif>
                     <a class="dashboard-link" href="{{ URL::to('/')}}/sr/create"><i class="fa fa-fw fa-table"></i>Register</a>
@@ -78,8 +78,8 @@
 
         <li
             @if( Session::has("admin-nav") && Session::get("admin-nav") == "gateway-prefs") class="active" @endif>
-            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/gateway"><span class="glyphicon glyphicon-sort"></span>&nbsp; @if(
-                Session::has("scigap_admin"))Gateways @else Gateway Preferences @endif</a>
+            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/gateway"><span class="glyphicon glyphicon-sort"></span>&nbsp;
+                Gateway Preferences</a>
         </li>
 
         <li

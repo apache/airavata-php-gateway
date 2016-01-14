@@ -2,7 +2,7 @@
 return array(
     /**
      * *****************************************************************
-     *  These are WSO2 Identity Server Related Configurations
+     *  WSO2 Identity Server Client Configurations
      * *****************************************************************
      */
 
@@ -51,12 +51,12 @@ return array(
         /**
          * Identity server domain
          */
-        'server' => 'idp.scigap.org',
+        'server' => 'localhost',
 
         /**
          * Identity server url
          */
-        'service-url' => 'https://idp.scigap.org:7443/',
+        'service-url' => 'https://localhost:7443/',
 
         /**
          * Enable HTTPS server verification
@@ -77,7 +77,7 @@ return array(
 
     /**
      * *****************************************************************
-     *  These are Airavata Related Configurations
+     *  Airavata Client Configurations
      * *****************************************************************
      */
     'airavata' => [
@@ -86,7 +86,7 @@ return array(
          * Airavata API server location. Use tls:// as the protocol to
          * connect TLS enabled Airavata
          */
-        'airavata-server' => 'gw56.iu.xsede.org',
+        'airavata-server' => 'localhost',
 
         /**
          * Airavata API server port
@@ -107,11 +107,6 @@ return array(
          * Maximum size of a file which is allowed to upload to the server
          */
         'server-allowed-file-size' => 64,
-
-        /**
-         * directory in the web server where experiment data is staged. (relative to the PGA documents root)
-         */
-        'experiment-data-dir' => '/../experimentData',
 
         /**
          * absolute path of the data dir
@@ -156,7 +151,12 @@ return array(
         /**
          * Life time of app catalog data cache in minutes
          */
-        'app-catalog-cache-duration' => 5
+        'app-catalog-cache-duration' => 5,
+
+        /**
+         * Gateway data store resource id
+         */
+         'gateway-data-store-resource-id' => ''
     ],
 
     /**
@@ -165,6 +165,10 @@ return array(
      * *****************************************************************
      */
     'portal' => [
+        /**
+         * Whether this portal is the SciGaP admin portal
+         */
+        'super-admin-portal' => false,
 
         /**
          * Set the name of theme in use here

@@ -73,8 +73,7 @@ class AdminUtilities
 
     public static function create_ssh_token(){
         try{
-            $token = Airavata::generateAndRegisterSSHKeys( Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"));
-            return Airavata::getAllUserSSHPubKeys( Session::get('authz-token'), Session::get("username") );
+            return $newToken = Airavata::generateAndRegisterSSHKeys( Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"));
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('p>Error in creating SSH Handshake. You might have to enable TLS in pga_config. </p>' .
                 '<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
@@ -87,7 +86,26 @@ class AdminUtilities
         }
     }
 
-    public static function get_ssh_tokens(){
-        return Airavata::getAllUserSSHPubKeys( Session::get('authz-token'), Session::get("username") );
+    public static function get_all_ssh_tokens(){
+        return Airavata::getAllGatewaySSHPubKeys( Session::get('authz-token'), Session::get("gateway_id") );
+    }
+
+    public static function get_pubkey_from_token( $token){
+        return Airavata::getSSHPubKey( Session::get('authz-token'), $token, Session::get("gateway_id"));
+    }
+
+    public static function remove_ssh_token( $token){
+        try{
+            return Airavata::deleteSSHPubKey( Session::get('authz-token'), $token, Session::get("gateway_id"));
+        } catch (InvalidRequestException $ire) {
+            CommonUtilities::print_error_message('p>Error in creating SSH Handshake. You might have to enable TLS in pga_config. </p>' .
+                '<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
+        } catch (AiravataClientException $ace) {
+            CommonUtilities::print_error_message('<p>Error in creating SSH Handshake. You might have to enable TLS in pga_config.  </p>' .
+                '<p>Airavata Client Exception: ' . $ace->getMessage() . '</p>');
+        } catch (AiravataSystemException $ase) {
+            CommonUtilities::print_error_message('p>Error in creating SSH Handshake. You might have to enable TLS in pga_config.  </p>' .
+                '<p>Airavata System Exception: ' . $ase->getMessage() . '</p>');
+        }
     }
 }
