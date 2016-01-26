@@ -803,7 +803,6 @@ class ExperimentUtilities
             case 'CREATED':
             case 'VALIDATED':
             case 'SCHEDULED':
-            case 'FAILED':
                 $expVal["editable"] = true;
                 break;
             default:
