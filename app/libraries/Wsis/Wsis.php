@@ -291,10 +291,16 @@ class Wsis {
      */
     public function getAllRoles(){
         try {
-            return $this->userStoreManager->getRoleNames();
+            $roles = $this->userStoreManager->getRoleNames();
+            return array_filter($roles, "Wsis::nonInternalRoles");
+            var_dump($roles);exit;
         } catch (Exception $ex) {
             throw new Exception("Unable to get all roles", 0, $ex);
         }
+    }
+
+    public function nonInternalRoles($var){
+        return 0 !== strpos($var, 'Internal/');
     }
 
     /**

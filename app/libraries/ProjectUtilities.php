@@ -183,7 +183,6 @@ class ProjectUtilities
         $updatedProject->owner = $projectDetails["owner"];
         $updatedProject->name = $projectDetails["name"];
         $updatedProject->description = $projectDetails["description"];
-
         try {
             Airavata::updateProject(Session::get('authz-token'), $projectId, $updatedProject);
 

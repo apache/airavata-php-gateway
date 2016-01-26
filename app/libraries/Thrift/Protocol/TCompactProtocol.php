@@ -61,7 +61,6 @@ class TCompactProtocol extends TProtocol {
   const VERSION = 1;
   const PROTOCOL_ID = 0x82;
   const TYPE_MASK = 0xe0;
-  const TYPE_BITS = 0x07;
   const TYPE_SHIFT_AMOUNT = 5;
 
   protected static $ctypes = array(
@@ -309,7 +308,7 @@ class TCompactProtocol extends TProtocol {
 
   public function writeDouble($value) {
     $data = pack('d', $value);
-    $this->trans_->write($data, 8);
+    $this->trans_->write(strrev($data), 8);
     return 8;
   }
 
@@ -382,13 +381,14 @@ class TCompactProtocol extends TProtocol {
     }
     $verType = 0;
     $result += $this->readUByte($verType);
-    $type = ($verType >> TCompactProtocol::TYPE_SHIFT_AMOUNT) & TCompactProtocol::TYPE_BITS;
+    $type = ($verType & TCompactProtocol::TYPE_MASK) >>
+      TCompactProtocol::TYPE_SHIFT_AMOUNT;
     $version = $verType & TCompactProtocol::VERSION_MASK;
     if ($version != TCompactProtocol::VERSION) {
       throw new TProtocolException('Bad version in TCompact message');
     }
-    $result += $this->readVarint($seqid);
-    $result += $this->readString($name);
+    $result += $this->readVarint($seqId);
+    $name += $this->readString($name);
 
     return $result;
   }
@@ -485,7 +485,7 @@ class TCompactProtocol extends TProtocol {
   }
 
   public function readDouble(&$value) {
-    $data = $this->trans_->readAll(8);
+    $data = strrev($this->trans_->readAll(8));
     $arr = unpack('d', $data);
     $value = $arr[1];
     return 8;

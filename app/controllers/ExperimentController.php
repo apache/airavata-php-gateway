@@ -80,7 +80,11 @@ class ExperimentController extends BaseController
     public function summary()
     {
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
-        //var_dump( $detailedExperiment); exit;
+        if(isset($_GET['isAutoRefresh']) && $_GET['isAutoRefresh'] == 'true'){
+            $autoRefresh = true;
+        }else{
+            $autoRefresh = false;
+        }
         if ($experiment != null) {
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
@@ -103,7 +107,8 @@ class ExperimentController extends BaseController
                 "experiment" => $experiment,
                 "project" => $project,
                 "jobDetails" => $jobDetails,
-                "expVal" => $expVal
+                "expVal" => $expVal,
+                "autoRefresh"=> $autoRefresh
             );
             if( Input::has("dashboard"))
             {

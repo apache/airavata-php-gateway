@@ -8,8 +8,18 @@
     <h1>
         Experiment Summary
         @if( !isset($dashboard))
-        <small><a href="{{ URL::to('/') }}/experiment/summary?expId={{ $experiment->experimentId }}"
+        <small><a id="refresh-experiment"
                   title="Refresh"><span class="glyphicon glyphicon-refresh refresh-exp"></span></a></small>
+            <small><small>Enable Auto Refresh </small></small>
+            <div class="btn-group btn-toggle">
+                @if($autoRefresh == true)
+                    <button class="btn btn-xs btn-primary active">ON</button>
+                    <button class="btn btn-xs btn-default">OFF</button>
+                @else
+                    <button class="btn btn-xs btn-default">ON</button>
+                    <button class="btn btn-xs btn-primary active">OFF</button>
+                @endif
+            </div>
         @endif
     </h1>
 
@@ -123,7 +133,7 @@
             <td><?php ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus->state, false); ?></td>
         </tr>
         <!-- an experiment is editable only when it has not failed. otherwise, show errors. -->
-        @if( $expVal["editable"] == false)
+{{--        @if( $expVal["editable"] == false)--}}
         <tr>
             <td><strong>Errors</strong></td>
             <td>
@@ -134,8 +144,16 @@
             @endif
             </td>
         </tr>
-        @endif
-
+        {{--@endif--}}
+        @foreach( $expVal["jobDetails"] as $index => $jobDetail)
+            @if($experiment->experimentStatus->state == \Airavata\Model\Status\ExperimentState::FAILED
+                    || $jobDetail->jobStatus->jobStateName == "FAILED")
+            <tr>
+                <th>Job Submission Response</th>
+                <td>{{$jobDetail->stdOut}}</td>
+            </tr>
+            @endif
+        @endforeach
     </table>
 
     @if( !isset( $dashboard))

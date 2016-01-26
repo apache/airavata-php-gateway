@@ -1,6 +1,6 @@
 @if ( isset($expContainer))
     @if (sizeof($expContainer) == 0)
-        @if (isset($pageNo) && $pageNo == 1) {
+        @if (isset($pageNo) && $pageNo == 1)
             {{ CommonUtilities::print_warning_message('No results found. Please try again.') }}
         @else
             {{ CommonUtilities::print_warning_message('No more results found.') }}
@@ -38,7 +38,11 @@
                         @endif
                     </td>
                     <!-- Application Name -->
+                    @if(isset($experiment['expValue']['applicationInterface']))
                     <td>{{ $experiment['expValue']['applicationInterface']->applicationName }}</td>
+                    @else
+                    <td></td>
+                    @endif
                     <!-- User Names visible to admin -->
                 @if( isset($dashboard))
                     <td>{{$experiment['experiment']->userName}}</td>

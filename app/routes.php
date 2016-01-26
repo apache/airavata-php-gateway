@@ -88,10 +88,18 @@ Route::get("experiment/browse", "ExperimentController@browseView");
 
 Route::post("experiment/browse", "ExperimentController@browseView");
 
-Route::get("download/{exp_folder}/{exp_file}", function( $exp_folder, $exp_file){
-    $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $exp_folder . '/' . $exp_file;
+Route::get("download/{exp_data_dir}/{exp_folder}/{exp_file}", function($exp_data_dir, $exp_folder, $exp_file){
+    $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . Session::get('username')
+        . '/' . $exp_data_dir . "/" . $exp_folder . '/' . $exp_file;
     return Response::download( $downloadLink);
 });
+
+Route::get("download/{exp_data_dir}/{exp_file}", function($exp_data_dir, $exp_file){
+    $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . Session::get('username')
+        . '/' . $exp_data_dir . '/' . $exp_file;
+    return Response::download( $downloadLink);
+});
+
 /*
  * Compute Resources Routes
 */
@@ -142,7 +150,7 @@ Route::post("sr/delete-jsi", "StorageResourceController@deleteActions");
 
 Route::post("sr/delete-dmi", "StorageResourceController@deleteActions");
 
-Route::post("sr/delete-cr", "StorageResourceController@deleteActions");
+Route::post("sr/delete-sr", "StorageResourceController@deleteActions");
 
 /*
  * Application Catalog Routes
@@ -187,6 +195,12 @@ Route::post("gp/remove-cr", "GatewayprofileController@delete");
 Route::post("gp/add-crp", "GatewayprofileController@modifyCRP");
 
 Route::post("gp/update-crp", "GatewayprofileController@modifyCRP");
+
+Route::post("gp/add-dsp", "GatewayprofileController@modifyDSP");
+
+Route::post("gp/update-dsp", "GatewayprofileController@modifyDSP");
+
+Route::post("gp/remove-sr", "GatewayprofileController@delete");
 
 Route::post("gp/credential-store-token-change", "GatewayprofileController@cstChange");
 
@@ -236,7 +250,9 @@ Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 
 Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser");
 
-Route::post("create-ssh-token", "AdminController@createSSH");
+Route::post("admin/create-ssh-token", "AdminController@createSSH");
+
+Route::post("admin/remove-ssh-token", "AdminController@removeSSH");
 
 //Super Admin Specific calls
 

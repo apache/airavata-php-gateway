@@ -51,7 +51,8 @@
         <div class="form-group required"><label class="control-label">E-mail</label>
 
             <div><input class="form-control" id="email" name="email" placeholder="email@example.com"
-                        required="required" title="" type="email" value="{{Input::old('email') }}"/></div>
+                        required="required" title="" type="email" value="{{Input::old('email') }}"
+                         data-toggle="popover" data-placement="left" data-content="Please make sure that you enter a correct email address as a verification mail will be sent to this addresss."/></div>
         </div>
         <div class="form-group required"><label class="control-label">First Name</label>
 
@@ -127,6 +128,9 @@
 @parent
 <script>
     $("#password").popover({
+        'trigger':'focus'
+    });
+    $("#email").popover({
         'trigger':'focus'
     });
 </script>

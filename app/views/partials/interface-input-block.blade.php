@@ -74,11 +74,10 @@
 
         <div class="col-md-8">
             <select name="dataStaged[]" readonly class="form-control">
-                <option>select</option>
+                <option value="0"
+                        @if( isset( $appInputs) ) @if( $appInputs->dataStaged == 0) selected @endif @endif>False</option>
                 <option value="1"
                 @if( isset( $appInputs) ) @if( $appInputs->dataStaged == 1) selected @endif @endif>True</option>
-                <option value="0"
-                @if( isset( $appInputs) ) @if( $appInputs->dataStaged == 0) selected @endif @endif>False</option>
             </select>
         </div>
         <!-- Removed Radio button because it creates problems with multiple inputs
