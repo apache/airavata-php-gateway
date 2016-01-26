@@ -53,7 +53,7 @@
                 <th>Job Name : {{$jobDetail->jobName}}</th>
                 <td>Job ID : {{ $jobDetail->jobId}}</td>
                 <td> Status : {{$jobDetail->jobStatus->jobStateName }}</td>
-                <td> Creation Time : {{ date("F j, Y, g:i a", $jobDetail->creationTime )}}</td>
+                <td> Creation Time : <span class="time" unix-time="{{$jobDetail->creationTime}}"></span></td>
             </tr>
         @endforeach
         <!--
