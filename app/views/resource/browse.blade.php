@@ -69,23 +69,13 @@
                         <td>{{ $crId }}</td>
                         @if(Session::has("admin"))
                         <td>
-                            @if(!$enabled)
                             <div class="checkbox">
-                                <input class="resource-status" resourceId="{{$crId}}" type="checkbox"
-                                @if(!Session::has("super-admin"))
-                                   disabled="disabled"
-                                @endif
-                                >
-                            </div>
-                            @else
-                            <div class="checkbox">
-                                <input class="resource-status" type="checkbox" resourceId="{{$crId}}" checked
+                                <input class="resource-status" type="checkbox" resourceId="{{$crId}}" @if($enabled) checked @endif
                                    @if(!Session::has("super-admin"))
                                        disabled="disabled"
                                    @endif
                                    >
                             </div>
-                            @endif
                         </td>
                         <td><a href="{{URL::to('/')}}/cr/view?crId={{ $crId }}" title="View">
                                 <span class="glyphicon glyphicon-list"></span>

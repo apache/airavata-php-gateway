@@ -93,6 +93,7 @@
             case 'EXECUTING':
             case 'CANCELING':
             case 'COMPLETED':
+            case 'FAILED':
                 echo '<a href="' . URL::to('/') . '/experiment/summary?expId=' .
                         $experiment->experimentId . '">' . $experiment->experimentName . '</a>';
                 break;

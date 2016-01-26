@@ -246,6 +246,10 @@ Route::post("admin/enable-cr", "AdminController@enableComputeResource");
 
 Route::post("admin/disable-cr", "AdminController@disableComputeResource");
 
+Route::post("admin/enable-sr", "AdminController@enableStorageResource");
+
+Route::post("admin/disable-sr", "AdminController@disableStorageResource");
+
 Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 
 Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser");

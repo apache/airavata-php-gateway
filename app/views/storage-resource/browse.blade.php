@@ -48,6 +48,9 @@
                         <tr>
                             <th>Id</th>
                             <th>Hostname</th>
+                            @if(Session::has("admin"))
+                            <th>Enabled</th>
+                            @endif
                             <th>View</th>
                             @if(Session::has("super-admin"))
                             <th>Delete</th>
@@ -58,10 +61,20 @@
                         <?php
                             $srId = $resource->storageResourceId;
                             $hostName = $resource->hostName;
+                            $enabled = $resource->enabled;
                         ?>
                         <tr id="srDetails">
                             <td>{{ $srId }}</td>
                             <td>{{ $hostName }}</td>
+                            <td>
+                            <div class="checkbox">
+                                <input class="storage-resource-status" type="checkbox" resourceId="{{$srId}}" @if($enabled) checked @endif
+                                   @if(!Session::has("super-admin"))
+                                       disabled="disabled"
+                                   @endif
+                                   >
+                            </div>
+                        </td>
                             <td>
                                 <a href="{{URL::to('/')}}/sr/edit?srId={{ $srId }}" title="Edit">
                                 <span class="glyphicon glyphicon-list"></span>
@@ -145,6 +158,39 @@
     $(".del-sr").click(function () {
         $(".delete-sr-id").html("'" + $(this).data("delete-sr-id") + "'");
         $(".delete-srId").val($(this).data("srid"));
+    });
+
+    $('.storage-resource-status').click(function() {
+        var $this = $(this);
+        if ($this.is(':checked')) {
+            //enable compute resource
+            $resourceId = $this.attr("resourceId");
+            $.ajax({
+                type: 'POST',
+                url: "{{URL::to('/')}}/admin/enable-sr",
+                data: {
+                    'resourceId': $resourceId
+                },
+                async: true,
+                success: function (data) {
+                    $(".success-message").html("<span class='alert alert-success col-md-12'>Successfully enabled Storage Resource</span>");
+                }
+            });
+        } else {
+            //disabled compute resource
+            $resourceId = $this.attr("resourceId");
+            $.ajax({
+                type: 'POST',
+                url: "{{URL::to('/')}}/admin/disable-sr",
+                data: {
+                    'resourceId': $resourceId
+                },
+                async: true,
+                success: function (data) {
+                    $(".success-message").html("<span class='alert alert-success col-md-12'>Successfully disabled Storage Resource</span>");
+                }
+            });
+        }
     });
 </script>
 @stop
