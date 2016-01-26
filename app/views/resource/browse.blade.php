@@ -51,9 +51,6 @@
                         <th>Id</th>
                         @if(Session::has("admin"))
                         <th>Enabled</th>
-                        @if(Session::has("super-admin"))
-                            <th>Edit</th>
-                        @endif
                         @endif
                         <th>View</th>
                         @if(Session::has("super-admin"))
@@ -96,11 +93,6 @@
                         </td>
                         @endif
                         @if(Session::has("super-admin"))
-                            <td>
-                                <a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
-                                    <span class="glyphicon glyphicon-pencil"></span>
-                                </a>
-                            </td>
                             <td>
                             <a href="#" title="Delete">
                                 <span class="glyphicon glyphicon-trash del-cr" data-toggle="modal"

@@ -48,9 +48,6 @@
                         <tr>
                             <th>Id</th>
                             <th>Hostname</th>
-                            @if(Session::has("super-admin"))
-                            <th>Edit</th>
-                            @endif
                             <th>View</th>
                             @if(Session::has("super-admin"))
                             <th>Delete</th>
@@ -65,12 +62,6 @@
                         <tr id="srDetails">
                             <td>{{ $srId }}</td>
                             <td>{{ $hostName }}</td>
-                            @if(Session::has("super-admin"))
-                            <td><a href="{{URL::to('/')}}/sr/edit?srId={{ $srId }}" title="Edit">
-                                    <span class="glyphicon glyphicon-pencil"></span>
-                                </a>
-                            </td>
-                            @endif
                             <td>
                                 <a href="{{URL::to('/')}}/sr/edit?srId={{ $srId }}" title="Edit">
                                 <span class="glyphicon glyphicon-list"></span>
