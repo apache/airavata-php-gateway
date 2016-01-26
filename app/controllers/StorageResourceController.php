@@ -112,7 +112,7 @@ class StorageresourceController extends BaseController
         return Redirect::to("sr/edit?srId=" . Input::get("srId") . $tabName);
     }
 
-    public function viewView()
+    public function srView()
     {
         $data = CRUtilities::getEditCRData();
         $computeResourceId = "";

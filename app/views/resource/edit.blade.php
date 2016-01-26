@@ -843,23 +843,6 @@
 
 @if(! Session::has('super-admin'))
     <script>
-    function disableInputs( elem){
-        elem.find("input").each( function( i,e){
-            if( $(e).attr("type")=='submit' || $(e).attr("type")=='button'  )
-                $(e).attr("disabled", "true");
-             else
-                $(e).prop("readonly", "true");
-        });
-        elem.find("textarea").prop("readonly", "true");
-        elem.find("select").attr("disabled", "true");
-        elem.find(".hide").prop("readonly", "true");
-        elem.find("button").attr("disabled", "true");
-        //remove previously created input/output blocks
-        elem.find(".app-inputs").html("");
-        elem.find(".app-outputs").html("");
-        $(".glyphicon").hide();
-    }
-
     disableInputs( $(".compute-resource-properties"));
     </script>
 @endif

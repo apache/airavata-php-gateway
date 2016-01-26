@@ -72,7 +72,7 @@
                             </td>
                             @endif
                             <td>
-                                <a href="{{URL::to('/')}}/sr/view?srId={{ $srId }}" title="Edit">
+                                <a href="{{URL::to('/')}}/sr/edit?srId={{ $srId }}" title="Edit">
                                 <span class="glyphicon glyphicon-list"></span>
                                 </a>
                             </td>

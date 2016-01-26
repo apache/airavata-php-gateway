@@ -14,7 +14,7 @@
 <div id="page-wrapper">
 
 <div class="container-fluid">
-<div class="col-md-offset-2 col-md-8">
+<div class="col-md-offset-2 col-md-8 storage-resource-properties">
 
 <input type="hidden" class="base-url" value="{{URL::to('/')}}"/>
 
@@ -384,5 +384,10 @@
 @section('scripts')
 @parent
 {{ HTML::script('js/script.js') }}
+@if(! Session::has('super-admin'))
+    <script>
+    disableInputs( $(".storage-resource-properties"));
+    </script>
+@endif
 
 @stop

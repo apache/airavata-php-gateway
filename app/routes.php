@@ -142,7 +142,7 @@ Route::get("sr/edit", "StorageResourceController@editView");
 
 Route::post("sr/edit", "StorageResourceController@editSubmit");
 
-Route::get("sr/view", "StorageResourceController@viewView");
+Route::get("sr/view", "StorageResourceController@srView");
 
 Route::get("sr/browse", "StorageResourceController@browseView");
 
