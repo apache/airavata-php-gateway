@@ -52,16 +52,35 @@
             case 'CANCELING':
             case 'CANCELED':
             case 'UNKNOWN':
-                $textClass = 'text-warning';
+                $expStatustextClass = 'text-warning';
                 break;
             case 'FAILED':
-                $textClass = 'text-danger';
+                $expStatustextClass = 'text-danger';
                 break;
             case 'COMPLETED':
-                $textClass = 'text-success';
+                $expStatustextClass = 'text-success';
                 break;
             default:
-                $textClass = 'text-info';
+                $expStatustextClass = 'text-info';
+                break;
+        }
+        switch ($expValues["jobState"]) {
+            case 'CANCELING':
+            case 'CANCELED':
+            case 'UNKNOWN':
+                $jobStatustextClass = 'text-warning';
+                break;
+            case 'FAILED':
+                $jobStatustextClass = 'text-danger';
+                break;
+            case 'COMPLETED':
+                $jobStatustextClass = 'text-success';
+                break;
+            case 'COMPLETE':
+                $jobStatustextClass = 'text-success';
+                break;
+            default:
+                $jobStatustextClass = 'text-info';
                 break;
         }
 
@@ -74,6 +93,7 @@
             case 'EXECUTING':
             case 'CANCELING':
             case 'COMPLETED':
+            case 'FAILED':
                 echo '<a href="' . URL::to('/') . '/experiment/summary?expId=' .
                         $experiment->experimentId . '">' . $experiment->experimentName . '</a>';
                 break;
@@ -103,10 +123,10 @@
         echo '<td class="time" unix-time="' . $expValues["experimentTimeOfStateChange"] . '"></td>';
 
 
-        echo '<td><div class="' . $textClass . '">' . $expValues["experimentStatusString"] . '</div></td>';
+        echo '<td><div class="' . $expStatustextClass . '">' . $expValues["experimentStatusString"] . '</div></td>';
 
         if (isset($expValues["jobState"])) echo '
-            <td>' . $expValues["jobState"] . '</td>';
+            <td><div class="' . $jobStatustextClass . '">' . $expValues["jobState"] . '</div></td>';
         else
             echo '<td></td>';
         echo '</tr>';

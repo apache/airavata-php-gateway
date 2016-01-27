@@ -142,7 +142,7 @@ Route::get("sr/edit", "StorageResourceController@editView");
 
 Route::post("sr/edit", "StorageResourceController@editSubmit");
 
-Route::get("sr/view", "StorageResourceController@viewView");
+Route::get("sr/view", "StorageResourceController@srView");
 
 Route::get("sr/browse", "StorageResourceController@browseView");
 
@@ -245,6 +245,10 @@ Route::post("admin/delete-role", "AdminController@deleteRole");
 Route::post("admin/enable-cr", "AdminController@enableComputeResource");
 
 Route::post("admin/disable-cr", "AdminController@disableComputeResource");
+
+Route::post("admin/enable-sr", "AdminController@enableStorageResource");
+
+Route::post("admin/disable-sr", "AdminController@disableStorageResource");
 
 Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 

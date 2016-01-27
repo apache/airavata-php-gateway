@@ -237,6 +237,23 @@ class AdminController extends BaseController {
         CRUtilities::register_or_update_compute_resource($computeResource, true);
     }
 
+    public function enableStorageResource(){
+		$this->beforeFilter('verifyadmin');
+        $resourceId = Input::get("resourceId");
+        $storageResource = SRUtilities::get_storage_resource($resourceId);
+        $storageResource->enabled = true;
+        SRUtilities::register_or_update_storage_resource($storageResource, true);
+    }
+
+    public function disableStorageResource(){
+		$this->beforeFilter('verifyadmin');
+        $resourceId = Input::get("resourceId");
+        $storageResource = SRUtilities::get_storage_resource($resourceId);
+        $storageResource->enabled = false;
+        SRUtilities::register_or_update_storage_resource($storageResource, true);
+    }
+
+
 	public function createSSH(){
 		$this->beforeFilter('verifyadmin');
 		$newToken = AdminUtilities::create_ssh_token();

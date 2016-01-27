@@ -53,14 +53,15 @@
             </div>
 
             <div class="col-md-12">
-                <h4>Or Select dates between which you want to review experiment statistics.</h4>
+                <h4>Select dates between which you want to review experiment statistics.</h4>
             </div>
             <div class='col-md-5'>
                 <div class="form-group">
                     <div class='input-group date' id='datetimepicker9'>
                         <input type='text' class="form-control" placeholder="From Date" name="from-date"/>
-                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -68,8 +69,9 @@
                 <div class="form-group">
                     <div class='input-group date' id='datetimepicker10'>
                         <input type='text' class="form-control" placeholder="To Date" name="to-date"/>
-                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -395,32 +397,28 @@ to be uncommented when actually in use.
     });
 
     $(".oneDayExp").click( function(){
-        var todayDate = getCurrentDate();
-        var ydayDate = getCurrentDate(1);
+        todayDate = moment().format('MM/DD/YYYY hh:mm A');
+        ydayDate = moment().subtract(1, "days").format('MM/DD/YYYY hh:mm A');
         $("#datetimepicker9").find("input").val( ydayDate);
         $("#datetimepicker10").find("input").val( todayDate);
-        todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
-        ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last 24 hours";
         getExperiments( ydayDate, todayDate, msg);
     });
 
     $(".oneWeekExp").click( function(){
-        var todayDate = getCurrentDate();
-        var ydayDate = getCurrentDate(7);
+        todayDate = moment().format('MM/DD/YYYY hh:mm A');
+        ydayDate = moment().subtract(7, "days").format('MM/DD/YYYY hh:mm A');
         $("#datetimepicker9").find("input").val( ydayDate);
         $("#datetimepicker10").find("input").val( todayDate);
-        todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
-        ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last week";
         getExperiments( ydayDate, todayDate, msg);
     })
 
     $("#getStatistics").click(function () {
         $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
+        $fromTime = moment($fromTime).format('MM/DD/YYYY hh:mm A');
         $toTime = $("#datetimepicker10").find("input").val();
-        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
+        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm A');
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
