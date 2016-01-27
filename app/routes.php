@@ -234,6 +234,8 @@ Route::get("manage/users", "AdminController@usersView");
 
 Route::post("admin/adduser", "AdminController@addAdminSubmit");
 
+Route::get("admin/getusercountinrole", "AdminController@getUserCountInRole");
+
 Route::post("admin/addgatewayadmin", "AdminController@addGatewayAdminSubmit");
 
 Route::post("admin/add-role", "AdminController@addRole");

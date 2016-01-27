@@ -96,13 +96,18 @@
                     <h3 class="text-center">Delete Role Confirmation</h3>
                 </div>
                 <div class="modal-body">
+                    <div class="loading-count">
+                        <img src="{{URL::to('/')}}/assets/ajax-loader.gif"/>
+                    </div>
+                    <div class="delete-warning-text hide">
                     <input type="hidden" class="form-control delete-roleName" name="role"/>
-                    Do you really want to delete the role - <span class="delete-role-name"></span>
+                    <h4 class="alert alert-warning"><span class="role-user-count"> 0 </span> users currently have the role - <span class="delete-role-name"></span>. Do you really want to delete this role? </span></h2>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <div class="form-group">
                         <input type="submit" class="btn btn-danger" value="Delete"/>
-                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                        <input type="button" class="btn btn-default cancel-delete-role" data-dismiss="modal" value="Cancel"/>
                     </div>
                 </div>
             </div>
@@ -137,10 +142,38 @@
     });
 
     $(".delete-role").click(function () {
-        $("#delete-role-block").modal("show");
         var roleName = $(this).parent().parent().find(".role-name").html();
+        $(".loading-count")
+        $.ajax({
+            type: "GET",
+            url: "{{URL::to('/')}}/admin/getusercountinrole",
+            data: {
+                role: roleName
+            }
+        }).success( function( data){
+            data = parseInt(data);
+            if( data === parseInt(data, 10)){
+                $(".role-user-count").html( data);
+                $(".loading-count").addClass("hide");
+                $(".delete-warning-text").removeClass("hide");
+            }
+            else{
+                $(".loading-count").after("<h4 class='problem-retrieving-count alert alert-warning'>There was a problem retrieving number of users connected with this role. Do you still want to delete the role - " + roleName + "?</h4>");
+                $(".loading-count").addClass("hide");
+            }
+        }).error( function(){
+            $(".loading-count").after("<h4 class='problem-retrieving-count alert alert-warning'>There was a problem retrieving number of users connected with this role. Do you still want to delete the role - " + roleName + "?</h4>");
+            $(".loading-count").addClass("hide");
+        });
+        $("#delete-role-block").modal("show");
         $(".delete-role-name").html(roleName);
         $(".delete-roleName").val(roleName);
+    });
+
+    $(".cancel-delete-role").click( function(){
+            $(".loading-count").removeClass("hide");
+            $(".delete-warning-text").addClass("hide");
+            $(".problem-retrieving-count").remove();
     });
 </script>
 @stop
