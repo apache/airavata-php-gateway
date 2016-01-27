@@ -207,6 +207,7 @@ Route::post("gp/credential-store-token-change", "GatewayprofileController@cstCha
 
 //DataCat
 Route::get("datacat/select", "DataCatController@select");
+Route::get("datacat/summary", "DataCatController@summary");
 
 
 //Management Dashboard
