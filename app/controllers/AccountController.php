@@ -132,7 +132,7 @@ class AccountController extends BaseController
             Session::put('oauth-refresh-code',$refreshToken);
             Session::put('oauth-expiration-time',$expirationTime);
             Session::put("user-profile", $userProfile);
-
+            Session::put('username', "Eroma2015");
             if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
                 Session::put("admin", true);
             }

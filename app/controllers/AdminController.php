@@ -46,6 +46,9 @@ class AdminController extends BaseController {
         else
             $users = WSIS::listUsers();
 
+		if(!isset($users) || empty($users)){
+			$users = array();
+		}
         $roles = WSIS::getAllRoles();
         Session::put("admin-nav", "manage-users");
         return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));

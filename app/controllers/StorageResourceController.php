@@ -160,6 +160,7 @@ class StorageresourceController extends BaseController
     {
         $this->beforeFilter('verifyeditadmin');
         $result = SRUtilities::deleteActions(Input::all());
+        var_dump($result);exit;
         /*
         if (Input::has("jsiId")) {
             return Redirect::to("cr/edit?crId=" . Input::get("crId") . "#tab-jobSubmission")
