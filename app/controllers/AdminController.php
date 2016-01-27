@@ -4,6 +4,7 @@ class AdminController extends BaseController {
 
 	public function __construct()
 	{
+		$this->beforeFilter('verifyadmin');
 		Session::put("nav-active", "user-console");
 	}
 
