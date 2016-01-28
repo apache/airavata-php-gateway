@@ -7,13 +7,14 @@
     @parent
 @stop
 @section('content')
-    <div class="container" style="max-width: 80%;">
+    <div style="margin: 25px">
     @if ( isset($results))
         @if (sizeof($results) != 0)
             <div id="re" class="table-responsive">
                 <table class="table">
                     <tr>
                         <th>FinalGeom</th>
+                        <th>InChI</th>
                         <th>Formula</th>
                         <th>Energy</th>
                         <th>ZPE</th>
@@ -26,7 +27,7 @@
                         <th>CodeVersion</th>
                     </tr>
                     @foreach($results as $key=>$result)
-                        @if(isset($result['Formula']))
+                        @if(isset($result['InChI']))
                             <tr>
                                 <td>
                                     <div id="mol_{{$key}}" style="width: 100px; height: 100px; background-color: black;"></div>
@@ -59,7 +60,8 @@
                                         </script>
                                     @endif
                                 </td>
-                                <td>@if(isset($result['Formula']))<a href="summary" target="_blank">{{$result['Formula']}}</a>@endif</td>
+                                <td>@if(isset($result['InChI']))<a href="summary" target="_blank">{{$result['InChI']}}</a>@endif</td>
+                                <td>@if(isset($result['Formula'])){{$result['Formula']}}@endif</td>
                                 <td>@if(isset($result['Energy'])){{$result['Energy']}}@endif</td>
                                 <td>@if(isset($result['ZPE'])){{$result['ZPE']}}@endif</td>
                                 <td>@if(isset($result['CalcType'])){{$result['CalcType']}}@endif</td>

@@ -7,15 +7,11 @@
     @parent
 @stop
 @section('content')
-    <div class="container" style="max-width: 60%;">
+    <div style="margin-left: 5%; margin-right: 5%; margin-top: 5px; margin-bottom: 5px">
     @if ( isset($result))
             <h1>Molecule Summary</h1>
             </br>
             <table class="table table-bordered">
-                <tr>
-                    <td><strong>Formula</strong></td>
-                    <td>@if(isset($result['Formula']))<a href="#">{{$result['Formula']}}</a>@endif</td>
-                </tr>
                 <tr>
                     <td><strong>FinalGeom</strong></td>
                     <td>
@@ -65,6 +61,10 @@
                 <tr>
                     <td><strong>CanonicalSMILES</strong></td>
                     <td>@if(isset($result['CanonicalSMILES'])){{$result['CanonicalSMILES']}}@endif</td>
+                </tr>
+                <tr>
+                    <td><strong>Formula</strong></td>
+                    <td>@if(isset($result['Formula']))<a href="#">{{$result['Formula']}}</a>@endif</td>
                 </tr>
             </table>
 

@@ -17,7 +17,7 @@ class DataCatController extends BaseController
     {
         //FIXME
         $result = json_decode(file_get_contents('http://localhost:9000/query-api/select?q=sddslfnlsdf'), true);
-        return View::make('datacat/summary', array("result" => $result[4]));
+        return View::make('datacat/summary', array("result" => $result[0]));
     }
 
 }
