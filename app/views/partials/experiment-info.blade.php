@@ -62,10 +62,23 @@
 
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
             <tr>
-                <th>Job Name : {{$jobDetail->jobName}}</th>
-                <td>Job ID : {{ $jobDetail->jobId}}</td>
-                <td> Status : {{$jobDetail->jobStatus->jobStateName }}</td>
-                <td> Creation Time : <span class="time" unix-time="{{$jobDetail->creationTime}}"></span></td>
+                <th>Job</th>
+                <td>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>Name</td>
+                            <td>ID</td>
+                            <td>Status</td>
+                            <td>Creation Time</td>
+                        </tr>
+                        <tr>
+                            <td>{{$jobDetail->jobName}}</td>
+                            <td>{{ $jobDetail->jobId}}</td>
+                            <td>{{$jobDetail->jobStatus->jobStateName }}</td>
+                            <td class="time" unix-time="{{$jobDetail->creationTime}}"></td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
         @endforeach
         <!--
