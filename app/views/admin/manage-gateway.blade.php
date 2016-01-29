@@ -38,7 +38,6 @@
                 <div class="col-md-6">
                     <h3>Other Gateway Preferences</h3>
                 </div>
-                @if( Session::has("super-admin"))
                 <div class="col-md-6" style="margin-top:2%">
                     <input type="text" class="col-md-12 filterinput" placeholder="Search by Gateway Name"/>
                 </div>
@@ -55,7 +54,7 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Enter Desired Gateway Name</label>
-                            <input type="text" name="gatewayName" class="form-control" required="required"/>
+                            <input type="text" name="gatewayName" class="form-control gatewayName" required="required"/>
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Enter Admin Email Address</label>
@@ -89,7 +88,6 @@
                     <div class="col-md-6 alert alert-danger gateway-error hide"></div>
                     <div class="col-md-6 alert alert-success gateway-success hide"></div>
                 </form>
-                 @endif
             </div>
 
             <div class="panel-group" id="accordion1">
@@ -100,7 +98,6 @@
                     @endforeach
                 </div>
             </div>
-
             @endif
 
         </div>
@@ -284,10 +281,24 @@
             data: formData,
             url: '{{ URL::to("/") }}/admin/add-gateway',
             success: function (data) {
-                $(".gateway-success").html("Gateway has been added. The page will be reloaded in a moment.").removeClass("hide");
-                setTimeout( function(){
-                    location.reload();
-                }, 2000);
+                if( data.gateway == $(".gatewayName").val() ){
+                    $(".gateway-success").html("Gateway has been added. The page will be reloaded in a moment.").removeClass("hide");
+                    setTimeout( function(){
+                        location.reload();
+                    }, 2000);
+                }
+                else if( data == 0){
+                    $(".gateway-error").html( "An unknown error occurred while trying to create the gateway.")
+                                        .removeClass("hide");
+                }
+                else{
+                    errors = data;
+                    $(".gateway-error").html("").removeClass("hide");
+                    for( input in data)
+                    {
+                        $(".gateway-error").append(" -- " + input + " : " + data[input] + "<br/><br/>");
+                    }
+                }
             },
             error: function( data){
                 var error = $.parseJSON( data.responseText);

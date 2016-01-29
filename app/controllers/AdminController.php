@@ -163,23 +163,6 @@ class AdminController extends BaseController {
 			return WSIS::updateUserRoles(Input::get("username"), array("new"=> array(), "deleted" => Input::get("roles") ) );
 	}
 
-
-	/* ---- Super Admin Functions ------- */
-
-	public function addGateway(){
-		$inputs = Input::all();
-
-        $gateway = AdminUtilities::add_gateway(Input::all());
-
-		$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"],
-			$inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
-
-		Session::put("message", "Gateway " . $inputs["gatewayName"] . " has been added.");
-		return Response::json( $tm);
-		//return Redirect::to("admin/dashboard/gateway")->with("message", "Gateway has been successfully added.");
-	}
-
-
     public function experimentStatistics()
     {
         if (Request::ajax()) {
@@ -203,6 +186,76 @@ class AdminController extends BaseController {
                 	));
         }
     }
+
+	public function createSSH(){
+		$newToken = AdminUtilities::create_ssh_token();
+		$pubkey = AdminUtilities::get_pubkey_from_token( $newToken);
+		return Response::json( array( "token" => $newToken, "pubkey" => $pubkey));
+
+	}
+
+	public function removeSSH(){
+		$removeToken = Input::get("token");
+		if( AdminUtilities::remove_ssh_token( $removeToken) )
+			return 1;
+		else
+			return 0;
+
+	}
+
+	public function getUsersWithRole( $role){
+			$users = WSIS::getUserlistOfRole( $role);
+			if( isset( $users->return))
+		    	$users = $users->return;
+		    else
+		    	$users = array();
+
+		    return $users;
+	}
+
+
+	/* ---- Super Admin Functions ------- */
+
+	public function addGateway(){
+		$inputs = Input::all();
+
+		$rules = array(
+            "username" => "required|min:6",
+            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#%*]).*$/",
+            "confirm_password" => "required|same:password",
+            "email" => "required|email",
+        );
+
+        $messages = array(
+            'password.regex' => 'Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$%&*',
+        );
+
+        $checkValidation = array();
+        $checkValidation["username"] = $inputs["admin-username"];
+        $checkValidation["password"] = $inputs["admin-password"];
+        $checkValidation["confirm_password"] = $inputs["admin-password-confirm"];
+        $checkValidation["email"] = $inputs["admin-email"];
+
+        $validator = Validator::make( $checkValidation, $rules, $messages);
+        if ($validator->fails()) {
+            return Response::json( $validator->messages() );
+        }
+        else{
+	        $gateway = AdminUtilities::add_gateway(Input::all());
+
+			$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"],
+				$inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
+
+			Session::put("message", "Gateway " . $inputs["gatewayName"] . " has been added.");
+			
+			return Response::json( array( "gateway" =>$gateway, "tm" => $tm ) ); 
+			if( $gateway ==  $inputs["gatewayName"] && is_object( $tm ) )
+				return Response::json( array( "gateway" =>$gateway, "tm" => $tm ) ); 
+			else
+				return 0;
+			//return Redirect::to("admin/dashboard/gateway")->with("message", "Gateway has been successfully added.");
+		}
+	}
 
     public function enableComputeResource(){
         $resourceId = Input::get("resourceId");
@@ -231,32 +284,4 @@ class AdminController extends BaseController {
         $storageResource->enabled = false;
         SRUtilities::register_or_update_storage_resource($storageResource, true);
     }
-
-
-	public function createSSH(){
-		$newToken = AdminUtilities::create_ssh_token();
-		$pubkey = AdminUtilities::get_pubkey_from_token( $newToken);
-		return Response::json( array( "token" => $newToken, "pubkey" => $pubkey));
-
-	}
-
-	public function removeSSH(){
-		$removeToken = Input::get("token");
-		if( AdminUtilities::remove_ssh_token( $removeToken) )
-			return 1;
-		else
-			return 0;
-
-	}
-
-	public function getUsersWithRole( $role){
-			$users = WSIS::getUserlistOfRole( $role);
-			if( isset( $users->return))
-		    	$users = $users->return;
-		    else
-		    	$users = array();
-
-		    return $users;
-	}
-
 }
