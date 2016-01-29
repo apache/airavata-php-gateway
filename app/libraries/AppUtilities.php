@@ -253,6 +253,29 @@ class AppUtilities
         return Airavata::getAllAppModules(Session::get('authz-token'), Session::get("gateway_id"));
     }
 
+    public static function checkAppModuleConnections( $appModuleId){
+        $appInterfaces = Airavata::getAllApplicationInterfaces( Session::get('authz-token'), Session::get("gateway_id"));
+        $appDeployments = Airavata::getAllApplicationDeployments( Session::get('authz-token'), Session::get("gateway_id"));
+        $connections = array();
+        $connections["appInterfaces"] = array(); 
+        $connections["appDeployments"] = array();
+
+        foreach($appInterfaces as $appInterface){
+            foreach($appInterface->applicationModules as $appModule){
+                var_dump( $appModule);
+                if($appModule == $appModuleId){
+                    $connections["appInterfaces"][] = $appInterface->applicationName;
+                }
+            }
+        }
+        foreach($appDeployments as $appDeployment){
+            if($appDeployment->appModuleId == $appModuleId){
+                $connections["appDeployments"][] = $appDeployment->appDeploymentId;
+            }
+        }
+        return $connections;
+    }
+
     /**
      * Get all available applications
      * @return null
