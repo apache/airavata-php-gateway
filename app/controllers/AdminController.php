@@ -57,18 +57,33 @@ class AdminController extends BaseController {
     	//only for super admin
 		//Session::put("super-admin", true);
 		$crData = CRUtilities::getEditCRData();
-		$gateways = CRUtilities::getAllGatewayProfilesData();
+		$gatewaysInfo = CRUtilities::getAllGatewayProfilesData();
+		$gateways = $gatewaysInfo["gateways"];
 		$tokens = AdminUtilities::get_all_ssh_tokens();
 		$srData = SRUtilities::getEditSRData();
+		$allCRs = CRUtilities::getAllCRObjects();
+		$allSRs = SRUtilities::getAllSRObjects();
+
+		foreach( (array)$allCRs as $index => $cr){
+			if( ! in_array($cr->computeResourceId, $gatewaysInfo["selectedCRs"]) )
+			$unselectedCRs[] = $cr;
+		}
+
+		foreach( (array)$allSRs as $index => $sr){
+			if( ! in_array($sr->storageResourceId, $gatewaysInfo["selectedSRs"]) )
+			$unselectedSRs[] = $sr;
+		}
 
 		//$dsData = CRUtilities::getAllDataStoragePreferences( $gateways);
 		$gatewayData = array( 
 								"gateways" => $gateways, 
-								"computeResources" => CRUtilities::getAllCRObjects(),
+								"computeResources" => $allCRs,
 								"crData" => $crData,
-								"storageResources" => SRUtilities::getAllSRObjects(),
+								"storageResources" => $allSRs,
 								"srData" => $srData,
-								"tokens" => $tokens
+								"tokens" => $tokens,
+								"unselectedCRs" => $unselectedCRs,
+								"unselectedSRs" => $unselectedSRs
 							);
 		$view = "admin/manage-gateway";
 

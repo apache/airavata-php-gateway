@@ -36,7 +36,7 @@
             @if( Session::has('super-admin'))
             <div class="row">
                 <div class="col-md-6">
-                    <h3>Other Gateway Preferences</h3>
+                    <h3>All Gateway Preferences</h3>
                 </div>
                 <div class="col-md-6" style="margin-top:2%">
                     <input type="text" class="col-md-12 filterinput" placeholder="Search by Gateway Name"/>
@@ -117,7 +117,7 @@
             <div class="input-group">
                 <select name="computeResourceId" class="cr-select form-control">
                     <option value="">Select a compute Resource and set its preferences</option>
-                    @foreach( (array)$computeResources as $index => $cr)
+                    @foreach( (array)$unselectedCRs as $index => $cr)
                     <option value="{{ $cr->computeResourceId}}">{{ $cr->hostName }}</option>
                     @endforeach
                 </select>
@@ -136,7 +136,7 @@
             <div class="input-group">
                 <select name="storageResourceId" class="sr-select form-control">
                     <option value="">Select a Data Storage Resource and set its preferences</option>
-                    @foreach( (array)$storageResources as $index => $sr)
+                    @foreach( (array)$unselectedSRs as $index => $sr)
                         <option value="{{ $sr->storageResourceId}}">{{ $sr->hostName }}</option>
                     @endforeach
                 </select>

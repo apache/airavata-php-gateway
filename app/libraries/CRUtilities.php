@@ -447,7 +447,8 @@ class CRUtilities
         else {
             $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
         }
-
+        $selectedCRs = array();
+        $selectedSRs = array();
         $gatewayProfiles = Airavata::getAllGatewayResourceProfiles(Session::get('authz-token'));
         //var_dump( $gatewayProfiles); exit;
         //$gatewayProfileIds = array("GatewayTest3_57726e98-313f-4e7c-87a5-18e69928afb5", "GatewayTest4_4fd9fb28-4ced-4149-bdbd-1f276077dad8");
@@ -458,9 +459,11 @@ class CRUtilities
                 if ($gw->gatewayId == $gp->gatewayID) {
                     foreach ((array)$gp->computeResourcePreferences as $i => $crp) {
                         $gatewayProfiles[$index]->computeResourcePreferences[$i]->crDetails = Airavata::getComputeResource(Session::get('authz-token'), $crp->computeResourceId);
+                        $selectedCRs[] = $crp->computeResourceId;
                     }
                     foreach( (array)$gp->storagePreferences as $j => $srp){
                         $gatewayProfiles[$index]->storagePreferences[$j]->srDetails = Airavata::getStorageResource( Session::get('authz-token'), $srp->storageResourceId);
+                        $selectedSRs[] = $srp->storageResourceId;
                     }
                     $gateways[$key]->profile = $gatewayProfiles[$index];
                 }
@@ -468,7 +471,8 @@ class CRUtilities
         }
         //var_dump( $gatewayProfiles[0]->computeResourcePreferences[0]->crDetails); exit;
 
-        return $gateways;
+        $gatewaysInfo = array( "gateways" =>$gateways, "selectedCRs" => $selectedCRs, "selectedSRs" => $selectedSRs);
+        return $gatewaysInfo;
     }
 
     public static function updateGatewayProfile( $data){
