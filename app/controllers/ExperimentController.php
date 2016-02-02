@@ -80,6 +80,11 @@ class ExperimentController extends BaseController
     public function summary()
     {
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
+
+        //viewing experiments of other gateways is not allowed if user is not super admin
+        if( $experiment->gatewayId != Session::get("gateway_id") && !Session::has("super-admin"))
+            return CommonUtilities::print_error_message('It seems that you do not have permissions to view this experiment or it belongs to another gateway.');
+        
         if(isset($_GET['isAutoRefresh']) && $_GET['isAutoRefresh'] == 'true'){
             $autoRefresh = true;
         }else{
