@@ -430,8 +430,6 @@ to be uncommented when actually in use.
 
     function getExperiments( startTime, endTime, msg){
 
-        console.log( startTime);
-        console.log( endTime);
         $(".experiment-statistics").html("");
         $(".loading-img-statistics").removeClass("hide");
             $.ajax({

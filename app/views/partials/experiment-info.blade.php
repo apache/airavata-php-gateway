@@ -1,12 +1,11 @@
 <div class="container" style="max-width: 750px;">
-
-    @if(isset( $invalidExperimentId ) )
     <!--
+    @if(isset( $invalidExperimentId ) )
     <div class="alert alert-danger">
         The Experiment ID does not exist. Please go to correct experiment.
     </div>
-    -->
     @else
+    -->
     <h1>
         Experiment Summary
         @if( !isset($dashboard))
