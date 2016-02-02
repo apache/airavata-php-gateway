@@ -459,11 +459,17 @@ class CRUtilities
                 if ($gw->gatewayId == $gp->gatewayID) {
                     foreach ((array)$gp->computeResourcePreferences as $i => $crp) {
                         $gatewayProfiles[$index]->computeResourcePreferences[$i]->crDetails = Airavata::getComputeResource(Session::get('authz-token'), $crp->computeResourceId);
-                        $selectedCRs[] = $crp->computeResourceId;
+                        
+                        //had to add this condition since for super admin it takes CRs selected in all gateways.
+                        if( $gp->gatewayID == Session::get("gateway_id"))
+                            $selectedCRs[] = $crp->computeResourceId;
                     }
                     foreach( (array)$gp->storagePreferences as $j => $srp){
                         $gatewayProfiles[$index]->storagePreferences[$j]->srDetails = Airavata::getStorageResource( Session::get('authz-token'), $srp->storageResourceId);
-                        $selectedSRs[] = $srp->storageResourceId;
+                        
+                        //had to add this condition since for super admin it takes SRs selected in all gateways.
+                        if( $gp->gatewayID == Session::get("gateway_id"))
+                            $selectedSRs[] = $srp->storageResourceId;
                     }
                     $gateways[$key]->profile = $gatewayProfiles[$index];
                 }
