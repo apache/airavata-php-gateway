@@ -29,7 +29,8 @@ $(document).ready(function () {
 
 	    //remove Compute Resource
 	    $("body").on("click", ".remove-cr", function(){
-			$(this).parent().remove();
+			$(this).parent().parent().parent().remove();
+			$(this).parent().parent().parent().find(".pref-space").html("");
 		});
 
 

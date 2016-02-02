@@ -21,7 +21,6 @@
         <div class="panel-body">
             <div class="app-interface-block">
                 <div class="row">
-                     @if(Session::has("admin"))
                     <div class="col-md-10 credential-store-token-change">
                         <form>
                             <div class="form-group">
@@ -29,14 +28,16 @@
                                 <div class="col-md-9">
                                     <select class="form-control gateway-credential-store-token" name="resourceSpecificCredentialStoreToken"  data-gpid="{{$gp->gatewayId}}" >
                                         @if( isset( $gp->profile->credentialStoreToken) )
-                                        <option value="{{$gp->profile->credentialStoreToken}}">{{$gp->profile->credentialStoreToken}}</option>
+                                        @foreach( $tokens as $token => $publicKey)
+                                            <option value="{{$token}}" @if( $token == $gp->profile->credentialStoreToken) selected @endif>{{$token}}</option>
+                                        @endforeach
                                         @else
                                         <option value="">Select a Credential Token from Store</option>
+                                        @foreach( $tokens as $token => $publicKey)
+                                            <option value="{{$token}}">{{$token}}</option>
+                                        @endforeach
                                         @endif
                                         <option value="">DO-NO-SET</option>
-                                        @foreach( $tokens as $token => $publicKey)
-                                        <option value="{{$token}}">{{$token}}</option>
-                                        @endforeach
                                     </select>
                                     <!--
                                     <input type="text" name="resourceSpecificCredentialStoreToken"  data-gpid="{{$gp->gatewayId}}" class="form-control credential-store-token"
@@ -49,19 +50,23 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-md-10">
+                </div>
+                    
+                <div class="col-md-10">
+
+
+                    <div class="row">
                         <button class="btn btn-default add-cr" data-gpid="{{$gp->gatewayId}}"><span
                                 class="glyphicon glyphicon-plus"></span> Add a Compute Resource Preference
                         </button>
                     </div>
-                    @endif
-                </div>
-                    
-                <div class="col-md-10">
+
                     @if( isset( $gp->profile->computeResourcePreferences) )
+                    @if( count( (array)$gp->profile->computeResourcePreferences) > 0)
                     <div>
                         <h3>Compute Resource Preferences :</h3>
                     </div>
+                    @endif
                     <div class="accordion-inner">
                         <div class="panel-group" id="cr-{{$accName}}-{{$indexGP}}">
                             @foreach( (array)$gp->profile->computeResourcePreferences as $indexCRP
@@ -113,10 +118,20 @@
                         </div>
                     </div>
                     @endif
+
+
+                    <div class="row">
+                        <button class="btn btn-default add-dsp" data-gpid="{{$gp->gatewayId}}"><span
+                                class="glyphicon glyphicon-plus"></span> Add a Storage Resource Preference
+                        </button>
+                    </div>
+
                     @if( isset( $gp->profile->storagePreferences) )
+                    @if( count( (array)$gp->profile->storagePreferences) > 0)
                     <div>
                         <h3>Storage Resource Preferences :</h3>
                     </div>
+                    @endif
                     <div class="accordion-inner">
                         <div class="panel-group" id="cr-accordion-{{$indexGP}}">
                             @foreach( (array)$gp->profile->storagePreferences as $indexSRP
@@ -168,12 +183,6 @@
                         </div>
                     </div>
                     @endif
-                </div>
-
-                <div class="col-md-10">
-                    <button class="btn btn-default add-dsp" data-gpid="{{$gp->gatewayId}}"><span
-                            class="glyphicon glyphicon-plus"></span> Add a Data Storage Preference
-                    </button>
                 </div>
 
                 <div class="col-md-10">
