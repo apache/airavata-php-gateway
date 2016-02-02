@@ -25,7 +25,7 @@
         </div>
         <div class="container-fluid">
             <div class="panel-group" id="accordion2">
-                <h3>Your Gateway Preferences</h3>
+                <h3>Edit your Gateway Preferences</h3>
                 @foreach( $gateways as $indexGP => $gp )
                     @if( $gp->gatewayId == Session::get("gateway_id"))
                         @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion2") )
@@ -36,7 +36,7 @@
             @if( Session::has('super-admin'))
             <div class="row">
                 <div class="col-md-6">
-                    <h3>All Gateway Preferences</h3>
+                    <h3>Check all Gateway Preferences</h3>
                 </div>
                 <div class="col-md-6" style="margin-top:2%">
                     <input type="text" class="col-md-12 filterinput" placeholder="Search by Gateway Name"/>
