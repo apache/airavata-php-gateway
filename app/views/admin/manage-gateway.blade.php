@@ -323,7 +323,7 @@
       elem.find("select").attr("disabled", "true");
       elem.find(".hide").prop("readonly", "true");
       elem.find("button").attr("disabled", "true");
-      $(".glyphicon").hide();
+       elem.find(".glyphicon").hide();
     }
 
 </script>
