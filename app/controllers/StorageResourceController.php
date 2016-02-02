@@ -72,10 +72,11 @@ class StorageresourceController extends BaseController
     }
 
     public function editSubmit()
-    {
+    {   
+        var_dump( Input::all() ); exit;
         $this->beforeFilter('verifyeditadmin');
         $tabName = "";
-        if (Input::get("sr-edit") == "resDesc") /* Modify compute Resource description */ {
+        if (Input::get("sr-edit") == "resDesc") /* Modify storage Resource description */ {
             $storageResourceDescription = SRUtilities::get_storage_resource(Input::get("srId"));
             $storageResourceDescription->hostName = trim(Input::get("hostname"));
             $storageResourceDescription->resourceDescription = Input::get("description");

@@ -274,7 +274,7 @@ class SRUtilities
         return Airavata::updateGatewayResourceProfile( Session::get('authz-token'), $data["gateway_id"], $gatewayResourceProfile); 
     }
 
-    public static function add_or_update_DSP($inputs)
+    public static function add_or_update_SRP($inputs)
     {
         $storagePreference = new StoragePreference($inputs);
 
@@ -283,11 +283,11 @@ class SRUtilities
                 Cache::forget('SR-' . $inputs["storageResourceId"]);
             }
         }
-
-        //var_dump( $inputs); exit;
-        return Airavata::addGatewayStoragePreference(Session::get('authz-token'), $inputs["gatewayId"], $inputs["storageResourceId"],
-            $storagePreference);
-
+        return Airavata::addGatewayStoragePreference(   Session::get('authz-token'), 
+                                                        $inputs["gatewayId"], 
+                                                        $inputs["storageResourceId"],
+                                                        $storagePreference
+                                                    );
     }
 
     public static function deleteGP($gpId)

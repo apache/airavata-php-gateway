@@ -490,10 +490,7 @@ class CRUtilities
                 Cache::forget('CR-' . $inputs["computeResourceId"]);
             }
         }
-
-        //var_dump( $inputs); exit;
         return Airavata::addGatewayComputeResourcePreference(Session::get('authz-token'), $inputs["gatewayId"], $inputs["computeResourceId"], $computeResourcePreferences);
-
     }
 
     public static function deleteGP($gpId)
