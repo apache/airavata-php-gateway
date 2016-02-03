@@ -86,6 +86,11 @@ class ExperimentController extends BaseController
             $autoRefresh = false;
         }
         if ($experiment != null) {
+
+            //viewing experiments of other gateways is not allowed if user is not super admin
+            if( $experiment->gatewayId != Session::get("gateway_id") && !Session::has("super-admin"))
+                CommonUtilities::print_error_message('It seems that you do not have permissions to view this experiment or it belongs to another gateway.');
+        
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);

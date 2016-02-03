@@ -101,29 +101,17 @@ class ExperimentUtilities
         try {
             return Airavata::getExperiment(Session::get('authz-token'), $expId);
         } catch (InvalidRequestException $ire) {
-            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
-            Please try again later or submit a bug report using the link in the Help menu.</p>' .
-                '<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
+            CommonUtilities::print_error_message('<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
         } catch (ExperimentNotFoundException $enf) {
-            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
-            Please try again later or submit a bug report using the link in the Help menu.</p>' .
-                '<p>ExperimentNotFoundException: ' . $enf->getMessage() . '</p>');
+            CommonUtilities::print_error_message('<p>ExperimentNotFoundException: ' . $enf->getMessage() . '</p>');
         } catch (AiravataClientException $ace) {
-            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
-            Please try again later or submit a bug report using the link in the Help menu.</p>' .
-                '<p>AiravataClientException: ' . $ace->getMessage() . '</p>');
+            CommonUtilities::print_error_message('AiravataClientException: ' . $ace->getMessage() . '</p>');
         } catch (AiravataSystemException $ase) {
-            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
-            Please try again later or submit a bug report using the link in the Help menu.</p>' .
-                '<p>AiravataSystemException: ' . $ase->getMessage() . '</p>');
+            CommonUtilities::print_error_message('AiravataSystemException: ' . $ase->getMessage() . '</p>');
         } catch (TTransportException $tte) {
-            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
-            Please try again later or submit a bug report using the link in the Help menu.</p>' .
-                '<p>TTransportException: ' . $tte->getMessage() . '</p>');
+            CommonUtilities::print_error_message('TTransportException: ' . $tte->getMessage() . '</p>');
         } catch (Exception $e) {
-            CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
-            Please try again later or submit a bug report using the link in the Help menu.</p>' .
-                '<p>Exception: ' . $e->getMessage() . '</p>');
+            CommonUtilities::print_error_message('Exception: ' . $e->getMessage() . '</p>');
         }
 
     }

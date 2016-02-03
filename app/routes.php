@@ -196,9 +196,9 @@ Route::post("gp/add-crp", "GatewayprofileController@modifyCRP");
 
 Route::post("gp/update-crp", "GatewayprofileController@modifyCRP");
 
-Route::post("gp/add-dsp", "GatewayprofileController@modifyDSP");
+Route::post("gp/add-srp", "GatewayprofileController@modifySRP");
 
-Route::post("gp/update-dsp", "GatewayprofileController@modifyDSP");
+Route::post("gp/update-srp", "GatewayprofileController@modifySRP");
 
 Route::post("gp/remove-sr", "GatewayprofileController@delete");
 
@@ -239,6 +239,8 @@ Route::get("admin/dashboard/credential-store", "AdminController@credentialStoreV
 Route::get("manage/users", "AdminController@usersView");
 
 Route::post("admin/adduser", "AdminController@addAdminSubmit");
+
+Route::get("admin/getusercountinrole", "AdminController@getUserCountInRole");
 
 Route::post("admin/addgatewayadmin", "AdminController@addGatewayAdminSubmit");
 

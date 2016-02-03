@@ -1,10 +1,11 @@
 <div class="container" style="max-width: 750px;">
-
+    <!--
     @if(isset( $invalidExperimentId ) )
     <div class="alert alert-danger">
         The Experiment ID does not exist. Please go to correct experiment.
     </div>
     @else
+    -->
     <h1>
         Experiment Summary
         @if( !isset($dashboard))
@@ -60,10 +61,23 @@
 
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
             <tr>
-                <th>Job Name : {{$jobDetail->jobName}}</th>
-                <td>Job ID : {{ $jobDetail->jobId}}</td>
-                <td> Status : {{$jobDetail->jobStatus->jobStateName }}</td>
-                <td> Creation Time : <span class="time" unix-time="{{$jobDetail->creationTime}}"></span></td>
+                <th>Job</th>
+                <td>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>Name</td>
+                            <td>ID</td>
+                            <td>Status</td>
+                            <td>Creation Time</td>
+                        </tr>
+                        <tr>
+                            <td>{{$jobDetail->jobName}}</td>
+                            <td>{{ $jobDetail->jobId}}</td>
+                            <td>{{$jobDetail->jobStatus->jobStateName }}</td>
+                            <td class="time" unix-time="{{$jobDetail->creationTime}}"></td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
         @endforeach
         <!--
@@ -225,14 +239,25 @@
                             </span>
 
                                 @foreach( $process->tasks as $task)
-                                    <br/>Task Id : {{ $task->taskId }}
-                                    <br/>Task Type : {{ $expVal["taskTypes"][$task->taskType] }}
-                                    <br/>Task Status : {{ $expVal["taskStates"][$task->taskStatus->state] }}
-                                    <br/>Jobs : {{ count( $task->jobs)}}
-                                    <br/>@foreach( $task->jobs as $jobIndex => $job)
-                                            Job No. : {{ $jobIndex}}
-                                         @endforeach
-
+                                    <dl class="well dl-horizontal">
+                                        <dt>Task Id : </dt> <dd>{{ $task->taskId }}</dd>
+                                        <dt>Task Type : </dt> <dd>{{ $expVal["taskTypes"][$task->taskType] }}</dd>
+                                        <dt>Task Status : </dt> <dd>{{ $expVal["taskStates"][$task->taskStatus->state] }}</dd>
+                                    @if( is_object( $task->taskError))
+                                        <dt>Task Error Id : </dt><dd>{{ $task->taskError->errorId }}</dd>
+                                        <dt>Task Error Msg : </dt><dd>{{ $task->taskError->userFriendlyMessage }}</dd>
+                                    @endif
+                                    @if( count( $task->jobs) > 0 )
+                                        <dt>Jobs : </dt><dd>{{ count( $task->jobs)}}</dd>
+                                    @endif
+                                    @foreach( $task->jobs as $jobIndex => $job)
+                                        <dl class="well dl-horizontal">
+                                            <dt>Job Id. :</dt> <dd>{{ $job->jobId }}</dd>
+                                            <dt>Job Name : </dt><dd>{{ $job->jobName }}</dd>
+                                            <dt>Job Description :</dt><dd>{{ $job->jobDescription }}</dd>
+                                        </dl>
+                                     @endforeach
+                                    </dl>
                                     <hr/>
                                 @endforeach
                         </li>

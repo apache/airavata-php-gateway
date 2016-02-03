@@ -324,14 +324,13 @@ to be uncommented when actually in use.
 -->
 
 <!-- Flot Charts JavaScript -->
+<!--
 {{ HTML::script('js/flot/jquery.flot.js')}}
 {{ HTML::script('js/flot/jquery.flot.tooltip.min.js')}}
 {{ HTML::script('js/flot/jquery.flot.resize.js')}}
 {{ HTML::script('js/flot/jquery.flot.pie.js')}}
 {{ HTML::script('js/flot/flot-data.js')}}
-
-{{ HTML::script('js/moment.js')}}
-{{ HTML::script('js/datetimepicker.js')}}
+-->
 {{ HTML::script('js/time-conversion.js')}}
 <script>
 
@@ -418,7 +417,7 @@ to be uncommented when actually in use.
         $fromTime = $("#datetimepicker9").find("input").val();
         $fromTime = moment($fromTime).format('MM/DD/YYYY hh:mm A');
         $toTime = $("#datetimepicker10").find("input").val();
-        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm A');
+        $toTime = moment($toTime).format('MM/DD/YYYY hh:mm A');
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -430,6 +429,7 @@ to be uncommented when actually in use.
     $(".oneDayExp").click();
 
     function getExperiments( startTime, endTime, msg){
+
         $(".experiment-statistics").html("");
         $(".loading-img-statistics").removeClass("hide");
             $.ajax({

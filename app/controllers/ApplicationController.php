@@ -39,25 +39,32 @@ class ApplicationController extends BaseController {
 
 	public function deleteAppModule()
 	{
+        
         $this->beforeFilter('verifyeditadmin');
         $data = AppUtilities::getAppInterfaceData();
-        foreach($data["appInterfaces"] as $appInterface){
-            foreach($appInterface->applicationModules as $appModule){
-                if($appModule == Input::get("appModuleId")){
-                    $errorMessage = "The selected app module is already assigned to " . $appInterface->applicationName
-                    . " interface. Hence it cannot be removed";
-                    return Redirect::to("app/module")->with("errorMessage", $errorMessage);
-                }
-            }
+        $connections = AppUtilities::checkAppModuleConnections( Input::get("appModuleId"));
+        if( count( $connections["appInterfaces"]) > 0 || count( $connections["appDeployments"]) > 0)
+        {	
+        	$message = "App Module you are trying to delete is connected to - <br/>";
+        	foreach( $connections["appInterfaces"] as $index => $interface)
+        	{
+        		$message .= "Interface " . ($index + 1) . " : " . $interface . "<br/>";
+        	}
+        	foreach( $connections["appDeployments"] as $index => $deployment)
+        	{
+        		$message .= "Deployment " . ($index + 1) . " : " . $deployment . "<br/>";
+        	}
+        	$message .= "<br/>Please disconnect it from all the above interfaces and deployments to be able to delete it.";
+        	return Redirect::to("app/module")->with("errorMessage", $message);
         }
-
-		if( AppUtilities::deleteAppModule( Input::get("appModuleId") ) )
-			$message = "Module has been deleted successfully!";
-		else
-			$message = "An error has occurred. Please report the issue.";
+        else{
+			if( AppUtilities::deleteAppModule( Input::get("appModuleId") ) )
+				$message = "Module has been deleted successfully!";
+			else
+				$message = "An error has occurred. Please report the issue.";
+		}
 
 		return Redirect::to("app/module")->with("message", $message);
-
 	}
 
 	public function showAppInterfaceView()

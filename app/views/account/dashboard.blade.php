@@ -40,7 +40,7 @@
                     </div>
                 </a>
 
-                <a href="{{URL::to('/')}}/admin/dashboard/experiments">
+                <a href="{{URL::to('/')}}/experiment/browse">
                     <div class="@if( Session::has('admin')) col-md-4 @else col-md-6 @endif well">
                         <div class="col-md-12">
                             <span class="glyphicon glyphicon-tasks console-icon"></span>
