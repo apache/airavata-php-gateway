@@ -6,6 +6,11 @@
     </div>
     @else
     -->
+    @if( Session::has("permissionDenied" ) )
+    <div class="alert alert-danger">
+        {{Session::forget("permissionDenied") }}
+    </div>
+    @else
     <h1>
         Experiment Summary
         @if( !isset($dashboard))
@@ -214,6 +219,8 @@
 
     <!-- check of correct experiment Id ends here -->
     @endif
+
+    @endif
 </div>
 
 @if( isset($dashboard))
@@ -285,78 +292,7 @@
                 </li>
             </ul>
         </li>
-                <!--
-                <li>
-                    <span class="badge badge-success"><i class="icon-minus-sign"></i>Input Staging</span>
-                    <ul>
-                        <li>
-                            <span class="alert alert-success"><i
-                                    class="icon-time"></i>2015-04-17 15:21:21</span> &ndash; <a href="">PGA to
-
-                                Airavata File Transfer Successful</a>
-                        </li>
-                        <li>
-                            <span class="alert alert-success" abhi><i
-                                    class="icon-time"></i>2015-04-17 15:21:21</span> &ndash; <a href="">Airavata to
-
-                                Resource File Transfer Successful</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <span class="badge badge-warning"><i class="icon-minus-sign"></i>Job Description</span>
-                    <ul>
-                        <li>
-                            <a href=""><span>
-                                               Long Script of Job Description / PBS Script <br/>
-                                               <br/>
-                                                <p>
-                                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-                                                    commodo ligula eget dolor. Aenean massa. Cum sociis natoque
-                                                    penatibus et magnis dis parturient montes, nascetur ridiculus
-                                                    mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
-                                                    quis, sem. Nulla consequat massa quis enim. Donec pede justo,
-                                                    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo,
-                                                    rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum
-                                                    felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-                                                    Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.
-                                                    Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac,
-                                                    enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a,
-                                                    tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque
-                                                    rutrum. Aenean
-                                                </p>
-                                             </span></a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <span class="badge badge-important"><i class="icon-minus-sign"></i>Execution</span>
-                    <ul>
-                        <li>
-                            <a href=""><span class="alert alert-success"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                Execution of Job Description - No errors</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li>
-                    <span class="badge badge-important"><i class="icon-minus-sign"></i>Experiment Complete</span>
-                    <ul>
-                        <li>
-                            <a href=""><span class="alert alert-danger"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                Output Transfer from Resource to Airavata UnSuccessful</a>
-                            <br/>
-                            <span> Some text about failure</span>
-                        </li>
-                        <li>
-                            <a href=""><span class="alert alert-danger"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                Output Transfer from Airavata to PGA UnSuccessful</a>
-                            <br/>
-                            <span> Some text about failure</span>
-                        </li>
-                    </ul>
-                </li>
-                -->
+                
 
     </ul>
 </div>
