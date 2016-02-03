@@ -278,8 +278,6 @@ class Wsis {
         try {
             $this->userStoreManager->deleteRole($roleName);
         } catch (Exception $ex) {
-            var_dump( $ex); exit;
-
             throw new Exception("Unable to delete role", 0, $ex);
         }
     }
@@ -310,7 +308,8 @@ class Wsis {
      */
     public function getUserRoles( $username){
         try {
-            return $this->userStoreManager->getRoleListOfUser( $username);
+            $roles = $this->userStoreManager->getRoleListOfUser( $username);
+            return array_filter($roles, "Wsis::nonInternalRoles");
         } catch (Exception $ex) {
             throw new Exception("Unable to get User roles.", 0, $ex);
         }

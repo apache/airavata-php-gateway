@@ -19,7 +19,7 @@
         {{ Session::forget("message") }}
         @endif
 
-        @if( Session::has('authorized-user') || Session::has('admin') )
+        @if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') )
         <div class="row text-center breathing-space">
             <h1>Let's get started!</h1>
         </div>
@@ -30,7 +30,7 @@
                 <h3>See what's happening in your projects</h3>
 
                 <a href="{{URL::to('/')}}/project/browse">
-                    <div class="@if( Session::has('admin')) col-md-4 @else col-md-6 @endif well">
+                    <div class="@if( Session::has('admin') || Session::has('admin-read-only')) col-md-4 @else col-md-6 @endif well">
                         <div class="col-md-12">
                             <span class="glyphicon glyphicon-off console-icon"></span>
                         </div>
@@ -41,7 +41,7 @@
                 </a>
 
                 <a href="{{URL::to('/')}}/experiment/browse">
-                    <div class="@if( Session::has('admin')) col-md-4 @else col-md-6 @endif well">
+                    <div class="@if( Session::has('admin') || Session::has('admin-read-only')) col-md-4 @else col-md-6 @endif well">
                         <div class="col-md-12">
                             <span class="glyphicon glyphicon-tasks console-icon"></span>
                         </div>
@@ -51,7 +51,7 @@
                     </div>
                 </a>
 
-                @if( Session::has('admin'))
+                @if( Session::has('admin') || Session::has('admin-read-only'))
                 <a href="{{URL::to('/')}}/admin/dashboard/experiments">
                     <div class="col-md-4  well">
                         <div class="col-md-12">
@@ -65,7 +65,7 @@
                 @endif
             </div>
 
-            @if( Session::has('admin'))
+            @if( Session::has('admin') || Session::has('admin-read-only'))
             <div class="row well">
 
                 <h3>Manage Users Access</h3>

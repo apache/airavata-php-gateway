@@ -144,7 +144,7 @@ class AccountController extends BaseController
             }
 
             //only for super admin
-            if(  Config::get('pga_config.portal')['super-admin-portal'] == true){
+            if(  Config::get('pga_config.portal')['super-admin-portal'] == true && Session::has("admin")){
                 Session::put("super-admin", true);
             }
 

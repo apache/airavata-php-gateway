@@ -120,7 +120,7 @@ Route::filter('verifyauthorizeduser', function () {
 
 Route::filter('verifyadmin', function () {
     if (CommonUtilities::verify_login()) {
-        if (!(Session::has("admin") || Session::has("admin-read-only"))) {
+        if (!Session::has("admin") && !Session::has("admin-read-only")) {
             return Redirect::to("home")->with("admin-alert", true);
         }
     } else
