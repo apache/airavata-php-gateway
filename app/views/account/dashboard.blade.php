@@ -65,7 +65,7 @@
                 @endif
             </div>
 
-            @if( Session::has('admin'))
+            @if( Session::has('admin') || Session::has('admin-read-only') )
             <div class="row well">
 
                 <h3>Manage Users Access</h3>

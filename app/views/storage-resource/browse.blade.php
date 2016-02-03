@@ -48,9 +48,7 @@
                         <tr>
                             <th>Id</th>
                             <th>Hostname</th>
-                            @if(Session::has("admin"))
                             <th>Enabled</th>
-                            @endif
                             <th>View</th>
                             @if(Session::has("super-admin"))
                             <th>Delete</th>

@@ -208,7 +208,6 @@
 
             $(".edit-app-module").click(function () {
                 var moduleData = $(this).data("module-data");
-                console.log(moduleData);
                 $(".edit-name").val(moduleData.appModuleName);
                 $(".edit-desc").val(moduleData.appModuleDescription);
                 $(".edit-version").val(moduleData.appModuleVersion);

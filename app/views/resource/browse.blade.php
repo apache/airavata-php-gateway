@@ -49,9 +49,9 @@
 
                         <th>Name</th>
                         <th>Id</th>
-                        @if(Session::has("admin"))
-                        <th>Enabled</th>
-                        @endif
+                        <th>
+                            Enabled
+                        </th>
                         <th>View</th>
                         @if(Session::has("super-admin"))
                             <th>Delete</th>
@@ -67,7 +67,6 @@
                     <tr id="crDetails">
                         <td><a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">{{ $crName }}</a></td>
                         <td>{{ $crId }}</td>
-                        @if(Session::has("admin"))
                         <td>
                             <div class="checkbox">
                                 <input class="resource-status" type="checkbox" resourceId="{{$crId}}" @if($enabled) checked @endif
@@ -81,7 +80,6 @@
                                 <span class="glyphicon glyphicon-list"></span>
                             </a>
                         </td>
-                        @endif
                         @if(Session::has("super-admin"))
                             <td>
                             <a href="#" title="Delete">
