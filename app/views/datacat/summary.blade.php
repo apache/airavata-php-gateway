@@ -48,7 +48,7 @@
                 </tr>
                 <tr>
                     <td><strong>InChI</strong></td>
-                    <td>@if(isset($result['InChI'])){{$result['InChI']}}@endif</td>
+                    <td>@if(isset($result['InChI']))<a href="#">{{$result['InChI']}}</a>@endif</td>
                 </tr>
                 <tr>
                     <td><strong>InChIKey</strong></td>
@@ -62,271 +62,389 @@
                     <td><strong>CanonicalSMILES</strong></td>
                     <td>@if(isset($result['CanonicalSMILES'])){{$result['CanonicalSMILES']}}@endif</td>
                 </tr>
+                @if(isset($result['Formula']))
                 <tr>
                     <td><strong>Formula</strong></td>
-                    <td>@if(isset($result['Formula']))<a href="#">{{$result['Formula']}}</a>@endif</td>
+                    <td>{{$result['Formula']}}</td>
                 </tr>
+                @endif
             </table>
 
             </br>
             <h3>Detailed Information</h3>
             <table class="table table-bordered">
+                @if(isset($result['ParsedBy']))
                 <tr>
                     <td><strong>ParsedBy</strong></td>
-                    <td>@if(isset($result['ParsedBy'])){{$result['ParsedBy']}}@endif</td>
+                    <td>{{$result['ParsedBy']}}</td>
                 </tr>
+                @endif
+                @if(isset($result['Charge']))
                 <tr>
                     <td><strong>Charge</strong></td>
-                    <td>@if(isset($result['Charge'])){{$result['Charge']}}@endif</td>
+                    <td>{{$result['Charge']}}</td>
                 </tr>
+                @endif
+                @if(isset($result['Multiplicity']))
                 <tr>
                     <td><strong>Multiplicity</strong></td>
-                    <td>@if(isset($result['Multiplicity'])){{$result['Multiplicity']}}@endif</td>
+                    <td>{{$result['Multiplicity']}}</td>
                 </tr>
+                @endif
+                @if(isset($result['Keywords']))
                 <tr>
                     <td><strong>Keywords</strong></td>
-                    <td>@if(isset($result['Keywords'])){{$result['Keywords']}}@endif</td>
+                    <td>({{$result['Keywords']}}</td>
                 </tr>
+                @endif
+                @if(isset($result['CalcType']))
                 <tr>
                     <td><strong>CalcType</strong></td>
-                    <td>@if(isset($result['CalcType'])){{$result['CalcType']}}@endif</td>
+                    <td>{{$result['CalcType']}}</td>
                 </tr>
+                @endif
+                @if(isset($result['Methods']))
                 <tr>
                     <td><strong>Methods</strong></td>
-                    <td>@if(isset($result['Methods'])){{$result['Methods']}}@endif</td>
+                    <td>{{$result['Methods']}}</td>
                 </tr>
+                @endif
+                @if(isset($result['Basis']))
                 <tr>
                     <td><strong>Basis</strong></td>
-                    <td>@if(isset($result['Basis'])){{$result['Basis']}}@endif</td>
+                    <td>{{$result['Basis']}}</td>
                 </tr>
+                @endif
+                @if(isset($result['NumBasis']))
                 <tr>
                     <td><strong>NumBasis</strong></td>
-                    <td>@if(isset($result['NumBasis'])){{$result['NumBasis']}}@endif</td>
+                    <td>{{$result['NumBasis']}}</td>
                 </tr>
+                @endif
+                @if(isset($result['NumFC']))
                 <tr>
                     <td><strong>NumFC</strong></td>
-                    <td>@if(isset($result['NumFC'])){{$result['NumFC']}}@endif</td>
+                    <td>{{$result['NumFC']}}</td>
                 </tr>
+                @endif
+                @if(isset($result['NumVirt']))
                 <tr>
                     <td><strong>NumVirt</strong></td>
-                    <td>@if(isset($result['NumVirt'])){{$result['NumVirt']}}@endif</td>
+                    <td>{{$result['NumVirt']}}</td>
                 </tr>
+                @endif
+                    @if(isset($result['JobStatus']))
                 <tr>
                     <td><strong>JobStatus</strong></td>
-                    <td>@if(isset($result['JobStatus'])){{$result['JobStatus']}}@endif</td>
+                    <td>{{$result['JobStatus']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['FinTime']))
                 <tr>
                     <td><strong>FinTime</strong></td>
-                    <td>@if(isset($result['FinTime'])){{$result['FinTime']}}@endif</td>
+                    <td>{{$result['FinTime']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['InitGeom']))
                 <tr>
                     <td><strong>InitGeom</strong></td>
-                    <td>@if(isset($result['InitGeom'])){{$result['InitGeom']}}@endif</td>
+                    <td>{{$result['InitGeom']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['FinalGeom']))
                 <tr>
                     <td><strong>FinalGeom</strong></td>
-                    <td>@if(isset($result['FinalGeom'])){{$result['FinalGeom']}}@endif</td>
+                    <td>{{$result['FinalGeom']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['PG']))
                 <tr>
                     <td><strong>PG</strong></td>
-                    <td>@if(isset($result['PG'])){{$result['PG']}}@endif</td>
+                    <td>{{$result['PG']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['ElecSym']))
                 <tr>
                     <td><strong>ElecSym</strong></td>
-                    <td>@if(isset($result['ElecSym'])){{$result['ElecSym']}}@endif</td>
+                    <td>{{$result['ElecSym']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['NImag']))
                 <tr>
                     <td><strong>NImag</strong></td>
-                    <td>@if(isset($result['NImag'])){{$result['NImag']}}@endif</td>
+                    <td>{{$result['NImag']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Energy']))
                 <tr>
                     <td><strong>Energy</strong></td>
-                    <td>@if(isset($result['Energy'])){{$result['Energy']}}@endif</td>
+                    <td>{{$result['Energy']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['EnergyKcal']))
                 <tr>
                     <td><strong>EnergyKcal</strong></td>
-                    <td>@if(isset($result['EnergyKcal'])){{$result['EnergyKcal']}}@endif</td>
+                    <td>{{$result['EnergyKcal']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['ZPE']))
                 <tr>
                     <td><strong>ZPE</strong></td>
-                    <td>@if(isset($result['ZPE'])){{$result['ZPE']}}@endif</td>
+                    <td>{{$result['ZPE']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['ZPEKcal']))
                 <tr>
                     <td><strong>ZPEKcal</strong></td>
-                    <td>@if(isset($result['ZPEKcal'])){{$result['ZPEKcal']}}@endif</td>
+                    <td>{{$result['ZPEKcal']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['HF']))
                 <tr>
                     <td><strong>HF</strong></td>
-                    <td>@if(isset($result['HF'])){{$result['HF']}}@endif</td>
+                    <td>{{$result['HF']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['HFKcal']))
                 <tr>
                     <td><strong>HFKcal</strong></td>
-                    <td>@if(isset($result['HFKcal'])){{$result['HFKcal']}}@endif</td>
+                    <td>{{$result['HFKcal']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Thermal']))
                 <tr>
                     <td><strong>Thermal</strong></td>
-                    <td>@if(isset($result['Thermal'])){{$result['Thermal']}}@endif</td>
+                    <td>{{$result['Thermal']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['ThermalKcal']))
                 <tr>
                     <td><strong>ThermalKcal</strong></td>
-                    <td>@if(isset($result['ThermalKcal'])){{$result['ThermalKcal']}}@endif</td>
+                    <td>{{$result['ThermalKcal']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Enthalpy']))
                 <tr>
                     <td><strong>Enthalpy</strong></td>
-                    <td>@if(isset($result['Enthalpy'])){{$result['Enthalpy']}}@endif</td>
+                    <td>{{$result['Enthalpy']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['EnthalpyKcal']))
                 <tr>
                     <td><strong>EnthalpyKcal</strong></td>
-                    <td>@if(isset($result['EnthalpyKcal'])){{$result['EnthalpyKcal']}}@endif</td>
+                    <td>{{$result['EnthalpyKcal']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Entropy']))
                 <tr>
                     <td><strong>Entropy</strong></td>
-                    <td>@if(isset($result['Entropy'])){{$result['Entropy']}}@endif</td>
+                    <td>{{$result['Entropy']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['EntropyKcal']))
                 <tr>
                     <td><strong>EntropyKcal</strong></td>
-                    <td>@if(isset($result['EntropyKcal'])){{$result['EntropyKcal']}}@endif</td>
+                    <td>{{$result['EntropyKcal']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Gibbs']))
                 <tr>
                     <td><strong>Gibbs</strong></td>
-                    <td>@if(isset($result['Gibbs'])){{$result['Gibbs']}}@endif</td>
+                    <td>{{$result['Gibbs']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['GibbsKcal']))
                 <tr>
                     <td><strong>GibbsKcal</strong></td>
-                    <td>@if(isset($result['GibbsKcal'])){{$result['GibbsKcal']}}@endif</td>
+                    <td>{{$result['GibbsKcal']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['OrbSym']))
                 <tr>
                     <td><strong>OrbSym</strong></td>
-                    <td>@if(isset($result['OrbSym'])){{$result['OrbSym']}}@endif</td>
+                    <td>{{$result['OrbSym']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Dipole']))
                 <tr>
                     <td><strong>Dipole</strong></td>
-                    <td>@if(isset($result['Dipole'])){{$result['Dipole']}}@endif</td>
+                    <td>{{$result['Dipole']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Freq']))
                 <tr>
                     <td><strong>Freq</strong></td>
-                    <td>@if(isset($result['Freq'])){{$result['Freq']}}@endif</td>
+                    <td>{{$result['Freq']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['AtomWeigh']))
                 <tr>
                     <td><strong>AtomWeigh</strong></td>
-                    <td>@if(isset($result['AtomWeigh'])){{$result['AtomWeigh']}}@endif</td>
+                    <td>{{$result['AtomWeigh']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Conditions']))
                 <tr>
                     <td><strong>Conditions</strong></td>
-                    <td>@if(isset($result['Conditions'])){{$result['Conditions']}}@endif</td>
+                    <td>{{$result['Conditions']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['ReacGeom']))
                 <tr>
                     <td><strong>ReacGeom</strong></td>
-                    <td>@if(isset($result['ReacGeom'])){{$result['ReacGeom']}}@endif</td>
+                    <td>{{$result['ReacGeom']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['ProdGeom']))
                 <tr>
                     <td><strong>ProdGeom</strong></td>
-                    <td>@if(isset($result['ProdGeom'])){{$result['ProdGeom']}}@endif</td>
+                    <td>{{$result['ProdGeom']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['MulCharge']))
                 <tr>
                     <td><strong>MulCharge</strong></td>
-                    <td>@if(isset($result['MulCharge'])){{$result['MulCharge']}}@endif</td>
+                    <td>{{$result['MulCharge']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['NatCharge']))
                 <tr>
                     <td><strong>NatCharge</strong></td>
-                    <td>@if(isset($result['NatCharge'])){{$result['NatCharge']}}@endif</td>
+                    <td>{{$result['NatCharge']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['S2']))
                 <tr>
                     <td><strong>S2</strong></td>
-                    <td>@if(isset($result['S2'])){{$result['S2']}}@endif</td>
+                    <td>{{$result['S2']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['CodeVersion']))
                 <tr>
                     <td><strong>CodeVersion</strong></td>
-                    <td>@if(isset($result['CodeVersion'])){{$result['CodeVersion']}}@endif</td>
+                    <td>{{$result['CodeVersion']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['CalcMachine']))
                 <tr>
                     <td><strong>CalcMachine</strong></td>
-                    <td>@if(isset($result['CalcMachine'])){{$result['CalcMachine']}}@endif</td>
+                    <td>{{$result['CalcMachine']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['CalcBy']))
                 <tr>
                     <td><strong>CalcBy</strong></td>
-                    <td>@if(isset($result['CalcBy'])){{$result['CalcBy']}}@endif</td>
+                    <td>{{$result['CalcBy']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['MemCost']))
                 <tr>
                     <td><strong>MemCost</strong></td>
-                    <td>@if(isset($result['MemCost'])){{$result['MemCost']}}@endif</td>
+                    <td>{{$result['MemCost']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['TimeCost']))
                 <tr>
                     <td><strong>TimeCost</strong></td>
-                    <td>@if(isset($result['TimeCost'])){{$result['TimeCost']}}@endif</td>
+                    <td>{{$result['TimeCost']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['CPUTime']))
                 <tr>
                     <td><strong>CPUTime</strong></td>
-                    <td>@if(isset($result['CPUTime'])){{$result['CPUTime']}}@endif</td>
+                    <td>{{$result['CPUTime']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Convergence']))
                 <tr>
                     <td><strong>Convergence</strong></td>
-                    <td>@if(isset($result['Convergence'])){{$result['Convergence']}}@endif</td>
+                    <td>{{$result['Convergence']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['FullPath']))
                 <tr>
                     <td><strong>FullPath</strong></td>
-                    <td>@if(isset($result['FullPath'])){{$result['FullPath']}}@endif</td>
+                    <td>{{$result['FullPath']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['InputButGeom']))
                 <tr>
                     <td><strong>InputButGeom</strong></td>
-                    <td>@if(isset($result['InputButGeom'])){{$result['InputButGeom']}}@endif</td>
+                    <td>{{$result['InputButGeom']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['OtherInfo']))
                 <tr>
                     <td><strong>OtherInfo</strong></td>
-                    <td>@if(isset($result['OtherInfo'])){{$result['OtherInfo']}}@endif</td>
+                    <td>{{$result['OtherInfo']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Comments']))
                 <tr>
                     <td><strong>Comments</strong></td>
-                    <td>@if(isset($result['Comments'])){{$result['Comments']}}@endif</td>
+                    <td>{{$result['Comments']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['NAtom']))
                 <tr>
                     <td><strong>NAtom</strong></td>
-                    <td>@if(isset($result['NAtom'])){{$result['NAtom']}}@endif</td>
+                    <td>{{$result['NAtom']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['Nmo']))
                 <tr>
                     <td><strong>Nmo</strong></td>
-                    <td>@if(isset($result['Nmo'])){{$result['Nmo']}}@endif</td>
+                    <td>{{$result['Nmo']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['NBasis']))
                 <tr>
                     <td><strong>NBasis</strong></td>
-                    <td>@if(isset($result['NBasis'])){{$result['NBasis']}}@endif</td>
+                    <td>{{$result['NBasis']}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['AtomNos']))
                 <tr>
                     <td><strong>AtomNos</strong></td>
-                    <td>@if(isset($result['AtomNos'])){{json_encode($result['AtomNos'], JSON_PRETTY_PRINT)}}@endif</td>
+                    <td>{{json_encode($result['AtomNos'], JSON_PRETTY_PRINT)}}</td>
                 </tr>
-                <tr>
-                    <td><strong>NAtom</strong></td>
-                    <td>@if(isset($result['NAtom'])){{$result['NAtom']}}@endif</td>
-                </tr>
-                <tr>
-                    <td><strong>NAtom</strong></td>
-                    <td>@if(isset($result['NAtom'])){{$result['NAtom']}}@endif</td>
-                </tr>
+                    @endif
+                    @if(isset($result['Homos']))
                 <tr>
                     <td><strong>Homos</strong></td>
-                    <td>@if(isset($result['Homos'])){{json_encode($result['Homos'])}}@endif</td>
+                    <td>{{json_encode($result['Homos'])}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['ScfEnergies']))
                 <tr>
                     <td><strong>ScfEnerfgies</strong></td>
-                    <td>@if(isset($result['ScfEnergies'])){{json_encode($result['ScfEnergies'], JSON_PRETTY_PRINT)}}@endif</td>
+                    <td>{{json_encode($result['ScfEnergies'], JSON_PRETTY_PRINT)}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['CoreElectrons']))
                 <tr>
                     <td><strong>CoreElectrons</strong></td>
-                    <td>@if(isset($result['CoreElectrons'])){{json_encode($result['CoreElectrons'], JSON_PRETTY_PRINT)}}@endif</td>
+                    <td>{{json_encode($result['CoreElectrons'], JSON_PRETTY_PRINT)}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['MoEnergies']))
                 <tr>
                     <td><strong>MoEnergies</strong></td>
-                    <td>@if(isset($result['MoEnergies'])){{json_encode($result['MoEnergies'], JSON_PRETTY_PRINT)}}@endif</td>
+                    <td>{{json_encode($result['MoEnergies'], JSON_PRETTY_PRINT)}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['AtomCoords']))
                 <tr>
                     <td><strong>AtomCoords</strong></td>
-                    <td>@if(isset($result['AtomCoords'])){{json_encode($result['AtomCoords'], JSON_PRETTY_PRINT)}}@endif</td>
+                    <td>{{json_encode($result['AtomCoords'], JSON_PRETTY_PRINT)}}</td>
                 </tr>
+                    @endif
+                    @if(isset($result['ScfTargets']))
                 <tr>
                     <td><strong>ScfTargets</strong></td>
-                    <td>@if(isset($result['ScfTargets'])){{json_encode($result['ScfTargets'], JSON_PRETTY_PRINT)}}@endif</td>
+                    <td>{{json_encode($result['ScfTargets'], JSON_PRETTY_PRINT)}}</td>
                 </tr>
+                    @endif
             </table>
     @endif
     </div>
