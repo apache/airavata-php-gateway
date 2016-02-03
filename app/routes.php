@@ -204,6 +204,12 @@ Route::post("gp/remove-sr", "GatewayprofileController@delete");
 
 Route::post("gp/credential-store-token-change", "GatewayprofileController@cstChange");
 
+
+//DataCat
+Route::get("datacat/select", "DataCatController@select");
+Route::get("datacat/summary", "DataCatController@summary");
+
+
 //Management Dashboard
 
 Route::get("admin/dashboard", "AdminController@dashboard");

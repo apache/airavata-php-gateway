@@ -44,7 +44,9 @@
                             Token
                         </th>
                         <th class="text-center">Public Key</th>
+                        @if( Session::has("admin"))
                         <th>Delete</th>
+                        @endif
                     </tr>
                     <tbody class="token-values">
                     @foreach( $tokens as $token => $publicKey)
@@ -55,9 +57,11 @@
                         <td class="public-key">
                             {{ $publicKey }}
                         </td>
+                        @if( Session::has("admin"))
                         <td>
                             <span data-token="{{$token}}" class="glyphicon glyphicon-trash remove-token"></span>
                         </td>
+                        @endif
                     </tr>
                     @endforeach
                     </tbody>
