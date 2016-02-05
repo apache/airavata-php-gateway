@@ -32,7 +32,9 @@
                 <tr>
                     <!-- Experiment Name -->
                     <td> 
+                        <a href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}">
                         {{ $experiment['experiment']->name }} 
+                        </a>
                         @if( $experiment['expValue']['editable'])
                             <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment['experiment']->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
                         @endif
