@@ -56,32 +56,12 @@
 
                     <td class="time" unix-time="{{ $experiment['experiment']->creationTime / 1000 }}"></td>
 
-                <?php
-
-                switch ($experiment['expValue']['experimentStatusString']) {
-                    case 'CANCELING':
-                    case 'CANCELED':
-                    case 'UNKNOWN':
-                        $textClass = 'text-warning';
-                        break;
-                    case 'FAILED':
-                        $textClass = 'text-danger';
-                        break;
-                    case 'COMPLETED':
-                        $textClass = 'text-success';
-                        break;
-                    default:
-                        $textClass = 'text-info';
-                        break;
-                }
-
-                ?>
-                <td>
-                    <a class="{{$textClass}}"
-                       href="{{ URL::to('/') }}/experiment/summary?expId={{$experiment['experiment']->experimentId }}">
-                        {{$experiment['expValue']['experimentStatusString'] }}
-                    </a>
-                </td>
+                    <td>
+                        <a class="{{ ExperimentUtilities::get_status_color_class( $experiment['expValue']['experimentStatusString'] ) }}"
+                           href="{{ URL::to('/') }}/experiment/summary?expId={{$experiment['experiment']->experimentId }}">
+                            {{$experiment['expValue']['experimentStatusString'] }}
+                        </a>
+                    </td>
 
                 </tr>
             @endforeach

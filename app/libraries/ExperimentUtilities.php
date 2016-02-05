@@ -1050,7 +1050,6 @@ class ExperimentUtilities
         return $states;
     }
 
-
     public static function apply_changes_to_experiment($experiment, $input)
     {
         $experiment->experimentName = $input['experiment-name'];
@@ -1104,6 +1103,30 @@ class ExperimentUtilities
             //var_dump($experiment);
             return $experiment;
         }
+    }
+
+    public static function get_status_color_class( $status)
+    {
+        switch ( $status) {
+            case 'CANCELING':
+            case 'CANCELED':
+            case 'UNKNOWN':
+                $statusClass = 'text-warning';
+                break;
+            case 'FAILED':
+                $statusClass = 'text-danger';
+                break;
+            case 'COMPLETED':
+                $statusClass = 'text-success';
+                break;
+            case 'COMPLETE':
+                $statusClass = 'text-success';
+                break;
+            default:
+                $statusClass = 'text-info';
+                break;
+        }
+        return $statusClass;
     }
 
     public static function get_job_details($experimentId)
