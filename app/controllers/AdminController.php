@@ -60,16 +60,16 @@ class AdminController extends BaseController {
 		$gatewaysInfo = CRUtilities::getAllGatewayProfilesData();
 		$gateways = $gatewaysInfo["gateways"];
 		$tokens = AdminUtilities::get_all_ssh_tokens();
-		$srData = SRUtilities::getEditSRData();
-		$allCRs = CRUtilities::getAllCRObjects();
-		$allSRs = SRUtilities::getAllSRObjects();
 
-		foreach( (array)$allCRs as $index => $cr){
+		$srData = SRUtilities::getEditSRData();
+		$crData = CRUtilities::getEditCRData();
+
+		foreach( (array)$gatewaysInfo["allCRs"] as $crId => $cr){
 			if( ! in_array($cr->computeResourceId, $gatewaysInfo["selectedCRs"]) )
 			$unselectedCRs[] = $cr;
 		}
 
-		foreach( (array)$allSRs as $index => $sr){
+		foreach( (array)$gatewaysInfo["allSRs"] as $index => $sr){
 			if( ! in_array($sr->storageResourceId, $gatewaysInfo["selectedSRs"]) )
 			$unselectedSRs[] = $sr;
 		}
@@ -77,9 +77,9 @@ class AdminController extends BaseController {
 		//$dsData = CRUtilities::getAllDataStoragePreferences( $gateways);
 		$gatewayData = array( 
 								"gateways" => $gateways, 
-								"computeResources" => $allCRs,
+								"computeResources" => $gatewaysInfo["allCRs"],
 								"crData" => $crData,
-								"storageResources" => $allSRs,
+								"storageResources" => $gatewaysInfo["allSRs"],
 								"srData" => $srData,
 								"tokens" => $tokens,
 								"unselectedCRs" => $unselectedCRs,

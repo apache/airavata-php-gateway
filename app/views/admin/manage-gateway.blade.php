@@ -7,6 +7,18 @@
 
 @section('content')
 
+
+
+<!-- contains all compute resource choices that might get selected on adding a new one to a gateway -->
+@foreach( (array)$computeResources as $index => $cr)
+@include('partials/compute-resource-preferences', array('computeResource' => $cr, 'crData' => $crData))
+@endforeach
+
+<!-- contains all storage resource choices that might get selected on adding a new one to a gateway -->
+@foreach( (array)$storageResources as $index => $sr)
+    @include('partials/storage-resource-preferences', array('storageResource' => $sr, 'srData' => $srData))
+@endforeach
+
 <div id="wrapper">
     <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
     @include( 'partials/dashboard-block')
@@ -91,11 +103,10 @@
             </div>
 
             <div class="panel-group" id="accordion1">
-                    @foreach( $gateways as $indexGP => $gp )
-                    <div class='super-admin-gateways-view'>
-                        @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
-                    </div>
-                    @endforeach
+                <div class='super-admin-gateways-view'>
+                @foreach( $gateways as $indexGP => $gp )
+                    @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
+                @endforeach
                 </div>
             </div>
             @endif
@@ -123,7 +134,7 @@
                 </select>
                 <span class="input-group-addon remove-cr" style="cursor:pointer;">x</span>
             </div>
-            <div class="pref-space form-horizontal"></div>
+            <div class="cr-pref-space form-horizontal"></div>
         </form>
     </div>
 </div>
@@ -142,7 +153,7 @@
                 </select>
                 <span class="input-group-addon remove-cr" style="cursor:pointer;">x</span>
             </div>
-            <div class="pref-space form-horizontal"></div>
+            <div class="sr-pref-space form-horizontal"></div>
         </form>
     </div>
 </div>
@@ -208,7 +219,7 @@
 <!-- Add a Gateway -->
 <div class="modal fade" id="add-gateway-loading" tabindex="-1" role="dialog" aria-labelledby="add-modal"
      aria-hidden="true" data-backdrop="static">
-<div class="modal-dialog">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="text-center">Registering the gateway</h3>
@@ -220,16 +231,6 @@
         </div>
     </div>
 </div>
-
-<!-- contains all compute resource choices that might get selected on adding a new one to a gateway -->
-@foreach( (array)$computeResources as $index => $cr)
-@include('partials/compute-resource-preferences', array('computeResource' => $cr, 'crData' => $crData))
-@endforeach
-
-<!-- contains all storage resource choices that might get selected on adding a new one to a gateway -->
-@foreach( (array)$storageResources as $index => $sr)
-    @include('partials/storage-resource-preferences', array('storageResource' => $sr, 'srData' => $srData))
-@endforeach
 
 @stop
 
@@ -318,12 +319,12 @@
               $(e).attr("disabled", "true");
            else
               $(e).prop("readonly", "true");
-      });
-      elem.find("textarea").prop("readonly", "true");
-      elem.find("select").attr("disabled", "true");
-      elem.find(".hide").prop("readonly", "true");
-      elem.find("button").attr("disabled", "true");
-       elem.find(".glyphicon").hide();
+        });
+        elem.find("textarea").prop("readonly", "true");
+        elem.find("select").attr("disabled", "true");
+        elem.find(".hide").prop("readonly", "true");
+        elem.find("button").attr("disabled", "true");
+        elem.find(".glyphicon").hide();
     }
 
 </script>

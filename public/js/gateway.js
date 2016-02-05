@@ -30,7 +30,13 @@ $(document).ready(function () {
 	    //remove Compute Resource
 	    $("body").on("click", ".remove-cr", function(){
 			$(this).parent().parent().parent().remove();
-			$(this).parent().parent().parent().find(".pref-space").html("");
+			$(this).parent().parent().parent().find(".cr-pref-space").html("");
+		});
+
+		//remove Storage Resource
+	    $("body").on("click", ".remove-cr", function(){
+			$(this).parent().parent().parent().remove();
+			$(this).parent().parent().parent().find(".sr-pref-space").html("");
 		});
 
 
@@ -50,14 +56,14 @@ $(document).ready(function () {
 			crId = $(this).val();
 			//This is done as Jquery creates problems when using period(.) in id or class.
 			crId = crId.replace(/\./g,"_");
-            $(".pref-space").html($("#cr-" + crId).html());
+            $(".cr-pref-space").html($("#cr-" + crId).html());
         });
 
 		$("body").on("change", ".sr-select", function(){
 			srId = $(this).val();
 			//This is done as Jquery creates problems when using period(.) in id or class.
 			srId = srId.replace(/\./g,"_");
-			$(".pref-space").html($("#sr-" + srId).html());
+			$(".sr-pref-space").html($("#sr-" + srId).html());
 		});
 
 		$(".edit-gateway").click( function(){
