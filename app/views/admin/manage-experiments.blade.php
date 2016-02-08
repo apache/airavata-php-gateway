@@ -396,28 +396,32 @@ to be uncommented when actually in use.
     });
 
     $(".oneDayExp").click( function(){
-        todayDate = moment().format('MM/DD/YYYY hh:mm A');
-        ydayDate = moment().subtract(1, "days").format('MM/DD/YYYY hh:mm A');
+        var todayDate = getCurrentDate();
+        var ydayDate = getCurrentDate(1);
         $("#datetimepicker9").find("input").val( ydayDate);
         $("#datetimepicker10").find("input").val( todayDate);
+        todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
+        ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last 24 hours";
         getExperiments( ydayDate, todayDate, msg);
     });
 
     $(".oneWeekExp").click( function(){
-        todayDate = moment().format('MM/DD/YYYY hh:mm A');
-        ydayDate = moment().subtract(7, "days").format('MM/DD/YYYY hh:mm A');
+        var todayDate = getCurrentDate();
+        var ydayDate = getCurrentDate(7);
         $("#datetimepicker9").find("input").val( ydayDate);
         $("#datetimepicker10").find("input").val( todayDate);
+        todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
+        ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last week";
         getExperiments( ydayDate, todayDate, msg);
     })
 
     $("#getStatistics").click(function () {
         $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = moment($fromTime).format('MM/DD/YYYY hh:mm A');
+        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm A');
         $toTime = $("#datetimepicker10").find("input").val();
-        $toTime = moment($toTime).format('MM/DD/YYYY hh:mm A');
+        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm A');
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -447,7 +451,7 @@ to be uncommented when actually in use.
 
     function getCurrentDate( subtractDaysFromToday){
         var cd =  new Date();
-        var hours = cd.getUTCHours();
+        var hours = cd.getHours();
         month = cd.getMonth() + 1; //getmonth()starts from 0 for some reason
         var timeOfDay = "AM";
         if(hours >= 12)
