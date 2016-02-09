@@ -53,14 +53,15 @@
             </div>
 
             <div class="col-md-12">
-                <h4>Or Select dates between which you want to review experiment statistics.</h4>
+                <h4>Select dates between which you want to review experiment statistics.</h4>
             </div>
             <div class='col-md-5'>
                 <div class="form-group">
                     <div class='input-group date' id='datetimepicker9'>
                         <input type='text' class="form-control" placeholder="From Date" name="from-date"/>
-                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -68,8 +69,9 @@
                 <div class="form-group">
                     <div class='input-group date' id='datetimepicker10'>
                         <input type='text' class="form-control" placeholder="To Date" name="to-date"/>
-                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -322,14 +324,13 @@ to be uncommented when actually in use.
 -->
 
 <!-- Flot Charts JavaScript -->
+<!--
 {{ HTML::script('js/flot/jquery.flot.js')}}
 {{ HTML::script('js/flot/jquery.flot.tooltip.min.js')}}
 {{ HTML::script('js/flot/jquery.flot.resize.js')}}
 {{ HTML::script('js/flot/jquery.flot.pie.js')}}
 {{ HTML::script('js/flot/flot-data.js')}}
-
-{{ HTML::script('js/moment.js')}}
-{{ HTML::script('js/datetimepicker.js')}}
+-->
 {{ HTML::script('js/time-conversion.js')}}
 <script>
 
@@ -418,9 +419,9 @@ to be uncommented when actually in use.
 
     $("#getStatistics").click(function () {
         $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
+        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm A');
         $toTime = $("#datetimepicker10").find("input").val();
-        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
+        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm A');
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
@@ -432,6 +433,7 @@ to be uncommented when actually in use.
     $(".oneDayExp").click();
 
     function getExperiments( startTime, endTime, msg){
+
         $(".experiment-statistics").html("");
         $(".loading-img-statistics").removeClass("hide");
             $.ajax({
@@ -449,7 +451,7 @@ to be uncommented when actually in use.
 
     function getCurrentDate( subtractDaysFromToday){
         var cd =  new Date();
-        var hours = cd.getUTCHours();
+        var hours = cd.getHours();
         month = cd.getMonth() + 1; //getmonth()starts from 0 for some reason
         var timeOfDay = "AM";
         if(hours >= 12)

@@ -142,7 +142,7 @@ Route::get("sr/edit", "StorageResourceController@editView");
 
 Route::post("sr/edit", "StorageResourceController@editSubmit");
 
-Route::get("sr/view", "StorageResourceController@viewView");
+Route::get("sr/view", "StorageResourceController@srView");
 
 Route::get("sr/browse", "StorageResourceController@browseView");
 
@@ -196,13 +196,19 @@ Route::post("gp/add-crp", "GatewayprofileController@modifyCRP");
 
 Route::post("gp/update-crp", "GatewayprofileController@modifyCRP");
 
-Route::post("gp/add-dsp", "GatewayprofileController@modifyDSP");
+Route::post("gp/add-srp", "GatewayprofileController@modifySRP");
 
-Route::post("gp/update-dsp", "GatewayprofileController@modifyDSP");
+Route::post("gp/update-srp", "GatewayprofileController@modifySRP");
 
 Route::post("gp/remove-sr", "GatewayprofileController@delete");
 
 Route::post("gp/credential-store-token-change", "GatewayprofileController@cstChange");
+
+
+//DataCat
+Route::get("datacat/select", "DataCatController@select");
+Route::get("datacat/summary", "DataCatController@summary");
+
 
 //Management Dashboard
 
@@ -234,6 +240,8 @@ Route::get("manage/users", "AdminController@usersView");
 
 Route::post("admin/adduser", "AdminController@addAdminSubmit");
 
+Route::get("admin/getusercountinrole", "AdminController@getUserCountInRole");
+
 Route::post("admin/addgatewayadmin", "AdminController@addGatewayAdminSubmit");
 
 Route::post("admin/add-role", "AdminController@addRole");
@@ -245,6 +253,10 @@ Route::post("admin/delete-role", "AdminController@deleteRole");
 Route::post("admin/enable-cr", "AdminController@enableComputeResource");
 
 Route::post("admin/disable-cr", "AdminController@disableComputeResource");
+
+Route::post("admin/enable-sr", "AdminController@enableStorageResource");
+
+Route::post("admin/disable-sr", "AdminController@disableStorageResource");
 
 Route::post("admin/add-roles-to-user", "AdminController@addRolesToUser");
 

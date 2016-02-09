@@ -447,6 +447,20 @@ class CRUtilities
         else {
             $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
         }
+        $selectedCRs = array();
+        $selectedSRs = array();
+        $allCRs = CRUtilities::getAllCRObjects();
+        $allSRs = SRUtilities::getAllSRObjects();
+        $allCRArray = array();
+        $allSRArray = array();
+        foreach( $allCRs as $index => $crObject)
+        {
+            $allCRArray[$crObject->computeResourceId] = $crObject;
+        }
+        foreach( $allSRs as $index => $srObject)
+        {
+            $allSRArray[$srObject->storageResourceId] = $srObject;
+        }
 
         $gatewayProfiles = Airavata::getAllGatewayResourceProfiles(Session::get('authz-token'));
         //var_dump( $gatewayProfiles); exit;
@@ -457,18 +471,31 @@ class CRUtilities
 
                 if ($gw->gatewayId == $gp->gatewayID) {
                     foreach ((array)$gp->computeResourcePreferences as $i => $crp) {
-                        $gatewayProfiles[$index]->computeResourcePreferences[$i]->crDetails = Airavata::getComputeResource(Session::get('authz-token'), $crp->computeResourceId);
+                        $gatewayProfiles[$index]->computeResourcePreferences[$i]->crDetails = $allCRArray[ $crp->computeResourceId];
+                        
+                        //had to add this condition since for super admin it takes CRs selected in all gateways.
+                        if( $gp->gatewayID == Session::get("gateway_id"))
+                            $selectedCRs[] = $crp->computeResourceId;
                     }
                     foreach( (array)$gp->storagePreferences as $j => $srp){
-                        $gatewayProfiles[$index]->storagePreferences[$j]->srDetails = Airavata::getStorageResource( Session::get('authz-token'), $srp->storageResourceId);
+                        $gatewayProfiles[$index]->storagePreferences[$j]->srDetails = $allSRArray[ $srp->storageResourceId];
+                        
+                        //had to add this condition since for super admin it takes SRs selected in all gateways.
+                        if( $gp->gatewayID == Session::get("gateway_id"))
+                            $selectedSRs[] = $srp->storageResourceId;
                     }
                     $gateways[$key]->profile = $gatewayProfiles[$index];
                 }
             }
         }
         //var_dump( $gatewayProfiles[0]->computeResourcePreferences[0]->crDetails); exit;
-
-        return $gateways;
+        $gatewaysInfo = array(  "gateways" =>$gateways, 
+                                "selectedCRs" => $selectedCRs, 
+                                "selectedSRs" => $selectedSRs, 
+                                "allCRs" => $allCRs,
+                                "allSRs" => $allSRs
+                            );
+        return $gatewaysInfo;
     }
 
     public static function updateGatewayProfile( $data){
@@ -486,10 +513,7 @@ class CRUtilities
                 Cache::forget('CR-' . $inputs["computeResourceId"]);
             }
         }
-
-        //var_dump( $inputs); exit;
         return Airavata::addGatewayComputeResourcePreference(Session::get('authz-token'), $inputs["gatewayId"], $inputs["computeResourceId"], $computeResourcePreferences);
-
     }
 
     public static function deleteGP($gpId)

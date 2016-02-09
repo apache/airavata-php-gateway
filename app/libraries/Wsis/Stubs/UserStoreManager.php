@@ -127,8 +127,9 @@ class UserStoreManager {
         $parameters = new ListUsers();
         $parameters->filter = "*" . $phrase . "*";
         $parameters->maxItemLimit = -1;
-
-        return $this->serviceStub->listUsers($parameters)->return;
+        if(isset($this->serviceStub->listUsers($parameters)->return)){
+            return $this->serviceStub->listUsers($parameters)->return;
+        }
     }
 
      /**

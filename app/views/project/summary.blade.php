@@ -9,6 +9,7 @@
 <div class="container" style="max-width: 80%;">
     <?php
         $project = ProjectUtilities::get_project($_GET['projId']);
+        $experiments = ProjectUtilities::get_experiments_in_project($project->projectID);
     ?>
     <h1>Project Summary
         @if( !isset($dashboard))
@@ -16,110 +17,85 @@
                   title="Refresh"><span class="glyphicon glyphicon-refresh refresh-exp"></span></a></small>
         @endif
     </h1>
-    <?php
+    <div>
+        <div>
+            <h3>{{ $project->name }} 
+                <a href="edit?projId={{ $project->projectID }}" title="Edit">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </h3>
+            <p>{{ $project->description }}</p>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <tr>
 
-    echo '<div>';
+                    <th>Name</th>
+                    <th>Application</th>
+                    <th>Compute Resource</th>
+                    <th>Last Modified Time</th>
+                    <th>Experiment Status</th>
+                    <th>Job Status</th>
 
-    echo '<div>';
-    echo '<h3>' . $project->name . ' <a href="edit?projId=' .
-        $project->projectID .
-        '" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a></h3>';
-    echo "<p>$project->description</p>";
-    echo '</div>';
+                </tr>
+                <?php 
 
-    $experiments = ProjectUtilities::get_experiments_in_project($project->projectID);
+                foreach ($experiments as $experiment) {
+                    $expValues = ExperimentUtilities::get_experiment_values($experiment, $project, true);
+                    $expValues["jobState"] = ExperimentUtilities::get_job_status($experiment);
+                    $applicationInterface = AppUtilities::get_application_interface($experiment->executionId);
+                    
+                    try {
+                        $cr = CRUtilities::get_compute_resource($experiment->userConfigurationData->computationalResourceScheduling->resourceHostId);
+                        if (!empty($cr)) {
+                            $resourceName = $cr->hostName;
+                        }
+                    } catch (Exception $ex) {
+                        $resourceName = 'Error while retrieving the CR';
+                    }
+                    ?>
 
-    echo '<div class="table-responsive">';
-    echo '<table class="table">';
+                <tr>
+                    <td> 
+                        <a href="{{URL::to('/')}}/experiment/summary?expId={{$experiment->experimentId}}">
+                        {{ $experiment->experimentName }} 
+                        </a>
+                        @if( $expValues['editable'])
+                            <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                        @endif
+                    </td>
+                    <td>
+                        @if( $applicationInterface != null )
+                            {{ $applicationInterface->applicationName }}
+                        @else
+                            <span class='text-danger'>Removed</span>
+                        @endif
+                    </td>
 
-    echo '<tr>';
+                    <td>{{ $resourceName }}</td>
+                    <td class="time" unix-time="{{$expValues["experimentTimeOfStateChange"]}}"></td>
+                    <td>
+                        <div class="{{ExperimentUtilities::get_status_color_class( $expValues["experimentStatusString"])}}">
+                            {{ $expValues["experimentStatusString"] }}
+                        </div>
+                    </td>
 
-    echo '<th>Name</th>';
-    echo '<th>Application</th>';
-    echo '<th>Compute Resource</th>';
-    echo '<th>Last Modified Time</th>';
-    echo '<th>Experiment Status</th>';
-    echo '<th>Job Status</th>';
-
-    echo '</tr>';
-
-    foreach ($experiments as $experiment) {
-        $expValues = ExperimentUtilities::get_experiment_values($experiment, $project, true);
-        $expValues["jobState"] = ExperimentUtilities::get_job_status($experiment);
-        $applicationInterface = AppUtilities::get_application_interface($experiment->executionId);
-
-        switch ($expValues["experimentStatusString"]) {
-            case 'CANCELING':
-            case 'CANCELED':
-            case 'UNKNOWN':
-                $textClass = 'text-warning';
-                break;
-            case 'FAILED':
-                $textClass = 'text-danger';
-                break;
-            case 'COMPLETED':
-                $textClass = 'text-success';
-                break;
-            default:
-                $textClass = 'text-info';
-                break;
-        }
-
-        echo '<tr>';
-
-        echo '<td>';
-        switch ($expValues["experimentStatusString"]) {
-            case 'SCHEDULED':
-            case 'LAUNCHED':
-            case 'EXECUTING':
-            case 'CANCELING':
-            case 'COMPLETED':
-                echo '<a href="' . URL::to('/') . '/experiment/summary?expId=' .
-                        $experiment->experimentId . '">' . $experiment->experimentName . '</a>';
-                break;
-            default:
-                echo '<a href="' . URL::to('/') . '/experiment/summary?expId=' .
-                        $experiment->experimentId . '">' . $experiment->experimentName . '</a>' .
-                        ' <a href="' . URL::to('/') . '/experiment/edit?expId=' .
-                        $experiment->experimentId .
-                        '" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>';
-                break;
-        }
-        echo '</td>';
-
-        echo "<td>$applicationInterface->applicationName</td>";
-
-        echo '<td>';
-        try {
-            $cr = CRUtilities::get_compute_resource($experiment->userConfigurationData
-                ->computationalResourceScheduling->resourceHostId);
-            if (!empty($cr)) {
-                echo $cr->hostName;
-            }
-        } catch (Exception $ex) {
-            //Error while retrieving the CR
-        }
-        echo '</td>';
-        echo '<td class="time" unix-time="' . $expValues["experimentTimeOfStateChange"] . '"></td>';
-
-
-        echo '<td><div class="' . $textClass . '">' . $expValues["experimentStatusString"] . '</div></td>';
-
-        if (isset($expValues["jobState"])) echo '
-            <td>' . $expValues["jobState"] . '</td>';
-        else
-            echo '<td></td>';
-        echo '</tr>';
-    }
-
-    echo '</table>';
-    echo '</div>';
-    echo '</div>';
-
-    ?>
-
-
+                    <td>
+                    @if (isset($expValues["jobState"]) )
+                        <div class="{{ ExperimentUtilities::get_status_color_class( $expValues["jobState"]) }}">
+                            {{ $expValues["jobState"] }}
+                        </div>
+                    @endif
+                    </td>
+                </tr>
+                <?php
+                }
+                ?>
+            </table>
+        </div>
+    </div>
 </div>
+
 @stop
 @section('scripts')
 @parent

@@ -2,7 +2,9 @@
 //<td> elements should have the unix time as an attribute e.g. <td class="time" unix-time="423423423524"></td>
 
 function convertTimestamp(timestamp) {
-    var d = new Date(timestamp * 1000),	// Convert the passed timestamp to milliseconds
+    if( timestamp.length <= 10)
+        timestamp = timestamp * 1000;// Convert the passed timestamp to milliseconds    
+    var d = new Date( parseInt( timestamp) ),
         yyyy = d.getFullYear(),
         mm = ('0' + (d.getMonth() + 1)).slice(-2),	// Months are zero based. Add leading 0.
         dd = ('0' + d.getDate()).slice(-2),			// Add leading 0.

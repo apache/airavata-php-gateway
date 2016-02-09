@@ -40,15 +40,15 @@ class GatewayprofileController extends BaseController {
 	{
 		if( CRUtilities::add_or_update_CRP( Input::all()) )
 		{
-			return Redirect::to("admin/dashboard/gateway")->with("message","Compute Resource Preference for the desired Gateway has been set.");
+			return Redirect::to("admin/dashboard/gateway")->with("message","Compute Resource Preference has been set.");
 		}
 	}
 
-	public function modifyDSP()
+	public function modifySRP()
 	{
-		if( SRUtilities::add_or_update_DSP( Input::all()) )
+		if( SRUtilities::add_or_update_SRP( Input::all()) )
 		{
-			return Redirect::to("admin/dashboard/gateway")->with("message","Data Storage Preference for the desired Gateway has been set.");
+			return Redirect::to("admin/dashboard/gateway")->with("message","Storage Preference has been set.");
 		}
 	}
 

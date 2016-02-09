@@ -86,6 +86,22 @@ class ExperimentController extends BaseController
             $autoRefresh = false;
         }
         if ($experiment != null) {
+             $data = array(
+                "autoRefresh"=> $autoRefresh,
+            );
+            //viewing experiments of other gateways is not allowed if user is not super admin
+            if( $experiment->gatewayId != Session::get("gateway_id") && !Session::has("super-admin")){
+                Session::put("permissionDenied", true);
+                CommonUtilities::print_error_message('It seems that you do not have permissions to view this experiment or it belongs to another gateway.');
+                if (Input::has("dashboard"))
+                    return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
+                else
+                    return View::make("experiment/summary", array("invalidExperimentId" => 1));
+            }
+            else
+                Session::forget("permissionDenied");
+
+        
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);

@@ -72,10 +72,11 @@ class StorageresourceController extends BaseController
     }
 
     public function editSubmit()
-    {
+    {   
+        var_dump( Input::all() ); exit;
         $this->beforeFilter('verifyeditadmin');
         $tabName = "";
-        if (Input::get("sr-edit") == "resDesc") /* Modify compute Resource description */ {
+        if (Input::get("sr-edit") == "resDesc") /* Modify storage Resource description */ {
             $storageResourceDescription = SRUtilities::get_storage_resource(Input::get("srId"));
             $storageResourceDescription->hostName = trim(Input::get("hostname"));
             $storageResourceDescription->resourceDescription = Input::get("description");
@@ -112,7 +113,7 @@ class StorageresourceController extends BaseController
         return Redirect::to("sr/edit?srId=" . Input::get("srId") . $tabName);
     }
 
-    public function viewView()
+    public function srView()
     {
         $data = CRUtilities::getEditCRData();
         $computeResourceId = "";
@@ -160,6 +161,7 @@ class StorageresourceController extends BaseController
     {
         $this->beforeFilter('verifyeditadmin');
         $result = SRUtilities::deleteActions(Input::all());
+        var_dump($result);exit;
         /*
         if (Input::has("jsiId")) {
             return Redirect::to("cr/edit?crId=" . Input::get("crId") . "#tab-jobSubmission")

@@ -132,7 +132,7 @@
             <input type="hidden" name="gatewayId" id="gatewayId" value="">
 
             <div class="input-group">
-                <select name="computeResourceId" class="cr-select form-control">
+                <select name="computeResourceId" class="cr-select form-control" required>
                     <option value="">Select a compute Resource and set its preferences</option>
                     @foreach( (array)$computeResources as $index => $cr)
                     <option value="{{ $cr->computeResourceId}}">{{ $cr->hostName }}</option>

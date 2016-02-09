@@ -40,14 +40,16 @@ dmi preference might be needed in the future
     <div class="col-md-9">
         <select class="form-control gateway-credential-store-token" name="resourceSpecificCredentialStoreToken" >
             @if( isset( $preferences) )
-            <option value="{{$preferences->resourceSpecificCredentialStoreToken}}">{{$preferences->resourceSpecificCredentialStoreToken}}</option>
+            @foreach( $tokens as $token => $publicKey)
+                <option value="{{$token}}" @if( $token == $preferences->resourceSpecificCredentialStoreToken) selected @endif >{{$token}}</option>
+            @endforeach
             @else
-            <option value="">Select a Credential Token from Store</option>
+                <option value="">Select a Credential Token from Store</option>
+                @foreach( $tokens as $token => $publicKey)
+                <option value="{{$token}}">{{$token}}</option>
+                @endforeach
             @endif
             <option value="">DO-NO-SET</option>
-            @foreach( $tokens as $token => $publicKey)
-            <option value="{{$token}}">{{$token}}</option>
-            @endforeach
         </select>
         <!--
         <input type="text" name="resourceSpecificCredentialStoreToken" class="form-control"
@@ -57,8 +59,8 @@ dmi preference might be needed in the future
 </div>
 
 @if(Session::has("admin"))
-<div class="form-group">
-    <input type="submit" class="form-control btn btn-primary" value="Set preferences"/>
+<div class="form-group text-center">
+    <input type="submit" class="btn btn-primary" value="Set preferences"/>
 </div>
 @endif
 </div>

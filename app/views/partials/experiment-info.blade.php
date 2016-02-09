@@ -1,8 +1,14 @@
 <div class="container" style="max-width: 750px;">
-
+    <!--
     @if(isset( $invalidExperimentId ) )
     <div class="alert alert-danger">
         The Experiment ID does not exist. Please go to correct experiment.
+    </div>
+    @else
+    -->
+    @if( Session::has("permissionDenied" ) )
+    <div class="alert alert-danger">
+        {{Session::forget("permissionDenied") }}
     </div>
     @else
     <h1>
@@ -60,10 +66,23 @@
 
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
             <tr>
-                <th>Job Name : {{$jobDetail->jobName}}</th>
-                <td>Job ID : {{ $jobDetail->jobId}}</td>
-                <td> Status : {{$jobDetail->jobStatus->jobStateName }}</td>
-                <td> Creation Time : {{ date("F j, Y, g:i a", $jobDetail->creationTime )}}</td>
+                <th>Job</th>
+                <td>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>Name</td>
+                            <td>ID</td>
+                            <td>Status</td>
+                            <td>Creation Time</td>
+                        </tr>
+                        <tr>
+                            <td>{{$jobDetail->jobName}}</td>
+                            <td>{{ $jobDetail->jobId}}</td>
+                            <td>{{$jobDetail->jobStatus->jobStateName }}</td>
+                            <td class="time" unix-time="{{$jobDetail->creationTime}}"></td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
         @endforeach
         <!--
@@ -163,11 +182,11 @@
                    type="submit"
                    class="btn btn-success"
                    value="Launch"
-                   title="Launch the experiment" <?php if (!$expVal["editable"]) echo 'style="display: none"' ?>>
+                   title="Launch the experiment" @if ( !$expVal["editable"]) style="display: none" @endif>
             <a id="cancel_exp_link" href="{{URL::to('/') }}/experiment/cancel?expId={{ $experiment->experimentId }}"
                class="btn btn-default" onclick="return confirm('Are you sure you want to cancel this experiment?')"
                role="button"
-               tit  le="Edit the experiment's settings" <?php if (!$expVal["cancelable"]) echo 'style="display: none"' ?>>
+               title="Edit the experiment's settings" @if (!$expVal["cancelable"]) style="display: none" @endif>
                 <input name="cancel" type="submit" class="btn btn-warning"
                        value="Cancel" <?php if (!$expVal["cancelable"]) echo 'disabled'; ?> >
             </a>
@@ -200,6 +219,8 @@
 
     <!-- check of correct experiment Id ends here -->
     @endif
+
+    @endif
 </div>
 
 @if( isset($dashboard))
@@ -225,14 +246,25 @@
                             </span>
 
                                 @foreach( $process->tasks as $task)
-                                    <br/>Task Id : {{ $task->taskId }}
-                                    <br/>Task Type : {{ $expVal["taskTypes"][$task->taskType] }}
-                                    <br/>Task Status : {{ $expVal["taskStates"][$task->taskStatus->state] }}
-                                    <br/>Jobs : {{ count( $task->jobs)}}
-                                    <br/>@foreach( $task->jobs as $jobIndex => $job)
-                                            Job No. : {{ $jobIndex}}
-                                         @endforeach
-
+                                    <dl class="well dl-horizontal">
+                                        <dt>Task Id : </dt> <dd>{{ $task->taskId }}</dd>
+                                        <dt>Task Type : </dt> <dd>{{ $expVal["taskTypes"][$task->taskType] }}</dd>
+                                        <dt>Task Status : </dt> <dd>{{ $expVal["taskStates"][$task->taskStatus->state] }}</dd>
+                                    @if( is_object( $task->taskError))
+                                        <dt>Task Error Id : </dt><dd>{{ $task->taskError->errorId }}</dd>
+                                        <dt>Task Error Msg : </dt><dd>{{ $task->taskError->userFriendlyMessage }}</dd>
+                                    @endif
+                                    @if( count( $task->jobs) > 0 )
+                                        <dt>Jobs : </dt><dd>{{ count( $task->jobs)}}</dd>
+                                    @endif
+                                    @foreach( $task->jobs as $jobIndex => $job)
+                                        <dl class="well dl-horizontal">
+                                            <dt>Job Id. :</dt> <dd>{{ $job->jobId }}</dd>
+                                            <dt>Job Name : </dt><dd>{{ $job->jobName }}</dd>
+                                            <dt>Job Description :</dt><dd>{{ $job->jobDescription }}</dd>
+                                        </dl>
+                                     @endforeach
+                                    </dl>
                                     <hr/>
                                 @endforeach
                         </li>
@@ -260,78 +292,7 @@
                 </li>
             </ul>
         </li>
-                <!--
-                <li>
-                    <span class="badge badge-success"><i class="icon-minus-sign"></i>Input Staging</span>
-                    <ul>
-                        <li>
-                            <span class="alert alert-success"><i
-                                    class="icon-time"></i>2015-04-17 15:21:21</span> &ndash; <a href="">PGA to
-
-                                Airavata File Transfer Successful</a>
-                        </li>
-                        <li>
-                            <span class="alert alert-success" abhi><i
-                                    class="icon-time"></i>2015-04-17 15:21:21</span> &ndash; <a href="">Airavata to
-
-                                Resource File Transfer Successful</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <span class="badge badge-warning"><i class="icon-minus-sign"></i>Job Description</span>
-                    <ul>
-                        <li>
-                            <a href=""><span>
-                                               Long Script of Job Description / PBS Script <br/>
-                                               <br/>
-                                                <p>
-                                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-                                                    commodo ligula eget dolor. Aenean massa. Cum sociis natoque
-                                                    penatibus et magnis dis parturient montes, nascetur ridiculus
-                                                    mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
-                                                    quis, sem. Nulla consequat massa quis enim. Donec pede justo,
-                                                    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo,
-                                                    rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum
-                                                    felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-                                                    Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.
-                                                    Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac,
-                                                    enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a,
-                                                    tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque
-                                                    rutrum. Aenean
-                                                </p>
-                                             </span></a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <span class="badge badge-important"><i class="icon-minus-sign"></i>Execution</span>
-                    <ul>
-                        <li>
-                            <a href=""><span class="alert alert-success"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                Execution of Job Description - No errors</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li>
-                    <span class="badge badge-important"><i class="icon-minus-sign"></i>Experiment Complete</span>
-                    <ul>
-                        <li>
-                            <a href=""><span class="alert alert-danger"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                Output Transfer from Resource to Airavata UnSuccessful</a>
-                            <br/>
-                            <span> Some text about failure</span>
-                        </li>
-                        <li>
-                            <a href=""><span class="alert alert-danger"><i class="icon-time"></i>2015-04-17 15:21:21</span> &ndash;
-                                Output Transfer from Airavata to PGA UnSuccessful</a>
-                            <br/>
-                            <span> Some text about failure</span>
-                        </li>
-                    </ul>
-                </li>
-                -->
+                
 
     </ul>
 </div>

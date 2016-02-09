@@ -12,7 +12,7 @@
 @section('scripts')
 @parent
 <script>
-    @if($autoRefresh)
+    @if( isset( $autoRefresh) )
         var autoRefresh = true;
     @else
         var autoRefresh = false;

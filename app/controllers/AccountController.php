@@ -125,6 +125,7 @@ class AccountController extends BaseController
             $username = $userProfile['username'];
             $userRoles = (array)WSIS::getUserRoles($username);
 
+            print_r( $userRoles);
             $authzToken = new Airavata\Model\Security\AuthzToken();
             $authzToken->accessToken = $accessToken;
             $authzToken->claimsMap = array('userName'=>$username);
@@ -132,11 +133,12 @@ class AccountController extends BaseController
             Session::put('oauth-refresh-code',$refreshToken);
             Session::put('oauth-expiration-time',$expirationTime);
             Session::put("user-profile", $userProfile);
-
+            Session::put('username', "Eroma2015");
             if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
                 Session::put("admin", true);
             }
             if (in_array(Config::get('pga_config.wsis')['read-only-admin-role-name'], $userRoles)) {
+                Session::put("authorized-user", true);
                 Session::put("admin-read-only", true);
             }
             if (in_array(Config::get('pga_config.wsis')['user-role-name'], $userRoles)) {
@@ -144,10 +146,9 @@ class AccountController extends BaseController
             }
 
             //only for super admin
-            if(  Config::get('pga_config.portal')['super-admin-portal'] == true){
+            if(  Config::get('pga_config.portal')['super-admin-portal'] == true && Session::has("admin")){
                 Session::put("super-admin", true);
             }
-
             CommonUtilities::store_id_in_session($username);
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
