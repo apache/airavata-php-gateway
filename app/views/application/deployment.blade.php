@@ -134,12 +134,13 @@
             </div>
         </div>
 
-        <div class="modal fade" id="create-app-deployment-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
-             aria-hidden="true">
+        <div class="modal fade" id="create-app-deployment-block" tabindex="-1" role="dialog" aria-labelledby="add-modal" aria-hidden="true"  data-backdrop="static">
             <div class="modal-dialog">
                 <form action="{{URL::to('/')}}/app/deployment-create" method="POST">
                     <div class="modal-content">
                         <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
                             <h3 class="text-center">Create Application Deployment</h3>
                         </div>
                         <div class="modal-body row">

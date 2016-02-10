@@ -100,8 +100,8 @@
                         </div>
                         <div class="modal-footer">
                             <div class="form-group">
-                                <input type="submit" class="btn btn-primary" value="Save"/>
-                                <input type="reset" class="reset-create-form btn btn-success" value="Reset"/>
+                                <input type="submit" class="btn btn-primary" value="Create"/>
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
                             </div>
                         </div>
                     </div>
