@@ -252,7 +252,7 @@
                                         <dt>Task Status : </dt> <dd>{{ $expVal["taskStates"][$task->taskStatus->state] }}</dd>
                                     @if( is_object( $task->taskError))
                                         <dt>Task Error Id : </dt><dd>{{ $task->taskError->errorId }}</dd>
-                                        <dt>Task Error Msg : </dt><dd>{{ $task->taskError->userFriendlyMessage }}</dd>
+                                        <dt>Task Error Msg : </dt><dd>{{ $task->taskError->userFriendlyMessage }} <a tabindex="0" class="popover-taskinfo btn btn-sm btn-default" role="button" data-toggle="popover" data-html="true" title="Detailed Task Information" data-content="{{ str_replace( ',', '<br/><br/>', $task->taskError->actualErrorMessage ) }}">More Info</a></dd>
                                     @endif
                                     @if( count( $task->jobs) > 0 )
                                         <dt>Jobs : </dt><dd>{{ count( $task->jobs)}}</dd>
@@ -301,4 +301,5 @@
 @section('scripts')
 @parent
 {{ HTML::script('js/time-conversion.js')}}
+
 @stop

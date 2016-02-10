@@ -210,4 +210,9 @@
             scrollTop: $(".get-experiment").offset().top - 100
         }, 1000);
     });
+
+    //element coming from experiment-info blade
+    $(document).on("click", ".popover-taskinfo", function(){ 
+        $(this).popover();
+    });
 </script>
