@@ -19,20 +19,16 @@
                 <th>Resource</th>
                 <th>Creation Time</th>
                 <th>Status</th>
-                <!--                    <select class="form-control select-status">-->
-                <!--                        <option value="ALL">Status</option>-->
-                <!--                    @foreach( $expStates as $index => $state)-->
-                <!--                        <option value="{{ $state }}">{{ $state }}</option>-->
-                <!--                    @endforeach-->
-                <!--                    </select>-->
-                <!--                </th>-->
+                @if( isset( $dashboard))
+                <th>Check Stats</th>
+                @endif
             </tr>
 
             @foreach($expContainer as $experiment)
                 <tr>
                     <!-- Experiment Name -->
                     <td> 
-                        <a @if( isset( $dashboard)) class="get-exp-stats" data-expid="{{$experiment['experiment']->experimentId}}" @else href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}" @endif style="cursor: pointer;">
+                        <a href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}" target="_blank">
                         {{ $experiment['experiment']->name }} 
                         </a>
                         @if( $experiment['expValue']['editable'])
@@ -59,11 +55,18 @@
                     <td class="time" unix-time="{{ $experiment['experiment']->creationTime / 1000 }}"></td>
 
                     <td>
-                        <a @if( isset( $dashboard)) class="get-exp-stats {{ ExperimentUtilities::get_status_color_class( $experiment['expValue']['experimentStatusString'] ) }}" data-expid="{{$experiment['experiment']->experimentId}}" @else class="{{ ExperimentUtilities::get_status_color_class( $experiment['expValue']['experimentStatusString'] ) }}" href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}" @endif style="cursor: pointer;">
+                        <a class="{{ ExperimentUtilities::get_status_color_class( $experiment['expValue']['experimentStatusString'] ) }}" href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}" target="_blank">
                             {{$experiment['expValue']['experimentStatusString'] }}
                         </a>
                     </td>
-
+                    @if( isset( $dashboard)) 
+                    <td class="text-center">
+                        <a class="get-exp-stats" data-expid="{{$experiment['experiment']->experimentId}}" style="cursor: pointer;">
+                        <span class="glyphicon glyphicon-stats"></span>
+                        </a>
+                    </td>
+                    @endif
+                    
                 </tr>
             @endforeach
            
