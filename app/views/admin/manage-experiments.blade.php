@@ -358,14 +358,16 @@ to be uncommented when actually in use.
 
     $(".get-experiment").click(function () {
         $(".loading-img").removeClass("hide");
+
+        var expId = $(".experimentId").val();
         $.ajax({
-            url: 'experiment/summary?expId=' + $(".experimentId").val(),
+            url: 'experiment/summary?expId=' + expId,
             type: 'get',
             success: function (data) {
                 //$(".experiment-info").html(data);
-                $("#myTabs").append('<li role="presentation"><a href="#' + $(".experimentId").val() + '" aria-controls="' + $(".experimentId").val() + '" role="tab" data-toggle="tab">' + $(".experimentId").val() + '</a></li>');
-                $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + $(".experimentId").val() + '">' + data + '</div>');
-                $('#myTabs a[href="#' + $(".experimentId").val() + '"]').tab('show') // Select tab by name
+                $("#myTabs").append('<li role="presentation"><a href="#' + expId + '" aria-controls="' + expId + '" role="tab" data-toggle="tab">' + expId + '</a></li>');
+                $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + expId + '">' + data + '</div>');
+                $('#myTabs a[href="#' + expId + '"]').tab('show') // Select tab by name
                 
                 //$('#myTabs a[href="#expsummary"]').tab('show') // Select tab by name
                 
@@ -467,5 +469,7 @@ to be uncommented when actually in use.
         var todayDate = month + "/" + date + "/" + cd.getFullYear() + " " + hours + ":" + cd.getUTCMinutes() + " " + timeOfDay;
         return todayDate;
     }
+
+    $
 </script>
 @stop

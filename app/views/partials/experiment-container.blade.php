@@ -32,7 +32,7 @@
                 <tr>
                     <!-- Experiment Name -->
                     <td> 
-                        <a href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}">
+                        <a @if( isset( $dashboard)) class="get-exp-stats" data-expid="{{$experiment['experiment']->experimentId}}" @else href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}" @endif style="cursor: pointer;">
                         {{ $experiment['experiment']->name }} 
                         </a>
                         @if( $experiment['expValue']['editable'])
@@ -59,8 +59,7 @@
                     <td class="time" unix-time="{{ $experiment['experiment']->creationTime / 1000 }}"></td>
 
                     <td>
-                        <a class="{{ ExperimentUtilities::get_status_color_class( $experiment['expValue']['experimentStatusString'] ) }}"
-                           href="{{ URL::to('/') }}/experiment/summary?expId={{$experiment['experiment']->experimentId }}">
+                        <a @if( isset( $dashboard)) class="get-exp-stats {{ ExperimentUtilities::get_status_color_class( $experiment['expValue']['experimentStatusString'] ) }}" data-expid="{{$experiment['experiment']->experimentId}}" @else class="{{ ExperimentUtilities::get_status_color_class( $experiment['expValue']['experimentStatusString'] ) }}" href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}" @endif style="cursor: pointer;">
                             {{$experiment['expValue']['experimentStatusString'] }}
                         </a>
                     </td>
