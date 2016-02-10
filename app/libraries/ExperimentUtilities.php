@@ -668,6 +668,7 @@ class ExperimentUtilities
         }
     }
 
+    /*
     public static function get_experiment_summary_values($experimentSummary, $forSearch = false)
     {
 //        var_dump( $experimentSummary); exit;
@@ -729,7 +730,7 @@ class ExperimentUtilities
         return $expVal;
 
     }
-
+    */
 
     public static function get_experiment_values($experiment, $project, $forSearch = false)
     {
@@ -744,7 +745,12 @@ class ExperimentUtilities
         $expVal["taskStates"] = TaskState::$__names;
         $expVal["taskTypes"] = TaskTypes::$__names;
 
-        $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus->state];
+
+        if( is_object( $experiment->experimentStatus ) )
+            $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus->state];
+        else
+            $experimentStatusString = $experiment->experimentStatus; 
+
         $expVal["experimentStatusString"] = $experimentStatusString;
         if ( $experimentStatusString == ExperimentState::FAILED)
             $expVal["editable"] = false;
@@ -757,18 +763,16 @@ class ExperimentUtilities
 
         if ($experiment->experimentStatus != null) {
             $experimentStatus = $experiment->experimentStatus;
-            /*
-            $experimentState = $experimentStatus->state;
-            $experimentStatusString = ExperimentState::$__names[$experimentState];
-            $expVal["experimentStatusString"] = $experimentStatusString;
-            */
-            $expVal["experimentTimeOfStateChange"] = $experimentStatus->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
+
+            if( is_object( $experiment->experimentStatus ) )
+                $expVal["experimentTimeOfStateChange"] = $experimentStatus->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
             $expVal["experimentCreationTime"] = $experiment->creationTime / 1000; // divide by 1000 since creationTime is in ms
         }
 
-        if (!$forSearch) {
+        if (!$forSearch && is_object( $experiment->experimentStatus) ){
             $userConfigData = $experiment->userConfigurationData;
             $scheduling = $userConfigData->computationalResourceScheduling;
+
             $expVal['scheduling'] = $scheduling;
             try {
                 $expVal["computeResource"] = CRUtilities::get_compute_resource($scheduling->resourceHostId);
@@ -786,8 +790,8 @@ class ExperimentUtilities
             $expVal["applicationInterface"]->applicationName = substr($experiment->executionId, -8);
         }
 
-
-        switch (ExperimentState::$__names[$experiment->experimentStatus->state]) {
+        //editable statuses
+        switch ( $experimentStatusString) {
             case 'CREATED':
             case 'VALIDATED':
             case 'SCHEDULED':
@@ -798,7 +802,8 @@ class ExperimentUtilities
                 break;
         }
 
-        switch (ExperimentState::$__names[$experiment->experimentStatus->state]) {
+        //cancelable statuses
+        switch ( $experimentStatusString) {
             case 'VALIDATED':
             case 'SCHEDULED':
             case 'LAUNCHED':
@@ -920,7 +925,7 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_summary_values($experiment, true);
+            $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
             $expContainer[$expNum]['experiment'] = $experiment;
             if ($expValue["experimentStatusString"] == "FAILED")
                 $expValue["editable"] = false;
@@ -977,7 +982,7 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_search_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
+            $expValue = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
             $expContainer[$expNum]['experiment'] = $experiment;
             if ($expValue["experimentStatusString"] == "FAILED")
                 $expValue["editable"] = false;
@@ -1023,7 +1028,7 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_summary_values($experiment, true);
+            $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
             $expContainer[$expNum]['experiment'] = $experiment;
             if ($expValue["experimentStatusString"] == "FAILED")
                 $expValue["editable"] = false;

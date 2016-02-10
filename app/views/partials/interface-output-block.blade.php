@@ -46,11 +46,10 @@
 
         <div class="col-md-9">
             <select name="dataMovement[]" readonly class="form-control">
-                <option>select</option>
-                <option value="1"
-                @if( isset( $appOutputs) ) @if( $appOutputs->dataMovement == 1) selected @endif @endif>True</option>
                 <option value="0"
                 @if( isset( $appOutputs) ) @if( $appOutputs->dataMovement == 0) selected @endif @endif>False</option>
+                <option value="1"
+                @if( isset( $appOutputs) ) @if( $appOutputs->dataMovement == 1) selected @endif @endif>True</option>
             </select>
         </div>
         <!--

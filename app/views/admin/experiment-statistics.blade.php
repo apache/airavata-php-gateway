@@ -147,163 +147,32 @@
 <script>
 
     $("#getAllExperiments").click(function () {
-        //These are coming from manage-experiments.blade.php
-        $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
-        $toTime = $("#datetimepicker10").find("input").val();
-        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
-        if ($fromTime == '' || $toTime == '') {
-            alert("Please Select Valid Date Inputs!");
-        } else {
-            $(".loading-img-statistics").removeClass("hide");
-            $.ajax({
-                type: 'GET',
-                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
-                data: {
-                    'status-type': 'ALL',
-                    'search-key': 'creation-time',
-                    'from-date': $fromTime,
-                    'to-date': $toTime
-                },
-                async: false,
-                success: function (data) {
-                    $(".experiment-container").html(data);
-                    //from time-conversion.js
-                    updateTime();
-                }
-            }).complete(function () {
-                $(".loading-img-statistics").addClass("hide");
-            });
-        }
+        getExperimentsOfStatus( 'ALL');
     });
 
     $("#getCreatedExperiments").click(function () {
-        //These are coming from manage-experiments.blade.php
-        $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
-        $toTime = $("#datetimepicker10").find("input").val();
-        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
-
-        if ($fromTime == '' || $toTime == '') {
-            alert("Please Select Valid Date Inputs!");
-        } else {
-            $(".loading-img-statistics").removeClass("hide");
-            $.ajax({
-                type: 'GET',
-                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
-                data: {
-                    'status-type': 'CREATED',
-                    'search-key': 'creation-time',
-                    'from-date': $fromTime,
-                    'to-date': $toTime
-                },
-                async: false,
-                success: function (data) {
-                    $(".experiment-container").html(data);
-                    //from time-conversion.js
-                    updateTime();
-                }
-            }).complete(function () {
-                $(".loading-img-statistics").addClass("hide");
-            });
-        }
+        getExperimentsOfStatus( 'CREATED');
     });
 
     $("#getRunningExperiments").click(function () {
-        //These are coming from manage-experiments.blade.php
-        $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
-        $toTime = $("#datetimepicker10").find("input").val();
-        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
-        if ($fromTime == '' || $toTime == '') {
-            alert("Please Select Valid Date Inputs!");
-        } else {
-            $(".loading-img-statistics").removeClass("hide");
-            $.ajax({
-                type: 'GET',
-                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
-                data: {
-                    'status-type': 'RUNNING',
-                    'search-key': 'creation-time',
-                    'from-date': $fromTime,
-                    'to-date': $toTime
-                },
-                async: false,
-                success: function (data) {
-                    $(".experiment-container").html(data);
-                    //from time-conversion.js
-                    updateTime();
-                }
-            }).complete(function () {
-                $(".loading-img-statistics").addClass("hide");
-            });
-        }
+        getExperimentsOfStatus( 'RUNNING');
     });
 
     $("#getCompletedExperiments").click(function () {
-        //These are coming from manage-experiments.blade.php
-        $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
-        $toTime = $("#datetimepicker10").find("input").val();
-        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
-        if ($fromTime == '' || $toTime == '') {
-            alert("Please Select Valid Date Inputs!");
-        } else {
-            $(".loading-img-statistics").removeClass("hide");
-            $.ajax({
-                type: 'GET',
-                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
-                data: {
-                    'status-type': 'COMPLETED',
-                    'search-key': 'creation-time',
-                    'from-date': $fromTime,
-                    'to-date': $toTime
-                },
-                async: false,
-                success: function (data) {
-                    $(".experiment-container").html(data);
-                    //from time-conversion.js
-                    updateTime();
-                }
-            }).complete(function () {
-                $(".loading-img-statistics").addClass("hide");
-            });
-        }
+        getExperimentsOfStatus( 'COMPLETED');
     });
 
     $("#getCancelledExperiments").click(function () {
-        //These are coming from manage-experiments.blade.php
-        $fromTime = $("#datetimepicker9").find("input").val();
-        $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
-        $toTime = $("#datetimepicker10").find("input").val();
-        $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm a');
-        if ($fromTime == '' || $toTime == '') {
-            alert("Please Select Valid Date Inputs!");
-        } else {
-            $(".loading-img-statistics").removeClass("hide");
-            $.ajax({
-                type: 'GET',
-                url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
-                data: {
-                    'status-type': 'CANCELED',
-                    'search-key': 'creation-time',
-                    'from-date': $fromTime,
-                    'to-date': $toTime
-                },
-                async: false,
-                success: function (data) {
-                    $(".experiment-container").html(data);
-                    //from time-conversion.js
-                    updateTime();
-                }
-            }).complete(function () {
-                $(".loading-img-statistics").addClass("hide");
-            });
-        }
+        getExperimentsOfStatus( 'CANCELED');
     });
 
     $("#getFailedExperiments").click(function () {
+        getExperimentsOfStatus( 'FAILED');
+    });
+
+    function getExperimentsOfStatus( status){
         //These are coming from manage-experiments.blade.php
+        $(".experiment-container").html( $(".loading-img").html() );
         $fromTime = $("#datetimepicker9").find("input").val();
         $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm a');
         $toTime = $("#datetimepicker10").find("input").val();
@@ -316,7 +185,7 @@
                 type: 'GET',
                 url: "{{URL::to('/')}}/admin/dashboard/experimentsOfTimeRange",
                 data: {
-                    'status-type': 'FAILED',
+                    'status-type': status,
                     'search-key': 'creation-time',
                     'from-date': $fromTime,
                     'to-date': $toTime
@@ -331,5 +200,14 @@
                 $(".loading-img-statistics").addClass("hide");
             });
         }
+    }
+
+    $(".experiment-statistics").on("click", ".get-exp-stats", function(){
+        expId = $(this).data("expid");
+        $(".experimentId").val( expId);
+        $(".get-experiment").click();
+        $('html, body').animate({
+            scrollTop: $(".get-experiment").offset().top - 100
+        }, 1000);
     });
 </script>
