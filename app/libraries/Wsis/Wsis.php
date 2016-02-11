@@ -444,8 +444,8 @@ class Wsis {
      * @param $userName
      * @param $tenantDomain
      */
-    public function confirmUserRegistration($userName, $code, $tenantDomain){
-        return $this->userInfoRecoveryManager->confirmUserRegistration($userName, $code, $tenantDomain);
+    public function confirmUserRegistration($userAnswer, $imagePath, $secret, $userName, $code, $tenantDomain){
+        return $this->userInfoRecoveryManager->confirmUserRegistration($userAnswer, $imagePath, $secret, $userName, $code, $tenantDomain);
     }
 
     /**
@@ -492,5 +492,13 @@ class Wsis {
      */
     public function resetPassword($username, $newPassword, $key){
         return $this->userInfoRecoveryManager->resetPassword($username, $newPassword, $key);
+    }
+
+    /**
+     * Method to get a capatcha
+     * @return mixed
+     */
+    public function getCapatcha(){
+        return $this->userInfoRecoveryManager->getCapatcha();
     }
 } 
