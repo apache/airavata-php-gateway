@@ -154,7 +154,7 @@
     });
 
     $(".del-sr").click(function () {
-        $(".delete-sr-id").html("'" + $(this).data("delete-sr-id") + "'");
+        $(".delete-sr-id").html("'" + $(this).data("srid") + "'");
         $(".delete-srId").val($(this).data("srid"));
     });
 
