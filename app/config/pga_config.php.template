@@ -11,17 +11,17 @@ return array(
         /**
          * Admin Role Name
          */
-        'admin-role-name' => 'admin',
+        'admin-role-name' => 'Internal/everyone',
 
         /**
          * Read only Admin Role Name
          */
-        'read-only-admin-role-name' => 'admin-read-only',
+        'read-only-admin-role-name' => 'Internal/everyone',
 
         /**
          * Gateway user role
          */
-        'user-role-name' => 'airavata-user',
+        'user-role-name' => 'Internal/everyone',
 
         /**
          * Tenant Domain
