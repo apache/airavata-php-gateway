@@ -207,7 +207,7 @@ class SRUtilities
             else
                 return 0;
         elseif (isset($inputs["del-srId"]))
-            if (Airavata::deleteComputeResource(Session::get('authz-token'), $inputs["del-srId"]))
+            if (Airavata::deleteStorageResource(Session::get('authz-token'), $inputs["del-srId"]))
                 return 1;
             else
                 return 0;
