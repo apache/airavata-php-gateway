@@ -202,7 +202,7 @@ class SRUtilities
             else
                 return 0;
         else if (isset($inputs["dmiId"]))
-            if (Airavata::deleteDataMovementInterface(Session::get('authz-token'), $inputs["srId"], $inputs["dmiId"]))
+            if (Airavata::deleteDataMovementInterface(Session::get('authz-token'), $inputs["srId"], $inputs["dmiId"], 1))
                 return 1;
             else
                 return 0;
