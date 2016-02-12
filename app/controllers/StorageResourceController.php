@@ -73,7 +73,6 @@ class StorageresourceController extends BaseController
 
     public function editSubmit()
     {   
-        var_dump( Input::all() ); exit;
         $this->beforeFilter('verifyeditadmin');
         $tabName = "";
         if (Input::get("sr-edit") == "resDesc") /* Modify storage Resource description */ {
@@ -161,15 +160,8 @@ class StorageresourceController extends BaseController
     {
         $this->beforeFilter('verifyeditadmin');
         $result = SRUtilities::deleteActions(Input::all());
-        var_dump($result);exit;
-        /*
-        if (Input::has("jsiId")) {
-            return Redirect::to("cr/edit?crId=" . Input::get("crId") . "#tab-jobSubmission")
-                ->with("message", "Job Submission Interface was deleted successfully");
-        }
-        */
         if (Input::has("dmiId")) {
-            return Redirect::to("sr/edit?crId=" . Input::get("crId") . "#tab-dataMovement")
+            return Redirect::to("sr/edit?srId=" . Input::get("srId") . "#tab-dataMovement")
                 ->with("message", "Data Movement Protocol was deleted successfully");
         } elseif (Input::has("del-srId")) {
             return Redirect::to("sr/browse")->with("message", "The Compute Resource has been successfully deleted.");

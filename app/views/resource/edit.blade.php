@@ -202,10 +202,9 @@
         @endif
     </div>
 
-    @if( count( $jobSubmissionInterfaces ) )
+    @if( count( $jobSubmissionInterfaces ) > 0)
     <div class="job-edit-info">
         @foreach( $jobSubmissionInterfaces as $index => $JSI )
-
         <div class="job-protocol-block">
             <form role="form" method="POST" action="{{ URL::to('/') }}/cr/edit">
                 <input type="hidden" name="crId" value="{{Input::get('crId') }}"/>
@@ -415,17 +414,7 @@
                         @endforeach
                     </select>
                 </div>
-<!--
-                <div class="form-group">
-                    <label class="control-label">Select Monitoring Mode</label>
-                    <select name="monitorMode">
-                        @foreach( $monitorModes as $index => $mode)
-                        <option value="{{ $index }}"
-                        @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
-                        @endforeach
-                    </select>
-                </div>
--->
+
                 <div class="form-group">
                     <label class="control-label">Alternate SSH Host Name</label>
                     <input class='form-control' name='alternativeSSHHostName'
@@ -448,17 +437,6 @@
                         @endforeach
                     </select>
                 </div>
-<!--
-                <div class="form-group">
-                    <label class="control-label">Select Monitoring Mode</label>
-                    <select name="monitorMode">
-                        @foreach( $monitorModes as $index => $mode)
-                        <option value="{{ $index }}"
-                        @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
-                        @endforeach
-                    </select>
-                </div>
--->
 
                 <div>
                     <div class="form-group required">
@@ -485,18 +463,7 @@
                         @endforeach
                     </select>
                 </div>
-<!--
-                <div class="form-group">
-                    <label class="control-label">Select Monitoring Mode</label>
-                    <select name="monitorMode">
-                        @foreach( $monitorModes as $index => $mode)
-                        <option value="{{ $index }}"
-                        @if( $JSI->monitorMode == $index ) selected @endif>{{ $mode}}</option>
-                        @endforeach
-                    </select>
-                </div>
--->
-
+                
                 <div>
                     <div class="form-group required">
                         <label class="control-label">Unicore End Point URL</label>
