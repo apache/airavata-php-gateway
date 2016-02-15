@@ -4,7 +4,7 @@ class StorageresourceController extends BaseController
 {
 
     /**
-     *    Instantiate a new Compute Resource Controller Instance
+     *    Instantiate a new Storage Resource Controller Instance
      **/
 
     public function __construct()
@@ -25,7 +25,6 @@ class StorageresourceController extends BaseController
     public function createSubmit()
     {
         $this->beforeFilter('verifyeditadmin');
-        //Compute resource is by default enabled
         $storageDescription = array(
             "hostName" => trim(Input::get("hostname")),
             "storageResourceDescription" => trim(Input::get("description")),
@@ -51,7 +50,6 @@ class StorageresourceController extends BaseController
             $storageResource = SRUtilities::get_storage_resource($storageResourceId);
             $dataMovementInterfaces = array();
             $addedDMI = array();
-            //var_dump( CRUtilities::getJobSubmissionDetails( $data["computeResource"]->jobSubmissionInterfaces[0]->jobSubmissionInterfaceId, 1) ); exit;
             
             if (count($storageResource->dataMovementInterfaces)) {
                 foreach ($storageResource->dataMovementInterfaces as $DMI) {
@@ -73,14 +71,12 @@ class StorageresourceController extends BaseController
 
     public function editSubmit()
     {   
-        var_dump( Input::all() ); exit;
         $this->beforeFilter('verifyeditadmin');
         $tabName = "";
         if (Input::get("sr-edit") == "resDesc") /* Modify storage Resource description */ {
             $storageResourceDescription = SRUtilities::get_storage_resource(Input::get("srId"));
             $storageResourceDescription->hostName = trim(Input::get("hostname"));
             $storageResourceDescription->resourceDescription = Input::get("description");
-            //var_dump( $computeDescription); exit;
 
             $storageResource = SRUtilities::register_or_update_storage_resource($storageResourceDescription, true);
 
@@ -113,6 +109,7 @@ class StorageresourceController extends BaseController
         return Redirect::to("sr/edit?srId=" . Input::get("srId") . $tabName);
     }
 
+    /*
     public function srView()
     {
         $data = CRUtilities::getEditCRData();
@@ -156,23 +153,17 @@ class StorageresourceController extends BaseController
             return View::make("resource/browse")->with("login-alert", "Unable to retrieve this Compute Resource. Please report this error to devs.");
 
     }
+    */
 
     public function deleteActions()
     {
         $this->beforeFilter('verifyeditadmin');
         $result = SRUtilities::deleteActions(Input::all());
-        var_dump($result);exit;
-        /*
-        if (Input::has("jsiId")) {
-            return Redirect::to("cr/edit?crId=" . Input::get("crId") . "#tab-jobSubmission")
-                ->with("message", "Job Submission Interface was deleted successfully");
-        }
-        */
         if (Input::has("dmiId")) {
-            return Redirect::to("sr/edit?crId=" . Input::get("crId") . "#tab-dataMovement")
+            return Redirect::to("sr/edit?srId=" . Input::get("srId") . "#tab-dataMovement")
                 ->with("message", "Data Movement Protocol was deleted successfully");
         } elseif (Input::has("del-srId")) {
-            return Redirect::to("sr/browse")->with("message", "The Compute Resource has been successfully deleted.");
+            return Redirect::to("sr/browse")->with("message", "The Storage Resource " . Input::get("del-srId") . " has been successfully deleted.");
         } else
             return $result;
     }

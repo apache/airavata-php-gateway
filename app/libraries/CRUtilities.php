@@ -403,7 +403,7 @@ class CRUtilities
             else
                 return 0;
         else if (isset($inputs["dmiId"]))
-            if (Airavata::deleteDataMovementInterface(Session::get('authz-token'), $inputs["crId"], $inputs["dmiId"]))
+            if (Airavata::deleteDataMovementInterface(Session::get('authz-token'), $inputs["crId"], $inputs["dmiId"], 0))
                 return 1;
             else
                 return 0;

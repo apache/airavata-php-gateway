@@ -183,32 +183,31 @@ class SRUtilities
 
     public static function deleteActions($inputs)
     {
-        if (isset($inputs["crId"])) {
+        if (isset($inputs["srId"])) {
             if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
-                if (Cache::has('CR-' . $inputs["crId"])) {
-                    Cache::forget('CR-' . $inputs["crId"]);
+                if (Cache::has('SR-' . $inputs["srId"])) {
+                    Cache::forget('SR-' . $inputs["srId"]);
                 }
             }
-        } elseif (isset($inputs["del-crId"])) {
+        } elseif (isset($inputs["del-srId"])) {
             if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
-                if (Cache::has('CR-' . $inputs["del-crId"])) {
-                    Cache::forget('CR-' . $inputs["del-crId"]);
+                if (Cache::has('SR-' . $inputs["del-srId"])) {
+                    Cache::forget('SR-' . $inputs["del-srId"]);
                 }
             }
         }
-
         if (isset($inputs["jsiId"]))
-            if (Airavata::deleteJobSubmissionInterface(Session::get('authz-token'), $inputs["crId"], $inputs["jsiId"]))
+            if (Airavata::deleteJobSubmissionInterface(Session::get('authz-token'), $inputs["srId"], $inputs["jsiId"]))
                 return 1;
             else
                 return 0;
         else if (isset($inputs["dmiId"]))
-            if (Airavata::deleteDataMovementInterface(Session::get('authz-token'), $inputs["crId"], $inputs["dmiId"]))
+            if (Airavata::deleteDataMovementInterface(Session::get('authz-token'), $inputs["srId"], $inputs["dmiId"], 1))
                 return 1;
             else
                 return 0;
-        elseif (isset($inputs["del-crId"]))
-            if (Airavata::deleteComputeResource(Session::get('authz-token'), $inputs["del-crId"]))
+        elseif (isset($inputs["del-srId"]))
+            if (Airavata::deleteStorageResource(Session::get('authz-token'), $inputs["del-srId"]))
                 return 1;
             else
                 return 0;
