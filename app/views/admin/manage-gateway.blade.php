@@ -141,7 +141,7 @@
 
 <div class="add-data-storage-preference-block hide">
     <div class="well">
-        <form action="{{URL::to('/')}}/gp/add-dsp" method="POST">
+        <form action="{{URL::to('/')}}/gp/add-srp" method="POST">
             <input type="hidden" name="gatewayId" id="gatewayId" value="">
 
             <div class="input-group">
