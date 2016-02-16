@@ -158,7 +158,7 @@ class AccountController extends BaseController
             if(Session::get("admin") || Session::get("admin-read-only")){
                 return Redirect::to("admin/dashboard");
             }else{
-                return Redirect::to("home");
+                return Redirect::to("account/dashboard");
             }
         }
 
