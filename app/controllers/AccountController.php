@@ -230,7 +230,7 @@ class AccountController extends BaseController
             return View::make('home');
         }
 
-        return Redirect::to("admin/dashboard");
+        return Redirect::to("account/dashboard");
     }
 
     public function forgotPassword()
@@ -425,4 +425,7 @@ class AccountController extends BaseController
         return Redirect::to('home');
     }
 
+    public function dashboard(){
+        return View::make("account/dashboard");
+    }
 }
