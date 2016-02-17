@@ -64,6 +64,9 @@ class AdminController extends BaseController {
 		$srData = SRUtilities::getEditSRData();
 		$crData = CRUtilities::getEditCRData();
 
+		$unselectedCRs = array();
+		$unselectedSRs = array();
+
 		foreach( (array)$gatewaysInfo["allCRs"] as $crId => $cr){
 			if( ! in_array($cr->computeResourceId, $gatewaysInfo["selectedCRs"]) )
 			$unselectedCRs[] = $cr;
