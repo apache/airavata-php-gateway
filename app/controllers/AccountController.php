@@ -332,6 +332,7 @@ class AccountController extends BaseController
                     }else{
                         WSIS::confirmUserRegistration("123", $capatcha->imagePath,
                             $capatcha->secretKey, $username, $confirmation, Config::get('pga_config.wsis')['tenant-domain']);
+                        return Redirect::to("login");
                     }
                 }
             }catch (Exception $e){
