@@ -26,7 +26,7 @@
                             <div class="form-group">
                                 <label class="control-label col-md-12">{{ Session::get('theme') }} Credential Store Token</label>
                                 <div class="col-md-9">
-                                    <select class="form-control gateway-credential-store-token" name="resourceSpecificCredentialStoreToken"  data-gpid="{{$gp->gatewayId}}" >
+                                    <select class="form-control gateway-credential-store-token" id="gateway-credential-store-token" name="resourceSpecificCredentialStoreToken"  data-gpid="{{$gp->gatewayId}}" >
                                         @if( isset( $gp->profile->credentialStoreToken) )
                                         @foreach( $tokens as $token => $publicKey)
                                             <option value="{{$token}}" @if( $token == $gp->profile->credentialStoreToken) selected @endif>{{$token}}</option>

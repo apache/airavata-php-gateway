@@ -246,19 +246,16 @@
     $(".credential-store-token-change > form").submit( function(e){
         $(this).prepend( "<img id='loading-gif' src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
         e.preventDefault();
-        cstField = $(".gateway-credential-store-token");
-        if( $.trim( cstField.val()) != ""){
-            $.ajax({
-                url: "{{URL::to('/')}}/gp/credential-store-token-change",
-                method: "POST",
-                data: { cst : cstField.val(), gateway_id: cstField.data("gpid") }
-            }).done( function( data){
-                $("#loading-gif").remove();
-                alert( data);
-            });
-        }
-        else
-            alert("Please enter a valid Credential Store Token.");
+        cstField = $("#gateway-credential-store-token");
+        $.ajax({
+            url: "{{URL::to('/')}}/gp/credential-store-token-change",
+            method: "POST",
+            data: { cst : cstField.val(), gateway_id: cstField.data("gpid") }
+        }).done( function( data){
+            $("#loading-gif").remove();
+            alert( data);
+        });
+       
     });
 
 
