@@ -158,7 +158,7 @@ class AccountController extends BaseController
             if(Session::get("admin") || Session::get("admin-read-only")){
                 return Redirect::to("admin/dashboard");
             }else{
-                return Redirect::to("account/dashboard");
+                return Redirect::to("home");
             }
         }
 
@@ -230,7 +230,7 @@ class AccountController extends BaseController
             return View::make('home');
         }
 
-        return Redirect::to("account/dashboard");
+        return Redirect::to("admin/dashboard");
     }
 
     public function forgotPassword()
@@ -324,9 +324,16 @@ class AccountController extends BaseController
                     }
                 }else{
                     $capatcha = WSIS::getCapatcha()->return;
-                    return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
-                        "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
-                        "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
+                    //hack to work with wso2 IS 5.0.0
+                    if (file_exists($capatcha->imagePath)){
+                        return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
+                            "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
+                            "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
+                    }else{
+                        WSIS::confirmUserRegistration("123", $capatcha->imagePath,
+                            $capatcha->secretKey, $username, $confirmation, Config::get('pga_config.wsis')['tenant-domain']);
+                        return Redirect::to("login");
+                    }
                 }
             }catch (Exception $e){
                 var_dump($e);exit;
@@ -425,7 +432,4 @@ class AccountController extends BaseController
         return Redirect::to('home');
     }
 
-    public function dashboard(){
-        return View::make("account/dashboard");
-    }
 }
