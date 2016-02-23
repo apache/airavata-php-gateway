@@ -80,6 +80,16 @@ $(document).ready( function(){
 
     });
 
+    $(".clone-app-interface").click( function(){
+        clearInputs( $(".clone-app-interface-block"));
+        //$("#create-app-interface-block").modal("show");
+        //checking if app module select option exist and if not add one.
+        var interfaceId = $(this).data("interface-id");
+        var interfaceName =  $(this).data("interface-name");
+        $("#cloneAppId").val( interfaceId);
+        $("#cloneAppName").val( interfaceName);
+    });
+
     $(".submit-create-app-interface-form").click( function(){
     	//check if app interface contains atleast one app module selected.
     	if( $(this).parent().parent().parent().find(".app-module-select").length)

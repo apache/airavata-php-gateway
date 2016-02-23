@@ -43,6 +43,11 @@ Route::post("confirm-user-registration", "AccountController@confirmAccountCreati
 Route::get("setUserTimezone", function () {
     Session::set("user_timezone", Input::get("timezone"));
 });
+
+Route::get("allocation-request", "AccountController@allocationRequestView");
+
+Route::post("allocation-request", "AccountController@allocationRequestSubmit");
+
 /*
  * The following routes will not work without logging in.
  *
@@ -171,6 +176,8 @@ Route::post("app/module-delete", "ApplicationController@deleteAppModule");
 Route::get("app/interface", "ApplicationController@showAppInterfaceView");
 
 Route::post("app/interface-create", "ApplicationController@createAppInterfaceSubmit");
+
+Route::post("app/interface-clone", "ApplicationController@cloneAppInterfaceSubmit");
 
 Route::post("app/interface-edit", "ApplicationController@editAppInterfaceSubmit");
 

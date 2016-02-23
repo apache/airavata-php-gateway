@@ -51,12 +51,25 @@
                         <small>{{ $interface->applicationInterfaceId }}</small>
                         @if(Session::has("admin"))
                         <div class="pull-right col-md-2 interface-options fade">
+
                             <span class="glyphicon glyphicon-pencil edit-app-interface" style="cursor:pointer;"
                                   data-toggle="modal" data-target="#edit-app-interface-block"
                                   data-interface-id="{{ $interface->applicationInterfaceId }}"></span>
+
+                            <span class="glyphicon glyphicon-file clone-app-interface" style="cursor:pointer;"
+                                  data-toggle="modal" data-target="#clone-app-interface-block"
+                                  data-interface-id="{{ $interface->applicationInterfaceId }}"></span>
+
+                            <span class="glyphicon glyphicon-file clone-app-interface" style="cursor:pointer; position:relative; top:-2px; left:-10%;"
+                                  data-toggle="modal" data-target="#clone-app-interface-block"
+                                  data-interface-id="{{ $interface->applicationInterfaceId }}"
+                                  data-interface-name="{{ $interface->applicationName }}"></span>
+
                             <span class="glyphicon glyphicon-trash delete-app-interface" style="cursor:pointer;"
                                   data-toggle="modal" data-target="#delete-app-interface-block"
-                                  data-interface-id="{{ $interface->applicationInterfaceId }}"></span>
+                                  data-interface-id="{{ $interface->applicationInterfaceId }}"
+                                  data-interface-name="{{ $interface->applicationName }}"></span>
+
                         </div>
                         @endif
                     </h4>
@@ -147,6 +160,46 @@
                         <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
                         <input type="submit" class="btn btn-primary hide really-submit-create-app-interface-form"
                                value=""/>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="modal fade" id="clone-app-interface-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+     aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <form action="{{URL::to('/')}}/app/interface-clone" method="POST" id="clone-app-interface-form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h3 class="text-center">Clone Application Interface</h3>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-md-12">
+                        <div class="clone-app-interface-block">
+                            <div class="cloneAppInterfaceInputs">
+                                <div class="form-group required">
+                                    <label class="control-label interface-name">Application Name</label>
+                                    <input type="text" class="form-control" name="applicationName" required placeholder="Cloned Application Interface Name" value=""/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Application chosen to be cloned</label>
+                                    <input type="text" disabled class="form-control" id="cloneAppName" value=""/>
+                                    <input type="hidden" class="form-control" id="cloneAppId" name="applicationInterfaceId" value=""/>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-primary submit-clone-app-interface-form" value="Clone"/>
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
                     </div>
                 </div>
             </div>
