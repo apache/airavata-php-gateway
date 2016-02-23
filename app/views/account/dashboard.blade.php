@@ -216,6 +216,16 @@
         </div>
     </div>
     @endif
+
+    <!--
+    Hidden until completed.
+    <div class="col-md-12 text-center">
+        <a href="{{URL::to('/')}}/allocation-request">
+            <button class="btn btn-default ">Request an allocation</button>
+        </a>
+    </div>
+    -->
+
 </div>
 
 @stop
