@@ -344,5 +344,21 @@ $(document).ready( function(){
 
   });
 
+  $(".enable-gateway-check").change( function(){
+    var reportingCheckbox = this;
+    if( reportingCheckbox.checked ){
+      $(reportingCheckbox).val(1);
+      $(".gateway-commands").find("input").each( function( i,e){
+            $(e).removeAttr("disabled");
+            $(e).removeAttr("readonly");
+      });
+    }
+    else{
+      $(reportingCheckbox).val(0);
+      disableInputs( $(".gateway-commands"));
+    }
+
+  })
+
   
 });

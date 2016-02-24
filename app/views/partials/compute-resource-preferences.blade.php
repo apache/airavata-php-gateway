@@ -105,6 +105,19 @@
         -->
     </div>
 </div>
+
+@if( isset( $computeResource->gatewayUsageReporting ) && $computeResource->gatewayUsageReporting == true)
+<div class="form-group">
+    <label class="control-label col-md-3">Gateway Id for Usage Reporting</label>
+
+    <div class="col-md-9">
+        <input type="text" name="allocationProjectNumber" class="form-control"
+               value="@if( isset( $preferences) ) {{$preferences->usageReportingGatewayId }}@endif"/>
+        <small>Enter Id of the Gateway using this resource if it requires reporting its usage back to the resource.</small>
+    </div>
+</div>
+@endif
+
 @if(Session::has("admin"))
 <div class="form-group text-center">
     <input type="submit" class="btn btn-primary" value="Set preferences"/>

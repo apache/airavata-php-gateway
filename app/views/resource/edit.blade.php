@@ -14,7 +14,7 @@
 <div id="page-wrapper">
 
 <div class="container-fluid">
-<div class="col-md-offset-2 col-md-8 compute-resource-properties">
+<div class="col-md-offset-1 col-md-10 compute-resource-properties">
 
 <input type="hidden" class="base-url" value="{{URL::to('/')}}"/>
 
@@ -34,6 +34,7 @@
         <li><a href="#tab-filesystem" data-toggle="tab">FileSystem</a></li>
         <li><a href="#tab-jobSubmission" data-toggle="tab">Job Submission Interfaces</a></li>
         <li><a href="#tab-dataMovement" data-toggle="tab">Data Movement Interfaces</a></li>
+        <li><a href="#tab-reporting" data-toggle="tab">Reporting</a></li>
     </ul>
 </div>
 
@@ -506,6 +507,41 @@
         </form>
 
     </div>
+
+</div>
+
+
+<div class="tab-pane" id="tab-reporting">
+
+    <form role="form" method="POST" action="{{ URL::to('/') }}/cr/edit">
+        <input type="hidden" name="crId" value="{{Input::get('crId') }}"/>
+        <input type="hidden" name="cr-edit" value="enableReporting"/>
+
+         <div class="form-group required">
+            <div class="checkbox">
+                <input type="checkbox" name="gatewayUsageReporting" class="enable-gateway-check" @if( $computeResource->gatewayUsageReporting == true) checked  value="1" @else value="0" @endif>
+                <label class="control-label">Enable Gateway Usage Reporting</label>
+            </div>
+
+        </div>
+
+        <div class="gateway-commands">
+            <div class="form-group required">
+                <label class="control-label">Gateway Module Load Command</label>
+                <input class="form-control hostName" name="gatewayUsageModuleLoadCommand" value="{{ $computeResource->gatewayUsageModuleLoadCommand }}" maxlength="100"
+                       name="hostname" required="required" @if( $computeResource->gatewayUsageReporting != true) disabled @endif/>
+            </div>
+            <div class="form-group required">
+                <label class="control-label">Gateway Usage Executable</label>
+                <input class="form-control hostName" name="gatewayUsageExecutable" value="{{ $computeResource->gatewayUsageExecutable }}" maxlength="100"
+                       name="hostname" required="required"  @if( $computeResource->gatewayUsageReporting != true) disabled @endif/>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Save changes"/>
+        </div>
+
+    </form>
 
 </div>
 

@@ -168,6 +168,24 @@ class ComputeResourceController extends BaseController
             $computeResource = CRUtilities::register_or_update_compute_resource($computeDescription, true);
 
             return 1; //currently done by ajax.
+        } else if (Input::get("cr-edit") == "enableReporting") {
+            $inputs = Input::all();
+            $computeDescription = CRUtilities::get_compute_resource(Input::get("crId"));
+            //var_dump( $computeDescription); exit;
+            if( isset( $inputs["gatewayUsageReporting"]) && $inputs["gatewayUsageReporting"] == 1){
+                $computeDescription->gatewayUsageReporting = true;
+                $computeDescription->gatewayUsageModuleLoadCommand = $inputs["gatewayUsageModuleLoadCommand"];
+                $computeDescription->gatewayUsageExecutable = $inputs["gatewayUsageExecutable"];
+
+            }
+            else{
+                $computeDescription->gatewayUsageReporting = false;
+                $computeDescription->gatewayUsageModuleLoadCommand = null;
+                $computeDescription->gatewayUsageExecutable = null;
+            }
+            //var_dump( $computeDescription); exit;
+            $computeResource = CRUtilities::register_or_update_compute_resource($computeDescription, true);
+            $tabName = "#tab-reporting";
         }
 
         return Redirect::to("cr/edit?crId=" . Input::get("crId") . $tabName);

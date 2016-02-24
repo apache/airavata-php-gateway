@@ -59,3 +59,7 @@ body{
 .navbar{
 	margin-bottom: 0;
 }
+
+.tab-content>.tab-pane {
+    margin-top: 10%;
+ }
