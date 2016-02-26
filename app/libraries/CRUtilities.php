@@ -146,7 +146,7 @@ class CRUtilities
                 "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
                 "jobManagerBinPath" => $inputs["jobManagerBinPath"],
                 "jobManagerCommands" => $inputs["jobManagerCommands"],
-                "parallalisimPrefix" => $inputs["parallelismPrefix"]
+                "parallelismPrefix" => $inputs["parallelismPrefix"]
             ));
 
             //$rmId = $jsiObject->resourceJobManager->resourceJobManagerId;
@@ -174,7 +174,7 @@ class CRUtilities
                 "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
                 "jobManagerBinPath" => $inputs["jobManagerBinPath"],
                 "jobManagerCommands" => $inputs["jobManagerCommands"],
-                "parallalisimPrefix" => $inputs["parallelismPrefix"]
+                "parallelismPrefix" => $inputs["parallelismPrefix"]
             ));
             $sshJobSubmission = new SSHJobSubmission(array
                 (
@@ -214,7 +214,7 @@ class CRUtilities
                 "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
                 "jobManagerBinPath" => $inputs["jobManagerBinPath"],
                 "jobManagerCommands" => $inputs["jobManagerCommands"],
-                "parallalisimPrefix" => $inputs["parallelismPrefix"]
+                "parallelismPrefix" => $inputs["parallelismPrefix"]
             ));
             $sshJobSubmission = new SSHJobSubmission(array
                 (
