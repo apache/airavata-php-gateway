@@ -19,7 +19,7 @@ function getAccodrionCode()
 
 function disableInputs( elem){
   elem.find("input").each( function( i,e){
-      if( $(e).attr("type")=='submit' || $(e).attr("type")=='button'  )
+      if( $(e).attr("type")=='submit' || $(e).attr("type")=='button' || $(e).attr("type")=='checkbox' )
           $(e).attr("disabled", "true");
        else
           $(e).prop("readonly", "true");
