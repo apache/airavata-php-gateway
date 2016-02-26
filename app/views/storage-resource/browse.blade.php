@@ -62,7 +62,7 @@
                             $enabled = $resource->enabled;
                         ?>
                         <tr id="srDetails">
-                            <td>{{ $srId }}</td>
+                            <td><a href="{{URL::to('/')}}/sr/edit?srId={{ $srId }}" title="Edit">{{ $srId }}</a></td>
                             <td>{{ $hostName }}</td>
                             <td>
                             <div class="checkbox">

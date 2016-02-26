@@ -76,7 +76,7 @@
                                    >
                             </div>
                         </td>
-                        <td><a href="{{URL::to('/')}}/cr/view?crId={{ $crId }}" title="View">
+                        <td><a href="{{URL::to('/')}}/cr/edit?crId={{ $crId }}" title="Edit">
                                 <span class="glyphicon glyphicon-list"></span>
                             </a>
                         </td>
