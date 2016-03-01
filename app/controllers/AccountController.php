@@ -450,4 +450,12 @@ class AccountController extends BaseController
         return Redirect::to('home');
     }
 
+    public function allocationRequestView(){
+        return View::make("account/request-allocation");
+    }
+
+    public function allocationRequestSubmit(){
+        return 'result';
+    }
+
 }

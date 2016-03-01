@@ -81,7 +81,17 @@ class ApplicationController extends BaseController {
 		//var_dump( $appInterfaceValues); exit;
 		AppUtilities::create_or_update_appInterface( $appInterfaceValues);
 
-		return Redirect::to( "app/interface")->with("message","Application Interface has been created");
+		return Redirect::to( "app/interface")->with("message","Application Interface <strong>" . $appInterfaceValues["applicationName"] . "</strong> has been created.");
+	}
+
+	public function cloneAppInterfaceSubmit()
+	{
+        $this->beforeFilter('verifyeditadmin');
+		$appInterfaceValues = Input::all();
+
+		AppUtilities::clone_appInterface( $appInterfaceValues);
+
+		return Redirect::to( "app/interface")->with("message","Clone Application Interface <strong>" . $appInterfaceValues["applicationName"] . "</strong> has been created.");
 	}
 
 	public function editAppInterfaceSubmit()

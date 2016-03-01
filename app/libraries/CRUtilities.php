@@ -23,6 +23,7 @@ use Airavata\Model\Data\Movement\UnicoreDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\UnicoreJobSubmission;
 use Airavata\Model\AppCatalog\GatewayProfile\ComputeResourcePreference;
 use Airavata\Model\AppCatalog\GatewayProfile\GatewayResourceProfile;
+use Airavata\Model\AppCatalog\Parallelism\ApplicationParallelismType;
 
 //Gateway Classes
 
@@ -82,6 +83,7 @@ class CRUtilities
         $dmp = new DataMovementProtocol();
         $jmc = new JobManagerCommand();
         $mm = new MonitorMode();
+        $pt = new ApplicationParallelismType();
         return array(
             "fileSystemsObject" => $files,
             "fileSystems" => $files::$__names,
@@ -94,7 +96,8 @@ class CRUtilities
             "dataMovementProtocolsObject" => $dmp,
             "dataMovementProtocols" => $dmp::$__names,
             "jobManagerCommands" => $jmc::$__names,
-            "monitorModes" => $mm::$__names
+            "monitorModes" => $mm::$__names,
+            "parallelismTypes" => $pt::$__names
         );
     }
 
@@ -142,7 +145,8 @@ class CRUtilities
                 "resourceJobManagerType" => $inputs["resourceJobManagerType"],
                 "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
                 "jobManagerBinPath" => $inputs["jobManagerBinPath"],
-                "jobManagerCommands" => $inputs["jobManagerCommands"]
+                "jobManagerCommands" => $inputs["jobManagerCommands"],
+                "parallelismPrefix" => $inputs["parallelismPrefix"]
             ));
 
             //$rmId = $jsiObject->resourceJobManager->resourceJobManagerId;
@@ -169,7 +173,8 @@ class CRUtilities
                 "resourceJobManagerType" => $inputs["resourceJobManagerType"],
                 "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
                 "jobManagerBinPath" => $inputs["jobManagerBinPath"],
-                "jobManagerCommands" => $inputs["jobManagerCommands"]
+                "jobManagerCommands" => $inputs["jobManagerCommands"],
+                "parallelismPrefix" => $inputs["parallelismPrefix"]
             ));
             $sshJobSubmission = new SSHJobSubmission(array
                 (
@@ -208,7 +213,8 @@ class CRUtilities
                 "resourceJobManagerType" => $inputs["resourceJobManagerType"],
                 "pushMonitoringEndpoint" => $inputs["pushMonitoringEndpoint"],
                 "jobManagerBinPath" => $inputs["jobManagerBinPath"],
-                "jobManagerCommands" => $inputs["jobManagerCommands"]
+                "jobManagerCommands" => $inputs["jobManagerCommands"],
+                "parallelismPrefix" => $inputs["parallelismPrefix"]
             ));
             $sshJobSubmission = new SSHJobSubmission(array
                 (

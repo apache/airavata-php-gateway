@@ -110,6 +110,12 @@ class AppUtilities
         //print_r( "App interface has been created.");
     }
 
+    
+    public static function clone_appInterface($appInterfaceValues)
+    {
+        return Airavata::cloneApplicationInterface( Session::get("authz-token"), $appInterfaceValues["applicationInterfaceId"], $appInterfaceValues["applicationName"], Session::get("gateway_id") );
+    }
+
     public static function deleteAppInterface($appInterfaceId)
     {
         if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {

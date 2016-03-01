@@ -302,4 +302,8 @@ class AdminController extends BaseController {
         $storageResource->enabled = false;
         SRUtilities::register_or_update_storage_resource($storageResource, true);
     }
+
+    public function viewAllocationRequests(){
+    	return 'result';
+    }
 }

@@ -14,7 +14,7 @@
 <div id="page-wrapper">
 
 <div class="container-fluid">
-<div class="col-md-offset-2 col-md-8 compute-resource-properties">
+<div class="col-md-offset-1 col-md-10 compute-resource-properties">
 
 <input type="hidden" class="base-url" value="{{URL::to('/')}}"/>
 
@@ -34,6 +34,7 @@
         <li><a href="#tab-filesystem" data-toggle="tab">FileSystem</a></li>
         <li><a href="#tab-jobSubmission" data-toggle="tab">Job Submission Interfaces</a></li>
         <li><a href="#tab-dataMovement" data-toggle="tab">Data Movement Interfaces</a></li>
+        <li><a href="#tab-reporting" data-toggle="tab">Reporting</a></li>
     </ul>
 </div>
 
@@ -222,38 +223,13 @@
                 </h4>
                 <input type="hidden" name="jobSubmissionProtocol" value="{{ $selectedJspIndex }}"/>
                 @if( $selectedJspIndex == $jobSubmissionProtocolsObject::LOCAL)
-                <div class="select-resource-manager-type">
-                    <div class="form-group required">
-                        <label class="control-label">Select resource manager type</label>
-                        <select name="resourceJobManagerType" class="form-control selected-resource-manager"
-                                required="required">
-                            @foreach( $resourceJobManagerTypes as $index => $rJmT)
-                            <option value="{{ $index }}"
-                            @if( $JSI->resourceJobManager->resourceJobManagerType == $index ) selected @endif >{{ $rJmT
-                            }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Push Monitoring End Point</label>
-                        <input type="text" class="form-control" name="pushMonitoringEndpoint"
-                               value="{{ $JSI->resourceJobManager->pushMonitoringEndpoint }}"/>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Job Manager Bin Path</label>
-                        <input type="text" class="form-control" name="jobManagerBinPath"
-                               value="{{ $JSI->resourceJobManager->jobManagerBinPath }}"/>
-                    </div>
-                    <div class="form-group">
-                        <h3>Job Manager Commands</h3>
-                        @foreach( $jobManagerCommands as $index => $jmc)
-                        <label class="control-label">{{ $jmc }}</label>
-                        <input class="form-control" name="jobManagerCommands[{{ $index }}]" placeholder="{{ $jmc }}"
-                               value="@if( isset( $JSI->resourceJobManager->jobManagerCommands[$index] ) ) {{ $JSI->resourceJobManager->jobManagerCommands[$index] }} @endif"/>
-                        @endforeach
-                        </select>
-                    </div>
-                </div>
+                    @include( 'partials/resource-job-manager', array(
+                                    "resourceJobManagerTypes" => $resourceJobManagerTypes,
+                                    "JSI" => $JSI,
+                                    "jobManagerCommands" => $jobManagerCommands,
+                                    "parallelismTypes" => $parallelismTypes
+                                )
+                            )
                 @elseif( $selectedJspIndex == $jobSubmissionProtocolsObject::SSH || $jobSubmissionProtocolsObject::SSH_FORK)
                 <div class="form-group required">
                     <label class="control-label">Select Security Protocol</label>
@@ -286,37 +262,14 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="select-resource-manager-type">
-                        <div class="form-group required">
-                            <label class="control-label">Select resource manager type</label>
-                            <select name="resourceJobManagerType" class="form-control selected-resource-manager"
-                                    required="required">
-                                @foreach( $resourceJobManagerTypes as $index => $rJmT)
-                                <option value="{{ $index }}"
-                                @if( $JSI->resourceJobManager->resourceJobManagerType == $index ) selected @endif >{{
-                                $rJmT }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Push Monitoring End Point</label>
-                            <input type="text" class="form-control" name="pushMonitoringEndpoint"
-                                   value="{{ $JSI->resourceJobManager->pushMonitoringEndpoint }}"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Job Manager Bin Path</label>
-                            <input type="text" class="form-control" name="jobManagerBinPath"
-                                   value="{{ $JSI->resourceJobManager->jobManagerBinPath }}"/>
-                        </div>
-                        <div class="form-group">
-                            <h3>Job Manager Commands</h3>
-                            @foreach( $jobManagerCommands as $index => $jmc)
-                            <label class="control-label">{{ $jmc }}</label>
-                            <input class="form-control" name="jobManagerCommands[{{ $index }}]" placeholder="{{ $jmc }}"
-                                   value="@if( isset( $JSI->resourceJobManager->jobManagerCommands[$index] ) ) {{ $JSI->resourceJobManager->jobManagerCommands[$index] }} @endif"/>
-                            @endforeach
-                        </div>
-                    </div>
+                    @include( 'partials/resource-job-manager', array(
+                                    "resourceJobManagerTypes" => $resourceJobManagerTypes,
+                                    "JSI" => $JSI,
+                                    "jobManagerCommands" => $jobManagerCommands,
+                                    "parallelismTypes" => $parallelismTypes
+                                )
+                            )
+                    
                 </div>
 
                 @elseif( $selectedJspIndex == $jobSubmissionProtocolsObject::UNICORE)
@@ -510,36 +463,51 @@
 </div>
 
 
+<div class="tab-pane" id="tab-reporting">
+
+    <form role="form" method="POST" action="{{ URL::to('/') }}/cr/edit">
+        <input type="hidden" name="crId" value="{{Input::get('crId') }}"/>
+        <input type="hidden" name="cr-edit" value="enableReporting"/>
+
+         <div class="form-group required">
+            <div class="checkbox">
+                <input type="checkbox" name="gatewayUsageReporting" class="enable-gateway-check" @if( $computeResource->gatewayUsageReporting == true) checked  value="1" @else value="0" @endif>
+                <label class="control-label">Enable Gateway Usage Reporting</label>
+            </div>
+
+        </div>
+
+        <div class="gateway-commands">
+            <div class="form-group required">
+                <label class="control-label">Gateway Module Load Command</label>
+                <input class="form-control hostName" name="gatewayUsageModuleLoadCommand" value="{{ $computeResource->gatewayUsageModuleLoadCommand }}" maxlength="100"
+                       name="hostname" required="required" @if( $computeResource->gatewayUsageReporting != true) disabled @endif/>
+            </div>
+            <div class="form-group required">
+                <label class="control-label">Gateway Usage Executable</label>
+                <input class="form-control hostName" name="gatewayUsageExecutable" value="{{ $computeResource->gatewayUsageExecutable }}" maxlength="100"
+                       name="hostname" required="required"  @if( $computeResource->gatewayUsageReporting != true) disabled @endif/>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Save changes"/>
+        </div>
+
+    </form>
+
+</div>
+
+
 </div>
 
 
 <div class="resource-manager-block hide">
-    <div class="select-resource-manager-type">
-        <div class="form-group required">
-            <label class="control-label">Select resource manager type</label>
-            <select name="resourceJobManagerType" class="form-control selected-resource-manager" required="required">
-                @foreach( $resourceJobManagerTypes as $index => $rJmT)
-                <option value="{{ $index }}">{{ $rJmT }}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label">Push Monitoring End Point</label>
-        <input type="text" class="form-control" name="pushMonitoringEndpoint"/>
-    </div>
-    <div class="form-group">
-        <label class="control-label">Job Manager Bin Path</label>
-        <input type="text" class="form-control" name="jobManagerBinPath"/>
-    </div>
-    <div class="form-group">
-        <h3>Job Manager Commands</h3>
-        @foreach( $jobManagerCommands as $index => $jmc)
-        <label class="control-label">{{ $jmc }}</label>
-        <input class="form-control" name="jobManagerCommands[{{ $index }}]" placeholder="{{ $jmc }}"/>
-        @endforeach
-        </select>
-    </div>
+@include( 'partials/resource-job-manager', array(
+        "resourceJobManagerTypes" => $resourceJobManagerTypes,
+        "jobManagerCommands" => $jobManagerCommands,
+        "parallelismTypes" => $parallelismTypes
+    )
+)
 </div>
 
 <div class="ssh-block hide">
@@ -631,8 +599,8 @@
                     Do you really want to delete this Job Submission Interface ?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger danger">Delete</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 </div>
             </form>
 
@@ -655,8 +623,8 @@
                     Do you really want to delete this Data Movement Interface ?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger danger">Delete</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 </div>
         </div>
     </div>
