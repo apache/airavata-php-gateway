@@ -325,7 +325,7 @@ class AccountController extends BaseController
                 }else{
                     $capatcha = WSIS::getCapatcha()->return;
                     //hack to work with wso2 IS 5.0.0
-                    if (file_exists($capatcha->imagePath)){
+                    if (is_array(getimagesize(Config::get('pga_config.wsis')['service-url'] . $capatcha->imagePath))){
                         return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
                             "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
                             "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
@@ -340,6 +340,24 @@ class AccountController extends BaseController
                 CommonUtilities::print_error_message("Account confirmation failed!");
                 return View::make("home");
             }
+        }
+    }
+
+    private function checkRemoteFile($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$url);
+        // don't download content
+        curl_setopt($ch, CURLOPT_NOBODY, 1);
+        curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        if(curl_exec($ch)!==FALSE)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
