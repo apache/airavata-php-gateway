@@ -3,7 +3,7 @@
 //Airavata classes - loaded from app/libraries/Airavata
 use Airavata\Model\AppCatalog\AppDeployment\ApplicationDeploymentDescription;
 use Airavata\Model\AppCatalog\AppDeployment\ApplicationModule;
-use Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType;
+use Airavata\Model\AppCatalog\Parallelism\ApplicationParallelismType;
 use Airavata\Model\AppCatalog\AppDeployment\SetEnvPaths;
 use Airavata\Model\AppCatalog\AppInterface\ApplicationInterfaceDescription;
 use Airavata\Model\Application\Io\DataType;
@@ -218,22 +218,22 @@ class AppUtilities
         if (isset($appDeploymentValues["parallelism"])) {
             switch($appDeploymentValues["parallelism"]){
                 case "MPI":
-                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::MPI;
+                    $appDeploymentValues["parallelism"] = ApplicationParallelismType::MPI;
                     break;
                 case "SERIAL":
-                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::SERIAL;
+                    $appDeploymentValues["parallelism"] = ApplicationParallelismType::SERIAL;
                     break;
                 case "OPENMP":
-                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::OPENMP;
+                    $appDeploymentValues["parallelism"] = ApplicationParallelismType::OPENMP;
                     break;
                 case "OPENMP_MPI":
-                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::OPENMP_MPI;
+                    $appDeploymentValues["parallelism"] = ApplicationParallelismType::OPENMP_MPI;
                     break;
                 case "CRAY_MPI":
-                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::CRAY_MPI;
+                    $appDeploymentValues["parallelism"] = ApplicationParallelismType::CRAY_MPI;
                     break;
                 case "CCM":
-                    $appDeploymentValues["parallelism"] = \Airavata\Model\AppCatalog\AppDeployment\ApplicationParallelismType::CCM;
+                    $appDeploymentValues["parallelism"] = ApplicationParallelismType::CCM;
                     break;
             }
         }

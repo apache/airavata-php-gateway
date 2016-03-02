@@ -35,7 +35,7 @@
         @foreach( $parallelismTypes as $index => $pt)
         <label class="control-label">{{ $pt }}</label>
         <input class="form-control" name="parallelismPrefix[{{ $index }}]" placeholder="{{ $pt }}"
-               value="@if( isset( $JSI->resourceJobManager->parallalisimPrefix[$index] ) ){{$JSI->resourceJobManager->parallalisimPrefix[$index]}}@endif"/>
+               value="@if( isset( $JSI->resourceJobManager->parallelismPrefix[$index] ) ){{$JSI->resourceJobManager->parallelismPrefix[$index]}}@endif"/>
         @endforeach
     </div>
 </div>
