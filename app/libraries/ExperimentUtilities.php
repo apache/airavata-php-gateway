@@ -436,7 +436,7 @@ class ExperimentUtilities
             //updating the experiment inputs and output path
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $cloneId);
             $experimentInputs = $experiment->experimentInputs;
-            ExperimentUtilities::create_experiment_folder_path($experiment->projectId, $experiment->name);
+            ExperimentUtilities::create_experiment_folder_path($experiment->projectId, $experiment->experimentName);
             $hostName = $_SERVER['SERVER_NAME'];
 
             foreach ($experimentInputs as $experimentInput) {
