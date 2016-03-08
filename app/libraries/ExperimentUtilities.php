@@ -81,7 +81,8 @@ class ExperimentUtilities
                                     $inputArray[ count($inputArray)-3] . '/' . 
                                     $inputArray[ count($inputArray)-2] . '/' . 
                                     $inputArray[ count($inputArray)-1] . '">' .
-                '<span class="glyphicon glyphicon-new-window"></span></a></p>';
+                                        $inputArray[ count($inputArray)-1] . 
+                ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
             }elseif($input->type == DataType::URI && !empty($input->metaData)
                 && json_decode($input->metaData)->location=="remote"){
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
@@ -664,6 +665,7 @@ class ExperimentUtilities
                                                 $outputPathArray[ count($outputPathArray)-3] . "/" . 
                                                 $outputPathArray[ count($outputPathArray)-2] . '/' . 
                                                 $outputPathArray[ count($outputPathArray)-1] . '">' .
+                                                    $outputPathArray[sizeof($outputPathArray) - 1] . 
                         ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
 //                else
