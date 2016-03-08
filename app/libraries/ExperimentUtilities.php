@@ -76,8 +76,7 @@ class ExperimentUtilities
             if ($input->type == DataType::URI && empty($input->metaData)) {
                 $inputArray = explode('/', $input->value);
                 echo '<p><a target="_blank"
-                        href="' . URL::to("/") . '/download/' . $inputArray[ count($inputArray)-2] . '/' . 
-                $inputArray[ count($inputArray)-1] . '">' .
+                        href="' . URL::to("/") . '/download/' . $inputArray[ count($inputArray)-3] . '/' . $inputArray[ count($inputArray)-2] . '/' . $inputArray[ count($inputArray)-1] . '">' .
                     $inputArray[ count($inputArray)-1] . '
                 <span class="glyphicon glyphicon-new-window"></span></a></p>';
             }elseif($input->type == DataType::URI && !empty($input->metaData)
@@ -651,7 +650,7 @@ class ExperimentUtilities
                     $outputPathArray = explode("/", $output->value);
 
                     echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                            href="' . URL::to("/") . '/download/' . $outputPathArray[ count($outputPathArray)-3] . "/" . $outputPathArray[ count($outputPathArray)-2] . '/' .
+                            href="' . URL::to("/") . '/download/' . $outputPathArray[ count($outputPathArray)-4] . "/" . $outputPathArray[ count($outputPathArray)-3] . "/" . $outputPathArray[ count($outputPathArray)-2] . '/' .
             $outputPathArray[ count($outputPathArray)-1] . '">' .
                         $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }

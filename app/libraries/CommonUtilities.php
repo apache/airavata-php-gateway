@@ -193,7 +193,11 @@ class CommonUtilities
         </li>';
         }
 
-
+        $active = "";
+        if( Session::has("nav-active"))
+            if( Session::get("nav-active") == "storage")
+                $active = "active";
+        echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/files/browse"><span class="glyphicon glyphicon-folder-close"></span> Storage</a></li>';
         echo '</ul>
 
         <ul class="nav navbar-nav navbar-right">';

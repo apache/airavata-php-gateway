@@ -97,10 +97,12 @@ Route::get("experiment/browse", "ExperimentController@browseView");
 
 Route::post("experiment/browse", "ExperimentController@browseView");
 
-Route::get("download/{exp_data_dir}/{exp_folder}/{exp_file}", function($exp_data_dir, $exp_folder, $exp_file){
-    $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . Session::get('username')
-        . '/' . $exp_data_dir . "/" . $exp_folder . '/' . $exp_file;
-    return Response::download( $downloadLink);
+Route::get("download/{username}/{exp_data_dir}/{exp_folder}/{exp_file}", function( $username, $exp_data_dir, $exp_folder, $exp_file){
+
+    if( $username == Session::get("username")){
+        $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $username . '/' . $exp_data_dir . "/" . $exp_folder . '/' . $exp_file;
+        return Response::download( $downloadLink);
+    }
 });
 
 Route::get("download/{exp_data_dir}/{exp_file}", function($exp_data_dir, $exp_file){
@@ -108,6 +110,10 @@ Route::get("download/{exp_data_dir}/{exp_file}", function($exp_data_dir, $exp_fi
         . '/' . $exp_data_dir . '/' . $exp_file;
     return Response::download( $downloadLink);
 });
+
+Route::get("files/browse", "FilemanagerController@browse");
+
+Route::get("files/get","FilemanagerController@get");
 
 /*
  * Compute Resources Routes
