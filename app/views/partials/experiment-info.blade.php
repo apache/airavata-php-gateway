@@ -129,27 +129,31 @@
         </tr>
         <tr>
             <td><strong>Wall time</strong></td>
-            <td><?php echo $experiment->userConfigurationData->computationalResourceScheduling->wallTimeLimit; ?></td>
+            <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->wallTimeLimit }}</td>
         </tr>
         <tr>
             <td><strong>CPU count</strong></td>
-            <td><?php echo $experiment->userConfigurationData->computationalResourceScheduling->totalCPUCount; ?></td>
+            <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->totalCPUCount }}</td>
         </tr>
         <tr>
             <td><strong>Node count</strong></td>
-            <td><?php echo $experiment->userConfigurationData->computationalResourceScheduling->nodeCount; ?></td>
+            <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->nodeCount }}</td>
         </tr>
         <tr>
             <td><strong>Queue</strong></td>
-            <td><?php echo $experiment->userConfigurationData->computationalResourceScheduling->queueName; ?></td>
+            <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->queueName }}</td>
         </tr>
         <tr>
             <td><strong>Inputs</strong></td>
-            <td><?php ExperimentUtilities::list_input_files($experiment->experimentInputs); ?></td>
+            <td>{{ ExperimentUtilities::list_input_files($experiment->experimentInputs) }}</td>
         </tr>
         <tr>
             <td><strong>Outputs</strong></td>
-            <td><?php ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus->state, false); ?></td>
+            <td>{{ ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus->state, false) }}</td>
+        </tr>
+        <tr>
+            <td><strong>Storage Directory</strong></td>
+            <td><a href="{{URL::to('/')}}/files/browse?path={{$experiment->userConfigurationData->experimentDataDir}}" target="_blank">Open</a></td>
         </tr>
         <!-- an experiment is editable only when it has not failed. otherwise, show errors. -->
 {{--        @if( $expVal["editable"] == false)--}}
