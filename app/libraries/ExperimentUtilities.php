@@ -76,9 +76,12 @@ class ExperimentUtilities
             if ($input->type == DataType::URI && empty($input->metaData)) {
                 $inputArray = explode('/', $input->value);
                 echo '<p><a target="_blank"
-                        href="' . URL::to("/") . '/download/' . $inputArray[ count($inputArray)-3] . '/' . $inputArray[ count($inputArray)-2] . '/' . $inputArray[ count($inputArray)-1] . '">' .
-                    $inputArray[ count($inputArray)-1] . '
-                <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        href="' . URL::to("/") . '/download/' . 
+                                    $inputArray[ count($inputArray)-4] . "/" .
+                                    $inputArray[ count($inputArray)-3] . '/' . 
+                                    $inputArray[ count($inputArray)-2] . '/' . 
+                                    $inputArray[ count($inputArray)-1] . '">' .
+                '<span class="glyphicon glyphicon-new-window"></span></a></p>';
             }elseif($input->type == DataType::URI && !empty($input->metaData)
                 && json_decode($input->metaData)->location=="remote"){
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
@@ -180,10 +183,10 @@ class ExperimentUtilities
         }
 
         $applicationInputs = AppUtilities::get_application_inputs($_POST['application']);
-        $experimentInputs = ExperimentUtilities::process_inputs($applicationInputs, $experimentInputs);
+        $experimentInputs = ExperimentUtilities::process_inputs($_POST['project'], $_POST['experiment-name'], $applicationInputs, $experimentInputs);
 
         if (ExperimentUtilities::$experimentPath == null) {
-            ExperimentUtilities::create_experiment_folder_path();
+            ExperimentUtilities::create_experiment_folder_path($_POST['project'], $_POST['experiment-name']);
         }
         $userConfigData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
 
@@ -220,7 +223,7 @@ class ExperimentUtilities
      * @internal param $environmentPath
      * @return array
      */
-    public static function process_inputs($applicationInputs, $experimentInputs)
+    public static function process_inputs($projectId, $experimentName, $applicationInputs, $experimentInputs)
     {
         $experimentAssemblySuccessful = true;
         $newExperimentInputs = array();
@@ -230,7 +233,7 @@ class ExperimentUtilities
         if (sizeof($_FILES) > 0) {
             if (ExperimentUtilities::file_upload_successful()) {
                 // construct unique path
-                ExperimentUtilities::create_experiment_folder_path();
+                ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
             } else {
                 $experimentAssemblySuccessful = false;
             }
@@ -347,10 +350,15 @@ class ExperimentUtilities
     }
 
 
-    public static function create_experiment_folder_path()
+    public static function create_experiment_folder_path($projectId, $experimentName)
     {
         do {
-            ExperimentUtilities::$relativeExperimentDataDir = "/" . Session::get('username') . "/" . md5(rand() * time()) . '/';
+            $projectId = substr($projectId, 0, -37);
+            $projectId = preg_replace('/[^a-zA-Z0-9]+/', '_', $projectId);
+            $experimentName = preg_replace('/[^a-zA-Z0-9]+/', '_', $experimentName);
+
+            ExperimentUtilities::$relativeExperimentDataDir = "/" . Session::get('username') . "/" . $projectId . "/"
+                        . $experimentName . time() . '/';
             ExperimentUtilities::$experimentPath = Config::get('pga_config.airavata')['experiment-data-absolute-path'] .
                 ExperimentUtilities::$relativeExperimentDataDir;
         } while (is_dir(ExperimentUtilities::$experimentPath)); // if dir already exists, try again
@@ -431,7 +439,7 @@ class ExperimentUtilities
             //updating the experiment inputs and output path
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $cloneId);
             $experimentInputs = $experiment->experimentInputs;
-            ExperimentUtilities::create_experiment_folder_path();
+            ExperimentUtilities::create_experiment_folder_path($experiment->projectId, $experiment->experimentName);
             $hostName = $_SERVER['SERVER_NAME'];
 
             foreach ($experimentInputs as $experimentInput) {
@@ -650,9 +658,13 @@ class ExperimentUtilities
                     $outputPathArray = explode("/", $output->value);
 
                     echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                            href="' . URL::to("/") . '/download/' . $outputPathArray[ count($outputPathArray)-4] . "/" . $outputPathArray[ count($outputPathArray)-3] . "/" . $outputPathArray[ count($outputPathArray)-2] . '/' .
-            $outputPathArray[ count($outputPathArray)-1] . '">' .
-                        $outputPathArray[sizeof($outputPathArray) - 1] . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                            href="' . URL::to("/") . '/download/' . 
+                                                $outputPathArray[ count($outputPathArray)-5] . "/" .
+                                                $outputPathArray[ count($outputPathArray)-4] . "/" . 
+                                                $outputPathArray[ count($outputPathArray)-3] . "/" . 
+                                                $outputPathArray[ count($outputPathArray)-2] . '/' . 
+                                                $outputPathArray[ count($outputPathArray)-1] . '">' .
+                        ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
 //                else
 //                    echo 'Output paths are not correctly defined for : <br/>' . $output->name . '<br/><br/> Please report this issue to the admin<br/><br/>';
@@ -1100,7 +1112,7 @@ class ExperimentUtilities
         $applicationInputs = AppUtilities::get_application_inputs($experiment->executionId);
 
         $experimentInputs = $experiment->experimentInputs; // get current inputs
-        $experimentInputs = ExperimentUtilities::process_inputs($applicationInputs, $experimentInputs); // get new inputs
+        $experimentInputs = ExperimentUtilities::process_inputs($input['project'], $input['experiment-name'], $applicationInputs, $experimentInputs); // get new inputs
 
         if ($experimentInputs) {
             $experiment->experimentInputs = $experimentInputs;
