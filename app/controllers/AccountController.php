@@ -225,6 +225,13 @@ class AccountController extends BaseController
                 //creating a default project for user
                 ProjectUtilities::create_default_project($username);
             }
+
+            $dirPath = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . "/" . Session::get('username');
+            if(!file_exists($dirPath)){
+                $old_umask = umask(0);
+                mkdir($dirPath, 0777, true);
+                umask($old_umask);
+            }
         }catch (Exception $ex){
             CommonUtilities::print_error_message("Unable to Connect to the Airavata Server Instance!");
             return View::make('home');
