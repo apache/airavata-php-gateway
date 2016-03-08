@@ -99,7 +99,7 @@ Route::post("experiment/browse", "ExperimentController@browseView");
 
 
 Route::get("download/{username}/{exp_data_dir}/{exp_folder}/{exp_file}", function( $username, $exp_data_dir, $exp_folder, $exp_file){
-
+    //FIXME check for no ../ paths
     if( $username == Session::get("username")){
         $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $username . '/' . $exp_data_dir . "/" . $exp_folder . '/' . $exp_file;
         return Response::download( $downloadLink);

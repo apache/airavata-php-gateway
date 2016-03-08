@@ -10,7 +10,13 @@ class FilemanagerController extends BaseController
     }
 
     public function browse(){
-    	return View::make("files/browse");
+		//FIXME check for no ../ paths
+		if(Input::has("path") && (0 === strpos(Input::get("path"), Session::get('username')))){
+			$path = Input::get("path");
+		}else{
+			$path = Session::get("username");
+		}
+		return View::make("files/browse",array("path"=>$path));
     }
 
 	public function get(){
