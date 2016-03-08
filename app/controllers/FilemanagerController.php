@@ -10,7 +10,7 @@ class FilemanagerController extends BaseController
     }
 
     public function browse(){
-		//FIXME check for no ../ paths
+		//FIXME check for no ../ parts in the path
 		if(Input::has("path") && (0 == strpos(Input::get("path"), Session::get('username'))
 				|| 0 == strpos(Input::get("path"), "/" . Session::get('username')))){
 			$path = Input::get("path");

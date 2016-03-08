@@ -76,7 +76,7 @@ class ExperimentUtilities
             if ($input->type == DataType::URI && empty($input->metaData)) {
                 $inputArray = explode('/', $input->value);
                 echo '<p><a target="_blank"
-                        href="' . URL::to("/") . '/download/' . 
+                        href="' . URL::to("/") . '/download?path=' .
                                     $inputArray[ count($inputArray)-4] . "/" .
                                     $inputArray[ count($inputArray)-3] . '/' . 
                                     $inputArray[ count($inputArray)-2] . '/' . 
@@ -659,7 +659,7 @@ class ExperimentUtilities
                     $outputPathArray = explode("/", $output->value);
 
                     echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                            href="' . URL::to("/") . '/download/' . 
+                            href="' . URL::to("/") . '/download?path=' .
                                                 $outputPathArray[ count($outputPathArray)-5] . "/" .
                                                 $outputPathArray[ count($outputPathArray)-4] . "/" . 
                                                 $outputPathArray[ count($outputPathArray)-3] . "/" . 

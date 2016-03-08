@@ -97,7 +97,7 @@ function show_table(files){
             name_link = '<a href="#" onclick=dir_click("' + f.link + '")>&nbsp;' + f.name + "</a>";
         } else {
             icon_class = 'glyphicon glyphicon-save-file';
-            name_link = '<a href="../download/' + f.link + '">&nbsp;' + f.name + '</a>';
+            name_link = '<a href="../download?path=' + f.link + '">&nbsp;' + f.name + '</a>';
         }
 
         html += '<tr>'

@@ -98,11 +98,15 @@ Route::get("experiment/browse", "ExperimentController@browseView");
 Route::post("experiment/browse", "ExperimentController@browseView");
 
 
-Route::get("download/{username}/{proj_folder}/{exp_folder}/{exp_file}", function( $username, $proj_folder, $exp_folder, $exp_file){
-    //FIXME check for no ../ paths
-    if( $username == Session::get("username")){
-        $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $username
-            . '/' . $proj_folder . "/" . $exp_folder . '/' . $exp_file;
+Route::get("download", function(){
+    //FIXME check for no ../ parts in the path
+    if(Input::has("path") && (0 == strpos(Input::get("path"), Session::get('username'))
+            || 0 == strpos(Input::get("path"), "/" . Session::get('username')))){
+        $path = Input::get("path");
+        if(0 === strpos($path, '/')){
+            $path = substr($path, 1);
+        }
+        $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path;
         return Response::download( $downloadLink);
     }
 });
