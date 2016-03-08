@@ -39,7 +39,7 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        var PATH = "{{Session::get('username') }}";
+        var PATH = "{{$path}}";
         browse(PATH);
     });
 
