@@ -56,7 +56,8 @@ class AppUtilities
         $appInterface = new ApplicationInterfaceDescription(array(
             "applicationName" => $appInterfaceValues["applicationName"],
             "applicationDescription" => $appInterfaceValues["applicationDescription"],
-            "applicationModules" => $appInterfaceValues["applicationModules"]
+            "applicationModules" => $appInterfaceValues["applicationModules"],
+            "archiveWorkingDirectory" =>  intval( $appInterfaceValues["archiveWorkingDirectory"])
         ));
 
         if (isset($appInterfaceValues["inputName"])) {

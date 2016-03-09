@@ -34,6 +34,17 @@
         </div>
         <button type="button" class="hide btn btn-default add-app-module">Add Application Module</button>
     </div>
+    
+    <div class="form-group">
+        <label class="control-label">Enable Archiving Working Directory</label>
+        <select name="archiveWorkingDirectory" class="form-control" style="max-width: 200px" readonly>
+            <option value="0"
+             @if( isset( $interfaceObject) ) @if( false == $interfaceObject->archiveWorkingDirectory ) selected @endif @endif>False</option>
+            <option value="1"
+             @if( isset( $interfaceObject) ) @if( true == $interfaceObject->archiveWorkingDirectory ) selected @endif @endif>True</option>
+        </select>
+    </div>
+
     <div class="form-group form-horizontal">
         @if( isset( $interfaceObject))
         @foreach( (array)$interfaceObject->applicationInputs as $index => $appInputs)

@@ -38,7 +38,7 @@
     </ul>
 </div>
 
-<div class="tab-content">
+<div class="tab-content col-md-12">
 
 <div class="tab-pane active" id="tab-desc">
 
