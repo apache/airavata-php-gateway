@@ -242,7 +242,9 @@ class AccountController extends BaseController
 
     public function forgotPassword()
     {
-        return View::make("account/forgot-password");
+        $capatcha = WSIS::getCapatcha()->return;
+        return View::make("account/forgot-password", array("imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
+                "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
     }
 
     public function forgotPasswordSubmit()
@@ -258,7 +260,7 @@ class AccountController extends BaseController
             else
                 $username = $username . "@" . $wsisConfig['tenant-domain'];
             try{
-                $key = WSIS::validateUser($username);
+                $key = WSIS::validateUser(Input::get("userAnswer"),Input::get("imagePath"),Input::get("secretKey"), $username);
                 if(!empty($key)){
                     $result = WSIS::sendPasswordResetNotification($username, $key);
                     if($result===true){
@@ -331,40 +333,14 @@ class AccountController extends BaseController
                     }
                 }else{
                     $capatcha = WSIS::getCapatcha()->return;
-                    //hack to work with wso2 IS 5.0.0
-                    if (is_array(getimagesize(Config::get('pga_config.wsis')['service-url'] . $capatcha->imagePath))){
-                        return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
-                            "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
-                            "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
-                    }else{
-                        WSIS::confirmUserRegistration("123", $capatcha->imagePath,
-                            $capatcha->secretKey, $username, $confirmation, Config::get('pga_config.wsis')['tenant-domain']);
-                        return Redirect::to("login");
-                    }
+                    return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
+                        "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
+                        "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
                 }
             }catch (Exception $e){
-                var_dump($e);exit;
                 CommonUtilities::print_error_message("Account confirmation failed!");
                 return View::make("home");
             }
-        }
-    }
-
-    private function checkRemoteFile($url)
-    {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,$url);
-        // don't download content
-        curl_setopt($ch, CURLOPT_NOBODY, 1);
-        curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        if(curl_exec($ch)!==FALSE)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
         }
     }
 

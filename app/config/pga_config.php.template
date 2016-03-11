@@ -41,12 +41,12 @@ return array(
         /**
          * OAuth client key
          */
-        'oauth-client-key' => 'iGEREhSBLuGapdcXwMU0b8jEpA4a',
+        'oauth-client-key' => '5_GFR88Nzd4XvGthSMF1fnOJPuMa',
 
         /**
          * OAuth client secret
          */
-        'oauth-client-secret' => 'g4Lgp05JIJcNQryJkNKjXJYi8A8a',
+        'oauth-client-secret' => 'KNTf_LPLuGBDbRVZwkrP_fF5z2Ea',
 
         /**
          * Identity server domain
@@ -56,7 +56,7 @@ return array(
         /**
          * Identity server url
          */
-        'service-url' => 'https://idp.scigap.org:7443/',
+        'service-url' => 'https://idp.scigap.org:9443/',
 
         /**
          * Enable HTTPS server verification

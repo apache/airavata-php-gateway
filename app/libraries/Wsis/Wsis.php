@@ -462,8 +462,8 @@ class Wsis {
      * Method to validate username
      * @param $username
      */
-    public function validateUser($username){
-        return $this->userInfoRecoveryManager->validateUsername($username);
+    public function validateUser($userAnswer, $imagePath, $secretKey, $username){
+        return $this->userInfoRecoveryManager->validateUsername($userAnswer, $imagePath, $secretKey, $username);
     }
 
 
