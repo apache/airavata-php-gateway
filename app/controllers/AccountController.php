@@ -243,9 +243,8 @@ class AccountController extends BaseController
 
     public function forgotPassword()
     {
-        $capatcha = WSIS::getCapatcha()->return;
-        return View::make("account/forgot-password", array("imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
-                "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
+//        $capatcha = WSIS::getCapatcha()->return;
+        return View::make("account/forgot-password");
     }
 
     public function forgotPasswordSubmit()
@@ -316,28 +315,27 @@ class AccountController extends BaseController
             return View::make("home");
         }else{
             try{
-                if(Input::has("userAnswer")){
-                    $result = WSIS::confirmUserRegistration(Input::get("userAnswer"),Input::get("imagePath"),
-                        Input::get("secretKey"), $username, $confirmation, Config::get('pga_config.wsis')['tenant-domain']);
+//                if(Input::has("userAnswer")){
+                    $result = WSIS::confirmUserRegistration($username, $confirmation, Config::get('pga_config.wsis')['tenant-domain']);
                     if($result->verified){
                         $this->sendAccountCreationNotification2Admin($username);
                         return Redirect::to("login");
-                    }else if(!$result->verified && preg_match('/Error while validating captcha for user/',$result->error) ){
-                        CommonUtilities::print_error_message("Captcha Verification failed!");
-                        $capatcha = WSIS::getCapatcha()->return;
-                        return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
-                            "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
-                            "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
+//                    }else if(!$result->verified && preg_match('/Error while validating captcha for user/',$result->error) ){
+//                        CommonUtilities::print_error_message("Captcha Verification failed!");
+//                        $capatcha = WSIS::getCapatcha()->return;
+//                        return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
+//                            "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
+//                            "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
                     }else{
                         CommonUtilities::print_error_message("Account confirmation failed!");
                         return View::make("home");
                     }
-                }else{
-                    $capatcha = WSIS::getCapatcha()->return;
-                    return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
-                        "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
-                        "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
-                }
+//                }else{
+//                    $capatcha = WSIS::getCapatcha()->return;
+//                    return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
+//                        "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
+//                        "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
+//                }
             }catch (Exception $e){
                 CommonUtilities::print_error_message("Account confirmation failed!");
                 return View::make("home");

@@ -446,8 +446,8 @@ class Wsis {
      * @param $userName
      * @param $tenantDomain
      */
-    public function confirmUserRegistration($userAnswer, $imagePath, $secret, $userName, $code, $tenantDomain){
-        return $this->userInfoRecoveryManager->confirmUserRegistration($userAnswer, $imagePath, $secret, $userName, $code, $tenantDomain);
+    public function confirmUserRegistration($userName, $code, $tenantDomain){
+        return $this->userInfoRecoveryManager->confirmUserRegistration($userName, $code, $tenantDomain);
     }
 
     /**

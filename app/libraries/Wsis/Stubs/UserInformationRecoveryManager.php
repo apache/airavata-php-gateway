@@ -147,15 +147,15 @@ class UserInformationRecoveryManager {
      * @param $userName
      * @param $tenantDomain
      */
-    public function confirmUserRegistration($userAnswer, $imagePath, $secret, $userName, $code, $tenantDomain){
+    public function confirmUserRegistration($userName, $code, $tenantDomain){
         $confirmUserSelfRegistration = new confirmUserSelfRegistration();
         $confirmUserSelfRegistration->username = $userName;
         $confirmUserSelfRegistration->code = $code;
         $confirmUserSelfRegistration->tenantDomain = $tenantDomain;
         $confirmUserSelfRegistration->captcha = new CaptchaInfoBean();
-        $confirmUserSelfRegistration->captcha->userAnswer = $userAnswer;
-        $confirmUserSelfRegistration->captcha->imagePath = $imagePath;
-        $confirmUserSelfRegistration->captcha->secretKey = $secret;
+//        $confirmUserSelfRegistration->captcha->userAnswer = $userAnswer;
+//        $confirmUserSelfRegistration->captcha->imagePath = $imagePath;
+//        $confirmUserSelfRegistration->captcha->secretKey = $secret;
         $result = $this->serviceStub->confirmUserSelfRegistration($confirmUserSelfRegistration);
         return $result->return;
     }
