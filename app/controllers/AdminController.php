@@ -130,7 +130,7 @@ class AdminController extends BaseController {
 	}
 
     public function addRolesToUser(){
-        $currentRoles = (array)WSIS::getUserRoles(Input::get("username"));
+        $currentRoles = Session::get('roles');
         $roles["new"] = array_diff(Input::all()["roles"], $currentRoles);
         $roles["deleted"] = array_diff($currentRoles, Input::all()["roles"]);
 
@@ -158,7 +158,7 @@ class AdminController extends BaseController {
     }
 
 	public function getRoles(){
-		return json_encode((array)WSIS::getUserRoles(Input::get("username")));
+		return json_encode(Session::get("roles"));
 	}
 
 	public function deleteRole(){
