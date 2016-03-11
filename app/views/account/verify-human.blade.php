@@ -23,14 +23,14 @@
                 <input name="username" type="hidden" value="{{$username}}" class="form-control"/>
                 <input name="imagePath" type="hidden" value="{{$imagePath}}" class="form-control"/>
                 <input name="secretKey" type="hidden" value="{{$secretKey}}" class="form-control"/>
-                <input class="form-control" id="userAnswer" name="userAnswer" required="required"/></div>
+                <input class="form-control" id="userAnswer" name="userAnswer" required="required"/>
             </div>
-            <div class="form-group btn-toolbar">
-                <div class="btn-group">
-                    <input type="submit" class="form-control btn btn-primary" value="Submit"/>
-                </div>
+        </div>
+        <div class="form-group btn-toolbar">
+            <div class="btn-group">
+                <input type="submit" class="form-control btn btn-primary" value="Submit"/>
             </div>
-
         </div>
     </form>
+</div>
 @stop

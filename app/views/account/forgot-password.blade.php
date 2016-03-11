@@ -12,8 +12,20 @@
     <h4> Please enter your username, you registered with.</h4>
     <form role="form" method="POST" action="{{ URL::to('/') }}/forgot-password">
         <div class="form-group form-horizontal">
-            <div class="col-md-8"><input name="username" type="username" value="" class="form-control" placeholder="username" required/></div>
-            <div class="col-md-2"><input type="submit" class="form-control btn btn-primary" value="Submit"/></div>
+            <img src="{{$imageUrl}}"/>
+            <div>
+                <input name="imagePath" type="hidden" value="{{$imagePath}}" class="form-control"/>
+                <input name="secretKey" type="hidden" value="{{$secretKey}}" class="form-control"/>
+                <br/>
+                <input class="form-control" id="userAnswer" name="userAnswer" placeholder="captcha text" required="required"/>
+                <br/>
+                <input name="username" type="username" value="" class="form-control" placeholder="username" required/>
+            </div>
+        </div>
+        <div class="form-group btn-toolbar">
+            <div class="btn-group">
+                <input type="submit" class="form-control btn btn-primary" value="Submit"/>
+            </div>
         </div>
     </form>
     @stop

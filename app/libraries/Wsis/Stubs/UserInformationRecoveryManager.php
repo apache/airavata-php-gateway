@@ -36,9 +36,14 @@ class UserInformationRecoveryManager {
      * Method to validate username and get key which is to be used for the next call
      * @param $username
      */
-    public function validateUsername($username){
+    public function validateUsername($userAnswer, $imagePath, $secretKey, $username){
         $verifyUser = new verifyUser();
         $verifyUser->username = $username;
+        $captcha = new CaptchaInfoBean();
+        $captcha->userAnswer = $userAnswer;
+        $captcha->imagePath = $imagePath;
+        $captcha->secretKey = $secretKey;
+        $verifyUser->captcha = $captcha;
         $result = $this->serviceStub->verifyUser($verifyUser);
         if($result->return->verified){
             return $result->return->key;
