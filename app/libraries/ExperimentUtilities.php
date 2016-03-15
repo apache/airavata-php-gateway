@@ -189,7 +189,7 @@ class ExperimentUtilities
         if (ExperimentUtilities::$experimentPath == null) {
             ExperimentUtilities::create_experiment_folder_path($_POST['project'], $_POST['experiment-name']);
         }
-        $userConfigData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
+        $userConfigData->experimentDataDir = ExperimentUtilities::$experimentPath;
 
         $experiment = new ExperimentModel();
         // required
