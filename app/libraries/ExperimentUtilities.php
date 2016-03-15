@@ -318,7 +318,7 @@ class ExperimentUtilities
                         $experimentAssemblySuccessful = false;
                     }
                     $hostName = $_SERVER['SERVER_NAME'];
-                    $experimentInput->value = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':' . $filePath;
+                    $experimentInput->value = 'file://' . $hostName . ':' . $filePath;
                     $experimentInput->type = $applicationInput->type;
 
                 } else {
