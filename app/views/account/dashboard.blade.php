@@ -212,7 +212,7 @@
             <h1>Hi! You look new here.</h1>
         </div>
         <div class="row well">
-            <h4>Please contact the gateway administrator to request access to run experiments and more.</h4>
+            <h4>You will be notified via email by your gateway administrator when can get access to the gateway to run experiments.</h4>
         </div>
     </div>
     @endif
