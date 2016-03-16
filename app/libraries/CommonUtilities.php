@@ -194,7 +194,8 @@ class CommonUtilities
         }
 
         $active = "";
-        if( Session::has("nav-active") && Session::has('loggedin') ){
+        if(Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
+                || Session::has('admin-read-only'))){
             if( Session::get("nav-active") == "storage")
                 $active = "active";
             echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/files/browse"><span class="glyphicon glyphicon-folder-close"></span> Storage</a></li>';

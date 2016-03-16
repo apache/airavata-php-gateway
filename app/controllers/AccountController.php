@@ -125,7 +125,6 @@ class AccountController extends BaseController
             $username = $userProfile['username'];
             $userRoles = $userProfile['roles'];
 
-            print_r( $userRoles);
             $authzToken = new Airavata\Model\Security\AuthzToken();
             $authzToken->accessToken = $accessToken;
             $authzToken->claimsMap = array('userName'=>$username);
@@ -159,7 +158,7 @@ class AccountController extends BaseController
             if(Session::get("admin") || Session::get("admin-read-only")){
                 return Redirect::to("admin/dashboard");
             }else{
-                return Redirect::to("home");
+                return Redirect::to("account/dashboard");
             }
         }
 
@@ -279,6 +278,10 @@ class AccountController extends BaseController
                 return View::make("home");
             }
         }
+    }
+
+    public function dashboard(){
+       return View::make("account/dashboard");
     }
 
     public function resetPassword()
