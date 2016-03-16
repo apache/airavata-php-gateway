@@ -33,7 +33,11 @@ class FilemanagerController extends BaseController
 			}
 			*/
 			$DATA_ROOT = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-			$data_path = $DATA_ROOT . "/" . $path;
+			if( strpos($path, $DATA_ROOT) !== false)
+				$data_path = $DATA_ROOT . "/" . $path;
+			else
+				$data_path = $path;
+				
 			if (!file_exists( $data_path))
 			    echo FileManager::msg(False, "$path does not exist");
 			if (is_dir( $data_path))
