@@ -197,6 +197,8 @@ class UserStoreManager {
      */
     public function updateRoleListOfUser( $username, $roles){
         if(isset($roles["deleted"])) {
+            if(!is_array($roles["deleted"]))
+                $roles["deleted"] = array($roles["deleted"]);
             foreach ($roles["deleted"] as $role) {
                 $parameters = new UpdateRoleListOfUser();
                 $parameters->userName = $username;
@@ -205,6 +207,8 @@ class UserStoreManager {
             }
         }
         if(isset($roles["new"])){
+            if(!is_array($roles["new"]))
+                $roles["new"] = array($roles["new"]);
             foreach ($roles["new"] as $role) {
                 $parameters = new UpdateRoleListOfUser();
                 $parameters->userName = $username;
