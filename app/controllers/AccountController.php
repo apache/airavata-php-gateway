@@ -124,8 +124,7 @@ class AccountController extends BaseController
             $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
             $username = $userProfile['username'];
             $userRoles = (array)WSIS::getUserRoles($username);
-
-            print_r( $userRoles);
+            
             $authzToken = new Airavata\Model\Security\AuthzToken();
             $authzToken->accessToken = $accessToken;
             $authzToken->claimsMap = array('userName'=>$username);
@@ -133,6 +132,7 @@ class AccountController extends BaseController
             Session::put('oauth-refresh-code',$refreshToken);
             Session::put('oauth-expiration-time',$expirationTime);
             Session::put("user-profile", $userProfile);
+
             if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
                 Session::put("admin", true);
             }
@@ -158,7 +158,7 @@ class AccountController extends BaseController
             if(Session::get("admin") || Session::get("admin-read-only")){
                 return Redirect::to("admin/dashboard");
             }else{
-                return Redirect::to("home");
+                return Redirect::to("account/dashboard");
             }
         }
 
@@ -279,6 +279,10 @@ class AccountController extends BaseController
                 return View::make("home");
             }
         }
+    }
+
+    public function dashboard(){
+       return View::make("account/dashboard");
     }
 
     public function resetPassword()
