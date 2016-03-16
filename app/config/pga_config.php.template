@@ -114,11 +114,6 @@ return array(
         'experiment-data-absolute-path' => '/var/www/experimentData',
 
         /**
-         * username for the user for accessing the experiment data over ssh
-         */
-        'ssh-user' => 'root',
-
-        /**
          * Advanced experiments options
          */
         'advanced-experiment-options' => '',

@@ -130,7 +130,7 @@ class AdminController extends BaseController {
 	}
 
     public function addRolesToUser(){
-        $currentRoles = (array)WSIS::getUserRoles(Input::get("username"));
+        $currentRoles = Session::get('roles');
         $roles["new"] = array_diff(Input::all()["roles"], $currentRoles);
         $roles["deleted"] = array_diff($currentRoles, Input::all()["roles"]);
 
@@ -158,7 +158,7 @@ class AdminController extends BaseController {
     }
 
 	public function getRoles(){
-		return json_encode((array)WSIS::getUserRoles(Input::get("username")));
+		return json_encode(Session::get("roles"));
 	}
 
 	public function deleteRole(){
@@ -175,10 +175,59 @@ class AdminController extends BaseController {
 	}
 
 	public function updateUserRoles(){
-		if( Input::has("add"))
-			return WSIS::updateUserRoles(Input::get("username"), array("new"=> Input::get("roles"), "deleted" => array() ) );
+		if( Input::has("add")){
+			WSIS::updateUserRoles(Input::get("username"), array("new"=> Input::get("roles"), "deleted" => array() ) );
+			if(in_array(Config::get(wsis::admin-role-name), Input::get("roles")) || in_array(Config::get(wsis::read-only-admin-role-name), Input::get("roles"))
+				|| in_array(Config::get(wsis::user-role-name), Input::get("roles"))){
+				$this->sendAccessGrantedEmailToTheUser(Input::get("username"));
+			}
+		}
 		else
 			return WSIS::updateUserRoles(Input::get("username"), array("new"=> array(), "deleted" => Input::get("roles") ) );
+	}
+
+	private function sendAccessGrantedEmailToTheUser($username){
+
+		$mail = new PHPMailer;
+
+		$mail->isSMTP();
+		$mail->SMTPDebug = 3;
+		$mail->Host = Config::get('pga_config.portal')['portal-smtp-server-host'];
+
+		$mail->SMTPAuth = true;
+
+		$mail->Username = Config::get('pga_config.portal')['portal-email-username'];
+		$mail->Password = Config::get('pga_config.portal')['portal-email-password'];
+
+		$mail->SMTPSecure = "tls";
+		$mail->Port = intval(Config::get('pga_config.portal')['portal-smtp-server-port']);
+
+		$mail->From = Config::get('pga_config.portal')['portal-email-username'];
+		$mail->FromName = "Gateway Portal: " . $_SERVER['SERVER_NAME'];
+
+		$recipients = Config::get('pga_config.portal')['admin-emails'];
+		foreach($recipients as $recipient){
+			$mail->addAddress($recipient);
+		}
+
+		$mail->isHTML(true);
+
+		$mail->Subject = "Your user account (".$username.") was authorized !";
+		$userProfile = WSIS::getUserProfile($username);
+		$wsisConfig = Config::get('pga_config.wsis');
+		if( $wsisConfig['tenant-domain'] == "")
+			$username = $username;
+		else
+			$username = $username . "@" . $wsisConfig['tenant-domain'];
+
+		$str = "Please relogin into the portal to access the portal features" ."<br/><br/>";
+		$str = $str . "Gateway Portal: " . $_SERVER['SERVER_NAME'] ."<br/>";
+		$str = $str . "Username: " . $username ."<br/>";
+		$str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
+		$str = $str . "Email: " . $userProfile["email"] ;
+
+		$mail->Body = $str;
+		$mail->send();
 	}
 
     public function experimentStatistics()
