@@ -11,67 +11,42 @@ return array(
         /**
          * Admin Role Name
          */
-        'admin-role-name' => 'sg_admin',
+        'admin-role-name' => 'Internal/everyone',
 
         /**
          * Read only Admin Role Name
          */
-        'read-only-admin-role-name' => 'sg_admin_read_only',
+        'read-only-admin-role-name' => 'Internal/everyone',
 
         /**
          * Gateway user role
          */
-        'user-role-name' => 'sg_user',
+        'user-role-name' => 'Internal/everyone',
 
         /**
          * Tenant Domain
          */
-        'tenant-domain' => 'prod.seagrid',
+        'tenant-domain' => 'master.airavata',
 
         /**
          * Tenant admin's username
          */
-        'admin-username' => 'admin',
+        'admin-username' => 'master',
 
         /**
          * Tenant admin's password
          */
-        'admin-password' => 'seagr1d_@dmin',
+        'admin-password' => 'master',
 
         /**
          * OAuth client key
          */
-        'oauth-client-key' => 'y7xgdnNUx6ifOswJTPcqtzw4aOEa',
+        'oauth-client-key' => '5_GFR88Nzd4XvGthSMF1fnOJPuMa',
 
         /**
          * OAuth client secret
          */
-        'oauth-client-secret' => 'CgfbuupAPhaOBSBPSScZUWHNANwa',
-
-//        /**
-//         * Tenant Domain
-//         */
-//        'tenant-domain' => 'master.airavata',
-//
-//        /**
-//         * Tenant admin's username
-//         */
-//        'admin-username' => 'master',
-//
-//        /**
-//         * Tenant admin's password
-//         */
-//        'admin-password' => 'master',
-//
-//        /**
-//         * OAuth client key
-//         */
-//        'oauth-client-key' => '5_GFR88Nzd4XvGthSMF1fnOJPuMa',
-//
-//        /**
-//         * OAuth client secret
-//         */
-//        'oauth-client-secret' => 'KNTf_LPLuGBDbRVZwkrP_fF5z2Ea',
+        'oauth-client-secret' => 'KNTf_LPLuGBDbRVZwkrP_fF5z2Ea',
 
         /**
          * Identity server domain
@@ -126,7 +101,7 @@ return array(
         /**
          * PGA Gateway ID
          */
-        'gateway-id' => 'seagrid',
+        'gateway-id' => 'default',
 
         /**
          * Maximum size of a file which is allowed to upload to the server
@@ -136,7 +111,7 @@ return array(
         /**
          * absolute path of the data dir
          */
-        'experiment-data-absolute-path' => '/Users/supun',
+        'experiment-data-absolute-path' => '/var/www/experimentData',
 
         /**
          * Advanced experiments options
@@ -171,7 +146,12 @@ return array(
         /**
          * Life time of app catalog data cache in minutes
          */
-        'app-catalog-cache-duration' => 5
+        'app-catalog-cache-duration' => 5,
+ 
+         /**
+         * Gateway data store resource id
+         */
+         'gateway-data-store-resource-id' => ''
     ],
 
     /**
@@ -188,7 +168,7 @@ return array(
         /**
          * Set the name of theme in use here
          */
-        'theme' => 'seagrid',
+        'theme' => 'base',
 
         /**
          * Portal title
