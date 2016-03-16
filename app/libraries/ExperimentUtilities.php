@@ -446,7 +446,7 @@ class ExperimentUtilities
             foreach ($experimentInputs as $experimentInput) {
                 if ($experimentInput->type == DataType::URI) {
                     $currentInputPath = $experimentInput->value;
-                    $hostPathConstant = 'file://' . Config::get('pga_config.airavata')['ssh-user'] . '@' . $hostName . ':';
+                    $hostPathConstant = 'file://' . $hostName . ':';
                     $currentInputPath = str_replace($hostPathConstant, '', $currentInputPath);
                     $parts = explode('/', rtrim($currentInputPath, '/'));
                     $fileName = array_pop($parts);

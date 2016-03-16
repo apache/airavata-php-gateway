@@ -196,11 +196,19 @@ class UserStoreManager {
      * @return void
      */
     public function updateRoleListOfUser( $username, $roles){
-        $parameters = new UpdateRoleListOfUser();
-        $parameters->userName = $username;
-        $parameters->deletedRoles = $roles["deleted"];
-        $parameters->newRoles = $roles["new"];
-        return $this->serviceStub->updateRoleListOfUser( $parameters);
+        foreach ($roles["deleted"] as $role) {
+            $parameters = new UpdateRoleListOfUser();
+            $parameters->userName = $username;
+            $parameters->deletedRoles = $role;
+            $this->serviceStub->updateRoleListOfUser( $parameters);
+        }
+        foreach ($roles["new"] as $role) {
+            $parameters = new UpdateRoleListOfUser();
+            $parameters->userName = $username;
+            $parameters->newRoles = $role;
+            $this->serviceStub->updateRoleListOfUser( $parameters);
+        }
+        return;
     }
 
     /**
