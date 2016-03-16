@@ -130,7 +130,7 @@ class AdminController extends BaseController {
 	}
 
     public function addRolesToUser(){
-        $currentRoles = Session::get('roles');
+        $currentRoles = WSIS::getUserRoles(Input::get("username"));
         $roles["new"] = array_diff(Input::all()["roles"], $currentRoles);
         $roles["deleted"] = array_diff($currentRoles, Input::all()["roles"]);
 
@@ -146,6 +146,11 @@ class AdminController extends BaseController {
 
         $username = Input::all()["username"];
         WSIS::updateUserRoles($username, $roles);
+		$roles = WSIS::getUserRoles(Input::get("username"));
+		if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $roles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $roles)
+			|| in_array(Config::get("pga_config.wsis")["user-role-name"], $roles)){
+			$this->sendAccessGrantedEmailToTheUser(Input::get("username"));
+		}
         return Redirect::to("admin/dashboard/roles")->with( "message", "Roles has been added.");
     }
 
@@ -158,7 +163,7 @@ class AdminController extends BaseController {
     }
 
 	public function getRoles(){
-		return json_encode(Session::get("roles"));
+		return json_encode((array)WSIS::getUserRoles(Input::get("username")));
 	}
 
 	public function deleteRole(){
@@ -177,8 +182,9 @@ class AdminController extends BaseController {
 	public function updateUserRoles(){
 		if( Input::has("add")){
 			WSIS::updateUserRoles(Input::get("username"), array("new"=> Input::get("roles"), "deleted" => array() ) );
-			if(in_array(Config::get(wsis::admin-role-name), Input::get("roles")) || in_array(Config::get(wsis::read-only-admin-role-name), Input::get("roles"))
-				|| in_array(Config::get(wsis::user-role-name), Input::get("roles"))){
+			$roles = WSIS::getUserRoles(Input::get("username"));
+			if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $roles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $roles)
+				|| in_array(Config::get("pga_config.wsis")["user-role-name"], $roles)){
 				$this->sendAccessGrantedEmailToTheUser(Input::get("username"));
 			}
 		}

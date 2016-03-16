@@ -247,38 +247,38 @@
         });
 
         update_users_existing_roles(this);
+    });
 
-        $(".add-roles-submit").click(function () {
-            that = this;
-            $(".success-message").html("");
-            $(this).attr("disabled", "disabled");
-            $(this).html("<img src='" + $(".base-url").val() + "/assets/ajax-loader.gif'/>");
-            userName = $(this).data("username");
-            var rolesToAdd = $(".new-roles-select").val();
-            if(rolesToAdd != null){
-                $(".roles-list").find(".role-name").each(function () {
-                    rolesToAdd.push($(this).html());
-                });
-                $.ajax({
-                    type: "POST",
-                    url: $(".base-url").val() + "/admin/add-roles-to-user",
-                    data: {
-                        add: true,
-                        username: userName,
-                        roles: rolesToAdd
-                    },
-                    success : function(data)
-                    {
-                        $(".roles-load").removeClass("hide");
-                        $(".roles-list").addClass("hide");
-                        $(".success-message").html("<span class='alert alert-success col-md-12'>Roles have been added</span>");
-                        update_users_existing_roles(that);
-                    }
-                });
-            }
-            $(".add-roles-submit").html("Add Roles");
-            $(this).removeAttr("disabled");
-        });
+    $(".add-roles-submit").click(function () {
+        that = this;
+        $(".success-message").html("");
+        $(this).attr("disabled", "disabled");
+        $(this).html("<img src='" + $(".base-url").val() + "/assets/ajax-loader.gif'/>");
+        userName = $(this).data("username");
+        var rolesToAdd = $(".new-roles-select").val();
+        if(rolesToAdd != null){
+            $(".roles-list").find(".role-name").each(function () {
+                rolesToAdd.push($(this).html());
+            });
+            $.ajax({
+                type: "POST",
+                url: $(".base-url").val() + "/admin/add-roles-to-user",
+                data: {
+                    add: true,
+                    username: userName,
+                    roles: rolesToAdd
+                },
+                success : function(data)
+                {
+                    $(".roles-load").removeClass("hide");
+                    $(".roles-list").addClass("hide");
+                    $(".success-message").html("<span class='alert alert-success col-md-12'>Roles have been added</span>");
+                    update_users_existing_roles(that);
+                }
+            });
+        }
+        $(".add-roles-submit").html("Add Roles");
+        $(this).removeAttr("disabled");
     });
 </script>
 @stop
