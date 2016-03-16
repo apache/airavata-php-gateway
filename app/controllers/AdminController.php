@@ -131,6 +131,8 @@ class AdminController extends BaseController {
 
     public function addRolesToUser(){
         $currentRoles = WSIS::getUserRoles(Input::get("username"));
+		if(!is_array($currentRoles))
+			$currentRoles = array($currentRoles);
         $roles["new"] = array_diff(Input::all()["roles"], $currentRoles);
         $roles["deleted"] = array_diff($currentRoles, Input::all()["roles"]);
 
