@@ -153,7 +153,14 @@
         </tr>
         <tr>
             <td><strong>Storage Directory</strong></td>
-            <td><a href="{{URL::to('/')}}/files/browse?path={{$experiment->userConfigurationData->experimentDataDir}}" target="_blank">Open</a></td>
+            <?php
+                if(0 === strpos($experiment->userConfigurationData->experimentDataDir, Config::get("pga_config.airavata")['experiment-data-absolute-path'])){
+                    $expDataDir = str_replace(Config::get("pga_config.airavata")['experiment-data-absolute-path'], "", $experiment->userConfigurationData->experimentDataDir);
+                }else{
+                    $expDataDir = $experiment->userConfigurationData->experimentDataDir;
+                }
+            ?>
+            <td><a href="{{URL::to('/')}}/files/browse?path={{$expDataDir}}" target="_blank">Open</a></td>
         </tr>
         <!-- an experiment is editable only when it has not failed. otherwise, show errors. -->
 {{--        @if( $expVal["editable"] == false)--}}

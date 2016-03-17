@@ -151,7 +151,9 @@ class AdminController extends BaseController {
 		$roles = WSIS::getUserRoles(Input::get("username"));
 		if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $roles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $roles)
 			|| in_array(Config::get("pga_config.wsis")["user-role-name"], $roles)){
-			$this->sendAccessGrantedEmailToTheUser(Input::get("username"));
+			$userProfile = WSIS::getUserProfile(Input::get("username"));
+			$recipients = array($userProfile["email"]);
+			$this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
 		}
         return Redirect::to("admin/dashboard/roles")->with( "message", "Roles has been added.");
     }
@@ -187,14 +189,16 @@ class AdminController extends BaseController {
 			$roles = WSIS::getUserRoles(Input::get("username"));
 			if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $roles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $roles)
 				|| in_array(Config::get("pga_config.wsis")["user-role-name"], $roles)){
-				$this->sendAccessGrantedEmailToTheUser(Input::get("username"));
+				$userProfile = WSIS::getUserProfile(Input::get("username"));
+				$recipients = array($userProfile["email"]);
+				$this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
 			}
 		}
 		else
 			return WSIS::updateUserRoles(Input::get("username"), array("new"=> array(), "deleted" => Input::get("roles") ) );
 	}
 
-	private function sendAccessGrantedEmailToTheUser($username){
+	private function sendAccessGrantedEmailToTheUser($username, $recipients){
 
 		$mail = new PHPMailer;
 
@@ -213,7 +217,6 @@ class AdminController extends BaseController {
 		$mail->From = Config::get('pga_config.portal')['portal-email-username'];
 		$mail->FromName = "Gateway Portal: " . $_SERVER['SERVER_NAME'];
 
-		$recipients = Config::get('pga_config.portal')['admin-emails'];
 		foreach($recipients as $recipient){
 			$mail->addAddress($recipient);
 		}
