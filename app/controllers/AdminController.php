@@ -223,7 +223,7 @@ class AdminController extends BaseController {
 
 		$mail->isHTML(true);
 
-		$mail->Subject = "Your user account (".$username.") was authorized !";
+		$mail->Subject = "Your user account (".$username.") privileges changed!";
 		$userProfile = WSIS::getUserProfile($username);
 		$wsisConfig = Config::get('pga_config.wsis');
 		if( $wsisConfig['tenant-domain'] == "")
@@ -231,7 +231,7 @@ class AdminController extends BaseController {
 		else
 			$username = $username . "@" . $wsisConfig['tenant-domain'];
 
-		$str = "Please relogin into the portal to access the portal features" ."<br/><br/>";
+		$str = "Please re-login into the portal to use new privileges" ."<br/><br/>";
 		$str = $str . "Gateway Portal: " . $_SERVER['SERVER_NAME'] ."<br/>";
 		$str = $str . "Username: " . $username ."<br/>";
 		$str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
