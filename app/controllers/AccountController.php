@@ -151,11 +151,12 @@ class AccountController extends BaseController
             CommonUtilities::store_id_in_session($username);
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
-            if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
+            if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user")){            
                 return $this->initializeWithAiravata($username);
             }
 
-            if(Session::get("admin") || Session::get("admin-read-only")){
+            if(Session::has("admin") || Session::has("admin-read-only")){
+
                 return Redirect::to("admin/dashboard");
             }else{
                 return Redirect::to("account/dashboard");
@@ -237,7 +238,11 @@ class AccountController extends BaseController
             return View::make('home');
         }
 
-        return Redirect::to("admin/dashboard");
+        if(Session::has("admin") || Session::has("admin-read-only")){
+            return Redirect::to("admin/dashboard");
+        }else{
+            return Redirect::to("account/dashboard");
+        }
     }
 
     public function forgotPassword()
