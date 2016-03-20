@@ -15,12 +15,16 @@
     <div class="form-group">
         <label class="control-label">Push Monitoring End Point</label>
         <input type="text" class="form-control" name="pushMonitoringEndpoint"
+            @if( isset( $JSI) )
                value="{{ $JSI->resourceJobManager->pushMonitoringEndpoint }}"/>
+            @endif
     </div>
     <div class="form-group">
         <label class="control-label">Job Manager Bin Path</label>
         <input type="text" class="form-control" name="jobManagerBinPath"
+            @if( isset( $JSI) )
                value="{{ $JSI->resourceJobManager->jobManagerBinPath }}"/>
+            @endif
     </div>
     <div class="form-group">
         <h3>Job Manager Commands</h3>
