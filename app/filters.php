@@ -121,7 +121,7 @@ Route::filter('verifyauthorizeduser', function () {
 Route::filter('verifyadmin', function () {
     if (CommonUtilities::verify_login()) {
         if (!Session::has("admin") && !Session::has("admin-read-only")) {
-            return Redirect::to("home");
+            return Redirect::to("home")->with("admin-alert", true);
         }
     } else
         return Redirect::to("home")->with("login-alert", true);
@@ -130,7 +130,7 @@ Route::filter('verifyadmin', function () {
 Route::filter('verifyeditadmin', function () {
     if (CommonUtilities::verify_login()) {
         if (!Session::has("admin")) {
-            return Redirect::to("home");
+            return Redirect::to("home")->with("admin-alert", true);
         }
     } else
         return Redirect::to("home")->with("login-alert", true);
