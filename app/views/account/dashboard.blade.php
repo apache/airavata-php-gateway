@@ -212,7 +212,7 @@
             <h1>Hi! You look new here.</h1>
         </div>
         <div class="row well">
-            <h4>Your SEAGrid account is pending approval. You will be notified via email upon approval by SEAGrid Admin.</h4>
+            <h4>Your {{ Config::get('pga_config.portal')['portal-title'] }} account is pending approval. You will be notified via email upon approval by {{ Config::get('pga_config.portal')['portal-title'] }} Admin.</h4>
         </div>
     </div>
     @endif
