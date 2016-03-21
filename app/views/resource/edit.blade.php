@@ -230,7 +230,7 @@
                                     "parallelismTypes" => $parallelismTypes
                                 )
                             )
-                @elseif( $selectedJspIndex == $jobSubmissionProtocolsObject::SSH || $jobSubmissionProtocolsObject::SSH_FORK)
+                @elseif( $selectedJspIndex == $jobSubmissionProtocolsObject::SSH || $selectedJspIndex == $jobSubmissionProtocolsObject::SSH_FORK)
                 <div class="form-group required">
                     <label class="control-label">Select Security Protocol</label>
                     <select name="securityProtocol" required="required">
