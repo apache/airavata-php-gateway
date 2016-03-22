@@ -17,7 +17,7 @@ use Airavata\Model\AppCatalog\ComputeResource\MonitorMode;
 use Airavata\Model\AppCatalog\ComputeResource\ResourceJobManagerType;
 use Airavata\Model\Data\Movement\SCPDataMovement;
 use Airavata\Model\Data\Movement\SecurityProtocol;
-use Airavata\Model\AppCatalog\ComputeResource\UnicoreDataMovement;
+use Airavata\Model\Data\Movement\UnicoreDataMovement;
 //Gateway Classes
 
 
