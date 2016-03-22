@@ -102,7 +102,7 @@ $(document).ready( function(){
     }
     else if( selectedVal == "globus")
     {
-    	alert("Globus Protool is not being setup right now. Please choose another option.");
+    	alert("Globus Protocol is not being setup right now. Please choose another option.");
     	/*	
       $(this).parent().append(  parentResDiv 
                       + $(".ssh-block").html()
