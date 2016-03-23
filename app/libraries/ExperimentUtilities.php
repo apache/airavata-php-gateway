@@ -317,7 +317,7 @@ class ExperimentUtilities
                 $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
                 $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
                 $hostName = $_SERVER['SERVER_NAME'];
-                $dataReplicationModel->filePath = "file://" . $hostName . $filePath;
+                $dataReplicationModel->filePath = "file://" . $hostName . ":" . $filePath;
 
                 $dataProductModel->replicaLocations[] = $dataReplicationModel;
                 $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
@@ -430,7 +430,6 @@ class ExperimentUtilities
 
             foreach ($experimentInputs as $experimentInput) {
                 if ($experimentInput->type == DataType::URI) {
-                    $currentInputPath = $experimentInput->value;
                     $hostPathConstant = 'file://' . $hostName . ':';
                     $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $experimentInput->value);
                     $currentInputPath = "";
@@ -460,7 +459,7 @@ class ExperimentUtilities
                     $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
                     $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
                     $hostName = $_SERVER['SERVER_NAME'];
-                    $dataReplicationModel->filePath = "file://" . $hostName . $newInputPath;
+                    $dataReplicationModel->filePath = "file://" . $hostName . ":" . $newInputPath;
 
                     $dataProductModel->replicaLocations[] = $dataReplicationModel;
                     $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
