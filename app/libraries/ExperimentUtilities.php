@@ -316,7 +316,8 @@ class ExperimentUtilities
                 $dataReplicationModel->replicaName = basename($filePath) . "-gateway-datastore-copy";
                 $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
                 $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
-                $dataReplicationModel->filePath = $filePath;
+                $hostName = $_SERVER['SERVER_NAME'];
+                $dataReplicationModel->filePath = "file://" . $hostName . $filePath;
 
                 $dataProductModel->replicaLocations[] = $dataReplicationModel;
                 $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
