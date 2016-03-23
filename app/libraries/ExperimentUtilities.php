@@ -7,7 +7,6 @@ use Airavata\API\Error\InvalidRequestException;
 use Airavata\Facades\Airavata;
 use Airavata\Model\Application\Io\DataType;
 use Airavata\Model\AppCatalog\AppInterface\ApplicationInterfaceDescription;
-use Airavata\Model\Application\Io\InputDataObjectType;
 use Airavata\Model\Scheduling\ComputationalResourceSchedulingModel;
 use Airavata\Model\Experiment\ExperimentModel;
 use Airavata\Model\Status\ExperimentState;
@@ -16,6 +15,11 @@ use Airavata\Model\Status\JobState;
 use Airavata\Model\Status\TaskState;
 use Airavata\Model\Task\TaskTypes;
 use Airavata\Model\Experiment\UserConfigurationDataModel;
+use Airavata\Model\Data\Product\DataProductModel;
+use Airavata\Model\Data\Product\DataProductType;
+use Airavata\Model\Data\Product\DataReplicaLocationModel;
+use Airavata\Model\Data\Product\ReplicaLocationCategory;
+use Airavata\Model\Data\Product\ReplicaPersistentType;
 
 class ExperimentUtilities
 {
@@ -298,9 +302,14 @@ class ExperimentUtilities
                     $experimentAssemblySuccessful = false;
                 }
 
+                $experimentInput->type = $applicationInput->type;
+                $dataProductModel = new DataProductModel();
+                $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
+                $dataProductModel->ownerName = Session::get("username");
+
                 $hostName = $_SERVER['SERVER_NAME'];
                 $experimentInput->value = 'file://' . $hostName . ':' . $filePath;
-                $experimentInput->type = $applicationInput->type;
+
 
             } else {
                 CommonUtilities::print_error_message('I cannot accept this input type yet!');
@@ -625,7 +634,6 @@ class ExperimentUtilities
 
                     echo '<p>' . $output->name . ' : ' . '<a target="_blank"
                             href="' . URL::to("/") . '/download?path=' .
-                                                $outputPathArray[ count($outputPathArray)-5] . "/" .
                                                 $outputPathArray[ count($outputPathArray)-4] . "/" . 
                                                 $outputPathArray[ count($outputPathArray)-3] . "/" . 
                                                 $outputPathArray[ count($outputPathArray)-2] . '/' . 
