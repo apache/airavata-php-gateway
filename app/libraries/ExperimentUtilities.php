@@ -229,8 +229,6 @@ class ExperimentUtilities
         $experimentAssemblySuccessful = true;
         $newExperimentInputs = array();
 
-        //var_dump($_FILES);
-
         if (sizeof($_FILES) > 0) {
             if (ExperimentUtilities::file_upload_successful()) {
                 // construct unique path
@@ -248,21 +246,12 @@ class ExperimentUtilities
         array_multisort($order, SORT_ASC, $applicationInputs);
 
         foreach ($applicationInputs as $applicationInput) {
-            $experimentInput = new InputDataObjectType();
+
             $experimentInput = $applicationInput;
-            //$experimentInput->name = $applicationInput->name;
-            //$experimentInput->metaData = $applicationInput->metaData;
-
-
-            //$experimentInput->type = $applicationInput->type;
-            //$experimentInput->type = DataType::STRING;
-
 
             if (($applicationInput->type == DataType::STRING) ||
                 ($applicationInput->type == DataType::INTEGER) ||
-                ($applicationInput->type == DataType::FLOAT) ||
-                ($applicationInput->type == DataType::URI && !empty($applicationInput->metaData)
-                    && json_decode($applicationInput->metaData)->location=="remote")
+                ($applicationInput->type == DataType::FLOAT)
             ) {
                 if (isset($_POST[$applicationInput->name]) && (trim($_POST[$applicationInput->name]) != '')) {
                     $experimentInput->value = $_POST[$applicationInput->name];
@@ -283,64 +272,40 @@ class ExperimentUtilities
                     }
                 }
             } elseif ($applicationInput->type == DataType::URI) {
-                //var_dump($_FILES[$applicationInput->name]->name);
-                if ($_FILES[$applicationInput->name]['name']) {
-                    $file = $_FILES[$applicationInput->name];
+                $file = $_FILES[$applicationInput->name];
 
-
-                    //
-                    // move file to experiment data directory
-                    //
-                    if(!empty($applicationInput->value)){
-                        $filePath = ExperimentUtilities::$experimentPath . $applicationInput->value;
-                    }else{
-                        $filePath = ExperimentUtilities::$experimentPath . $file['name'];
-                    }
-
-                    // check if file already exists
-                    if (is_file($filePath)) {
-                        unlink($filePath);
-
-                        CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
-                    }
-
-                    $moveFile = move_uploaded_file($file['tmp_name'], $filePath);
-
-                    if ($moveFile) {
-                        CommonUtilities::print_success_message('Upload: ' . $file['name'] . '<br>' .
-                            'Type: ' . $file['type'] . '<br>' .
-                            'Size: ' . ($file['size'] / 1024) . ' kB');
-                        //<br>' .
-                        //'Stored in: ' . $experimentPath . $file['name']);
-                    } else {
-                        CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file['name'] . '!
-                    Please try again later or report a bug using the link in the Help menu.</p>');
-                        $experimentAssemblySuccessful = false;
-                    }
-                    $hostName = $_SERVER['SERVER_NAME'];
-                    $experimentInput->value = 'file://' . $hostName . ':' . $filePath;
-                    $experimentInput->type = $applicationInput->type;
-
-                } else {
-                    $index = -1;
-                    for ($i = 0; $i < sizeof($experimentInputs); $i++) {
-                        if ($experimentInputs[$i]->name == $applicationInput->name) {
-                            $index = $i;
-                        }
-                    }
-
-                    if ($index >= 0) {
-                        $experimentInput->value = $experimentInputs[$index]->value;
-                        $experimentInput->type = $applicationInput->type;
-                    }
+                //
+                // move file to experiment data directory
+                //
+                if(!empty($applicationInput->value)){
+                    $filePath = ExperimentUtilities::$experimentPath . $applicationInput->value;
+                }else{
+                    $filePath = ExperimentUtilities::$experimentPath . $file['name'];
                 }
+
+                // check if file already exists
+                if (is_file($filePath)) {
+                    unlink($filePath);
+
+                    CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
+                }
+
+                $moveFile = move_uploaded_file($file['tmp_name'], $filePath);
+
+                if (!$moveFile) {
+                    CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file['name'] . '!
+                        Please try again later or report a bug using the link in the Help menu.</p>');
+                    $experimentAssemblySuccessful = false;
+                }
+
+                $hostName = $_SERVER['SERVER_NAME'];
+                $experimentInput->value = 'file://' . $hostName . ':' . $filePath;
+                $experimentInput->type = $applicationInput->type;
 
             } else {
                 CommonUtilities::print_error_message('I cannot accept this input type yet!');
             }
-
             $newExperimentInputs[] = $experimentInput;
-
         }
 
         if ($experimentAssemblySuccessful) {
