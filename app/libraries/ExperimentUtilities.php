@@ -432,7 +432,7 @@ class ExperimentUtilities
                 if ($experimentInput->type == DataType::URI) {
                     $currentInputPath = $experimentInput->value;
                     $hostPathConstant = 'file://' . $hostName . ':';
-                    $dataProductModel = Airavata::getDataProduct($experimentInput->value);
+                    $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $experimentInput->value);
                     $currentInputPath = "";
                     foreach ($dataProductModel->replicaLocations as $rp) {
                         if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
