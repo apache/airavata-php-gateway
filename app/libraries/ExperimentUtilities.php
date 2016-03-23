@@ -314,7 +314,7 @@ class ExperimentUtilities
                 $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
                 $dataProductModel->ownerName = Session::get("username");
                 $dataProductModel->productName = basename($filePath);
-                $logicalPath = str_replace(Config::get("pga_config.airavata")["experiment-data-absolute-path"] . "/" . Session::get('username'), "", $filePath);
+                $logicalPath = str_replace(Config::get("pga_config.airavata")["experiment-data-absolute-path"], "", $filePath);
                 $dataProductModel->logicalPath = $logicalPath;
                 $dataProductModel->dataProductType = DataProductType::FILE;
 
@@ -456,7 +456,7 @@ class ExperimentUtilities
                     $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
                     $dataProductModel->ownerName = Session::get("username");
                     $dataProductModel->productName = basename($newInputPath);
-                    $logicalPath = str_replace(Config::get("pga_config.airavata")["experiment-data-absolute-path"] . "/" . Session::get('username'), "", $newInputPath);
+                    $logicalPath = str_replace(Config::get("pga_config.airavata")["experiment-data-absolute-path"] , "", $newInputPath);
                     $dataProductModel->logicalPath = $logicalPath;
                     $dataProductModel->dataProductType = DataProductType::FILE;
 
