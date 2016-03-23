@@ -90,7 +90,7 @@ class ExperimentUtilities
                 $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
                 if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                     $dataRoot = $dataRoot . "/";
-                $filePath = str_replace($hostPathConstant . $dataRoot . Session::get('username'), "", $currentInputPath);
+                $filePath = str_replace($hostPathConstant . $dataRoot, "", $currentInputPath);
                 echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
             } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                 || $input->type == DataType::FLOAT) {
