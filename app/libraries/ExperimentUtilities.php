@@ -77,7 +77,7 @@ class ExperimentUtilities
         foreach ($experimentInputs as $input) {
             $matchingAppInput = null;
 
-            if ($input->type == DataType::URI && empty($input->metaData)) {
+            if ($input->type == DataType::URI) {
                 $hostName = $_SERVER['SERVER_NAME'];
                 $hostPathConstant = 'file://' . $hostName . ':';
                 $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
