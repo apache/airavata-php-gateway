@@ -319,7 +319,7 @@ class ExperimentUtilities
                 $dataReplicationModel->filePath = $filePath;
 
                 $dataProductModel->replicaLocations[] = $dataReplicationModel;
-                $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataReplicationModel);
+                $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
                 $experimentInput->value = $uri;
             } else {
                 CommonUtilities::print_error_message('I cannot accept this input type yet!');
