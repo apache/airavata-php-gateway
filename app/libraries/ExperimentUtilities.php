@@ -307,7 +307,7 @@ class ExperimentUtilities
                 $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
                 $dataProductModel->ownerName = Session::get("username");
                 $dataProductModel->productName = basename($filePath);
-                $logicalPath = str_replace(Config::get("pga_config.airavata")["experiment-data-absolute-path"],"", $filePath);
+                $logicalPath = str_replace(Config::get("pga_config.airavata")["experiment-data-absolute-path"] . "/" . Session::get('username'), "", $filePath);
                 $dataProductModel->logicalPath = $logicalPath;
                 $dataProductModel->dataProductType = DataProductType::FILE;
 
@@ -432,12 +432,39 @@ class ExperimentUtilities
                 if ($experimentInput->type == DataType::URI) {
                     $currentInputPath = $experimentInput->value;
                     $hostPathConstant = 'file://' . $hostName . ':';
+                    $dataProductModel = Airavata::getDataProduct($experimentInput->value);
+                    $currentInputPath = "";
+                    foreach ($dataProductModel->replicaLocations as $rp) {
+                        if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                            $currentInputPath = $rp->filePath;
+                            break;
+                        }
+                    }
                     $currentInputPath = str_replace($hostPathConstant, '', $currentInputPath);
                     $parts = explode('/', rtrim($currentInputPath, '/'));
                     $fileName = array_pop($parts);
                     $newInputPath = ExperimentUtilities::$experimentPath . $fileName;
                     copy($currentInputPath, $newInputPath);
-                    $experimentInput->value = $hostPathConstant . $newInputPath;
+
+                    $dataProductModel = new DataProductModel();
+                    $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
+                    $dataProductModel->ownerName = Session::get("username");
+                    $dataProductModel->productName = basename($newInputPath);
+                    $logicalPath = str_replace(Config::get("pga_config.airavata")["experiment-data-absolute-path"] . "/" . Session::get('username'), "", $newInputPath);
+                    $dataProductModel->logicalPath = $logicalPath;
+                    $dataProductModel->dataProductType = DataProductType::FILE;
+
+                    $dataReplicationModel = new DataReplicaLocationModel();
+                    $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
+                    $dataReplicationModel->replicaName = basename($newInputPath) . "-gateway-datastore-copy";
+                    $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
+                    $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
+                    $hostName = $_SERVER['SERVER_NAME'];
+                    $dataReplicationModel->filePath = "file://" . $hostName . $newInputPath;
+
+                    $dataProductModel->replicaLocations[] = $dataReplicationModel;
+                    $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
+                    $experimentInput->value = $uri;
                 }
             }
             $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
@@ -467,6 +494,7 @@ class ExperimentUtilities
     }
 
     /**
+     * Cancel the experiment with the given ID
      * Cancel the experiment with the given ID
      * @param $expId
      */
