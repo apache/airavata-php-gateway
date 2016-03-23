@@ -73,7 +73,6 @@ class ExperimentUtilities
             $order[$index] = $input->inputOrder;
         }
         array_multisort($order, SORT_ASC, $experimentInputs);
-        $html = "";
         foreach ($experimentInputs as $input) {
             $matchingAppInput = null;
 
@@ -92,14 +91,12 @@ class ExperimentUtilities
                 if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                     $dataRoot += "/";
                 $filePath = str_replace($hostPathConstant . $dataRoot . Session::get('username'), "", $currentInputPath);
-                $html .= '<p><a target="_blank" href="' . URL::to("/") . '/download?path=' . $filePath . '>' . basename($filePath) . '<span class="glyphicon glyphicon-new-window"></span></a></p>';
+                echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
             } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                 || $input->type == DataType::FLOAT) {
-                $html .= '<p>' . $input->name . ': ' . $input->value . '</p>';
+                echo '<p>' . $input->name . ': ' . $input->value . '</p>';
             }
         }
-
-        return $html;
     }
 
     private  static function endsWith($haystack, $needle) {
