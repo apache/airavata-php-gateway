@@ -78,19 +78,21 @@ class ExperimentUtilities
             $matchingAppInput = null;
 
             if ($input->type == DataType::URI && empty($input->metaData)) {
-                $inputArray = explode('/', $input->value);
+                $hostName = $_SERVER['SERVER_NAME'];
+                $hostPathConstant = 'file://' . $hostName . ':';
+                $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
+                $currentInputPath = "";
+                foreach ($dataProductModel->replicaLocations as $rp) {
+                    if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                        $currentInputPath = $rp->filePath;
+                        break;
+                    }
+                }
+                $filePath = str_replace($hostPathConstant . Config::get("pga_config.airavata")["experiment-data-absolute-path"], "", $currentInputPath);
                 echo '<p><a target="_blank"
-                        href="' . URL::to("/") . '/download?path=' .
-                                    $inputArray[ count($inputArray)-4] . "/" .
-                                    $inputArray[ count($inputArray)-3] . '/' . 
-                                    $inputArray[ count($inputArray)-2] . '/' . 
-                                    $inputArray[ count($inputArray)-1] . '">' .
-                                        $inputArray[ count($inputArray)-1] . 
-                ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
-            }elseif($input->type == DataType::URI && !empty($input->metaData)
-                && json_decode($input->metaData)->location=="remote"){
-                echo '<p>' . $input->name . ': ' . $input->value . '</p>';
-            }elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
+                        href="' . URL::to("/") . '/download?path=' . $filePath . '>' . basename($filePath) .
+                    ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+            } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                 || $input->type == DataType::FLOAT) {
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
             }
