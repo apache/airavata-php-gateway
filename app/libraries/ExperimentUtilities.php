@@ -73,7 +73,7 @@ class ExperimentUtilities
             $order[$index] = $input->inputOrder;
         }
         array_multisort($order, SORT_ASC, $experimentInputs);
-
+        $html = "";
         foreach ($experimentInputs as $input) {
             $matchingAppInput = null;
 
@@ -88,15 +88,23 @@ class ExperimentUtilities
                         break;
                     }
                 }
-                $filePath = str_replace($hostPathConstant . Config::get("pga_config.airavata")["experiment-data-absolute-path"], "", $currentInputPath);
-                echo '<p><a target="_blank"
-                        href="' . URL::to("/") . '/download?path=' . $filePath . '>' . basename($filePath) .
-                    ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+                if(!ExperimentUtilities::endsWith($dataRoot, "/"))
+                    $dataRoot += "/";
+                $filePath = str_replace($hostPathConstant . $dataRoot . Session::get('username'), "", $currentInputPath);
+                $html .= '<p><a target="_blank" href="' . URL::to("/") . '/download?path=' . $filePath . '>' . basename($filePath) . '<span class="glyphicon glyphicon-new-window"></span></a></p>';
             } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                 || $input->type == DataType::FLOAT) {
-                echo '<p>' . $input->name . ': ' . $input->value . '</p>';
+                $html .= '<p>' . $input->name . ': ' . $input->value . '</p>';
             }
         }
+
+        return $html;
+    }
+
+    private  static function endsWith($haystack, $needle) {
+        // search forward starting from end minus needle length characters
+        return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
     }
 
     /**
