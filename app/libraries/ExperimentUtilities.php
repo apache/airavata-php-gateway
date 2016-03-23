@@ -306,11 +306,21 @@ class ExperimentUtilities
                 $dataProductModel = new DataProductModel();
                 $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
                 $dataProductModel->ownerName = Session::get("username");
+                $dataProductModel->productName = basename($filePath);
+                $logicalPath = str_replace(Config::get("pga_config.airavata")["experiment-data-absolute-path"],"", $filePath);
+                $dataProductModel->logicalPath = $logicalPath;
+                $dataProductModel->dataProductType = DataProductType::FILE;
 
-                $hostName = $_SERVER['SERVER_NAME'];
-                $experimentInput->value = 'file://' . $hostName . ':' . $filePath;
+                $dataReplicationModel = new DataReplicaLocationModel();
+                $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
+                $dataReplicationModel->replicaName = basename($filePath) . "-gateway-datastore-copy";
+                $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
+                $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
+                $dataReplicationModel->filePath = $filePath;
 
-
+                $dataProductModel->replicaLocations[] = $dataReplicationModel;
+                $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataReplicationModel);
+                $experimentInput->value = $uri;
             } else {
                 CommonUtilities::print_error_message('I cannot accept this input type yet!');
             }
