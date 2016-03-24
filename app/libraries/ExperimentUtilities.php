@@ -15,11 +15,11 @@ use Airavata\Model\Status\JobState;
 use Airavata\Model\Status\TaskState;
 use Airavata\Model\Task\TaskTypes;
 use Airavata\Model\Experiment\UserConfigurationDataModel;
-use Airavata\Model\Data\Product\DataProductModel;
-use Airavata\Model\Data\Product\DataProductType;
-use Airavata\Model\Data\Product\DataReplicaLocationModel;
-use Airavata\Model\Data\Product\ReplicaLocationCategory;
-use Airavata\Model\Data\Product\ReplicaPersistentType;
+use Airavata\Model\Data\Replica\DataProductModel;
+use Airavata\Model\Data\Replica\DataProductType;
+use Airavata\Model\Data\Replica\DataReplicaLocationModel;
+use Airavata\Model\Data\Replica\ReplicaLocationCategory;
+use Airavata\Model\Data\Replica\ReplicaPersistentType;
 
 class ExperimentUtilities
 {
