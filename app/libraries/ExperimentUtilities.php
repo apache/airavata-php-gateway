@@ -328,6 +328,18 @@ class ExperimentUtilities
                     $dataProductModel->replicaLocations[] = $dataReplicationModel;
                     $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
                     $experimentInput->value = $uri;
+                } else {
+                    $index = -1;
+                    for ($i = 0; $i < sizeof($experimentInputs); $i++) {
+                        if ($experimentInputs[$i]->name == $applicationInput->name) {
+                            $index = $i;
+                        }
+                    }
+
+                    if ($index >= 0) {
+                        $experimentInput->value = $experimentInputs[$index]->value;
+                        $experimentInput->type = $applicationInput->type;
+                    }
                 }
             } else {
                 CommonUtilities::print_error_message('I cannot accept this input type yet!');
