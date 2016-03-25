@@ -483,7 +483,7 @@ class ExperimentUtilities
                     $experimentInput->value = $uri;
                 }
             }
-            $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
+            $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
             return $cloneId;
         } catch (InvalidRequestException $ire) {
