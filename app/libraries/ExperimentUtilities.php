@@ -670,42 +670,34 @@ class ExperimentUtilities
     {
         if( $process)
         {
-            $processStatusVal = array_search($status, ProcessState::$__names);
             if ($status != ProcessState::COMPLETED)
                 echo "Process hasn't completed. Process Status is : " . ProcessState::$__names[ $status] . '<br/>';
         }
         else
         {
-            $expStatusVal = array_search($status, ExperimentState::$__names);
             if ( $status != ExperimentState::COMPLETED)
                 echo "Experiment hasn't completed. Experiment Status is : " .  ExperimentState::$__names[ $status] . '<br/>';
         }
-        //$outputs = $experiment->experimentOutputs;
-        //print_r( $outputs); exit;
+
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
-                if(file_exists(str_replace('//','/',$output->value))){
-                    $outputPathArray = explode("/", $output->value);
-
-                    echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                            href="' . URL::to("/") . '/download?path=' .
-                                                $outputPathArray[ count($outputPathArray)-4] . "/" . 
-                                                $outputPathArray[ count($outputPathArray)-3] . "/" . 
-                                                $outputPathArray[ count($outputPathArray)-2] . '/' . 
-                                                $outputPathArray[ count($outputPathArray)-1] . '">' .
-                                                    $outputPathArray[sizeof($outputPathArray) - 1] . 
-                        ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $output->value);
+                $currentInputPath = "";
+                foreach ($dataProductModel->replicaLocations as $rp) {
+                    if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
+                        $currentInputPath = $rp->filePath;
+                        break;
+                    }
                 }
-//                else
-//                    echo 'Output paths are not correctly defined for : <br/>' . $output->name . '<br/><br/> Please report this issue to the admin<br/><br/>';
-            
-            } 
-            elseif ($output->type == DataType::STRING) {
+                $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+                if (!ExperimentUtilities::endsWith($dataRoot, "/"))
+                    $dataRoot = $dataRoot . "/";
+                $filePath = str_replace($dataRoot, "", $currentInputPath);
+                echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+            } elseif ($output->type == DataType::STRING) {
                 echo '<p>' . $output->value . '</p>';
-            }
-            else
-                echo 'output : '. $output;
-            //echo 'output-type : ' . $output->type;
+            } else
+                echo 'output : ' . $output;
         }
     }
 
