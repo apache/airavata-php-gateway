@@ -283,50 +283,52 @@ class ExperimentUtilities
                     }
                 }
             } elseif ($applicationInput->type == DataType::URI) {
-                $file = $_FILES[$applicationInput->name];
+                if ($_FILES[$applicationInput->name]['name']) {
+                    $file = $_FILES[$applicationInput->name];
 
-                //
-                // move file to experiment data directory
-                //
-                if(!empty($applicationInput->value)){
-                    $filePath = ExperimentUtilities::$experimentPath . $applicationInput->value;
-                }else{
-                    $filePath = ExperimentUtilities::$experimentPath . $file['name'];
-                }
+                    //
+                    // move file to experiment data directory
+                    //
+                    if (!empty($applicationInput->value)) {
+                        $filePath = ExperimentUtilities::$experimentPath . $applicationInput->value;
+                    } else {
+                        $filePath = ExperimentUtilities::$experimentPath . $file['name'];
+                    }
 
-                // check if file already exists
-                if (is_file($filePath)) {
-                    unlink($filePath);
+                    // check if file already exists
+                    if (is_file($filePath)) {
+                        unlink($filePath);
 
-                    CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
-                }
+                        CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
+                    }
 
-                $moveFile = move_uploaded_file($file['tmp_name'], $filePath);
+                    $moveFile = move_uploaded_file($file['tmp_name'], $filePath);
 
-                if (!$moveFile) {
-                    CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file['name'] . '!
+                    if (!$moveFile) {
+                        CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file['name'] . '!
                         Please try again later or report a bug using the link in the Help menu.</p>');
-                    $experimentAssemblySuccessful = false;
-                }
+                        $experimentAssemblySuccessful = false;
+                    }
 
-                $experimentInput->type = $applicationInput->type;
+                    $experimentInput->type = $applicationInput->type;
                     $dataProductModel = new DataProductModel();
-                $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
-                $dataProductModel->ownerName = Session::get("username");
-                $dataProductModel->productName = basename($filePath);
-                $dataProductModel->dataProductType = DataProductType::FILE;
+                    $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
+                    $dataProductModel->ownerName = Session::get("username");
+                    $dataProductModel->productName = basename($filePath);
+                    $dataProductModel->dataProductType = DataProductType::FILE;
 
-                $dataReplicationModel = new DataReplicaLocationModel();
-                $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
-                $dataReplicationModel->replicaName = basename($filePath) . " gateway data store copy";
-                $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
-                $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
-                $hostName = $_SERVER['SERVER_NAME'];
-                $dataReplicationModel->filePath = "file://" . $hostName . ":" . $filePath;
+                    $dataReplicationModel = new DataReplicaLocationModel();
+                    $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
+                    $dataReplicationModel->replicaName = basename($filePath) . " gateway data store copy";
+                    $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
+                    $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
+                    $hostName = $_SERVER['SERVER_NAME'];
+                    $dataReplicationModel->filePath = "file://" . $hostName . ":" . $filePath;
 
-                $dataProductModel->replicaLocations[] = $dataReplicationModel;
-                $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
-                $experimentInput->value = $uri;
+                    $dataProductModel->replicaLocations[] = $dataReplicationModel;
+                    $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
+                    $experimentInput->value = $uri;
+                }
             } else {
                 CommonUtilities::print_error_message('I cannot accept this input type yet!');
             }
