@@ -681,7 +681,7 @@ class ExperimentUtilities
 
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
-                if(!empty($output->value)){
+                if(!empty($output->value) && filter_var($output->value, FILTER_VALIDATE_URL)){
                     $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $output->value);
                     $currentInputPath = "";
                     foreach ($dataProductModel->replicaLocations as $rp) {
