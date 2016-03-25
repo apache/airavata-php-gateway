@@ -681,19 +681,21 @@ class ExperimentUtilities
 
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
-                $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $output->value);
-                $currentInputPath = "";
-                foreach ($dataProductModel->replicaLocations as $rp) {
-                    if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
-                        $currentInputPath = $rp->filePath;
-                        break;
+                if(!empty($output->value)){
+                    $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $output->value);
+                    $currentInputPath = "";
+                    foreach ($dataProductModel->replicaLocations as $rp) {
+                        if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
+                            $currentInputPath = $rp->filePath;
+                            break;
+                        }
                     }
+                    $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+                    if (!ExperimentUtilities::endsWith($dataRoot, "/"))
+                        $dataRoot = $dataRoot . "/";
+                    $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
+                    echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
-                $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-                if (!ExperimentUtilities::endsWith($dataRoot, "/"))
-                    $dataRoot = $dataRoot . "/";
-                $filePath = str_replace($dataRoot, "", $currentInputPath);
-                echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
             } elseif ($output->type == DataType::STRING) {
                 echo '<p>' . $output->value . '</p>';
             } else
