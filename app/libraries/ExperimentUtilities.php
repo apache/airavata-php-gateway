@@ -310,17 +310,15 @@ class ExperimentUtilities
                 }
 
                 $experimentInput->type = $applicationInput->type;
-                $dataProductModel = new DataProductModel();
+                    $dataProductModel = new DataProductModel();
                 $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
                 $dataProductModel->ownerName = Session::get("username");
                 $dataProductModel->productName = basename($filePath);
-                $logicalPath = str_replace(Config::get("pga_config.airavata")["experiment-data-absolute-path"], "", $filePath);
-                $dataProductModel->logicalPath = $logicalPath;
                 $dataProductModel->dataProductType = DataProductType::FILE;
 
                 $dataReplicationModel = new DataReplicaLocationModel();
                 $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
-                $dataReplicationModel->replicaName = basename($filePath) . "-gateway-datastore-copy";
+                $dataReplicationModel->replicaName = basename($filePath) . " gateway data store copy";
                 $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
                 $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
                 $hostName = $_SERVER['SERVER_NAME'];
@@ -456,13 +454,11 @@ class ExperimentUtilities
                     $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
                     $dataProductModel->ownerName = Session::get("username");
                     $dataProductModel->productName = basename($newInputPath);
-                    $logicalPath = str_replace(Config::get("pga_config.airavata")["experiment-data-absolute-path"] , "", $newInputPath);
-                    $dataProductModel->logicalPath = $logicalPath;
                     $dataProductModel->dataProductType = DataProductType::FILE;
 
                     $dataReplicationModel = new DataReplicaLocationModel();
                     $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
-                    $dataReplicationModel->replicaName = basename($newInputPath) . "-gateway-datastore-copy";
+                    $dataReplicationModel->replicaName = basename($newInputPath) . " gateway data store copy";
                     $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
                     $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
                     $hostName = $_SERVER['SERVER_NAME'];
