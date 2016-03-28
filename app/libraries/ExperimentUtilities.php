@@ -694,7 +694,7 @@ class ExperimentUtilities
                     if (!ExperimentUtilities::endsWith($dataRoot, "/"))
                         $dataRoot = $dataRoot . "/";
                     $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
-                    echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                    echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . urlencode($filePath) . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
             } elseif ($output->type == DataType::STRING) {
                 echo '<p>' . $output->value . '</p>';
