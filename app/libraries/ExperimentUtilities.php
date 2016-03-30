@@ -77,19 +77,24 @@ class ExperimentUtilities
             $matchingAppInput = null;
 
             if ($input->type == DataType::URI) {
-                $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
-                $currentInputPath = "";
-                foreach ($dataProductModel->replicaLocations as $rp) {
-                    if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
-                        $currentInputPath = $rp->filePath;
-                        break;
-                    }
-                }
                 $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
                 if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                     $dataRoot = $dataRoot . "/";
-                $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
-                echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                if(strpos($input->value, "airavata-dp") == 0){
+                    $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
+                    $currentInputPath = "";
+                    foreach ($dataProductModel->replicaLocations as $rp) {
+                        if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                            $currentInputPath = $rp->filePath;
+                            break;
+                        }
+                    }
+                    $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
+                }else{
+                    $filePath = str_replace($dataRoot, "", parse_url($input->value, PHP_URL_PATH));
+                }
+                echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?path='
+                    . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
             } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                 || $input->type == DataType::FLOAT) {
                 echo '<p>' . $input->name . ':&nbsp;' . $input->value . '</p>';
@@ -726,19 +731,26 @@ class ExperimentUtilities
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
                 if(!empty($output->value) && filter_var($output->value, FILTER_VALIDATE_URL)){
-                    $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $output->value);
-                    $currentInputPath = "";
-                    foreach ($dataProductModel->replicaLocations as $rp) {
-                        if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
-                            $currentInputPath = $rp->filePath;
-                            break;
-                        }
-                    }
                     $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-                    if (!ExperimentUtilities::endsWith($dataRoot, "/"))
+                    if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                         $dataRoot = $dataRoot . "/";
-                    $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
-                    echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . urlencode($filePath) . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                    if(strpos($output->value, "airavata-dp") == 0){
+                        $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $output->value);
+                        $currentOutputPath = "";
+                        foreach ($dataProductModel->replicaLocations as $rp) {
+                            if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                                $currentOutputPath = $rp->filePath;
+                                break;
+                            }
+                        }
+                        $filePath = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
+                    }else{
+                        $filePath = str_replace($dataRoot, "", parse_url($output->value, PHP_URL_PATH));
+                    }
+                    echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
+                        . '/download/?path=' . urlencode($filePath) . '">' . basename($filePath)
+                        . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+
                 }
             } elseif ($output->type == DataType::STRING) {
                 echo '<p>' . $output->value . '</p>';
