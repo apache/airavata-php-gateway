@@ -80,7 +80,7 @@ class ExperimentUtilities
                 $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
                 if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                     $dataRoot = $dataRoot . "/";
-                if(strpos($input->value, "airavata-dp") == 0){
+                if(strpos($input->value, "airavata-dp") === 0){
                     $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
                     $currentInputPath = "";
                     foreach ($dataProductModel->replicaLocations as $rp) {
@@ -734,7 +734,7 @@ class ExperimentUtilities
                     $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
                     if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                         $dataRoot = $dataRoot . "/";
-                    if(strpos($output->value, "airavata-dp") == 0){
+                    if(strpos($output->value, "airavata-dp") === 0){
                         $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $output->value);
                         $currentOutputPath = "";
                         foreach ($dataProductModel->replicaLocations as $rp) {
