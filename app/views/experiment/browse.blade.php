@@ -168,9 +168,15 @@
         });
         $("#datetimepicker9").on("dp.change", function (e) {
             $('#datetimepicker10').data("DateTimePicker").setMinDate(e.date);
+
+            //hack to close calendar on selecting date
+            $(this).find(".glyphicon-calendar").click();
         });
         $("#datetimepicker10").on("dp.change", function (e) {
             $('#datetimepicker9').data("DateTimePicker").setMaxDate(e.date);
+
+            //hack to close calendar on selecting date
+            $(this).find(".glyphicon-calendar").click();
         });
 
         /* selecting creation time */

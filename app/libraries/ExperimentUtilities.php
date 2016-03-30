@@ -933,7 +933,6 @@ class ExperimentUtilities
                     case '':
                 }
             }
-
             $experiments = Airavata::searchExperiments(Session::get('authz-token'),
                 Session::get('gateway_id'), Session::get('username'), $filters, $limit, $offset);
         } catch (InvalidRequestException $ire) {
