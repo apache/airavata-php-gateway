@@ -167,7 +167,6 @@ class CRUtilities
                 $localSub = Airavata::addLocalSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $localJobSubmission);
                 return $localSub;
             }
-
         } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::SSH) {
             $resourceManager = new ResourceJobManager(array(
                 "resourceJobManagerType" => $inputs["resourceJobManagerType"],
