@@ -77,7 +77,6 @@ class ExperimentUtilities
             $matchingAppInput = null;
 
             if ($input->type == DataType::URI) {
-                $hostName = $_SERVER['SERVER_NAME'];
                 $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
                 $currentInputPath = "";
                 foreach ($dataProductModel->replicaLocations as $rp) {
@@ -90,7 +89,7 @@ class ExperimentUtilities
                 if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                     $dataRoot = $dataRoot . "/";
                 $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
-                echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                echo '<p>' . $input->name . '&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
             } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                 || $input->type == DataType::FLOAT) {
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';

@@ -128,7 +128,7 @@
         <h4>Enter UserDN</h4>
 
         <div class="userdninfo">
-            <input type="text" class="form-control" name="userDN" placeholder="user"/>
+            <input type="text" class="form-control" name="userDN" placeholder="user" value="{{$expInputs['userDN']}}"/>
         </div>
     </div>
 </div>
