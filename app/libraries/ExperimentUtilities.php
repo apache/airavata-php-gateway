@@ -89,11 +89,65 @@ class ExperimentUtilities
                 if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                     $dataRoot = $dataRoot . "/";
                 $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
-                echo '<p>' . $input->name . '&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
             } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
+                || $input->type == DataType::FLOAT) {
+                echo '<p>' . $input->name . ':&nbsp;' . $input->value . '</p>';
+            }
+        }
+    }
+
+    /**
+     * List the process's input files
+     * @param $experiment
+     */
+    public static function list_process_input_files($processInputs)
+    {
+        $order = array();
+        foreach ($processInputs as $index => $input) {
+            $order[$index] = $input->inputOrder;
+        }
+        array_multisort($order, SORT_ASC, $processInputs);
+
+        foreach ($processInputs as $input) {
+            $matchingAppInput = null;
+
+            if ($input->type == DataType::URI) {
+                $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+                if(!ExperimentUtilities::endsWith($dataRoot, "/"))
+                    $dataRoot = $dataRoot . "/";
+                $filePath = str_replace($dataRoot, "", parse_url($input->value, PHP_URL_PATH));
+                echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
+                    . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+            }elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                 || $input->type == DataType::FLOAT) {
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
             }
+        }
+    }
+
+    /**
+     * List the process's output files
+     * @param $experiment
+     */
+    public static function list_process_output_files($outputs, $status){
+        if ($status != ProcessState::COMPLETED)
+            echo "Process hasn't completed. Process Status is : " . ProcessState::$__names[ $status] . '<br/>';
+
+        foreach ((array)$outputs as $output) {
+            if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
+                $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+                if(!ExperimentUtilities::endsWith($dataRoot, "/"))
+                    $dataRoot = $dataRoot . "/";
+                $filePath = str_replace($dataRoot, "", parse_url($output->value, PHP_URL_PATH));
+                echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
+                    . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+            }
+            elseif ($output->type == DataType::STRING) {
+                echo '<p>' . $output->value . '</p>';
+            }
+            else
+                echo 'output : '. $output;
         }
     }
 
@@ -666,16 +720,8 @@ class ExperimentUtilities
 
     public static function list_output_files($outputs, $status, $process)
     {
-        if( $process)
-        {
-            if ($status != ProcessState::COMPLETED)
-                echo "Process hasn't completed. Process Status is : " . ProcessState::$__names[ $status] . '<br/>';
-        }
-        else
-        {
-            if ( $status != ExperimentState::COMPLETED)
-                echo "Experiment hasn't completed. Experiment Status is : " .  ExperimentState::$__names[ $status] . '<br/>';
-        }
+        if ( $status != ExperimentState::COMPLETED)
+            echo "Experiment hasn't completed. Experiment Status is : " .  ExperimentState::$__names[ $status] . '<br/>';
 
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {

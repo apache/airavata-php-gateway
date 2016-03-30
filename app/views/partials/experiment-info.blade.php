@@ -248,7 +248,7 @@
                         <li>
                             <span class="alert"><i class="icon-time"></i>
                                 <p>Inputs<br/>
-                                {{ ExperimentUtilities::list_input_files( $process->processInputs) }}</p>
+                                {{ ExperimentUtilities::list_process_input_files( $process->processInputs) }}</p>
                             </span>
                         </li>
                         <li>
@@ -282,7 +282,7 @@
                         <li>
                             <span class="alert"><i class="icon-time"></i>
                                 <p>Outputs<hr/>
-                                {{ ExperimentUtilities::list_output_files( $process->processOutputs, $process->processStatus->state, true) }}</p>
+                                {{ ExperimentUtilities::list_process_output_files( $process->processOutputs, $process->processStatus->state) }}</p>
                             </span>
                         </li>
                     </ul>

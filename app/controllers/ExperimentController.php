@@ -86,9 +86,6 @@ class ExperimentController extends BaseController
             $autoRefresh = false;
         }
         if ($experiment != null) {
-             $data = array(
-                "autoRefresh"=> $autoRefresh,
-            );
             //viewing experiments of other gateways is not allowed if user is not super admin
             if( $experiment->gatewayId != Session::get("gateway_id") && !Session::has("super-admin")){
                 Session::put("permissionDenied", true);
