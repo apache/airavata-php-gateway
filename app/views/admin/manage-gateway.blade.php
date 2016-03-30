@@ -258,6 +258,58 @@
        
     });
 
+    $(".set-cr-preference").submit( function( ev){
+        var crForm = $(this);
+        crForm.find(".loading-gif").removeClass("hide");
+
+        ev.preventDefault();
+        var datastring = crForm.serialize();
+        $.ajax({
+            type: "POST",
+            url: "{{URL::to('/')}}/gp/update-crp",
+            data: datastring,
+            success: function(data) {
+                if( data == 1)
+                    crForm.find(".alert-success").removeClass("hide");
+                else
+                    crForm.find(".alert-danger").removeClass("hide");
+            }
+        }).complete( function(){
+            crForm.find(".loading-gif").addClass("hide");
+            setTimeout( function(){
+                crForm.find(".alert-success").addClass("hide");
+                crForm.find(".alert-danger").addClass("hide");
+            }, 5000);
+        });
+
+    });
+
+    $(".set-sr-preference").submit( function( ev){
+        var srForm = $(this);
+        srForm.find(".loading-gif").removeClass("hide");
+
+        ev.preventDefault();
+        var datastring = srForm.serialize();
+        $.ajax({
+            type: "POST",
+            url: "{{URL::to('/')}}/gp/update-srp",
+            data: datastring,
+            success: function(data) {
+                if( data == 1)
+                    srForm.find(".alert-success").removeClass("hide");
+                else
+                    srForm.find(".alert-danger").removeClass("hide");
+            }
+        }).complete( function(){
+            srForm.find(".loading-gif").addClass("hide");
+            setTimeout( function(){
+                srForm.find(".alert-success").addClass("hide");
+                srForm.find(".alert-danger").addClass("hide");
+            }, 5000);
+        });
+
+    });
+
 
     $(".add-tenant").slideUp();
 
