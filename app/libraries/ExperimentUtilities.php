@@ -7,7 +7,6 @@ use Airavata\API\Error\InvalidRequestException;
 use Airavata\Facades\Airavata;
 use Airavata\Model\Application\Io\DataType;
 use Airavata\Model\AppCatalog\AppInterface\ApplicationInterfaceDescription;
-use Airavata\Model\Application\Io\InputDataObjectType;
 use Airavata\Model\Scheduling\ComputationalResourceSchedulingModel;
 use Airavata\Model\Experiment\ExperimentModel;
 use Airavata\Model\Status\ExperimentState;
@@ -16,6 +15,11 @@ use Airavata\Model\Status\JobState;
 use Airavata\Model\Status\TaskState;
 use Airavata\Model\Task\TaskTypes;
 use Airavata\Model\Experiment\UserConfigurationDataModel;
+use Airavata\Model\Data\Replica\DataProductModel;
+use Airavata\Model\Data\Replica\DataProductType;
+use Airavata\Model\Data\Replica\DataReplicaLocationModel;
+use Airavata\Model\Data\Replica\ReplicaLocationCategory;
+use Airavata\Model\Data\Replica\ReplicaPersistentType;
 
 class ExperimentUtilities
 {
@@ -69,28 +73,34 @@ class ExperimentUtilities
             $order[$index] = $input->inputOrder;
         }
         array_multisort($order, SORT_ASC, $experimentInputs);
-
         foreach ($experimentInputs as $input) {
             $matchingAppInput = null;
 
-            if ($input->type == DataType::URI && empty($input->metaData)) {
-                $inputArray = explode('/', $input->value);
-                echo '<p><a target="_blank"
-                        href="' . URL::to("/") . '/download?path=' .
-                                    $inputArray[ count($inputArray)-4] . "/" .
-                                    $inputArray[ count($inputArray)-3] . '/' . 
-                                    $inputArray[ count($inputArray)-2] . '/' . 
-                                    $inputArray[ count($inputArray)-1] . '">' .
-                                        $inputArray[ count($inputArray)-1] . 
-                ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
-            }elseif($input->type == DataType::URI && !empty($input->metaData)
-                && json_decode($input->metaData)->location=="remote"){
-                echo '<p>' . $input->name . ': ' . $input->value . '</p>';
-            }elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
+            if ($input->type == DataType::URI) {
+                $hostName = $_SERVER['SERVER_NAME'];
+                $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
+                $currentInputPath = "";
+                foreach ($dataProductModel->replicaLocations as $rp) {
+                    if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                        $currentInputPath = $rp->filePath;
+                        break;
+                    }
+                }
+                $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+                if(!ExperimentUtilities::endsWith($dataRoot, "/"))
+                    $dataRoot = $dataRoot . "/";
+                $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
+                echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+            } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                 || $input->type == DataType::FLOAT) {
                 echo '<p>' . $input->name . ': ' . $input->value . '</p>';
             }
         }
+    }
+
+    private  static function endsWith($haystack, $needle) {
+        // search forward starting from end minus needle length characters
+        return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
     }
 
     /**
@@ -229,8 +239,6 @@ class ExperimentUtilities
         $experimentAssemblySuccessful = true;
         $newExperimentInputs = array();
 
-        //var_dump($_FILES);
-
         if (sizeof($_FILES) > 0) {
             if (ExperimentUtilities::file_upload_successful()) {
                 // construct unique path
@@ -248,21 +256,12 @@ class ExperimentUtilities
         array_multisort($order, SORT_ASC, $applicationInputs);
 
         foreach ($applicationInputs as $applicationInput) {
-            $experimentInput = new InputDataObjectType();
+
             $experimentInput = $applicationInput;
-            //$experimentInput->name = $applicationInput->name;
-            //$experimentInput->metaData = $applicationInput->metaData;
-
-
-            //$experimentInput->type = $applicationInput->type;
-            //$experimentInput->type = DataType::STRING;
-
 
             if (($applicationInput->type == DataType::STRING) ||
                 ($applicationInput->type == DataType::INTEGER) ||
-                ($applicationInput->type == DataType::FLOAT) ||
-                ($applicationInput->type == DataType::URI && !empty($applicationInput->metaData)
-                    && json_decode($applicationInput->metaData)->location=="remote")
+                ($applicationInput->type == DataType::FLOAT)
             ) {
                 if (isset($_POST[$applicationInput->name]) && (trim($_POST[$applicationInput->name]) != '')) {
                     $experimentInput->value = $_POST[$applicationInput->name];
@@ -283,17 +282,15 @@ class ExperimentUtilities
                     }
                 }
             } elseif ($applicationInput->type == DataType::URI) {
-                //var_dump($_FILES[$applicationInput->name]->name);
                 if ($_FILES[$applicationInput->name]['name']) {
                     $file = $_FILES[$applicationInput->name];
-
 
                     //
                     // move file to experiment data directory
                     //
-                    if(!empty($applicationInput->value)){
+                    if (!empty($applicationInput->value)) {
                         $filePath = ExperimentUtilities::$experimentPath . $applicationInput->value;
-                    }else{
+                    } else {
                         $filePath = ExperimentUtilities::$experimentPath . $file['name'];
                     }
 
@@ -306,21 +303,30 @@ class ExperimentUtilities
 
                     $moveFile = move_uploaded_file($file['tmp_name'], $filePath);
 
-                    if ($moveFile) {
-                        CommonUtilities::print_success_message('Upload: ' . $file['name'] . '<br>' .
-                            'Type: ' . $file['type'] . '<br>' .
-                            'Size: ' . ($file['size'] / 1024) . ' kB');
-                        //<br>' .
-                        //'Stored in: ' . $experimentPath . $file['name']);
-                    } else {
+                    if (!$moveFile) {
                         CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file['name'] . '!
-                    Please try again later or report a bug using the link in the Help menu.</p>');
+                        Please try again later or report a bug using the link in the Help menu.</p>');
                         $experimentAssemblySuccessful = false;
                     }
-                    $hostName = $_SERVER['SERVER_NAME'];
-                    $experimentInput->value = 'file://' . $hostName . ':' . $filePath;
-                    $experimentInput->type = $applicationInput->type;
 
+                    $experimentInput->type = $applicationInput->type;
+                    $dataProductModel = new DataProductModel();
+                    $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
+                    $dataProductModel->ownerName = Session::get("username");
+                    $dataProductModel->productName = basename($filePath);
+                    $dataProductModel->dataProductType = DataProductType::FILE;
+
+                    $dataReplicationModel = new DataReplicaLocationModel();
+                    $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
+                    $dataReplicationModel->replicaName = basename($filePath) . " gateway data store copy";
+                    $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
+                    $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
+                    $hostName = $_SERVER['SERVER_NAME'];
+                    $dataReplicationModel->filePath = "file://" . $hostName . ":" . $filePath;
+
+                    $dataProductModel->replicaLocations[] = $dataReplicationModel;
+                    $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
+                    $experimentInput->value = $uri;
                 } else {
                     $index = -1;
                     for ($i = 0; $i < sizeof($experimentInputs); $i++) {
@@ -334,13 +340,10 @@ class ExperimentUtilities
                         $experimentInput->type = $applicationInput->type;
                     }
                 }
-
             } else {
                 CommonUtilities::print_error_message('I cannot accept this input type yet!');
             }
-
             $newExperimentInputs[] = $experimentInput;
-
         }
 
         if ($experimentAssemblySuccessful) {
@@ -445,17 +448,41 @@ class ExperimentUtilities
 
             foreach ($experimentInputs as $experimentInput) {
                 if ($experimentInput->type == DataType::URI) {
-                    $currentInputPath = $experimentInput->value;
                     $hostPathConstant = 'file://' . $hostName . ':';
+                    $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $experimentInput->value);
+                    $currentInputPath = "";
+                    foreach ($dataProductModel->replicaLocations as $rp) {
+                        if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                            $currentInputPath = $rp->filePath;
+                            break;
+                        }
+                    }
                     $currentInputPath = str_replace($hostPathConstant, '', $currentInputPath);
                     $parts = explode('/', rtrim($currentInputPath, '/'));
                     $fileName = array_pop($parts);
                     $newInputPath = ExperimentUtilities::$experimentPath . $fileName;
                     copy($currentInputPath, $newInputPath);
-                    $experimentInput->value = $hostPathConstant . $newInputPath;
+
+                    $dataProductModel = new DataProductModel();
+                    $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
+                    $dataProductModel->ownerName = Session::get("username");
+                    $dataProductModel->productName = basename($newInputPath);
+                    $dataProductModel->dataProductType = DataProductType::FILE;
+
+                    $dataReplicationModel = new DataReplicaLocationModel();
+                    $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
+                    $dataReplicationModel->replicaName = basename($newInputPath) . " gateway data store copy";
+                    $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
+                    $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
+                    $hostName = $_SERVER['SERVER_NAME'];
+                    $dataReplicationModel->filePath = "file://" . $hostName . ":" . $newInputPath;
+
+                    $dataProductModel->replicaLocations[] = $dataReplicationModel;
+                    $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
+                    $experimentInput->value = $uri;
                 }
             }
-            $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$relativeExperimentDataDir;
+            $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
             return $cloneId;
         } catch (InvalidRequestException $ire) {
@@ -482,6 +509,7 @@ class ExperimentUtilities
     }
 
     /**
+     * Cancel the experiment with the given ID
      * Cancel the experiment with the given ID
      * @param $expId
      */
@@ -641,43 +669,36 @@ class ExperimentUtilities
     {
         if( $process)
         {
-            $processStatusVal = array_search($status, ProcessState::$__names);
             if ($status != ProcessState::COMPLETED)
                 echo "Process hasn't completed. Process Status is : " . ProcessState::$__names[ $status] . '<br/>';
         }
         else
         {
-            $expStatusVal = array_search($status, ExperimentState::$__names);
             if ( $status != ExperimentState::COMPLETED)
                 echo "Experiment hasn't completed. Experiment Status is : " .  ExperimentState::$__names[ $status] . '<br/>';
         }
-        //$outputs = $experiment->experimentOutputs;
-        //print_r( $outputs); exit;
+
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
-                if(file_exists(str_replace('//','/',$output->value))){
-                    $outputPathArray = explode("/", $output->value);
-
-                    echo '<p>' . $output->name . ' : ' . '<a target="_blank"
-                            href="' . URL::to("/") . '/download?path=' .
-                                                $outputPathArray[ count($outputPathArray)-5] . "/" .
-                                                $outputPathArray[ count($outputPathArray)-4] . "/" . 
-                                                $outputPathArray[ count($outputPathArray)-3] . "/" . 
-                                                $outputPathArray[ count($outputPathArray)-2] . '/' . 
-                                                $outputPathArray[ count($outputPathArray)-1] . '">' .
-                                                    $outputPathArray[sizeof($outputPathArray) - 1] . 
-                        ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                if(!empty($output->value) && filter_var($output->value, FILTER_VALIDATE_URL)){
+                    $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $output->value);
+                    $currentInputPath = "";
+                    foreach ($dataProductModel->replicaLocations as $rp) {
+                        if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
+                            $currentInputPath = $rp->filePath;
+                            break;
+                        }
+                    }
+                    $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+                    if (!ExperimentUtilities::endsWith($dataRoot, "/"))
+                        $dataRoot = $dataRoot . "/";
+                    $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
+                    echo '<p><a target="_blank" href="' . URL::to("/") . '/download/?path=' . urlencode($filePath) . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
-//                else
-//                    echo 'Output paths are not correctly defined for : <br/>' . $output->name . '<br/><br/> Please report this issue to the admin<br/><br/>';
-            
-            } 
-            elseif ($output->type == DataType::STRING) {
+            } elseif ($output->type == DataType::STRING) {
                 echo '<p>' . $output->value . '</p>';
-            }
-            else
-                echo 'output : '. $output;
-            //echo 'output-type : ' . $output->type;
+            } else
+                echo 'output : ' . $output;
         }
     }
 
