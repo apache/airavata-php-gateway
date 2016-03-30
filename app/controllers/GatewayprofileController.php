@@ -40,7 +40,11 @@ class GatewayprofileController extends BaseController {
 	{
 		if( CRUtilities::add_or_update_CRP( Input::all()) )
 		{
-			return Redirect::to("admin/dashboard/gateway")->with("message","Compute Resource Preference has been set.");
+			if( Request::ajax()){
+				return 1;
+			}
+			else
+				return Redirect::to("admin/dashboard/gateway")->with("message","Compute Resource Preference has been set.");
 		}
 	}
 
@@ -48,7 +52,11 @@ class GatewayprofileController extends BaseController {
 	{
 		if( SRUtilities::add_or_update_SRP( Input::all()) )
 		{
-			return Redirect::to("admin/dashboard/gateway")->with("message","Storage Preference has been set.");
+			if( Request::ajax()){
+				return 1;
+			}
+			else
+				return Redirect::to("admin/dashboard/gateway")->with("message","Storage Resource Preference has been set.");
 		}
 	}
 

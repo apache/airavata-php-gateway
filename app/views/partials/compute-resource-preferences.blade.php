@@ -114,7 +114,13 @@
 
 @if(Session::has("admin"))
 <div class="form-group text-center">
-    <input type="submit" class="btn btn-primary" value="Set preferences"/>
+    <input type="submit" class="btn btn-primary submit-crp-form" value="Set preferences"/>
 </div>
 @endif
 </div>
+
+<div class="loading-gif text-center hide">
+    <img  src='{{URL::to('/')}}/assets/ajax-loader.gif'/>
+</div>
+<div class="col-md-offset-2 col-md-8 alert alert-success hide">Compute Resource Preferences have been updated.</div>
+<div class="col-md-offset-2 col-md-8 alert alert-danger hide">An error has occurred.</div>

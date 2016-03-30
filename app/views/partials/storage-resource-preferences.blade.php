@@ -39,16 +39,10 @@ dmi preference might be needed in the future
 
     <div class="col-md-9">
         <select class="form-control gateway-credential-store-token" name="resourceSpecificCredentialStoreToken" >
-            @if( isset( $preferences) )
+            <option value="">Select a Credential Token from Store</option>
             @foreach( $tokens as $token => $publicKey)
-                <option value="{{$token}}" @if( $token == $preferences->resourceSpecificCredentialStoreToken) selected @endif >{{$token}}</option>
+                <option value="{{$token}}" @if( isset( $preferences) ) @if( $token == $preferences->resourceSpecificCredentialStoreToken) selected @endif @endif>{{$token}}</option>
             @endforeach
-            @else
-                <option value="">Select a Credential Token from Store</option>
-                @foreach( $tokens as $token => $publicKey)
-                <option value="{{$token}}">{{$token}}</option>
-                @endforeach
-            @endif
             <option value="">DO-NO-SET</option>
         </select>
         <!--
@@ -60,7 +54,14 @@ dmi preference might be needed in the future
 
 @if(Session::has("admin"))
 <div class="form-group text-center">
-    <input type="submit" class="btn btn-primary" value="Set preferences"/>
+    <input type="submit" class="btn btn-primary submit-srp-form" value="Set preferences"/>
 </div>
 @endif
 </div>
+
+
+<div class="loading-gif text-center hide">
+    <img  src='{{URL::to('/')}}/assets/ajax-loader.gif'/>
+</div>
+<div class="col-md-offset-2 col-md-8 alert alert-success hide">Storage Resource Preferences have been updated.</div>
+<div class="col-md-offset-2 col-md-8 alert alert-danger hide">An error has occurred.</div>

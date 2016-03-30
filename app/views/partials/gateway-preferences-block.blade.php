@@ -95,7 +95,7 @@
                                      class="panel-collapse collapse">
                                     <div class="panel-body">
                                         <div class="app-compute-resource-preferences-block">
-                                            <form action="{{URL::to('/')}}/gp/update-crp"
+                                            <form class="set-cr-preference" action="{{URL::to('/')}}/gp/update-crp"
                                                   method="POST">
                                                 <input type="hidden" name="gatewayId" id="gatewayId"
                                                        value="{{$gp->gatewayId}}">
@@ -160,7 +160,7 @@
                                      class="panel-collapse collapse">
                                     <div class="panel-body">
                                         <div class="app-compute-resource-preferences-block">
-                                            <form action="{{URL::to('/')}}/gp/update-srp"
+                                            <form class="set-sr-preference" action="{{URL::to('/')}}/gp/update-srp"
                                                   method="POST">
                                                 <input type="hidden" name="gatewayId" id="gatewayId"
                                                        value="{{$gp->gatewayId}}">
