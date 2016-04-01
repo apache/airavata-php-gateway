@@ -460,6 +460,10 @@ to be uncommented when actually in use.
 
     function getCurrentDate( subtractDaysFromToday){
         var cd =  new Date();
+        if( subtractDaysFromToday!= null)
+        {
+            cd = new Date( cd.setDate( cd.getDate() - subtractDaysFromToday) );
+        }
         var hours = cd.getHours();
         month = cd.getMonth() + 1; //getmonth()starts from 0 for some reason
         var timeOfDay = "AM";
@@ -470,9 +474,7 @@ to be uncommented when actually in use.
                 hours = hours - 12;
         }
         var date = cd.getDate();
-        if( subtractDaysFromToday!= null)
-            date = date - subtractDaysFromToday;
-
+        
         var todayDate = month + "/" + date + "/" + cd.getFullYear() + " " + hours + ":" + cd.getUTCMinutes() + " " + timeOfDay;
         return todayDate;
     }
