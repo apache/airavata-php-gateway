@@ -180,7 +180,7 @@
                     || $jobDetail->jobStatus->jobStateName == "FAILED")
             <tr>
                 <th>Job Submission Response</th>
-                <td>{{$jobDetail->stdOut}}</td>
+                <td>{{$jobDetail->stdOut . $jobDetail->stdErr}}</td>
             </tr>
             @endif
         @endforeach
