@@ -22,7 +22,7 @@
         <form action="{{URL::to('/')}}/experiment/edit" method="POST" role="form" enctype="multipart/form-data">
             <input type="hidden" name="expId" value="<?php echo Input::get('expId'); ?>"/>
 
-            @include('partials/experiment-inputs')
+            @include('partials/experiment-inputs', array( "expInputs", $expInputs))
 
 
             <div class="btn-toolbar">

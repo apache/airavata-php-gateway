@@ -14,19 +14,11 @@
 </div>
 <div class="form-group required">
     <label for="project" class="control-label">Project</label>
-    @if( isset( $expInputs['cloning']))
-    {{ ProjectUtilities::create_project_select($expInputs['experiment']->projectId, $expInputs['expVal']['editable']) }}
-    @else
-    {{ ProjectUtilities::create_project_select($expInputs['project'], !$expInputs['disabled']) }}
-    @endif
+    {{ ProjectUtilities::create_project_select($expInputs['project'], !$expInputs['clonedExp']) }}
 </div>
 <div class="form-group">
     <label for="application">Application</label>
-    @if( isset( $expInputs['cloning']))
-    {{ ExperimentUtilities::create_application_select($expInputs['application'], false)}}
-    @else
-    {{ ExperimentUtilities::create_application_select($expInputs['application'], !$expInputs['disabled']) }}
-    @endif
+    {{ ExperimentUtilities::create_application_select($expInputs['application'], false) }}
 </div>
 
 <div class="panel panel-default">
@@ -36,7 +28,7 @@
 
         <div class="well">
             <input type="hidden" id="allowedFileSize" value="{{$expInputs['allowedFileSize']}}"/>
-            @if( isset( $expInputs['cloning']))
+            @if( $expInputs["clonedExp"])
             <div class="form-group">
                 <p><strong>Current inputs</strong></p>
                 {{ ExperimentUtilities::list_input_files($expInputs['experiment']->experimentInputs) }}
