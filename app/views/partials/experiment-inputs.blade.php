@@ -27,7 +27,6 @@
         <label>Application input</label>
 
         <div class="well">
-            <input type="hidden" id="allowedFileSize" value="{{$expInputs['allowedFileSize']}}"/>
             @if( $expInputs["clonedExp"])
             <div class="form-group">
                 <p><strong>Current inputs</strong></p>
