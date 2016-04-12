@@ -34,23 +34,13 @@ class AccountController extends BaseController
         $password = $_POST['password'];
         $email = $_POST['email'];
 
-//        Fixme - Save these user information
-//        $organization = $_POST['organization'];
-//        $address = $_POST['address'];
-//        $country = $_POST['country'];
-//        $telephone = $_POST['telephone'];
-//        $mobile = $_POST['mobile'];
-//        $im = $_POST['im'];
-//        $url = $_POST['url'];
-
-        $organization = "";
-        $address = "";
-        $country = "";
-        $telephone = "";
-        $mobile = "";
-        $im = "";
-        $url = "";
-
+        $organization = isset($_POST['organization']) ? $_POST['organization'] : null;
+        $address = isset($_POST['address']) ? $_POST['address'] : null;
+        $country = isset($_POST['country']) ? $_POST['country'] : null;
+        $telephone = isset($_POST['telephone']) ? $_POST['telephone'] : null;
+        $mobile = isset($_POST['mobile']) ? $_POST['mobile'] : null;
+        $im = isset($_POST['im']) ? $_POST['im'] : null;
+        $url = isset($_POST['url']) ? $_POST['url'] : null;
 
         if (WSIS::usernameExists($username)) {
             return Redirect::to("create")
@@ -71,7 +61,7 @@ class AccountController extends BaseController
 //                return View::make('account/login');
 //            }
 
-            WSIS::registerUserAccount($username, $password, $email, $first_name, $last_name,
+            WSIS::registerUserAccount($username, $password, $email, $first_name, $last_name, $organization, $address, $country, $telephone, $mobile, $im, $url,
                 Config::get('pga_config.wsis')['tenant-domain']);
 
             /*add user to role - user_pending */

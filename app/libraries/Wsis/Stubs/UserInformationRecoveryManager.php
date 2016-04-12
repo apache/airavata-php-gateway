@@ -107,7 +107,7 @@ class UserInformationRecoveryManager {
      * @param $tenantDomain
      * @return mixed
      */
-    public function registerAccount($username, $password, $email,$firstName, $lastName, $tenantDomain){
+    public function registerAccount($username, $password, $email,$firstName, $lastName, $organization, $address, $country, $telephone, $mobile, $im, $url, $tenantDomain){
 
         $registerUser =  new registerUser();
         $registerUser->userName  = $username;
@@ -136,6 +136,69 @@ class UserInformationRecoveryManager {
         $lastNameDTO->claimValue = $lastName;
         array_push($fieldValues, $lastNameDTO);
         $registerUser->claims = $fieldValues;
+
+        $lastNameDTO = new UserIdentityClaimDTO();
+        $lastNameDTO->claimUri = "http://wso2.org/claims/lastname";
+        $lastNameDTO->claimValue = $lastName;
+        array_push($fieldValues, $lastNameDTO);
+        $registerUser->claims = $fieldValues;
+
+        //Todo Add other information too
+        if(!empty($organization)){
+            $organizationDTO = new UserIdentityClaimDTO();
+            $organizationDTO->claimUri = "http://wso2.org/claims/organization";
+            $organizationDTO->claimValue = $organization;
+            array_push($fieldValues, $organizationDTO);
+            $registerUser->claims = $fieldValues;
+        }
+
+        if(!empty($address)){
+            $addressDTO = new UserIdentityClaimDTO();
+            $addressDTO->claimUri = "http://wso2.org/claims/streetaddress";
+            $addressDTO->claimValue = $address;
+            array_push($fieldValues, $addressDTO);
+            $registerUser->claims = $fieldValues;
+        }
+
+        if(!empty($country)){
+            $countryDTO = new UserIdentityClaimDTO();
+            $countryDTO->claimUri = "http://wso2.org/claims/country";
+            $countryDTO->claimValue = $countryDTO;
+            array_push($fieldValues, $countryDTO);
+            $registerUser->claims = $fieldValues;
+        }
+
+        if(!empty($telephone)){
+            $telephoneDTO = new UserIdentityClaimDTO();
+            $telephoneDTO->claimUri = "http://wso2.org/claims/telephone";
+            $telephoneDTO->claimValue = $telephone;
+            array_push($fieldValues, $telephoneDTO);
+            $registerUser->claims = $fieldValues;
+        }
+
+        if(!empty($mobile)){
+            $mobileDTO = new UserIdentityClaimDTO();
+            $mobileDTO->claimUri = "http://wso2.org/claims/mobile";
+            $mobileDTO->claimValue = $mobile;
+            array_push($fieldValues, $mobileDTO);
+            $registerUser->claims = $fieldValues;
+        }
+
+        if(!empty($im)){
+            $imDTO = new UserIdentityClaimDTO();
+            $imDTO->claimUri = "http://wso2.org/claims/im";
+            $imDTO->claimValue = $im;
+            array_push($fieldValues, $imDTO);
+            $registerUser->claims = $fieldValues;
+        }
+
+        if(!empty($url)){
+            $urlDTO = new UserIdentityClaimDTO();
+            $urlDTO->claimUri = "http://wso2.org/claims/url";
+            $urlDTO->claimValue = $url;
+            array_push($fieldValues, $urlDTO);
+            $registerUser->claims = $fieldValues;
+        }
 
         $result = $this->serviceStub->registerUser($registerUser);
         return $result->return->verified;
