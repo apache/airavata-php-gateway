@@ -163,7 +163,7 @@ class UserInformationRecoveryManager {
         if(!empty($country)){
             $countryDTO = new UserIdentityClaimDTO();
             $countryDTO->claimUri = "http://wso2.org/claims/country";
-            $countryDTO->claimValue = $countryDTO;
+            $countryDTO->claimValue = $country;
             array_push($fieldValues, $countryDTO);
             $registerUser->claims = $fieldValues;
         }
