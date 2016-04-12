@@ -41,20 +41,31 @@ class ExperimentController extends BaseController
                 "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
             );
 
+            $clonedExp = false;
+            if( Input::has("clonedExp"))
+                $clonedExp = true;
+
+            // Condition added to deal with php ini default value set for post_max_size issue.
+            $allowedFileSize = Config::get('pga_config.airavata')["server-allowed-file-size"];
+            $serverLimit = intval( ini_get( 'post_max_size') );
+            if( $serverLimit < $allowedFileSize)
+                $allowedFileSize = $serverLimit;
+
             $experimentInputs = array(
+                "clonedExp" => $clonedExp,
                 "disabled" => ' disabled',
                 "experimentName" => $_POST['experiment-name'],
                 "experimentDescription" => $_POST['experiment-description'] . ' ',
                 "project" => $_POST['project'],
                 "application" => $_POST['application'],
-                "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
                 "echo" => ($_POST['application'] == 'Echo') ? ' selected' : '',
                 "wrf" => ($_POST['application'] == 'WRF') ? ' selected' : '',
                 "queueDefaults" => $queueDefaults,
                 "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"],
                 "computeResources" => $computeResources,
                 "resourceHostId" => null,
-                "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"]
+                "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"],
+                "allowedFileSize" => $allowedFileSize
             );
 
             return View::make("experiment/create-complete", array("expInputs" => $experimentInputs));
@@ -193,7 +204,12 @@ class ExperimentController extends BaseController
 
         $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
 
+        $clonedExp = false;
+        if( Input::has("clonedExp"))
+            $clonedExp = true;
+
         $experimentInputs = array(
+            "clonedExp" => $clonedExp,
             "disabled" => ' ',
             "experimentName" => $experiment->experimentName,
             "experimentDescription" => $experiment->description,
@@ -205,7 +221,6 @@ class ExperimentController extends BaseController
             "queueDefaults" => $queueDefaults,
             'project' => $project,
             'expVal' => $expVal,
-            'cloning' => true,
             'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"],
             'computeResources' => $computeResources,
             "resourceHostId" => $expVal['scheduling']->resourceHostId,
@@ -227,7 +242,7 @@ class ExperimentController extends BaseController
             $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
             $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
 
-            return Redirect::to('experiment/edit?expId=' . $cloneId);
+            return Redirect::to('experiment/edit?expId=' . $cloneId . "&clonedExp=true");
         }
     }
 

@@ -32,7 +32,7 @@
 
     </form>
 
-
+<input type="hidden" id="allowedFileSize" value="{{ $expInputs['allowedFileSize'] }}"/>
 </div>
 
 

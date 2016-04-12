@@ -102,12 +102,10 @@
                 </form>
             </div>
 
-            <div class="panel-group" id="accordion1">
-                <div class='super-admin-gateways-view'>
+            <div class="panel-group super-admin-gateways-view" id="accordion1">
                 @foreach( $gateways as $indexGP => $gp )
                     @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
                 @endforeach
-                </div>
             </div>
             @endif
 

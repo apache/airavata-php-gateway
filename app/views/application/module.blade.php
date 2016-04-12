@@ -191,7 +191,7 @@
                     children = ($("#accordion").children());
 
                     var containing = children.filter(function () {
-                        var regex = new RegExp('\\b' + a, 'i');
+                        var regex = new RegExp(a, 'i');
                         return regex.test($('a', this).text());
                     }).slideDown();
                     children.not(containing).slideUp();
