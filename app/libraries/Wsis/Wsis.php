@@ -438,7 +438,7 @@ class Wsis {
     public function registerUserAccount($username, $password, $email, $firstName, $lastName, $organization, $address, $country, $telephone, $mobile, $im, $url, $tenantDomain)
     {
         $this->userInfoRecoveryManager->registerAccount($username, $password, $email, $firstName,
-            $lastName, $tenantDomain, $organization, $address, $country, $telephone, $mobile, $im, $url);
+            $lastName, $organization, $address, $country, $telephone, $mobile, $im, $url, $tenantDomain);
     }
 
     /**
