@@ -197,7 +197,7 @@
             <a id="cancel_exp_link" href="{{URL::to('/') }}/experiment/cancel?expId={{ $experiment->experimentId }}"
                class="btn btn-default" onclick="return confirm('Are you sure you want to cancel this experiment?')"
                role="button"
-               title="Edit the experiment's settings" @if (!$expVal["cancelable"]) style="display: none" @endif>
+               title="Cancel experiment" @if (!$expVal["cancelable"]) style="display: none" @endif>
                 <input name="cancel" type="submit" class="btn btn-warning"
                        value="Cancel" <?php if (!$expVal["cancelable"]) echo 'disabled'; ?> >
             </a>
@@ -216,10 +216,10 @@
                 Clone
             </a>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
-            <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}"
+            <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
                class="btn btn-default"
                role="button"
-               title="Edit the experiment's settings" <?php if (!$expVal["editable"]) echo 'style="display: none"' ?>>
+               title="Edit experiment" <?php if (!$expVal["editable"]) echo 'style="display: none"' ?>>
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit
             </a>

@@ -14,7 +14,11 @@
 </div>
 <div class="form-group required">
     <label for="project" class="control-label">Project</label>
-    {{ ProjectUtilities::create_project_select($expInputs['project'], !$expInputs['clonedExp']) }}
+    @if( $expInputs["clonedExp"] || $expInputs["savedExp"])
+        {{ ProjectUtilities::create_project_select($expInputs["project"], false) }}
+    @else
+        {{ ProjectUtilities::create_project_select($expInputs["project"], true) }}
+    @endif
 </div>
 <div class="form-group">
     <label for="application">Application</label>
@@ -27,11 +31,12 @@
         <label>Application input</label>
 
         <div class="well">
-            @if( $expInputs["clonedExp"])
             <div class="form-group">
-                <p><strong>Current inputs</strong></p>
                 {{ ExperimentUtilities::list_input_files($expInputs['experiment']->experimentInputs) }}
+                <hr/>
             </div>
+            <h3>Enter Experiment Inputs</h3>
+            @if( $expInputs["clonedExp"] || $expInputs["savedExp"])
             {{ ExperimentUtilities::create_inputs($expInputs['application'], false) }}
             @else
             {{ ExperimentUtilities::create_inputs($expInputs['application'], true) }}
