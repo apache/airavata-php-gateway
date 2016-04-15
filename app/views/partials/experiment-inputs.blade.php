@@ -31,12 +31,12 @@
         <label>Application input</label>
 
         <div class="well">
+            <h3>Enter Experiment Inputs</h3>
+            @if( $expInputs["clonedExp"] || $expInputs["savedExp"])
             <div class="form-group">
                 {{ ExperimentUtilities::list_input_files($expInputs['experiment']->experimentInputs) }}
                 <hr/>
             </div>
-            <h3>Enter Experiment Inputs</h3>
-            @if( $expInputs["clonedExp"] || $expInputs["savedExp"])
             {{ ExperimentUtilities::create_inputs($expInputs['application'], false) }}
             @else
             {{ ExperimentUtilities::create_inputs($expInputs['application'], true) }}
