@@ -24,7 +24,7 @@
 
             @include('partials/experiment-inputs', array( "expInputs", $expInputs))
 
-
+            @if( count( $expInputs['computeResources']) > 0)
             <div class="btn-toolbar">
                 <div class="btn-group">
                     <input name="save" type="submit" class="btn btn-primary"
@@ -33,6 +33,10 @@
                            value="Save and launch" <?php if (!$expInputs['expVal']['editable']) echo 'disabled' ?>>
                 </div>
             </div>
+            @else
+            <p class="well alert alert-danger">
+                This experiment is connected with an Application which is currently not deployed on any Resource. The experiment cannot be launched at the moment.
+            </p>
 
 
         </form>

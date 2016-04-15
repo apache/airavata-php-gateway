@@ -74,7 +74,6 @@ class ExperimentUtilities
         }
         array_multisort($order, SORT_ASC, $experimentInputs);
         if( count( $experimentInputs) > 0 ) { 
-            echo '<h3>Saved Inputs</strong></h3>';
             foreach ($experimentInputs as $input) {
                 $matchingAppInput = null;
 
