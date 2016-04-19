@@ -253,6 +253,8 @@ Route::get("admin/dashboard/experiment/summary", function () {
 
 Route::get("admin/dashboard/credential-store", "AdminController@credentialStoreView");
 
+Route::get("admin/dashboard/notices", "AdminController@noticesView");
+
 Route::get("manage/users", "AdminController@usersView");
 
 Route::post("admin/adduser", "AdminController@addAdminSubmit");

@@ -87,6 +87,11 @@
             <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/credential-store"><span class="glyphicon glyphicon-lock"></span>&nbspCredential
                 Store</a>
         </li>
+        <li
+            @if( Session::has("admin-nav") && Session::get("admin-nav") == "notices") class="active" @endif>
+            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/notices">
+                <span class="glyphicon glyphicon-bell"></span> Notices</a>
+        </li>
 <!--        <li>-->
 <!--            <a href="forms.html"><i class="fa fa-fw fa-edit"></i> Settings</a>-->
 <!--        </li>-->

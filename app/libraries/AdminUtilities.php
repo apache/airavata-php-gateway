@@ -109,4 +109,8 @@ class AdminUtilities
                 '<p>Airavata System Exception: ' . $ase->getMessage() . '</p>');
         }
     }
+
+    public static function get_notices(){
+        return Airavata::getNotices( Session::get('authz-token'), $token, Session::get("gateway_id"));
+    }
 }

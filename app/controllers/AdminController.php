@@ -183,6 +183,13 @@ class AdminController extends BaseController {
 		return View::make("admin/manage-credentials", array("tokens" => $tokens ) );
 	}
 
+	public function noticesView(){
+        Session::put("admin-nav", "notices");
+        $notices = array();
+        //$notices = AdminUtilities::getNotices();
+		return View::make("admin/manage-notices", array("notices" => $notices));
+	}
+
 	public function updateUserRoles(){
 		if( Input::has("add")){
 			WSIS::updateUserRoles(Input::get("username"), array("new"=> Input::get("roles"), "deleted" => array() ) );
@@ -299,13 +306,13 @@ class AdminController extends BaseController {
 
 		$rules = array(
             "username" => "required|min:6",
-            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#%*]).*$/",
+            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
         );
 
         $messages = array(
-            'password.regex' => 'Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$%&*',
+            'password.regex' => 'Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$&*',
         );
 
         $checkValidation = array();
