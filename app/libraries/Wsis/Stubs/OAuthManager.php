@@ -70,7 +70,7 @@ class OAuthManager
         ));
 
         // Assemble POST parameters for the request.
-        $post_fields = "grant_type=password&username=" . $username . "&password=" . $password . "&scope=openid";
+        $post_fields = "grant_type=password&username=" . urlencode($username) . "&password=" . urlencode($password) . "&scope=openid";
 
         // Obtain and return the access token from the response.
         curl_setopt($r, CURLOPT_POST, true);
