@@ -73,31 +73,34 @@ class ExperimentUtilities
             $order[$index] = $input->inputOrder;
         }
         array_multisort($order, SORT_ASC, $experimentInputs);
-        foreach ($experimentInputs as $input) {
-            $matchingAppInput = null;
+        if( count( $experimentInputs) > 0 ) { 
+            foreach ($experimentInputs as $input) {
+                $matchingAppInput = null;
 
-            if ($input->type == DataType::URI) {
-                $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-                if(!ExperimentUtilities::endsWith($dataRoot, "/"))
-                    $dataRoot = $dataRoot . "/";
-                if(strpos($input->value, "airavata-dp") === 0){
-                    $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
-                    $currentInputPath = "";
-                    foreach ($dataProductModel->replicaLocations as $rp) {
-                        if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
-                            $currentInputPath = $rp->filePath;
-                            break;
+                if ($input->type == DataType::URI) {
+                    $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+                    if(!ExperimentUtilities::endsWith($dataRoot, "/"))
+                        $dataRoot = $dataRoot . "/";
+                    if(strpos($input->value, "airavata-dp") === 0){
+                        $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
+                        $currentInputPath = "";
+                        foreach ($dataProductModel->replicaLocations as $rp) {
+                            if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                                $currentInputPath = $rp->filePath;
+                                break;
+                            }
                         }
+                        $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
+                    }else{
+                        $filePath = str_replace($dataRoot, "", parse_url($input->value, PHP_URL_PATH));
                     }
-                    $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
-                }else{
-                    $filePath = str_replace($dataRoot, "", parse_url($input->value, PHP_URL_PATH));
+
+                    echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?path='
+                        . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
+                    || $input->type == DataType::FLOAT) {
+                    echo '<p>' . $input->name . ':&nbsp;' . $input->value . '</p>';
                 }
-                echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?path='
-                    . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
-            } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
-                || $input->type == DataType::FLOAT) {
-                echo '<p>' . $input->name . ':&nbsp;' . $input->value . '</p>';
             }
         }
     }
@@ -497,11 +500,11 @@ class ExperimentUtilities
             //create new experiment to receive the clone
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $expId);
             $cloneId = Airavata::cloneExperiment(Session::get('authz-token'), $expId, 'Clone of ' . $experiment->experimentName);
-
             //updating the experiment inputs and output path
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $cloneId);
             $experimentInputs = $experiment->experimentInputs;
             ExperimentUtilities::create_experiment_folder_path($experiment->projectId, $experiment->experimentName);
+
             $hostName = $_SERVER['SERVER_NAME'];
 
             foreach ($experimentInputs as $experimentInput) {
@@ -823,7 +826,7 @@ class ExperimentUtilities
     }
     */
 
-    public static function get_experiment_values($experiment, $project, $forSearch = false)
+    public static function get_experiment_values($experiment, $forSearch = false)
     {
         $expVal = array();
         //$expVal["experimentStatusString"] = "";
@@ -1072,7 +1075,7 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_values($experiment, ProjectUtilities::get_project($experiment->projectId), true);
+            $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
             $expContainer[$expNum]['experiment'] = $experiment;
             if ($expValue["experimentStatusString"] == "FAILED")
                 $expValue["editable"] = false;
@@ -1149,7 +1152,7 @@ class ExperimentUtilities
     {
         $experiment->experimentName = $input['experiment-name'];
         $experiment->description = rtrim($input['experiment-description']);
-        $experiment->projectId = $input['project'];
+//        $experiment->projectId = $input['project'];
 //        $experiment->applicationId = $_POST['application'];
 //        $experiment->executionId = $_POST['application'];
 
@@ -1191,7 +1194,7 @@ class ExperimentUtilities
         $applicationInputs = AppUtilities::get_application_inputs($experiment->executionId);
 
         $experimentInputs = $experiment->experimentInputs; // get current inputs
-        $experimentInputs = ExperimentUtilities::process_inputs($input['project'], $input['experiment-name'], $applicationInputs, $experimentInputs); // get new inputs
+        $experimentInputs = ExperimentUtilities::process_inputs( $experiment->projectId, $input['experiment-name'], $applicationInputs, $experimentInputs); // get new inputs
 
         if ($experimentInputs) {
             $experiment->experimentInputs = $experimentInputs;

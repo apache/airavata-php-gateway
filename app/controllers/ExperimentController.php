@@ -34,16 +34,17 @@ class ExperimentController extends BaseController
             Session::put('exp_create_continue', true);
 
             $computeResources = CRUtilities::create_compute_resources_select($_POST['application'], null);
-
             $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
                 "nodeCount" => Config::get('pga_config.airavata')["node-count"],
                 "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
                 "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
             );
 
-            $clonedExp = false;
+            $clonedExp = false; $savedExp = false;
             if( Input::has("clonedExp"))
                 $clonedExp = true;
+            if( Input::has("savedExp"))
+                $savedExp = true;
 
             // Condition added to deal with php ini default value set for post_max_size issue.
             $allowedFileSize = Config::get('pga_config.airavata')["server-allowed-file-size"];
@@ -51,8 +52,10 @@ class ExperimentController extends BaseController
             if( $serverLimit < $allowedFileSize)
                 $allowedFileSize = $serverLimit;
 
+            
             $experimentInputs = array(
                 "clonedExp" => $clonedExp,
+                "savedExp" => $savedExp,
                 "disabled" => ' disabled',
                 "experimentName" => $_POST['experiment-name'],
                 "experimentDescription" => $_POST['experiment-description'] . ' ',
@@ -111,7 +114,7 @@ class ExperimentController extends BaseController
 
         
             $project = ProjectUtilities::get_project($experiment->projectId);
-            $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+            $expVal = ExperimentUtilities::get_experiment_values($experiment);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
             //var_dump( $jobDetails); exit;
             foreach( $jobDetails as $index => $jobDetail){
@@ -168,9 +171,7 @@ class ExperimentController extends BaseController
     {
         //var_dump( Input::all() ); exit;
         $experiment = ExperimentUtilities::get_experiment(Input::get('expId'));
-        $project = ProjectUtilities::get_project($experiment->projectId);
-
-        $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+        $expVal = ExperimentUtilities::get_experiment_values($experiment);
         $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
         /*if (isset($_POST['save']))
         {
@@ -197,19 +198,20 @@ class ExperimentController extends BaseController
         );
 
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
-        $project = ProjectUtilities::get_project($experiment->projectId);
-
-        $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+        $expVal = ExperimentUtilities::get_experiment_values($experiment);
         $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
 
         $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
 
-        $clonedExp = false;
+        $clonedExp = false; $savedExp = false;
         if( Input::has("clonedExp"))
             $clonedExp = true;
+        if( Input::has("savedExp"))
+            $savedExp = true;
 
         $experimentInputs = array(
             "clonedExp" => $clonedExp,
+            "savedExp" => $savedExp,
             "disabled" => ' ',
             "experimentName" => $experiment->experimentName,
             "experimentDescription" => $experiment->description,
@@ -219,12 +221,9 @@ class ExperimentController extends BaseController
             "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
             'experiment' => $experiment,
             "queueDefaults" => $queueDefaults,
-            'project' => $project,
-            'expVal' => $expVal,
-            'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"],
             'computeResources' => $computeResources,
             "resourceHostId" => $expVal['scheduling']->resourceHostId,
-            'project' => $project,
+            'project' => $experiment->projectId,
             'expVal' => $expVal,
             'cloning' => true,
             'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
@@ -239,7 +238,7 @@ class ExperimentController extends BaseController
             $experiment = ExperimentUtilities::get_experiment($cloneId);
             $project = ProjectUtilities::get_project($experiment->projectId);
 
-            $expVal = ExperimentUtilities::get_experiment_values($experiment, $project);
+            $expVal = ExperimentUtilities::get_experiment_values($experiment);
             $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
 
             return Redirect::to('experiment/edit?expId=' . $cloneId . "&clonedExp=true");

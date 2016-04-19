@@ -75,10 +75,10 @@ class ProjectUtilities
      */
     public static function create_project_select($projectId = null, $editable = true)
     {
-        $editable ? $readonly = '' : $readonly = 'readonly';
+        $editable ? $disabled = '' : $disabled = 'disabled';
         $userProjects = ProjectUtilities::get_all_user_projects(Session::get("gateway_id"), Session::get('username'));
 
-        echo '<select class="form-control" name="project" id="project" required ' . $readonly . '>';
+        echo '<select class="form-control" name="project" id="project" required ' . $disabled . '>';
         if (sizeof($userProjects) > 0) {
             foreach ($userProjects as $project) {
                 if ($project->projectID == $projectId) {

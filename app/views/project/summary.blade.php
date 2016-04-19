@@ -41,7 +41,7 @@
                 <?php 
 
                 foreach ($experiments as $experiment) {
-                    $expValues = ExperimentUtilities::get_experiment_values($experiment, $project, true);
+                    $expValues = ExperimentUtilities::get_experiment_values($experiment, true);
                     $expValues["jobState"] = ExperimentUtilities::get_job_status($experiment);
                     $applicationInterface = AppUtilities::get_application_interface($experiment->executionId);
                     
