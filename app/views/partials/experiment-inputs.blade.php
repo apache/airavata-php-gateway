@@ -31,10 +31,9 @@
         <label>Application input</label>
 
         <div class="well">
-            <h3>Enter Experiment Inputs</h3>
             @if( $expInputs["clonedExp"] || $expInputs["savedExp"])
             <div class="form-group">
-                <h3>Current Inputs</h3>
+                <p><strong>Current Inputs</strong></p>
                 {{ ExperimentUtilities::list_input_files($expInputs['experiment']->experimentInputs) }}
                 <hr/>
             </div>

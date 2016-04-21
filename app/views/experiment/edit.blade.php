@@ -37,8 +37,7 @@
             <p class="well alert alert-danger">
                 This experiment is connected with an Application which is currently not deployed on any Resource. The experiment cannot be launched at the moment.
             </p>
-
-
+            @endif
         </form>
     </div>
 
