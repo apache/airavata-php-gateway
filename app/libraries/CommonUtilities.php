@@ -212,6 +212,10 @@ class CommonUtilities
                 if ("user-console" == Session::get("nav-active"))
                     $active = " active ";
             }
+            echo '<li style="color:#fff; relative">' .
+                    '<span class="glyphicon glyphicon-bell notif-bell"></span>' .
+                    '<span class="notif-num" style="">2</span>' .
+                '</li>';
             if (Session::has("admin") || Session::has("admin-read-only"))
                 echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
 //            else

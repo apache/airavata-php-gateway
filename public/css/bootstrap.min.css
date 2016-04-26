@@ -63,3 +63,18 @@ body{
 .tab-content>.tab-pane {
     margin-top: 20px;
  }
+
+ .notif-bell{
+ 	margin:15px; 
+ 	font-size:1.5em;
+ }
+
+ .notif-num{
+ 	background: red; 
+ 	border-radius: 20px; 
+ 	padding: 7px; 
+ 	position: absolute; 
+ 	top: 0px; 
+ 	left: 50%; 
+ 	font-size: 0.6em;
+ }
