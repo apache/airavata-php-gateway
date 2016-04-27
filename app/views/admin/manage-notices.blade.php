@@ -3,6 +3,8 @@
 @section('page-header')
 @parent
 {{ HTML::style('css/admin.css')}}
+{{ HTML::style('css/datetimepicker.css')}}
+
 @stop
 
 @section('content')
@@ -29,89 +31,48 @@
                 <hr/>
                 @if(Session::has("admin"))
                 <div class="col-md-12">
-                    <form class="form-horizontal">
-                        <h4 class="text-center">Create a new Notice</h4>
-                        <div class="form-group required">
-                            <label class="control-label col-md-3">Notice Message</label>
-
-                            <div class="col-md-6">
-                                <textarea type="text" class="form-control" name=""></textarea>
-                            </div>
-                        </div>
-                        <div class='form-group required'>
-                            <label class="col-md-3 control-label">Publish date</label>
-                            <div class='input-group date col-md-4' id='datetimepicker9'>
-                                <input type='text' class="form-control" placeholder="From Date" name="from-date"/>
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
-                        </div>
-                         <div class='form-group required'>
-                            <label class="col-md-3 control-label">Expiration Date</label>
-                            <div class='input-group date col-md-4' id='datetimepicker9'>
-                                <input type='text' class="form-control" placeholder="To Date" name="to-date"/>
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group required">
-                            <label class="col-md-3 control-label">Priority</label>
-                            <div class="col-md-6">
-                                <select class="form-control">
-                                    <option>Low</option>
-                                    <option>Normal</option>
-                                    <option>Hight</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class=" col-md-offset-3 col-md-3">
-                                <button type="submit" class="btn btn-primary form-control" value="Submit">Submit</button>
-                            </div>
-                        </div>
-                    </form>
-                    <hr/>
+                    <button class="btn btn-default create-notice-button">Create a new Notice</button>
                 </div>
                 <div class="loading-img text-center hide">
                    <img src="../../assets/ajax-loader.gif"/>
                 </div>
                 @endif
                 <h4 class="text-center">Existing Notices</h4>
-                <table class="table table-bordered table-striped table-condensed" style="word-wrap: break-word;">
+                <table class="table table-bordered table-condensed" style="word-wrap: break-word;">
                     <tr>
                         <th>Notice</th>
+                        <th>Message</th>
                         <th>Publish Date</th>
                         <th>Expiry Date</th>
                         <th>Priority</th>
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
-                    <tbody class="token-values">
+                    <tbody class="notices-list">
                     @foreach( $notices as $index => $notice)
-                    <tr>
+                    <tr id="notice-{{$notice->notificationId}}" data-notice-info="{{ htmlspecialchars(json_encode( $notice ), ENT_QUOTES, 'UTF-8') }}">
                         <td class="">
-                            {{ $notice->text }}
+                            {{ $notice->title }}
                         </td>
                         <td>
-                            {{ $notice->publish_date }}
+                            {{ $notice->notifcationMessage}}
+                        <td class="time" unix-time="{{ $notice->publishedtime/1000 }}">
+                            {{ $notice->publishedtime }}
+                        </td>
+                        <td class="time" unix-time="{{ $notice->expirationTime/1000 }}">
+                            {{ $notice->expirationTime }}
                         </td>
                         <td>
-                            {{ $notice->expiry_date }}
-                        </td>
-                        <td>
-                            {{ $notice->priority }}
+                            {{-- $notice->priority --}}
                         </td>
                         @if( Session::has("admin"))
-                        <td>
-                            <span data-token="{{$token}}" class="glyphicon glyphicon-pencil"></span>
+                        <td class="update-notice-icon">
+                            <span class="glyphicon glyphicon-pencil"></span>
                         </td>
                         @endif
                         @if( Session::has("admin"))
-                        <td>
-                            <span data-token="{{$token}}" class="glyphicon glyphicon-trash"></span>
+                        <td class="delete-notice-icon">
+                            <span class="glyphicon glyphicon-trash"></span>
                         </td>
                         @endif
                     </tr>
@@ -123,22 +84,64 @@
     </div>
 </div>
 
-<div class="modal fade" id="delete-role-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+<!-- Create a Notice -->
+<div class="modal fade" id="create-notice" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="form-horizontal notice-form-values">
+                <div class="modal-header">
+                    <h3 class="text-center">Create a new Notice</h3>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary submit-add-notice-form" class="btn btn-primary form-control" value="Submit">Create</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="update-notice" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form class="form-horizontal notice-form-values">
+                <input type="hidden" class="notice-notificationId" name="notificationId"/>
+                <div class="modal-header">
+                    <h3 class="text-center">Update Notice</h3>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary submit-update-notice-form" class="btn btn-primary form-control" value="Submit">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </form>
+</div>
+
+
+<div class="modal fade" id="delete-notice" tabindex="-1" role="dialog" aria-labelledby="add-modal"
      aria-hidden="true">
     <div class="modal-dialog">
 
-        <form action="{{URL::to('/')}}/admin/deleterole" method="POST">
+        <form action="{{URL::to('/')}}/delete-notice" class="delete-notice-values" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="text-center">Delete Role Confirmation</h3>
+                    <h3 class="text-center">Delete Notice Confirmation</h3>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" class="form-control delete-roleName" name="role"/>
-                    Do you really want to delete the role - <span class="delete-role-name"></span>
+                    <input type="hidden" class="form-control notice-notificationId" name="notificationId"/>
+                    Do you really want to delete the Notice - <span class="notice-title"></span>
                 </div>
                 <div class="modal-footer">
                     <div class="form-group">
-                        <input type="submit" class="btn btn-danger" value="Delete"/>
+                        <button type="submit" class="btn btn-danger delete-notice-submit">Delete</button>
                         <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
                     </div>
                 </div>
@@ -150,27 +153,52 @@
     </div>
 </div>
 
+<div class="notice-form hide">
+    <div class="form-group required">
+        <label class="control-label col-md-3">Notice title</label>
 
-<!-- Remove a Compute Resource from a Gateway -->
-<div class="modal fade" id="remove-token-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="text-center">Remove SSH Key Confirmation</h3>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" class="form-control remove-crId" name="rem-crId"/>
-                <input type="hidden" class="form-control cr-gpId" name="gpId"/>
+        <div class="col-md-6">
+            <input type="text" class="form-control notice-title" required name="title"/>
+        </div>
+    </div>
+    <div class="form-group required">
+        <label class="control-label col-md-3">Notice Message</label>
 
-                Are you sure, you want to remove the SSH Key?<span class="remove-token-name"> </span>
+        <div class="col-md-6">
+            <textarea type="text" class="form-control notice-notificationMessage" required name="notificationMessage"></textarea>
+        </div>
+    </div>
+    <div class='form-group required'>
+        <label class="col-md-3 control-label">Publish Date</label>
+        <div class="col-md-6">
+            <div class='input-group date datetimepicker9'>
+                <input type='text' class="form-control notice-publishedtime" id="publishedtime" required placeholder="From Date"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
             </div>
-            <div class="modal-footer">
-                <div class="form-group">
-                    <input type="submit" class="btn btn-danger" value="Remove"/>
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
-                </div>
+        </div>
+    </div>
+     <div class='form-group'>
+        <label class="col-md-3 control-label">Expiration Date</label>
+        <div class="col-md-6">
+            <div class='input-group date datetimepicker10'>
+                <input type='text' class="form-control notice-expirationTime" placeholder="To Date" id="expirationTime"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
             </div>
+        </div>
+    </div>
+
+    <div class="form-group required">
+        <label class="col-md-3 control-label">Priority</label>
+        <div class="col-md-6">
+            <select class="form-control notice-priority">
+                <option>Low</option>
+                <option>Normal</option>
+                <option>Hight</option>
+            </select>
         </div>
     </div>
 </div>
@@ -179,66 +207,152 @@
 
 @section('scripts')
 @parent
+
+{{ HTML::script('js/moment.js')}}
+{{ HTML::script('js/datetimepicker.js')}}
+{{ HTML::script('js/time-conversion.js')}}
+
 <script>
-   $(".generate-ssh").click( function(){
-        $(".loading-img").removeClass("hide");
-        $.ajax({
-          type: "POST",
-          url: "{{URL::to('/')}}/admin/create-ssh-token"
-        }).success( function( data){
-
-            var tokenJson = data;
-
-            //$(".token-values").html("");
-            $(".generate-ssh").after("<div class='alert alert-success new-token-msg'>New Token has been generated.</div>");
-
-            $(".token-values").prepend("<tr class='alert alert-success'><td>" + tokenJson.token + "</td><td class='public-key'>" + tokenJson.pubkey + "</td>" + "<td><a href=''><span data-token='"+tokenJson.token+"' class='glyphicon glyphicon-trash remove-token'></span></a></td></<tr>");
-            $(".loading-img").addClass("hide");
-            
-            setInterval( function(){
-                $(".new-token-msg").fadeOut();
-            }, 3000);
-        }).fail( function( data){
-        $(".loading-img").addClass("hide");
-
-            failureObject = $.parseJSON( data.responseText);
-            $(".generate-ssh").after("<div class='alert alert-danger'>" + failureObject.error.message + "</div>");
+        $(".create-notice-button").click( function(){
+            $("#create-notice .modal-body").html( $(".notice-form").html());
+            setDateProperties("#create-notice");
+            $("#create-notice").modal( "show");
         });
-   });
 
-   $(".remove-token").click( function(){
-        var removeSpan = $(this);
-        var tr = removeSpan.parent().parent();
-        var tokenToRemove = removeSpan.data("token");
-        var publicKey = tr.children(".public-key").html();
-        tr.children(".public-key").html("<div class='alert alert-danger'>Do you really want to remove the token? This action cannot be undone.<br/>" +
-                                                                    "<span class='btn-group'>"+
-                                                                    "<input type='button' class='btn btn-default remove-token-confirmation' value='Yes'/>" +
-                                                                    "<input type='button' class='btn btn-default remove-token-cancel' value='Cancel'/>"+
-                                                                    "</span></div>");
+        $(".notices-list").on("click", ".update-notice-icon", function(){
+            var noticeData = $(this).parent().data("notice-info");
+            $("#update-notice .modal-body").html( $(".notice-form").html());
 
-        
-        tr.find( ".remove-token-confirmation").click( function(){
-            $(".loading-img").removeClass("hide");
+            for( var key in noticeData){
+                var formInput = $("#update-notice .notice-" + key);
+                formInput.val( noticeData[key]);
+            }
+            $("#update-notice .notice-publishedtime").val( moment( parseInt( $("#update-notice .notice-publishedtime").val()) ).format('MM/DD/YYYY hh:mm a') );
+            $("#update-notice .notice-expirationTime").val( moment( parseInt( $("#update-notice .notice-expirationTime").val()) ).format('MM/DD/YYYY hh:mm a') );
+            setDateProperties("#update-notice");
+
+            $("#update-notice").modal( "show");
+        });
+
+        //Add notice submit
+        $("body").on("click", ".submit-add-notice-form", function(ev){
+            ev.preventDefault();
+            $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
+            var formData = $("#create-notice .notice-form-values").serialize();
+            formData += "&publishedtime="+ moment( $("#publishedtime").val() ).utc().format('MM/DD/YYYY hh:mm a');
+            formData += "&expirationTime="+ moment( $("#expirationTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
             $.ajax({
-              type: "POST",
-              data:{ "token" : tokenToRemove},
-              url: "{{URL::to('/')}}/admin/remove-ssh-token"
-              }).success( function( data){
-                if( data.responseText == 1)
-                    tr.addClass("alert").addClass("alert-danger");
-                        tr.fadeOut(1000);
-            }).fail( function( data){
-                tr.after("<tr class='alert alert-danger'><td></td><td>Error occurred : " + $.parseJSON( data.responseText).error.message + "</td><td></td></tr>");
+                url: '{{URL::to('/')}}/add-notice',
+                type: "post",
+                data: formData,
+                success: function( data){
+                    var addedNotice = $.parseJSON( data);
+                    $(".notices-list").prepend(
+                        "<tr class='alert alert-success' data-notice-info='" + data + "'>" + updateRow( addedNotice) + "</tr>"
+                    );
+                    $("#create-notice").modal("hide");  
+                },
+                error: function(){
+                    $(".submit-add-notice-form").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
+                }
             }).complete( function(){
-                $(".loading-img").addClass("hide");
-
+                    $(".submit-add-notice-form").html("Submit");
             });
         });
-        tr.find( ".remove-token-cancel").click( function(){
-            tr.children(".public-key").html( publicKey);
+
+        //Update Notice Submit
+        $("body").on("click", ".submit-update-notice-form", function(ev){
+            ev.preventDefault();
+            $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
+            var formData = $("#update-notice .notice-form-values").serialize();
+            formData += "&publishedtime="+ moment( $("#publishedtime").val() ).utc().format('MM/DD/YYYY hh:mm a');
+            formData += "&expirationTime="+ moment( $("#expirationTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
+            $.ajax({
+                url: '{{URL::to('/')}}/update-notice',
+                type: "post",
+                data: formData,
+                success: function( data){
+                    var addedNotice = $.parseJSON( data);
+                    $("#notice-" + $("#update-notice .notice-notificationId").val() ).html(updateRow( addedNotice));
+
+                    $("#notice-" + $("#update-notice .notice-notificationId").val())
+                        .addClass("alert")
+                        .addClass("alert-success")
+                        .data("notice-info", data);
+                    $("#update-notice").modal("hide");  
+                },
+                error: function(){
+                    $(".submit-update-notice-form").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
+                }
+            }).complete( function(){
+                    $(".submit-add-notice-form").html("Update");
+            });
         });
-        
-   });
+
+        $(".notices-list").on("click", ".delete-notice-icon", function(){
+            var notice = $(this).parent().data("notice-info");
+            $("#delete-notice .notice-notificationId").val( notice.notificationId);
+            $("#delete-notice .notice-title").html( notice.title);
+            $("#delete-notice").modal("show");
+        });
+
+        //Update Notice Submit
+        $(".delete-notice-submit").click( function(ev){
+            ev.preventDefault();
+            formData = $(".delete-notice-values").serialize();
+
+            $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
+
+            $.ajax({
+                url: '{{URL::to('/')}}/delete-notice',
+                type: "post",
+                data: formData,
+                success: function( data){
+                    if( data == 1){
+                        $("#notice-" +$("#delete-notice .notice-notificationId").val()).fadeOut().remove();
+                    }
+                    else{
+                        $(".delete-notice-submit").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
+                    }
+                },
+                error: function(){
+                    $(".submit-update-notice-form").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
+                }
+            }).complete( function(){
+                    $(".submit-add-notice-form").html("Update");
+            });
+        });
+
+        function setDateProperties( parent){
+            $( parent + " .datetimepicker9").datetimepicker({
+                pick12HourFormat: false
+            });
+            $( parent + " .datetimepicker10").datetimepicker({
+                pick12HourFormat: false
+            });
+            $( parent + " .datetimepicker9").on("dp.change", function (e) {
+                $( parent + " .datetimepicker10").data("DateTimePicker").setMinDate(e.date);
+
+                //hack to close calendar on selecting date
+                $(this).find(".glyphicon-calendar").click();
+            });
+            $( parent + " .datetimepicker10").on("dp.change", function (e) {
+                $( parent + " .datetimepicker9").data("DateTimePicker").setMaxDate(e.date);
+
+                //hack to close calendar on selecting date
+                $(this).find(".glyphicon-calendar").click();
+            });
+        }
+
+        function updateRow( noticeObject){
+            var row =   "<td>" + noticeObject.title + "</td>" +
+                        "<td>" + noticeObject.notifcationMessage + "</td>" +
+                        "<td class='date'>" + convertTimestamp( noticeObject.publishedtime) + "</td>" +
+                        "<td class='date' unix-time='" + convertTimestamp( noticeObject.expirationTime ) + "'</td>" +
+                        "<td></td>"+
+                        "<td class='update-notice-icon'><span class='glyphicon glyphicon-pencil'></span></td>"+
+                        "<td class='delete-notice-icon'><span class='glyphicon glyphicon-trash'></span></td>";
+            return row;
+        }
 </script>
 @stop

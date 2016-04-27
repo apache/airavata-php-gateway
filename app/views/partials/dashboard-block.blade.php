@@ -84,7 +84,7 @@
 
         <li
             @if( Session::has("admin-nav") && Session::get("admin-nav") == "credential-store") class="active" @endif>
-            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/credential-store"><span class="glyphicon glyphicon-lock"></span>&nbspCredential
+            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/credential-store"><span class="glyphicon glyphicon-lock"></span>&nbsp; Credential
                 Store</a>
         </li>
         <li
