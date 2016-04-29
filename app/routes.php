@@ -293,6 +293,8 @@ Route::post("update-notice", "AdminController@updateNotice");
 
 Route::post("delete-notice", "AdminController@deleteNotice");
 
+Route::post("notice-seen-ack", "AccountController@noticeSeenAck");
+
 //Super Admin Specific calls
 
 Route::post("admin/add-gateway", "AdminController@addGateway");

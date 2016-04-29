@@ -38,6 +38,7 @@
                 </div>
                 @endif
                 <h4 class="text-center">Existing Notices</h4>
+                <div class="table-responsive">
                 <table class="table table-bordered table-condensed" style="word-wrap: break-word;">
                     <tr>
                         <th>Notice</th>
@@ -56,6 +57,7 @@
                         </td>
                         <td>
                             {{ $notice->notifcationMessage}}
+                        </td>
                         <td class="time" unix-time="{{ $notice->publishedtime/1000 }}">
                             {{ $notice->publishedtime }}
                         </td>
@@ -79,6 +81,7 @@
                     @endforeach
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>

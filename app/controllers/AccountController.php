@@ -438,4 +438,9 @@ class AccountController extends BaseController
         return 'result';
     }
 
+    public function noticeSeenAck(){
+        Session::put( "notice-count", Input::get("notice-count"));
+        Session::put("notice-seen", true);
+    }
+
 }

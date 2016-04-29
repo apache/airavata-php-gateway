@@ -111,10 +111,6 @@ class AdminUtilities
         }
     }
 
-    public static function get_all_notices(){
-        return Airavata::getAllNotifications( Session::get('authz-token'), Session::get("gateway_id"));
-    }
-
     public static function add_or_update_notice( $notifData, $update = false){
         $notification = new Notification();
         $notification->gatewayId = Session::get("gateway_id");

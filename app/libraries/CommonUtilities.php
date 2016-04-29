@@ -1,4 +1,5 @@
 <?php
+use Airavata\Model\Workspace\Notification;
 
 class CommonUtilities
 {
@@ -115,20 +116,6 @@ class CommonUtilities
                 )
             );
 
-//            if (Session::has("admin")) {
-//                $menus['Compute Resource'] = array
-//                (
-//                    array('label' => 'Register', 'url' => URL::to('/') . '/cr/create', "nav-active" => "compute-resource"),
-//                    array('label' => 'Browse', 'url' => URL::to('/') . '/cr/browse', "nav-active" => "compute-resource")
-//                );
-//                $menus['App Catalog'] = array
-//                (
-//                    array('label' => 'Module', 'url' => URL::to('/') . '/app/module', "nav-active" => "app-catalog"),
-//                    array('label' => 'Interface', 'url' => URL::to('/') . '/app/interface', "nav-active" => "app-catalog"),
-//                    array('label' => 'Deployment', 'url' => URL::to('/') . '/app/deployment', "nav-active" => "app-catalog")
-//                );
-//            }
-
             if( isset( Config::get('pga_config.portal')['jira-help']))
             {
                 $menus['Help'] = array();
@@ -153,7 +140,7 @@ class CommonUtilities
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
                        <span class="sr-only">Toggle navigation</span>
                        <span class="icon-bar"></span>
                        <span class="icon-bar"></span>
@@ -165,7 +152,7 @@ class CommonUtilities
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
                     <ul class="nav navbar-nav">';
 
 
@@ -212,10 +199,13 @@ class CommonUtilities
                 if ("user-console" == Session::get("nav-active"))
                     $active = " active ";
             }
-            echo '<li style="color:#fff; relative">' .
-                    '<span class="glyphicon glyphicon-bell notif-bell"></span>' .
-                    '<span class="notif-num" style="">2</span>' .
-                '</li>';
+
+            //notification bell
+            $notices = array();
+            $notices = array_reverse( CommonUtilities::get_all_notices() );
+            echo CommonUtilities::get_notices_ui( $notices);
+
+
             if (Session::has("admin") || Session::has("admin-read-only"))
                 echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
 //            else
@@ -237,6 +227,47 @@ class CommonUtilities
 
         echo '</div></div></nav>';
     }
+
+    public static function get_notices_ui( $notices){
+
+           $notifVisibility = "";
+            $countOfNotices = count( $notices);
+            $newNotices = 0;
+            if( Session::has("notice-count")){
+                $newNotices = $countOfNotices - Session::get("notice-count");
+                if( !$newNotices)
+                    $notifVisibility = "hide";
+            }
+            else
+                $newNotices = count( $notices);
+
+            $noticesUI = '<li clas="dropdown" style="color:#fff; relative">' .
+                    '<a href="#" class="dropdown-toggle notif-link" data-toggle="dropdown">' .
+                        '<span class="glyphicon glyphicon-bell notif-bell"></span>' .
+                        '<span class="notif-num ' . $notifVisibility . '" data-total-notices="' . $countOfNotices . '">' . $newNotices . '</span>'.
+                        '<div class="dropdown-menu widget-notifications no-padding" style="width: 300px"><div class="slimScrollDiv" style="position: relative; overflow-y: scroll; overflow-x:hidden; width: auto; height: 250px;"><div class="notifications-list" id="main-navbar-notifications" style=" width: auto; height: 250px;">';
+
+            foreach( $notices as $notice){
+                $noticesUI .= '
+                <div class="notification">
+                    <div class="notification-title text-primary">' . $notice->title . '</div>
+                    <div class="notification-description"><strong></strong>' . $notice->notifcationMessage . '</div>
+                    <div class="notification-ago">' . date("m/d/Y h:i:s A T", $notice->publishedtime) . '</div>
+                    <div class="notification-icon"></div>
+                </div> <!-- / .notification -->
+                ';
+            }
+            $noticesUI .= '
+            </div><div class="slimScrollBar" style="width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 195.925px; background: rgb(0, 0, 0);"></div>
+
+            <div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div></div> <!-- / .notifications-list -->
+            <a href="#" class="notifications-link">MORE NOTIFICATIONS</a>
+            </div>'.
+            '</a>'.
+                '</li>';
+
+        return $noticesUI;
+    }   
 
     /**
      * Add attributes to the HTTP header.
@@ -265,6 +296,15 @@ class CommonUtilities
         if (!$tokenFile) {
             throw new Exception('Error: Cannot open tokens database!');
         }
+    }
+
+    /**
+     * Get All Notifications for a gateway
+     * @param 
+     * 
+     */
+    public static function get_all_notices(){
+        return Airavata::getAllNotifications( Session::get('authz-token'), Session::get("gateway_id"));
     }
 }
 
