@@ -253,8 +253,6 @@ Route::get("admin/dashboard/experiment/summary", function () {
 
 Route::get("admin/dashboard/credential-store", "AdminController@credentialStoreView");
 
-Route::get("admin/dashboard/notices", "AdminController@noticesView");
-
 Route::get("manage/users", "AdminController@usersView");
 
 Route::post("admin/adduser", "AdminController@addAdminSubmit");
@@ -284,6 +282,18 @@ Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser")
 Route::post("admin/create-ssh-token", "AdminController@createSSH");
 
 Route::post("admin/remove-ssh-token", "AdminController@removeSSH");
+
+
+//notices
+Route::get("admin/dashboard/notices", "AdminController@noticesView");
+
+Route::post("add-notice", "AdminController@addNotice");
+
+Route::post("update-notice", "AdminController@updateNotice");
+
+Route::post("delete-notice", "AdminController@deleteNotice");
+
+Route::post("notice-seen-ack", "AccountController@noticeSeenAck");
 
 //Super Admin Specific calls
 

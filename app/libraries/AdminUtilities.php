@@ -1,6 +1,7 @@
 <?php
 
 use Airavata\Model\Workspace\Gateway;
+use Airavata\Model\Workspace\Notification;
 
 class AdminUtilities
 {
@@ -110,7 +111,29 @@ class AdminUtilities
         }
     }
 
-    public static function get_notices(){
-        return Airavata::getNotices( Session::get('authz-token'), $token, Session::get("gateway_id"));
+    public static function add_or_update_notice( $notifData, $update = false){
+        $notification = new Notification();
+        $notification->gatewayId = Session::get("gateway_id");
+        $notification->title = $notifData["title"];
+        $notification->notifcationMessage = $notifData["notificationMessage"];
+        $notification->publishedtime = strtotime( $notifData["publishedtime"])* 1000;
+        $notification->expirationTime = strtotime( $notifData["expirationTime"]) * 1000;
+
+        if( $update){
+            $notification->notificationId =  $notifData["notificationId"];
+            return Airavata::getNotification( 
+                    Session::get('authz-token'), 
+                    Session::get("gateway_id"), 
+                    Airavata::updateNotification( Session::get("authz-token"), $notification) );
+        }
+        else
+            return Airavata::getNotification( 
+                    Session::get('authz-token'), 
+                    Session::get("gateway_id"), 
+                    Airavata::createNotification( Session::get("authz-token"), $notification) );
+    }
+
+    public static function delete_notice( $notificationId){
+        return Airavata::deleteNotification( Session::get('authz-token'), Session::get("gateway_id"), $notificationId);
     }
 }

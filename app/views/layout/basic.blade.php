@@ -108,6 +108,15 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
         'slow');
         $(".seagrid-info").scrollTop( $(window).scrollTop() + 150);
     })
+
+    $(".notif-link").click( function(){
+        $.ajax({
+            type:"post",
+            url:"{{URL::to('/')}}/notice-seen-ack",
+            data:{"notice-count": $(".notif-num").data("total-notices")}
+        });
+        $(".notif-num").addClass("fade");
+    })
 </script>
 
 <!-- Google Analytics for portal-->

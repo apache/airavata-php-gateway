@@ -183,13 +183,6 @@ class AdminController extends BaseController {
 		return View::make("admin/manage-credentials", array("tokens" => $tokens ) );
 	}
 
-	public function noticesView(){
-        Session::put("admin-nav", "notices");
-        $notices = array();
-        //$notices = AdminUtilities::getNotices();
-		return View::make("admin/manage-notices", array("notices" => $notices));
-	}
-
 	public function updateUserRoles(){
 		if( Input::has("add")){
 			WSIS::updateUserRoles(Input::get("username"), array("new"=> Input::get("roles"), "deleted" => array() ) );
@@ -373,4 +366,39 @@ class AdminController extends BaseController {
     public function viewAllocationRequests(){
     	return 'result';
     }
+
+	public function noticesView(){
+        Session::put("admin-nav", "notices");
+        $notices = array();
+        $notices = array_reverse( CommonUtilities::get_all_notices() );
+		return View::make("admin/manage-notices", array("notices" => $notices));
+	}
+
+	public function addNotice(){
+		$inputs = Input::all();
+		$newNotice = AdminUtilities::add_or_update_notice( $inputs);
+			return json_encode( $newNotice);
+	}
+
+	public function updateNotice(){
+		$inputs = Input::all();
+		if( AdminUtilities::add_or_update_notice( $inputs, true))
+		{
+			return 1;
+		}
+		else
+			return 0;
+	}
+
+	public function deleteNotice(){
+		$inputs = Input::all();
+		if( AdminUtilities::delete_notice( $inputs["notificationId"]))
+		{
+			//ajax
+			return 1;
+		}
+		else
+			return 0;
+	}
+
 }

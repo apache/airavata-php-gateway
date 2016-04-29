@@ -119,59 +119,6 @@
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="delete-role-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
-     aria-hidden="true">
-    <div class="modal-dialog">
-
-        <form action="{{URL::to('/')}}/admin/deleterole" method="POST">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="text-center">Delete Role Confirmation</h3>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" class="form-control delete-roleName" name="role"/>
-                    Do you really want to delete the role - <span class="delete-role-name"></span>
-                </div>
-                <div class="modal-footer">
-                    <div class="form-group">
-                        <input type="submit" class="btn btn-danger" value="Delete"/>
-                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
-                    </div>
-                </div>
-            </div>
-
-        </form>
-
-
-    </div>
-</div>
-
-
-<!-- Remove a Compute Resource from a Gateway -->
-<div class="modal fade" id="remove-token-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="text-center">Remove SSH Key Confirmation</h3>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" class="form-control remove-crId" name="rem-crId"/>
-                <input type="hidden" class="form-control cr-gpId" name="gpId"/>
-
-                Are you sure, you want to remove the SSH Key?<span class="remove-token-name"> </span>
-            </div>
-            <div class="modal-footer">
-                <div class="form-group">
-                    <input type="submit" class="btn btn-danger" value="Remove"/>
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 @stop
 
 @section('scripts')
