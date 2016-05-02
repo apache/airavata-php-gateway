@@ -89,7 +89,7 @@ class AccountController extends BaseController
 //        }else{
 //            return View::make('account/login');
 //        }
-        if(CommonUtilities::verify_login()){
+        if(CommonUtilities::id_in_session()){
             return Redirect::to("home");
         }else
             return View::make('account/login');
