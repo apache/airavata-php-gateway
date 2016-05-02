@@ -251,7 +251,7 @@ class CommonUtilities
                 $noticesUI .= '
                 <div class="notification">
                     <div class="notification-title text-primary">' . $notice->title . '</div>
-                    <div class="notification-description"><strong></strong>' . $notice->notifcationMessage . '</div>
+                    <div class="notification-description"><strong></strong>' . $notice->notificationMessage . '</div>
                     <div class="notification-ago">' . date("m/d/Y h:i:s A T", $notice->publishedtime) . '</div>
                     <div class="notification-icon"></div>
                 </div> <!-- / .notification -->

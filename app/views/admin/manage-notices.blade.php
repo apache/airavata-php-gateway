@@ -56,7 +56,7 @@
                             {{ $notice->title }}
                         </td>
                         <td>
-                            {{ $notice->notifcationMessage}}
+                            {{ $notice->notificationMessage}}
                         </td>
                         <td class="time" unix-time="{{ $notice->publishedtime/1000 }}">
                             {{ $notice->publishedtime }}
@@ -349,7 +349,7 @@
 
         function updateRow( noticeObject){
             var row =   "<td>" + noticeObject.title + "</td>" +
-                        "<td>" + noticeObject.notifcationMessage + "</td>" +
+                        "<td>" + noticeObject.notificationMessage + "</td>" +
                         "<td class='date'>" + convertTimestamp( noticeObject.publishedtime) + "</td>" +
                         "<td class='date' unix-time='" + convertTimestamp( noticeObject.expirationTime ) + "'</td>" +
                         "<td></td>"+

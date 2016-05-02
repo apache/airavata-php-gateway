@@ -115,7 +115,7 @@ class AdminUtilities
         $notification = new Notification();
         $notification->gatewayId = Session::get("gateway_id");
         $notification->title = $notifData["title"];
-        $notification->notifcationMessage = $notifData["notificationMessage"];
+        $notification->notificationMessage = $notifData["notificationMessage"];
         $notification->publishedtime = strtotime( $notifData["publishedtime"])* 1000;
         $notification->expirationTime = strtotime( $notifData["expirationTime"]) * 1000;
 
