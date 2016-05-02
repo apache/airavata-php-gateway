@@ -183,6 +183,18 @@
                         </div>
                     </div>
                     @endif
+
+                    <br/>
+                    <div>
+                        <h3>Identity Server Configuration :</h3>
+                    </div>
+                    <div>
+                        <label>Tenant ID :</label>
+                        <input type="text">
+                        </br>
+                        <label>Password Credential Token :</label>
+                        <input type="text">
+                    </div>
                 </div>
 
                 <div class="col-md-10">

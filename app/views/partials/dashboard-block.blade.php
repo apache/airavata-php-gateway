@@ -79,7 +79,7 @@
         <li
             @if( Session::has("admin-nav") && Session::get("admin-nav") == "gateway-prefs") class="active" @endif>
             <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/gateway"><span class="glyphicon glyphicon-sort"></span>&nbsp;
-                Gateway Preferences</a>
+                Gateway Profile</a>
         </li>
 
         <li

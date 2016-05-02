@@ -99,6 +99,33 @@
                 </div>
                 @endif
                 -->
+                    <br/>
+                    <h1 class="text-center">Password Credentials</h1>
+                    @if(Session::has("admin"))
+                        <table class="table">
+                            <tr class="text-center table-condensed">
+                                <td>
+                                    <button class="btn btn-default register-pwd-cred">Register a new password credential</button>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="loading-img text-center hide">
+                            <img src="../../assets/ajax-loader.gif"/>
+                        </div>
+                    @endif
+                    <table class="table table-bordered table-condensed" style="word-wrap: break-word;">
+                        <tr>
+                            <th class="text-center">
+                                Token
+                            </th>
+                            <th class="text-center">Description</th>
+                            @if( Session::has("admin"))
+                                <th>Delete</th>
+                            @endif
+                        </tr>
+                        <tbody class="token-values">
+                        </tbody>
+                    </table>
 
                 <h1 class="text-center">Amazon Credentials</h1>
 
