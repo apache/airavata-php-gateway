@@ -58,8 +58,8 @@
                         <td>
                             {{ $notice->notificationMessage}}
                         </td>
-                        <td class="time" unix-time="{{ $notice->publishedtime/1000 }}">
-                            {{ $notice->publishedtime }}
+                        <td class="time" unix-time="{{ $notice->publishedTime/1000 }}">
+                            {{ $notice->publishedTime }}
                         </td>
                         <td class="time" unix-time="{{ $notice->expirationTime/1000 }}">
                             {{ $notice->expirationTime }}
@@ -175,7 +175,7 @@
         <label class="col-md-3 control-label">Publish Date</label>
         <div class="col-md-6">
             <div class='input-group date datetimepicker9'>
-                <input type='text' class="form-control notice-publishedtime" id="publishedtime" required placeholder="From Date"/>
+                <input type='text' class="form-control notice-publishedTime" id="publishedTime" required placeholder="From Date"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -230,7 +230,7 @@
                 var formInput = $("#update-notice .notice-" + key);
                 formInput.val( noticeData[key]);
             }
-            $("#update-notice .notice-publishedtime").val( moment( parseInt( $("#update-notice .notice-publishedtime").val()) ).format('MM/DD/YYYY hh:mm a') );
+            $("#update-notice .notice-publishedTime").val( moment( parseInt( $("#update-notice .notice-publishedTime").val()) ).format('MM/DD/YYYY hh:mm a') );
             $("#update-notice .notice-expirationTime").val( moment( parseInt( $("#update-notice .notice-expirationTime").val()) ).format('MM/DD/YYYY hh:mm a') );
             setDateProperties("#update-notice");
 
@@ -242,7 +242,7 @@
             ev.preventDefault();
             $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
             var formData = $("#create-notice .notice-form-values").serialize();
-            formData += "&publishedtime="+ moment( $("#publishedtime").val() ).utc().format('MM/DD/YYYY hh:mm a');
+            formData += "&publishedTime="+ moment( $("#publishedTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
             formData += "&expirationTime="+ moment( $("#expirationTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
             $.ajax({
                 url: '{{URL::to('/')}}/add-notice',
@@ -268,7 +268,7 @@
             ev.preventDefault();
             $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
             var formData = $("#update-notice .notice-form-values").serialize();
-            formData += "&publishedtime="+ moment( $("#publishedtime").val() ).utc().format('MM/DD/YYYY hh:mm a');
+            formData += "&publishedTime="+ moment( $("#publishedTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
             formData += "&expirationTime="+ moment( $("#expirationTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
             $.ajax({
                 url: '{{URL::to('/')}}/update-notice',
@@ -350,7 +350,7 @@
         function updateRow( noticeObject){
             var row =   "<td>" + noticeObject.title + "</td>" +
                         "<td>" + noticeObject.notificationMessage + "</td>" +
-                        "<td class='date'>" + convertTimestamp( noticeObject.publishedtime) + "</td>" +
+                        "<td class='date'>" + convertTimestamp( noticeObject.publishedTime) + "</td>" +
                         "<td class='date' unix-time='" + convertTimestamp( noticeObject.expirationTime ) + "'</td>" +
                         "<td></td>"+
                         "<td class='update-notice-icon'><span class='glyphicon glyphicon-pencil'></span></td>"+
