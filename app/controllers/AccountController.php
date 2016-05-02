@@ -121,7 +121,6 @@ class AccountController extends BaseController
             $authzToken = new Airavata\Model\Security\AuthzToken();
             $authzToken->accessToken = $accessToken;
             $authzToken->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
-            $authzToken->userName = $username;
             Session::put('authz-token',$authzToken);
             Session::put('oauth-refresh-code',$refreshToken);
             Session::put('oauth-expiration-time',$expirationTime);

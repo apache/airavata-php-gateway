@@ -28,7 +28,6 @@ App::before(function ($request) {
                 $authzToken = Session::get('authz-token');
                 $authzToken->accessToken = $accessToken;
                 $authzToken->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
-                $authzToken->userName = Session::get('username');
                 Session::put('authz-token',$authzToken);
                 Session::put('oauth-refresh-code',$refreshToken);
                 Session::put('oauth-expiration-time',$expirationTime);
