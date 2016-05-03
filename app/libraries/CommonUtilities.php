@@ -194,18 +194,19 @@ class CommonUtilities
 
         // right-aligned content
 
-        if (Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
-                || Session::has('admin-read-only'))){
+        if (Session::has('loggedin')) {
             $active = "";
             if (Session::has("nav-active")) {
                 if ("user-console" == Session::get("nav-active"))
                     $active = " active ";
             }
 
-            //notification bell
-            $notices = array();
-            $notices = CommonUtilities::get_all_notices();
-            echo CommonUtilities::get_notices_ui( $notices);
+            if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only')){
+                //notification bell
+                $notices = array();
+                $notices = CommonUtilities::get_all_notices();
+                echo CommonUtilities::get_notices_ui( $notices);
+            }
 
 
             if (Session::has("admin") || Session::has("admin-read-only"))
