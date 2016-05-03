@@ -371,7 +371,7 @@ class AdminController extends BaseController {
         Session::put("admin-nav", "notices");
         $notices = array();
         $noticePriorities = CommonUtilities::get_notice_priorities();
-        $notices = array_reverse( CommonUtilities::get_all_notices() );
+        $notices = CommonUtilities::get_all_notices();
 		return View::make("admin/manage-notices", array("notices" => $notices, "priorities" => $noticePriorities));
 	}
 
