@@ -236,7 +236,10 @@ class CommonUtilities
         $currentTime = floatval( time()*1000);
         $noticesUI = "";
         foreach( $notices as $notice){
-            if( $currentTime >= $notice->publishedTime && $currentTime <= $notice->expirationTime)
+            $endTime = $notice->expirationTime;
+            if( $endTime == null)
+                $endTime = $currentTime;
+            if( $currentTime >= $notice->publishedTime && $currentTime <= $endTime)
             {
                 $publishedNoticesCount++;
                 $textColor = "text-info";
