@@ -1,5 +1,6 @@
 <?php
 use Airavata\Model\Workspace\Notification;
+use Airavata\Model\Workspace\NotificationPriority;
 
 class CommonUtilities
 {
@@ -230,41 +231,42 @@ class CommonUtilities
 
     public static function get_notices_ui( $notices){
 
-           $notifVisibility = "";
-            $countOfNotices = count( $notices);
-            $newNotices = 0;
-            if( Session::has("notice-count")){
-                $newNotices = $countOfNotices - Session::get("notice-count");
-                if( !$newNotices)
-                    $notifVisibility = "hide";
-            }
-            else
-                $newNotices = count( $notices);
+        $notifVisibility = "";
+        $countOfNotices = count( $notices);
+        $newNotices = 0;
+        if( Session::has("notice-count")){
+            $newNotices = $countOfNotices - Session::get("notice-count");
+        }
+        else
+            $newNotices = $countOfNotices;
 
-            $noticesUI = '<li clas="dropdown" style="color:#fff; relative">' .
-                    '<a href="#" class="dropdown-toggle notif-link" data-toggle="dropdown">' .
-                        '<span class="glyphicon glyphicon-bell notif-bell"></span>' .
-                        '<span class="notif-num ' . $notifVisibility . '" data-total-notices="' . $countOfNotices . '">' . $newNotices . '</span>'.
-                        '<div class="dropdown-menu widget-notifications no-padding" style="width: 300px"><div class="slimScrollDiv" style="position: relative; overflow-y: scroll; overflow-x:hidden; width: auto; height: 250px;"><div class="notifications-list" id="main-navbar-notifications" style=" width: auto; height: 250px;">';
+        if( !$newNotices)
+            $notifVisibility = "hide";
 
-            foreach( $notices as $notice){
-                $noticesUI .= '
-                <div class="notification">
-                    <div class="notification-title text-primary">' . $notice->title . '</div>
-                    <div class="notification-description"><strong></strong>' . $notice->notifcationMessage . '</div>
-                    <div class="notification-ago">' . date("m/d/Y h:i:s A T", $notice->publishedtime) . '</div>
-                    <div class="notification-icon"></div>
-                </div> <!-- / .notification -->
-                ';
-            }
+        $noticesUI = '<li clas="dropdown" style="color:#fff; relative">' .
+                '<a href="#" class="dropdown-toggle notif-link" data-toggle="dropdown">' .
+                    '<span class="glyphicon glyphicon-bell notif-bell"></span>' .
+                    '<span class="notif-num ' . $notifVisibility . '" data-total-notices="' . $countOfNotices . '">' . $newNotices . '</span>'.
+                    '<div class="dropdown-menu widget-notifications no-padding" style="width: 300px"><div class="slimScrollDiv" style="position: relative; overflow-y: scroll; overflow-x:hidden; width: auto; height: 250px;"><div class="notifications-list" id="main-navbar-notifications" style=" width: auto; height: 250px;">';
+
+        foreach( $notices as $notice){
             $noticesUI .= '
-            </div><div class="slimScrollBar" style="width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 195.925px; background: rgb(0, 0, 0);"></div>
+            <div class="notification">
+                <div class="notification-title text-primary">' . $notice->title . '</div>
+                <div class="notification-description"><strong></strong>' . $notice->notificationMessage . '</div>
+                <div class="notification-ago">' . date("m/d/Y h:i:s A T", $notice->publishedTime) . '</div>
+                <div class="notification-icon"></div>
+            </div> <!-- / .notification -->
+            ';
+        }
+        $noticesUI .= '
+        </div><div class="slimScrollBar" style="width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 195.925px; background: rgb(0, 0, 0);"></div>
 
-            <div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div></div> <!-- / .notifications-list -->
-            <a href="#" class="notifications-link">MORE NOTIFICATIONS</a>
-            </div>'.
-            '</a>'.
-                '</li>';
+        <div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div></div> <!-- / .notifications-list -->
+        <a href="#" class="notifications-link">MORE NOTIFICATIONS</a>
+        </div>'.
+        '</a>'.
+            '</li>';
 
         return $noticesUI;
     }   
@@ -305,6 +307,10 @@ class CommonUtilities
      */
     public static function get_all_notices(){
         return Airavata::getAllNotifications( Session::get('authz-token'), Session::get("gateway_id"));
+    }
+
+    public static function get_notice_priorities(){
+        return NotificationPriority::$__names;
     }
 }
 

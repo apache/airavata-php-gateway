@@ -56,16 +56,16 @@
                             {{ $notice->title }}
                         </td>
                         <td>
-                            {{ $notice->notifcationMessage}}
+                            {{ $notice->notificationMessage}}
                         </td>
-                        <td class="time" unix-time="{{ $notice->publishedtime/1000 }}">
-                            {{ $notice->publishedtime }}
+                        <td @if( $notice->publishedTime != null) class="time" unix-time="{{ $notice->publishedTime/1000 }}" @endif>
+                            Not Set
                         </td>
-                        <td class="time" unix-time="{{ $notice->expirationTime/1000 }}">
-                            {{ $notice->expirationTime }}
+                        <td @if( $notice->expirationTime != null) class="time" unix-time="{{ $notice->expirationTime/1000 }}" @endif>
+                            Not Set
                         </td>
-                        <td>
-                            {{-- $notice->priority --}}
+                        <td class="priority">
+                            {{ $priorities[$notice->priority] }}
                         </td>
                         @if( Session::has("admin"))
                         <td class="update-notice-icon">
@@ -87,12 +87,13 @@
     </div>
 </div>
 
+<input type="hidden" id="priorities-list" data-priorities="{{ htmlspecialchars(json_encode( $priorities ), ENT_QUOTES, 'UTF-8')  }}"/>
 <!-- Create a Notice -->
 <div class="modal fade" id="create-notice" tabindex="-1" role="dialog" aria-labelledby="add-modal"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form class="form-horizontal notice-form-values">
+            <form class="form-horizontal notice-form-values" action="javascript:0" method="POST">
                 <div class="modal-header">
                     <h3 class="text-center">Create a new Notice</h3>
                 </div>
@@ -100,7 +101,7 @@
                     
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary submit-add-notice-form" class="btn btn-primary form-control" value="Submit">Create</button>
+                    <input type="submit" class="btn btn-primary submit-add-notice-form" class="btn btn-primary form-control" value="Create"/>
                 </div>
             </form>
 
@@ -111,7 +112,7 @@
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form class="form-horizontal notice-form-values">
+            <form class="form-horizontal notice-form-values"  action="#" method="POST">
                 <input type="hidden" class="notice-notificationId" name="notificationId"/>
                 <div class="modal-header">
                     <h3 class="text-center">Update Notice</h3>
@@ -120,7 +121,7 @@
                     
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary submit-update-notice-form" class="btn btn-primary form-control" value="Submit">Update</button>
+                    <input type="submit" class="btn btn-primary submit-update-notice-form" class="btn btn-primary form-control" value="Update"/>
                 </div>
             </form>
         </div>
@@ -175,7 +176,7 @@
         <label class="col-md-3 control-label">Publish Date</label>
         <div class="col-md-6">
             <div class='input-group date datetimepicker9'>
-                <input type='text' class="form-control notice-publishedtime" id="publishedtime" required placeholder="From Date"/>
+                <input type='text' class="form-control notice-publishedTime" required placeholder="From Date"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -186,7 +187,7 @@
         <label class="col-md-3 control-label">Expiration Date</label>
         <div class="col-md-6">
             <div class='input-group date datetimepicker10'>
-                <input type='text' class="form-control notice-expirationTime" placeholder="To Date" id="expirationTime"/>
+                <input type='text' class="form-control notice-expirationTime" placeholder="To Date"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -197,10 +198,10 @@
     <div class="form-group required">
         <label class="col-md-3 control-label">Priority</label>
         <div class="col-md-6">
-            <select class="form-control notice-priority">
-                <option>Low</option>
-                <option>Normal</option>
-                <option>Hight</option>
+            <select class="form-control notice-priority" name="priority">
+                @foreach( $priorities as $index => $priority)
+                    <option value="{{ $index }}">{{ $priority}}</option>
+                @endforeach
             </select>
         </div>
     </div>
@@ -230,8 +231,14 @@
                 var formInput = $("#update-notice .notice-" + key);
                 formInput.val( noticeData[key]);
             }
-            $("#update-notice .notice-publishedtime").val( moment( parseInt( $("#update-notice .notice-publishedtime").val()) ).format('MM/DD/YYYY hh:mm a') );
-            $("#update-notice .notice-expirationTime").val( moment( parseInt( $("#update-notice .notice-expirationTime").val()) ).format('MM/DD/YYYY hh:mm a') );
+            var publishedTimeElem = $("#update-notice .notice-publishedTime");
+            if( publishedTimeElem.val() != "")
+                publishedTimeElem.val( moment( parseInt( publishedTimeElem.val())).format('MM/DD/YYYY hh:mm a') );
+
+            var expirationTimeElem = $("#update-notice .notice-expirationTime");
+            if( expirationTimeElem.val() != "")
+                expirationTimeElem.val( moment( parseInt( expirationTimeElem.val())).format('MM/DD/YYYY hh:mm a') );
+            
             setDateProperties("#update-notice");
 
             $("#update-notice").modal( "show");
@@ -240,56 +247,70 @@
         //Add notice submit
         $("body").on("click", ".submit-add-notice-form", function(ev){
             ev.preventDefault();
-            $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
-            var formData = $("#create-notice .notice-form-values").serialize();
-            formData += "&publishedtime="+ moment( $("#publishedtime").val() ).utc().format('MM/DD/YYYY hh:mm a');
-            formData += "&expirationTime="+ moment( $("#expirationTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
-            $.ajax({
-                url: '{{URL::to('/')}}/add-notice',
-                type: "post",
-                data: formData,
-                success: function( data){
-                    var addedNotice = $.parseJSON( data);
-                    $(".notices-list").prepend(
-                        "<tr class='alert alert-success' data-notice-info='" + data + "'>" + updateRow( addedNotice) + "</tr>"
-                    );
-                    $("#create-notice").modal("hide");  
-                },
-                error: function(){
-                    $(".submit-add-notice-form").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
-                }
-            }).complete( function(){
-                    $(".submit-add-notice-form").html("Submit");
-            });
+            if( $('#create-notice .notice-form-values')[0].checkValidity() ){
+                $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
+                var formData = $("#create-notice .notice-form-values").serialize();
+                formData += "&publishedTime="+ moment( $("#create-notice .notice-publishedTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
+                formData += "&expirationTime="+ moment( $("#create-notice .notice-expirationTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
+                $.ajax({
+                    url: '{{URL::to('/')}}/add-notice',
+                    type: "post",
+                    data: formData,
+                    success: function( data){
+                        var addedNotice = $.parseJSON( data);
+                        $(".notices-list").prepend(
+                            "<tr id='notice-'" + addedNotice.notificationId + "' class='alert alert-success' data-notice-info='" + data + "'>" + updateRow( addedNotice) + "</tr>"
+                        );
+                        $("#create-notice").modal("hide");  
+                    },
+                    error: function(){
+                        $(".submit-add-notice-form").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
+                    }
+                }).complete( function(){
+                        $(".submit-add-notice-form").html("Submit");
+                });
+            }
         });
 
         //Update Notice Submit
         $("body").on("click", ".submit-update-notice-form", function(ev){
             ev.preventDefault();
-            $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
-            var formData = $("#update-notice .notice-form-values").serialize();
-            formData += "&publishedtime="+ moment( $("#publishedtime").val() ).utc().format('MM/DD/YYYY hh:mm a');
-            formData += "&expirationTime="+ moment( $("#expirationTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
-            $.ajax({
-                url: '{{URL::to('/')}}/update-notice',
-                type: "post",
-                data: formData,
-                success: function( data){
-                    var addedNotice = $.parseJSON( data);
-                    $("#notice-" + $("#update-notice .notice-notificationId").val() ).html(updateRow( addedNotice));
+            if( $('#update-notice .notice-form-values')[0].checkValidity() ){
+                $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
+                var formData = $("#update-notice .notice-form-values").serialize();
+                var publishedTime = $("#update-notice .notice-publishedTime").val();
+                if( publishedTime != "")
+                    formData += "&publishedTime="+ moment().utc( publishedTime).format('MM/DD/YYYY hh:mm a');
+                else
+                    formData += "&publishedTime=";
+                var expirationTime = $("#ipdate-notice .notice-expirationTime").val();
+                if( expirationTime != "")
+                    formData += "&expirationTime="+ moment(  ).utc().format('MM/DD/YYYY hh:mm a');
+                else
+                    formData += "&expirationTime=";
 
-                    $("#notice-" + $("#update-notice .notice-notificationId").val())
-                        .addClass("alert")
-                        .addClass("alert-success")
-                        .data("notice-info", data);
-                    $("#update-notice").modal("hide");  
-                },
-                error: function(){
-                    $(".submit-update-notice-form").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
-                }
-            }).complete( function(){
-                    $(".submit-add-notice-form").html("Update");
-            });
+                $.ajax({
+                    url: '{{URL::to('/')}}/update-notice',
+                    type: "post",
+                    data: formData,
+                    success: function( data){
+                        var addedNotice = $.parseJSON( data);
+                        elemToUpdate = $("#notice-" + $("#update-notice .notice-notificationId").val() );
+                        elemToUpdate.html(updateRow( addedNotice));
+
+                        elemToUpdate.addClass("alert").addClass("alert-success").data("notice-info", data);
+                        $("#update-notice").modal("hide");  
+
+                    },
+                    error: function(){
+                        $(".submit-update-notice-form").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
+                    }
+                }).complete( function(){
+                        $(".submit-update-notice-form").html("Update");
+                });
+            }
+            else
+                $('#update-notice .notice-form-values').submit();
         });
 
         $(".notices-list").on("click", ".delete-notice-icon", function(){
@@ -337,22 +358,23 @@
                 $( parent + " .datetimepicker10").data("DateTimePicker").setMinDate(e.date);
 
                 //hack to close calendar on selecting date
-                $(this).find(".glyphicon-calendar").click();
+                //$(this).find(".glyphicon-calendar").click();
             });
             $( parent + " .datetimepicker10").on("dp.change", function (e) {
                 $( parent + " .datetimepicker9").data("DateTimePicker").setMaxDate(e.date);
 
                 //hack to close calendar on selecting date
-                $(this).find(".glyphicon-calendar").click();
+                //$(this).find(".glyphicon-calendar").click();
             });
         }
 
         function updateRow( noticeObject){
+            var prioritiesList = $("#priorities-list").data("priorities");
             var row =   "<td>" + noticeObject.title + "</td>" +
-                        "<td>" + noticeObject.notifcationMessage + "</td>" +
-                        "<td class='date'>" + convertTimestamp( noticeObject.publishedtime) + "</td>" +
-                        "<td class='date' unix-time='" + convertTimestamp( noticeObject.expirationTime ) + "'</td>" +
-                        "<td></td>"+
+                        "<td>" + noticeObject.notificationMessage + "</td>" +
+                        "<td class='date'>" + convertTimestamp( noticeObject.publishedTime) + "</td>" +
+                        "<td class='date'>" + convertTimestamp( noticeObject.expirationTime ) + "'</td>" +
+                        "<td>" +  prioritiesList[noticeObject.priority] + "</td>"+
                         "<td class='update-notice-icon'><span class='glyphicon glyphicon-pencil'></span></td>"+
                         "<td class='delete-notice-icon'><span class='glyphicon glyphicon-trash'></span></td>";
             return row;

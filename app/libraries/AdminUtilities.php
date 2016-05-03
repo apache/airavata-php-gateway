@@ -2,6 +2,7 @@
 
 use Airavata\Model\Workspace\Gateway;
 use Airavata\Model\Workspace\Notification;
+use Airavata\Model\Workspace\NotificationPriority;
 
 class AdminUtilities
 {
@@ -115,16 +116,21 @@ class AdminUtilities
         $notification = new Notification();
         $notification->gatewayId = Session::get("gateway_id");
         $notification->title = $notifData["title"];
-        $notification->notifcationMessage = $notifData["notificationMessage"];
-        $notification->publishedtime = strtotime( $notifData["publishedtime"])* 1000;
+        $notification->notificationMessage = $notifData["notificationMessage"];
+        $notification->publishedTime = strtotime( $notifData["publishedTime"])* 1000;
         $notification->expirationTime = strtotime( $notifData["expirationTime"]) * 1000;
+        $notification->priority = intval($notifData["priority"]);
 
         if( $update){
             $notification->notificationId =  $notifData["notificationId"];
-            return Airavata::getNotification( 
-                    Session::get('authz-token'), 
-                    Session::get("gateway_id"), 
-                    Airavata::updateNotification( Session::get("authz-token"), $notification) );
+            if( Airavata::updateNotification( Session::get("authz-token"), $notification) )
+            {
+                return json_encode( Airavata::getNotification(  Session::get('authz-token'), 
+                                                                Session::get("gateway_id"), 
+                                                                $notifData["notificationId"] ));
+            }
+            else
+                0;
         }
         else
             return Airavata::getNotification( 

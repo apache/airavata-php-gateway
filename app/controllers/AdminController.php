@@ -370,8 +370,9 @@ class AdminController extends BaseController {
 	public function noticesView(){
         Session::put("admin-nav", "notices");
         $notices = array();
+        $noticePriorities = CommonUtilities::get_notice_priorities();
         $notices = array_reverse( CommonUtilities::get_all_notices() );
-		return View::make("admin/manage-notices", array("notices" => $notices));
+		return View::make("admin/manage-notices", array("notices" => $notices, "priorities" => $noticePriorities));
 	}
 
 	public function addNotice(){
@@ -382,12 +383,7 @@ class AdminController extends BaseController {
 
 	public function updateNotice(){
 		$inputs = Input::all();
-		if( AdminUtilities::add_or_update_notice( $inputs, true))
-		{
-			return 1;
-		}
-		else
-			return 0;
+		return AdminUtilities::add_or_update_notice( $inputs, true);
 	}
 
 	public function deleteNotice(){
