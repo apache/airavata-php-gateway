@@ -121,12 +121,11 @@
                     
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary submit-update-notice-form" class="btn btn-primary form-control">Update</button
+                    <button type="submit" class="btn btn-primary submit-update-notice-form" class="btn btn-primary form-control">Update</button>
                 </div>
             </form>
         </div>
     </div>
-    </form>
 </div>
 
 
