@@ -194,7 +194,8 @@ class CommonUtilities
 
         // right-aligned content
 
-        if (Session::has('loggedin')) {
+        if (Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
+                || Session::has('admin-read-only'))){
             $active = "";
             if (Session::has("nav-active")) {
                 if ("user-console" == Session::get("nav-active"))
