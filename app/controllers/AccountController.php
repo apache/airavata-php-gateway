@@ -64,15 +64,15 @@ class AccountController extends BaseController
             WSIS::registerUserAccount($username, $password, $email, $first_name, $last_name, $organization, $address, $country, $telephone, $mobile, $im, $url,
                 Config::get('pga_config.wsis')['tenant-domain']);
 
-            /*add user to role - user_pending */
+            /*add user to role - user-pending */
 
             $allRoles = WSIS::getAllRoles();
-            if(! in_array( "user_pending", $allRoles)){
-                WSIS::addRole( "user_pending");
+            if(! in_array( "user-pending", $allRoles)){
+                WSIS::addRole( "user-pending");
             }
             //$userRoles = (array)WSIS::getUserRoles( $username);
 
-            $userRoles["new"] = "user_pending";
+            $userRoles["new"] = "user-pending";
             $userRoles["deleted"] = array();
             WSIS::updateUserRoles( $username, $userRoles);
 
@@ -89,7 +89,10 @@ class AccountController extends BaseController
 //        }else{
 //            return View::make('account/login');
 //        }
-        return View::make('account/login');
+        if(CommonUtilities::id_in_session()){
+            return Redirect::to("home");
+        }else
+            return View::make('account/login');
     }
 
     public function loginSubmit()
@@ -117,7 +120,9 @@ class AccountController extends BaseController
 
             $authzToken = new Airavata\Model\Security\AuthzToken();
             $authzToken->accessToken = $accessToken;
-            $authzToken->claimsMap = array('userName'=>$username);
+            $authzToken->claimsMap['gatewayID'] = Config::get('pga_config.airavata')['gateway-id'];
+            $authzToken->claimsMap['userName'] = $username;
+
             Session::put('authz-token',$authzToken);
             Session::put('oauth-refresh-code',$refreshToken);
             Session::put('oauth-expiration-time',$expirationTime);

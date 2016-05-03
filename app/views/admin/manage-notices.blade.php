@@ -101,7 +101,7 @@
                     
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-primary submit-add-notice-form" class="btn btn-primary form-control" value="Create"/>
+                    <button type="submit" class="btn btn-primary submit-add-notice-form" class="btn btn-primary form-control">Create</button>
                 </div>
             </form>
 
@@ -121,7 +121,7 @@
                     
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-primary submit-update-notice-form" class="btn btn-primary form-control" value="Update"/>
+                    <button type="submit" class="btn btn-primary submit-update-notice-form" class="btn btn-primary form-control">Update</button
                 </div>
             </form>
         </div>
@@ -225,7 +225,11 @@
 
         $(".notices-list").on("click", ".update-notice-icon", function(){
             var noticeData = $(this).parent().data("notice-info");
+            if( typeof noticeData != "object")
+                noticeData = $.parseJSON( noticeData);
             $("#update-notice .modal-body").html( $(".notice-form").html());
+
+            $("#update-notice").modal( "show");
 
             for( var key in noticeData){
                 var formInput = $("#update-notice .notice-" + key);
@@ -238,17 +242,16 @@
             var expirationTimeElem = $("#update-notice .notice-expirationTime");
             if( expirationTimeElem.val() != "")
                 expirationTimeElem.val( moment( parseInt( expirationTimeElem.val())).format('MM/DD/YYYY hh:mm a') );
-            
-            setDateProperties("#update-notice");
 
-            $("#update-notice").modal( "show");
+            setDateProperties("#update-notice");
         });
 
         //Add notice submit
-        $("body").on("click", ".submit-add-notice-form", function(ev){
+        $("body").on("submit", "#create-notice .notice-form-values", function(ev){
             ev.preventDefault();
-            if( $('#create-notice .notice-form-values')[0].checkValidity() ){
-                $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
+
+            if( $(this)[0].checkValidity() ){
+                $(".submit-add-notice-form").html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
                 var formData = $("#create-notice .notice-form-values").serialize();
                 formData += "&publishedTime="+ moment( $("#create-notice .notice-publishedTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
                 formData += "&expirationTime="+ moment( $("#create-notice .notice-expirationTime").val() ).utc().format('MM/DD/YYYY hh:mm a');
@@ -267,25 +270,25 @@
                         $(".submit-add-notice-form").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
                     }
                 }).complete( function(){
-                        $(".submit-add-notice-form").html("Submit");
+                        $(".submit-add-notice-form").html("Create");
                 });
             }
         });
 
         //Update Notice Submit
-        $("body").on("click", ".submit-update-notice-form", function(ev){
+        $("body").on("submit", "#update-notice .notice-form-values", function(ev){
             ev.preventDefault();
-            if( $('#update-notice .notice-form-values')[0].checkValidity() ){
-                $(this).html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
+            if( $(this)[0].checkValidity() ){
+                $(".submit-update-notice-form").html("<img src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
                 var formData = $("#update-notice .notice-form-values").serialize();
                 var publishedTime = $("#update-notice .notice-publishedTime").val();
                 if( publishedTime != "")
-                    formData += "&publishedTime="+ moment().utc( publishedTime).format('MM/DD/YYYY hh:mm a');
+                    formData += "&publishedTime="+ publishedTime;
                 else
                     formData += "&publishedTime=";
-                var expirationTime = $("#ipdate-notice .notice-expirationTime").val();
+                var expirationTime = $("#update-notice .notice-expirationTime").val();
                 if( expirationTime != "")
-                    formData += "&expirationTime="+ moment(  ).utc().format('MM/DD/YYYY hh:mm a');
+                    formData += "&expirationTime="+expirationTime;
                 else
                     formData += "&expirationTime=";
 
@@ -297,7 +300,6 @@
                         var addedNotice = $.parseJSON( data);
                         elemToUpdate = $("#notice-" + $("#update-notice .notice-notificationId").val() );
                         elemToUpdate.html(updateRow( addedNotice));
-
                         elemToUpdate.addClass("alert").addClass("alert-success").data("notice-info", data);
                         $("#update-notice").modal("hide");  
 
@@ -334,6 +336,8 @@
                 success: function( data){
                     if( data == 1){
                         $("#notice-" +$("#delete-notice .notice-notificationId").val()).fadeOut().remove();
+                        $("#delete-notice").modal("hide");  
+
                     }
                     else{
                         $(".delete-notice-submit").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
@@ -343,7 +347,7 @@
                     $(".submit-update-notice-form").after("<span alert alert-danger'>An error has occurred. Please try again later.</span>");
                 }
             }).complete( function(){
-                    $(".submit-add-notice-form").html("Update");
+                    $(".delete-notice-submit").html("Delete");
             });
         });
 

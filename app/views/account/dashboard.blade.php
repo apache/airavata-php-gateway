@@ -114,7 +114,7 @@
                             <span class="glyphicon glyphicon-sort console-icon"></span>
                         </div>
                         <div class="col-md-12">
-                            <h4>Gateway Prefereces</h4>
+                            <h4>Gateway Profile</h4>
                         </div>
                     </div>
                 </a>

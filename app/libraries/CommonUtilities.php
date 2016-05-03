@@ -101,7 +101,7 @@ class CommonUtilities
     public static function create_nav_bar()
     {
         $menus = array();
-        if (Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
+        if ( Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
                 || Session::has('admin-read-only'))) {
             $menus = array
             (
@@ -203,7 +203,7 @@ class CommonUtilities
 
             //notification bell
             $notices = array();
-            $notices = array_reverse( CommonUtilities::get_all_notices() );
+            $notices = CommonUtilities::get_all_notices();
             echo CommonUtilities::get_notices_ui( $notices);
 
 
@@ -230,9 +230,34 @@ class CommonUtilities
     }
 
     public static function get_notices_ui( $notices){
-
         $notifVisibility = "";
-        $countOfNotices = count( $notices);
+
+        $publishedNoticesCount = 0;
+        $currentTime = floatval( time()*1000);
+        $noticesUI = "";
+        foreach( $notices as $notice){
+            if( $currentTime >= $notice->publishedTime && $currentTime <= $notice->expirationTime)
+            {
+                $publishedNoticesCount++;
+                $textColor = "text-info";
+                if( $notice->priority == NotificationPriority::LOW)
+                    $textColor = "text-primary";
+                elseif( $notice->priority ==NotificationPriority::NORMAL)
+                    $textColor = "text-warning";
+                elseif( $notice->priority == NotificationPriority::HIGH)
+                    $textColor = "text-danger";
+                $noticesUI .= '
+                <div class="notification">
+                    <div class="notification-title ' . $textColor . '">' . $notice->title . '</div>
+                    <div class="notification-description"><strong></strong>' . $notice->notificationMessage . '</div>
+                    <div class="notification-ago">' . date("m/d/Y h:i:s A T", $notice->publishedTime/1000) . '</div>
+                    <div class="notification-icon"></div>
+                </div> <!-- / .notification -->
+                ';
+            }
+        }
+
+        $countOfNotices = $publishedNoticesCount;
         $newNotices = 0;
         if( Session::has("notice-count")){
             $newNotices = $countOfNotices - Session::get("notice-count");
@@ -244,26 +269,19 @@ class CommonUtilities
             $notifVisibility = "hide";
 
         $noticesUI = '<li clas="dropdown" style="color:#fff; relative">' .
-                '<a href="#" class="dropdown-toggle notif-link" data-toggle="dropdown">' .
-                    '<span class="glyphicon glyphicon-bell notif-bell"></span>' .
-                    '<span class="notif-num ' . $notifVisibility . '" data-total-notices="' . $countOfNotices . '">' . $newNotices . '</span>'.
-                    '<div class="dropdown-menu widget-notifications no-padding" style="width: 300px"><div class="slimScrollDiv" style="position: relative; overflow-y: scroll; overflow-x:hidden; width: auto; height: 250px;"><div class="notifications-list" id="main-navbar-notifications" style=" width: auto; height: 250px;">';
+                        '<a href="#" class="dropdown-toggle notif-link" data-toggle="dropdown">' .
+                        '<span class="glyphicon glyphicon-bell notif-bell"></span>' .
+                        '<span class="notif-num ' . $notifVisibility . '" data-total-notices="' . $countOfNotices . '">' . $newNotices . '</span>'.
+                        '<div class="dropdown-menu widget-notifications no-padding" style="width: 300px"><div class="slimScrollDiv" style="position: relative; overflow-y: scroll; overflow-x:hidden; width: auto; max-height: 250px;"><div class="notifications-list" id="main-navbar-notifications" style=" width: auto; max-height: 250px;">'
 
-        foreach( $notices as $notice){
-            $noticesUI .= '
-            <div class="notification">
-                <div class="notification-title text-primary">' . $notice->title . '</div>
-                <div class="notification-description"><strong></strong>' . $notice->notificationMessage . '</div>
-                <div class="notification-ago">' . date("m/d/Y h:i:s A T", $notice->publishedTime) . '</div>
-                <div class="notification-icon"></div>
-            </div> <!-- / .notification -->
-            ';
-        }
+                    . $noticesUI;
+
+        
         $noticesUI .= '
         </div><div class="slimScrollBar" style="width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 195.925px; background: rgb(0, 0, 0);"></div>
 
         <div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div></div> <!-- / .notifications-list -->
-        <a href="#" class="notifications-link">MORE NOTIFICATIONS</a>
+        <a href="#" class="notifications-link"><!--MORE NOTIFICATIONS--></a>
         </div>'.
         '</a>'.
             '</li>';
