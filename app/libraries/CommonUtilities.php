@@ -287,7 +287,7 @@ class CommonUtilities
         </div><div class="slimScrollBar" style=""></div>
 
         <div class="slimScrollRail" style=""></div></div> <!-- / .notifications-list -->';
-        if (!Session::has("admin"))
+        if ( Session::has("admin"))
         {        
             $noticesUI .= '<a href="' . URL::to('/') . '/admin/dashboard/notices" class="notifications-link">Manage Notifications</a>';
         }
