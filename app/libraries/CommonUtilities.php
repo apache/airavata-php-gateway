@@ -251,11 +251,12 @@ class CommonUtilities
                     $textColor = "text-warning";
                 elseif( $notice->priority == NotificationPriority::HIGH)
                     $textColor = "text-danger";
+
                 $noticesUI .= '
                 <div class="notification">
                     <div class="notification-title ' . $textColor . '">' . $notice->title . '</div>
-                    <div class="notification-description"><strong></strong>' . $notice->notificationMessage . '</div>
-                    <div class="notification-ago">' . date("m/d/Y h:i:s A T", $notice->publishedTime/1000) . '</div>
+                    <div class="notification-description"><strong>' . $notice->notificationMessage . '</strong></div>
+                    <div class="notification-ago time" unix-time="' . $notice->publishedTime/1000 . '">' . date("m/d/Y h:i:s A T", $notice->publishedTime/1000) . '</div>
                     <div class="notification-icon"></div>
                 </div> <!-- / .notification -->
                 ';
@@ -270,26 +271,30 @@ class CommonUtilities
         else
             $newNotices = $countOfNotices;
 
-        if( !$newNotices)
+        if( $newNotices <=0)
             $notifVisibility = "hide";
 
         $noticesUI = '<li clas="dropdown" style="color:#fff; relative">' .
                         '<a href="#" class="dropdown-toggle notif-link" data-toggle="dropdown">' .
                         '<span class="glyphicon glyphicon-bell notif-bell"></span>' .
                         '<span class="notif-num ' . $notifVisibility . '" data-total-notices="' . $countOfNotices . '">' . $newNotices . '</span>'.
-                        '<div class="dropdown-menu widget-notifications no-padding" style="width: 300px"><div class="slimScrollDiv" style="position: relative; overflow-y: scroll; overflow-x:hidden; width: auto; max-height: 250px;"><div class="notifications-list" id="main-navbar-notifications" style=" width: auto; max-height: 250px;">'
+                        '<div class="dropdown-menu widget-notifications no-padding" style="width: 300px"><div class="slimScrollDiv"><div class="notifications-list" id="main-navbar-notifications">'
 
                     . $noticesUI;
 
         
         $noticesUI .= '
-        </div><div class="slimScrollBar" style="width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 195.925px; background: rgb(0, 0, 0);"></div>
+        </div><div class="slimScrollBar" style=""></div>
 
-        <div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);"></div></div> <!-- / .notifications-list -->
-        <a href="#" class="notifications-link"><!--MORE NOTIFICATIONS--></a>
-        </div>'.
-        '</a>'.
-            '</li>';
+        <div class="slimScrollRail" style=""></div></div> <!-- / .notifications-list -->';
+        if (!Session::has("admin"))
+        {        
+            $noticesUI .= '<a href="' . URL::to('/') . '/admin/dashboard/notices" class="notifications-link">Manage Notifications</a>';
+        }
+        else
+            $noticesUI .= '<a href="#" class="notifications-link"></a>';
+        
+        $noticesUI .= '</div>'.'</li>';
 
         return $noticesUI;
     }   

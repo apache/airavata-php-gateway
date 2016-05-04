@@ -282,12 +282,12 @@
                 var formData = $("#update-notice .notice-form-values").serialize();
                 var publishedTime = $("#update-notice .notice-publishedTime").val();
                 if( publishedTime != "")
-                    formData += "&publishedTime="+ publishedTime;
+                    formData += "&publishedTime="+  moment( publishedTime ).utc().format('MM/DD/YYYY hh:mm a');
                 else
                     formData += "&publishedTime=";
                 var expirationTime = $("#update-notice .notice-expirationTime").val();
                 if( expirationTime != "")
-                    formData += "&expirationTime="+expirationTime;
+                    formData += "&expirationTime="+ moment( expirationTime ).utc().format('MM/DD/YYYY hh:mm a');
                 else
                     formData += "&expirationTime=";
 
@@ -376,7 +376,7 @@
             var row =   "<td>" + noticeObject.title + "</td>" +
                         "<td>" + noticeObject.notificationMessage + "</td>" +
                         "<td class='date'>" + convertTimestamp( noticeObject.publishedTime) + "</td>" +
-                        "<td class='date'>" + convertTimestamp( noticeObject.expirationTime ) + "'</td>" +
+                        "<td class='date'>" + convertTimestamp( noticeObject.expirationTime ) + "</td>" +
                         "<td>" +  prioritiesList[noticeObject.priority] + "</td>"+
                         "<td class='update-notice-icon'><span class='glyphicon glyphicon-pencil'></span></td>"+
                         "<td class='delete-notice-icon'><span class='glyphicon glyphicon-trash'></span></td>";
