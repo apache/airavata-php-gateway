@@ -213,7 +213,6 @@
 
 {{ HTML::script('js/moment.js')}}
 {{ HTML::script('js/datetimepicker.js')}}
-{{ HTML::script('js/time-conversion.js')}}
 
 <script>
         $(".create-notice-button").click( function(){

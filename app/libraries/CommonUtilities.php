@@ -252,6 +252,7 @@ class CommonUtilities
                 elseif( $notice->priority == NotificationPriority::HIGH)
                     $textColor = "text-danger";
 
+
                 $noticesUI .= '
                 <div class="notification">
                     <div class="notification-title ' . $textColor . '">' . $notice->title . '</div>
