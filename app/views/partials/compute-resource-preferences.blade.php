@@ -56,6 +56,7 @@
 
     <div class="col-md-9">
         <select name="preferredBatchQueue" class="form-control">
+            <option value="">Select a Queue from list</option>
             @foreach( (array)$computeResource->batchQueues as $index => $queue)
             <option value="{{ $queue->queueName}}"
             @if( isset( $preferences) ) @if( $preferences->preferredBatchQueue == $queue->queueName) selected @endif

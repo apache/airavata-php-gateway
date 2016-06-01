@@ -79,6 +79,7 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 
 @section('scripts')
 @include('layout/fixed-scripts')
+{{ HTML::script('js/time-conversion.js')}}
 <script type="text/javascript">
 	/* keeping a check that footer stays atleast at the bottom of the window.*/
 	var bh = $("html").height();

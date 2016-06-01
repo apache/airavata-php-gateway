@@ -2,6 +2,8 @@
 //<td> elements should have the unix time as an attribute e.g. <td class="time" unix-time="423423423524"></td>
 
 function convertTimestamp(timestamp) {
+    if( timestamp == null)
+        return;
     if( timestamp.length <= 10)
         timestamp = timestamp * 1000;// Convert the passed timestamp to milliseconds    
     var d = new Date( parseInt( timestamp) ),
@@ -25,10 +27,9 @@ function convertTimestamp(timestamp) {
     }
 
     // ie: 2013-02-18, 8:35 AM
-    time = yyyy + '-' + mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm;
+    time = mm + '/' + dd + '/' + yyyy + ', ' + h + ':' + min + ' ' + ampm;
 
     var offset = new Date().toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1];
-
     return time + " - " + offset;
 }
 

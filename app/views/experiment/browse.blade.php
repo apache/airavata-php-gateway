@@ -120,7 +120,6 @@
 
 @section('scripts')
 @parent
-{{ HTML::script('js/time-conversion.js')}}
 {{ HTML::script('js/moment.js')}}
 {{ HTML::script('js/datetimepicker.js')}}
 
