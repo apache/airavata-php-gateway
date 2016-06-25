@@ -60,6 +60,18 @@ class GatewayprofileController extends BaseController {
 		}
 	}
 
+	public function modifyIDP()
+	{
+		if( AdminUtilities::add_or_update_IDP( Input::all()) )
+		{
+			if( Request::ajax()){
+				return 1;
+			}
+			else
+				return Redirect::to("admin/dashboard/gateway")->with("message","Identity Server Preference has been set.");
+		}
+	}
+
 	public function delete()
 	{
 		$error = false;

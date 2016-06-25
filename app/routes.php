@@ -217,6 +217,8 @@ Route::post("gp/add-srp", "GatewayprofileController@modifySRP");
 
 Route::post("gp/update-srp", "GatewayprofileController@modifySRP");
 
+Route::post("gp/update-idp", "GatewayprofileController@modifyIDP");
+
 Route::post("gp/remove-sr", "GatewayprofileController@delete");
 
 Route::post("gp/credential-store-token-change", "GatewayprofileController@cstChange");
@@ -282,6 +284,10 @@ Route::post("admin/remove-role-from-user", "AdminController@removeRoleFromUser")
 Route::post("admin/create-ssh-token", "AdminController@createSSH");
 
 Route::post("admin/remove-ssh-token", "AdminController@removeSSH");
+
+Route::post("admin/create-pwd-token", "AdminController@createPWD");
+
+Route::post("admin/remove-pwd-token", "AdminController@removePWD");
 
 
 //notices

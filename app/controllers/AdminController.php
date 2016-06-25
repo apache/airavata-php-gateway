@@ -60,7 +60,7 @@ class AdminController extends BaseController {
 		$gatewaysInfo = CRUtilities::getAllGatewayProfilesData();
 		$gateways = $gatewaysInfo["gateways"];
 		$tokens = AdminUtilities::get_all_ssh_tokens();
-
+		$pwdTokens = AdminUtilities::get_all_pwd_tokens();
 		$srData = SRUtilities::getEditSRData();
 		$crData = CRUtilities::getEditCRData();
 
@@ -85,6 +85,7 @@ class AdminController extends BaseController {
 								"storageResources" => $gatewaysInfo["allSRs"],
 								"srData" => $srData,
 								"tokens" => $tokens,
+								"pwdTokens" => $pwdTokens,
 								"unselectedCRs" => $unselectedCRs,
 								"unselectedSRs" => $unselectedSRs
 							);
@@ -179,8 +180,9 @@ class AdminController extends BaseController {
 	public function credentialStoreView(){
         Session::put("admin-nav", "credential-store");
         $tokens = AdminUtilities::get_all_ssh_tokens();
+		$pwdTokens = AdminUtilities::get_all_pwd_tokens();
         //var_dump( $tokens); exit;
-		return View::make("admin/manage-credentials", array("tokens" => $tokens ) );
+		return View::make("admin/manage-credentials", array("tokens" => $tokens , "pwdTokens" => $pwdTokens) );
 	}
 
 	public function updateUserRoles(){
@@ -272,9 +274,23 @@ class AdminController extends BaseController {
 
 	}
 
+	public function createPWD(){
+		AdminUtilities::create_pwd_token(Input::all());
+		return $this->credentialStoreView();
+	}
+
 	public function removeSSH(){
 		$removeToken = Input::get("token");
 		if( AdminUtilities::remove_ssh_token( $removeToken) )
+			return 1;
+		else
+			return 0;
+
+	}
+
+	public function removePWD(){
+		$removeToken = Input::get("token");
+		if( AdminUtilities::remove_pwd_token( $removeToken) )
 			return 1;
 		else
 			return 0;

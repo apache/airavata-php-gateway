@@ -75,22 +75,24 @@ class AdminUtilities
     }
 
     public static function create_ssh_token(){
-        try{
-            return $newToken = Airavata::generateAndRegisterSSHKeys( Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"));
-        } catch (InvalidRequestException $ire) {
-            CommonUtilities::print_error_message('p>Error in creating SSH Handshake. You might have to enable TLS in pga_config. </p>' .
-                '<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
-        } catch (AiravataClientException $ace) {
-            CommonUtilities::print_error_message('<p>Error in creating SSH Handshake. You might have to enable TLS in pga_config.  </p>' .
-                '<p>Airavata Client Exception: ' . $ace->getMessage() . '</p>');
-        } catch (AiravataSystemException $ase) {
-            CommonUtilities::print_error_message('p>Error in creating SSH Handshake. You might have to enable TLS in pga_config.  </p>' .
-                '<p>Airavata System Exception: ' . $ase->getMessage() . '</p>');
-        }
+        return $newToken = Airavata::generateAndRegisterSSHKeys( Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"));
+    }
+
+    public static function create_pwd_token($inputs){
+        $username = $inputs['username'];
+        $password = $inputs['password'];
+        $description = $inputs['description'];
+        return $newToken = Airavata::registerPwdCredential( Session::get('authz-token'), Session::get("gateway_id"),
+            Session::get("username"), $username, $password, $description);
+
     }
 
     public static function get_all_ssh_tokens(){
         return Airavata::getAllGatewaySSHPubKeys( Session::get('authz-token'), Session::get("gateway_id") );
+    }
+
+    public static function get_all_pwd_tokens(){
+        return Airavata::getAllGatewayPWDCredentials( Session::get('authz-token'), Session::get("gateway_id") );
     }
 
     public static function get_pubkey_from_token( $token){
@@ -98,18 +100,11 @@ class AdminUtilities
     }
 
     public static function remove_ssh_token( $token){
-        try{
-            return Airavata::deleteSSHPubKey( Session::get('authz-token'), $token, Session::get("gateway_id"));
-        } catch (InvalidRequestException $ire) {
-            CommonUtilities::print_error_message('p>Error in creating SSH Handshake. You might have to enable TLS in pga_config. </p>' .
-                '<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
-        } catch (AiravataClientException $ace) {
-            CommonUtilities::print_error_message('<p>Error in creating SSH Handshake. You might have to enable TLS in pga_config.  </p>' .
-                '<p>Airavata Client Exception: ' . $ace->getMessage() . '</p>');
-        } catch (AiravataSystemException $ase) {
-            CommonUtilities::print_error_message('p>Error in creating SSH Handshake. You might have to enable TLS in pga_config.  </p>' .
-                '<p>Airavata System Exception: ' . $ase->getMessage() . '</p>');
-        }
+        return Airavata::deletePWDCredential( Session::get('authz-token'), $token, Session::get("gateway_id"));
+    }
+
+    public static function remove_pwd_token( $token){
+        return Airavata::deleteSSHPubKey( Session::get('authz-token'), $token, Session::get("gateway_id"));
     }
 
     public static function add_or_update_notice( $notifData, $update = false){
@@ -141,5 +136,30 @@ class AdminUtilities
 
     public static function delete_notice( $notificationId){
         return Airavata::deleteNotification( Session::get('authz-token'), Session::get("gateway_id"), $notificationId);
+    }
+
+    public static function add_or_update_IDP($inputs)
+    {
+        $gatewayId = $inputs['gatewayId'];
+        $identityServerTenant = $inputs['identityServerTenant'];
+        $identityServerPwdCredToken = $inputs['identityServerPwdCredToken'];
+
+        $gp = Airavata::getGatewayResourceProfile(Session::get('authz-token'), $gatewayId);
+        if(!empty($identityServerTenant)){
+            $gp->identityServerTenant = $identityServerTenant;
+        }else{
+            $gp->identityServerTenant = "";
+        }
+
+        if(!empty($identityServerPwdCredToken) and $identityServerPwdCredToken != 'DO-NOT-SET'){
+            $gp->identityServerPwdCredToken = $identityServerPwdCredToken;
+        }else{
+            $gp->identityServerPwdCredToken = null;
+        }
+
+
+        Airavata::updateGatewayResourceProfile(Session::get('authz-token'), $gatewayId, $gp);
+
+        return true;
     }
 }

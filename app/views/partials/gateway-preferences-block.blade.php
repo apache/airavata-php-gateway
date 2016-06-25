@@ -188,12 +188,39 @@
                     <div>
                         <h3>Identity Server Configuration :</h3>
                     </div>
-                    <div>
-                        <label>Tenant ID :</label>
-                        <input type="text">
-                        </br>
-                        <label>Password Credential Token :</label>
-                        <input type="text">
+                    <div class="panel panel-default panel-body">
+                        <form action="{{URL::to('/')}}/gp/update-idp" method="POST">
+                            <input type="hidden" name="gatewayId" id="gatewayId"
+                                   value="{{$gp->gatewayId}}">
+                            <br/>
+                            <div class="form-horizontal">
+                                <div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3">Tenant ID</label>
+                                        <div class="col-md-9">
+                                            <input type="text" name="identityServerTenant" class="form-control"
+                                                   value="@if( isset( $gp->profile->identityServerTenant) ){{$gp->profile->identityServerTenant}}@endif"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3">Identity Server Password Credential</label>
+                                        <div class="col-md-9">
+                                            <select class="form-control gateway-credential-store-token" name="identityServerPwdCredToken">
+                                                @foreach( $pwdTokens as $token => $description)
+                                                    <option value="{{$token}}" @if( isset( $gp->profile->identityServerPwdCredToken) ) @if( $token == $gp->profile->identityServerPwdCredToken) selected @endif @endif>{{$token}}</option>
+                                                @endforeach
+                                                <option value="">DO-NO-SET</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    @if(Session::has("admin"))
+                                        <div class="form-group text-center">
+                                            <input type="submit" class="btn btn-primary submit-srp-form" value="Set preferences"/>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
 

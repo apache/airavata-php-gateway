@@ -59,7 +59,7 @@
                         </td>
                         @if( Session::has("admin"))
                         <td>
-                            <span data-token="{{$token}}" class="glyphicon glyphicon-trash remove-token"></span>
+                            <span data-token="{{$token}}" class="glyphicon glyphicon-trash remove=ssh-token"></span>
                         </td>
                         @endif
                     </tr>
@@ -105,7 +105,7 @@
                         <table class="table">
                             <tr class="text-center table-condensed">
                                 <td>
-                                    <button class="btn btn-default register-pwd-cred">Register a new password credential</button>
+                                    <button class="btn btn-default" data-toggle="modal" data-target="#pwd-cred-form">Register a new password credential</button>
                                 </td>
                             </tr>
                         </table>
@@ -124,6 +124,21 @@
                             @endif
                         </tr>
                         <tbody class="token-values">
+                        @foreach( $pwdTokens as $token => $publicKey)
+                            <tr>
+                                <td class="">
+                                    {{ $token }}
+                                </td>
+                                <td class="description">
+                                    {{ $publicKey }}
+                                </td>
+                                @if( Session::has("admin"))
+                                    <td>
+                                        <span data-token="{{$token}}" class="glyphicon glyphicon-trash remove-pwd-token"></span>
+                                    </td>
+                                @endif
+                            </tr>
+                        @endforeach
                         </tbody>
                     </table>
 
@@ -142,6 +157,58 @@
                         <td>Under Development</td>
                     </tr>
                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="pwd-cred-form" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">
+                    Password Credential
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+
+                <form role="form" id="register-pwd-form" action="{{URL::to('/')}}/admin/create-pwd-token" method="POST">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" required="required"
+                               id="username" name="username" placeholder="Username"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="text" class="form-control" required="required"
+                               id="password" name="password" placeholder="Password"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" class="form-control" required="required"
+                               id="description" name="description" placeholder="Description"/>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Save changes
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -177,7 +244,7 @@
         });
    });
 
-   $(".remove-token").click( function(){
+   $(".remove-ssh-token").click( function(){
         var removeSpan = $(this);
         var tr = removeSpan.parent().parent();
         var tokenToRemove = removeSpan.data("token");
@@ -210,6 +277,41 @@
             tr.children(".public-key").html( publicKey);
         });
         
+   });
+
+   $(".remove-pwd-token").click( function(){
+       var removeSpan = $(this);
+       var tr = removeSpan.parent().parent();
+       var tokenToRemove = removeSpan.data("token");
+       var description = tr.children(".description").html();
+       tr.children(".description").html("<div class='alert alert-danger'>Do you really want to remove the token? This action cannot be undone.<br/>" +
+               "<span class='btn-group'>"+
+               "<input type='button' class='btn btn-default remove-token-confirmation' value='Yes'/>" +
+               "<input type='button' class='btn btn-default remove-token-cancel' value='Cancel'/>"+
+               "</span></div>");
+
+
+       tr.find( ".remove-token-confirmation").click( function(){
+           $(".loading-img").removeClass("hide");
+           $.ajax({
+               type: "POST",
+               data:{ "token" : tokenToRemove},
+               url: "{{URL::to('/')}}/admin/remove-pwd-token"
+           }).success( function( data){
+               if( data.responseText == 1)
+                   tr.addClass("alert").addClass("alert-danger");
+               tr.fadeOut(1000);
+           }).fail( function( data){
+               tr.after("<tr class='alert alert-danger'><td></td><td>Error occurred : " + $.parseJSON( data.responseText).error.message + "</td><td></td></tr>");
+           }).complete( function(){
+               $(".loading-img").addClass("hide");
+
+           });
+       });
+       tr.find( ".remove-token-cancel").click( function(){
+           tr.children(".description").html( description);
+       });
+
    });
 </script>
 @stop
