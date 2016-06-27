@@ -94,6 +94,7 @@
             <tr>
 
                 <th>Name</th>
+                <th>Owner</th>
                 <th>Creation Time</th>
                 <th>Experiments</th>
 
@@ -109,6 +110,9 @@
                         <a href="{{URL::to('/')}}/project/edit?projId=<?php echo $project->projectID; ?>" title="Edit">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
+                    </td>
+                    <td>
+                        {{$project->owner}}
                     </td>
                     <td class="time" unix-time="
                             <?php echo $project->creationTime / 1000 ?>">

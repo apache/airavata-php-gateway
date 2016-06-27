@@ -31,6 +31,7 @@
                 <tr>
 
                     <th>Name</th>
+                    <th>Owner</th>
                     <th>Application</th>
                     <th>Compute Resource</th>
                     <th>Last Modified Time</th>
@@ -64,6 +65,7 @@
                             <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
                         @endif
                     </td>
+                    <td>{{ $experiment->userName }}</td>
                     <td>
                         @if( $applicationInterface != null )
                             {{ $applicationInterface->applicationName }}

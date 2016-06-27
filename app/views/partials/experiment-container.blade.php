@@ -11,11 +11,8 @@
         <table class="table">
             <tr>
                 <th>Name</th>
+                <th>Owner</th>
                 <th>Application</th>
-                @if( isset($dashboard))
-                    <th>User</th>
-                @endif
-                <!--<th>Description</th>-->
                 <th>Resource</th>
                 <th>Creation Time</th>
                 <th>Status</th>
@@ -35,16 +32,13 @@
                             <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment['experiment']->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
                         @endif
                     </td>
+                    <td>{{$experiment['experiment']->userName}}</td>
                     <!-- Application Name -->
                     @if(isset($experiment['expValue']['applicationInterface']))
                     <td>{{ $experiment['expValue']['applicationInterface']->applicationName }}</td>
                     @else
                     <td></td>
                     @endif
-                    <!-- User Names visible to admin -->
-                @if( isset($dashboard))
-                    <td>{{$experiment['experiment']->userName}}</td>
-                @endif
                     <!-- Resource Name -->
                     <td>
                         @if( !empty( explode("_", $experiment['experiment']->resourceHostId)[0] ) ) 
