@@ -1030,63 +1030,6 @@ class ExperimentUtilities
     }
 
     /**
-     * Get results of the user's search of experiments
-     * @return array|null
-     */
-    public static function get_expsearch_results($inputs)
-    {
-        $experiments = array();
-
-        try {
-            switch ($inputs["search-key"]) {
-                case 'experiment-name':
-                    $experiments = Airavata::searchExperimentsByName(Session::get('authz-token'), Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
-                    break;
-                case 'experiment-description':
-                    $experiments = Airavata::searchExperimentsByDesc(Session::get('authz-token'), Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
-                    break;
-                case 'application':
-                    $experiments = Airavata::searchExperimentsByApplication(Session::get('authz-token'), Session::get('gateway_id'), Session::get('username'), $inputs["search-value"]);
-                    break;
-                case 'creation-time':
-                    $experiments = Airavata::searchExperimentsByCreationTime(Session::get('authz-token'), Session::get('gateway_id'), Session::get('username'), strtotime($inputs["from-date"]) * 1000, strtotime($inputs["to-date"]) * 1000);
-                    break;
-                case '':
-            }
-        } catch (InvalidRequestException $ire) {
-            CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
-        } catch (AiravataClientException $ace) {
-            CommonUtilities::print_error_message('AiravataClientException!<br><br>' . $ace->getMessage());
-        } catch (AiravataSystemException $ase) {
-            if ($ase->airavataErrorType == 2) // 2 = INTERNAL_ERROR
-            {
-                CommonUtilities::print_info_message('<p>You have not created any experiments yet, so no results will be returned!</p>
-                                <p>Click <a href="create_experiment.php">here</a> to create an experiment, or
-                                <a href="create_project.php">here</a> to create a new project.</p>');
-            } else {
-                CommonUtilities::print_error_message('There was a problem with Airavata. Please try again later or report a bug using the link in the Help menu.');
-                //print_error_message('AiravataSystemException!<br><br>' . $ase->airavataErrorType . ': ' . $ase->getMessage());
-            }
-        } catch (TTransportException $tte) {
-            CommonUtilities::print_error_message('TTransportException!<br><br>' . $tte->getMessage());
-        }
-
-        //get values of all experiments
-        $expContainer = array();
-        $expNum = 0;
-        foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
-            $expContainer[$expNum]['experiment'] = $experiment;
-            if ($expValue["experimentStatusString"] == "FAILED")
-                $expValue["editable"] = false;
-            $expContainer[$expNum]['expValue'] = $expValue;
-            $expNum++;
-        }
-
-        return $expContainer;
-    }
-
-    /**
      * Get results of the user's all experiments with pagination.
      * Results are ordered creation time DESC
      * @return array|null

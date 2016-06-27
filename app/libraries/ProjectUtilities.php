@@ -236,12 +236,14 @@ class ProjectUtilities
         try {
             switch ($searchKey) {
                 case 'project-name':
-                    $projects = Airavata::searchProjectsByProjectName(Session::get('authz-token'), Session::get("gateway_id"),
-                        Session::get("username"), $searchValue, $limit, $offset);
+                    $filters[\Airavata\Model\Experiment\ProjectSearchFields::PROJECT_NAME] = $searchValue;
+                    $projects = Airavata::searchProjects(Session::get('authz-token'), Session::get("gateway_id"),
+                        Session::get("username"), $filters, $limit, $offset);
                     break;
                 case 'project-description':
-                    $projects = Airavata::searchProjectsByProjectDesc(Session::get('authz-token'), Session::get("gateway_id"),
-                        Session::get("username"), $searchValue, $limit, $offset);
+                    $filters[\Airavata\Model\Experiment\ProjectSearchFields::PROJECT_DESCRIPTION] = $searchValue;
+                    $projects = Airavata::searchProjects(Session::get('authz-token'), Session::get("gateway_id"),
+                        Session::get("username"), $filters, $limit, $offset);
                     break;
             }
         } catch (InvalidRequestException $ire) {
@@ -263,40 +265,4 @@ class ProjectUtilities
 
         return $projects;
     }
-
-
-    public static function get_projsearch_results($searchKey, $searchValue)
-    {
-
-        $projects = array();
-
-        try {
-            switch ($searchKey) {
-                case 'project-name':
-                    $projects = Airavata::searchProjectsByProjectName(Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"), $searchValue);
-                    break;
-                case 'project-description':
-                    $projects = Airavata::searchProjectsByProjectDesc(Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"), $searchValue);
-                    break;
-            }
-        } catch (InvalidRequestException $ire) {
-            CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
-        } catch (AiravataClientException $ace) {
-            CommonUtilities::print_error_message('AiravataClientException!<br><br>' . $ace->getMessage());
-        } catch (AiravataSystemException $ase) {
-            if ($ase->airavataErrorType == 2) // 2 = INTERNAL_ERROR
-            {
-                CommonUtilities::print_info_message('<p>You have not created any projects yet, so no results will be returned!</p>
-                                <p>Click <a href="create_project.php">here</a> to create a new project.</p>');
-            } else {
-                CommonUtilities::print_error_message('There was a problem with Airavata. Please try again later, or report a bug using the link in the Help menu.');
-                //print_error_message('AiravataSystemException!<br><br>' . $ase->airavataErrorType . ': ' . $ase->getMessage());
-            }
-        } catch (TTransportException $tte) {
-            CommonUtilities::print_error_message('TTransportException!<br><br>' . $tte->getMessage());
-        }
-
-        return $projects;
-    }
-
 }
