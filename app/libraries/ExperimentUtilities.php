@@ -120,7 +120,7 @@ class ExperimentUtilities
 
             if ($input->type == DataType::URI) {
                 $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-                if(!$dataRoot.endswith("/"))
+                if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                     $dataRoot = $dataRoot . "/";
                 $filePath = str_replace($dataRoot, "", parse_url($input->value, PHP_URL_PATH));
                 echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
@@ -143,7 +143,7 @@ class ExperimentUtilities
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
                 $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-                if(!$dataRoot.endswith("/"))
+                if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                     $dataRoot = $dataRoot . "/";
                 $filePath = str_replace($dataRoot, "", parse_url($output->value, PHP_URL_PATH));
                 echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
@@ -155,6 +155,11 @@ class ExperimentUtilities
             else
                 echo 'output : '. $output;
         }
+    }
+
+    private  static function endsWith($haystack, $needle) {
+        // search forward starting from end minus needle length characters
+        return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
     }
 
     /**

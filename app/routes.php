@@ -115,7 +115,7 @@ Route::get("download", function(){
         $id = Input::get("id");
 
         $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-        if(!$dataRoot.endswith("/"))
+        if(!((($temp = strlen($dataRoot) - strlen("/")) >= 0 && strpos($dataRoot, "/", $temp) !== false)))
             $dataRoot = $dataRoot . "/";
 
         $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $id);
