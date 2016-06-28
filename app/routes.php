@@ -121,7 +121,7 @@ Route::get("download", function(){
         $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $id);
         $currentOutputPath = "";
         foreach ($dataProductModel->replicaLocations as $rp) {
-            if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
+            if($rp->replicaLocationCategory == Airavata\Model\Data\Replica\ReplicaLocationCategory::GATEWAY_DATA_STORE){
                 $currentOutputPath = $rp->filePath;
                 break;
             }
