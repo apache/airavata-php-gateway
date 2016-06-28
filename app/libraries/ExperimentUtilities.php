@@ -76,11 +76,8 @@ class ExperimentUtilities
         if( count( $experimentInputs) > 0 ) { 
             foreach ($experimentInputs as $input) {
                 $matchingAppInput = null;
-
                 if ($input->type == DataType::URI) {
-                    $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-                    if(!ExperimentUtilities::endsWith($dataRoot, "/"))
-                        $dataRoot = $dataRoot . "/";
+
                     if(strpos($input->value, "airavata-dp") === 0){
                         $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
                         $currentInputPath = "";
@@ -90,13 +87,14 @@ class ExperimentUtilities
                                 break;
                             }
                         }
-                        $filePath = str_replace($dataRoot, "", parse_url($currentInputPath, PHP_URL_PATH));
+                        $fileName = basename($currentInputPath);
                     }else{
-                        $filePath = str_replace($dataRoot, "", parse_url($input->value, PHP_URL_PATH));
+                        $fileName = basename($input->value);
                     }
 
-                    echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?path='
-                        . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                    echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?id='
+                        . $input->value . '">' .  $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+
                 } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                     || $input->type == DataType::FLOAT) {
                     echo '<p>' . $input->name . ':&nbsp;' . $input->value . '</p>';
@@ -122,7 +120,7 @@ class ExperimentUtilities
 
             if ($input->type == DataType::URI) {
                 $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-                if(!ExperimentUtilities::endsWith($dataRoot, "/"))
+                if(!$dataRoot.endswith("/"))
                     $dataRoot = $dataRoot . "/";
                 $filePath = str_replace($dataRoot, "", parse_url($input->value, PHP_URL_PATH));
                 echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
@@ -145,7 +143,7 @@ class ExperimentUtilities
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
                 $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-                if(!ExperimentUtilities::endsWith($dataRoot, "/"))
+                if(!$dataRoot.endswith("/"))
                     $dataRoot = $dataRoot . "/";
                 $filePath = str_replace($dataRoot, "", parse_url($output->value, PHP_URL_PATH));
                 echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
@@ -157,11 +155,6 @@ class ExperimentUtilities
             else
                 echo 'output : '. $output;
         }
-    }
-
-    private  static function endsWith($haystack, $needle) {
-        // search forward starting from end minus needle length characters
-        return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
     }
 
     /**
@@ -734,9 +727,7 @@ class ExperimentUtilities
         foreach ((array)$outputs as $output) {
             if ($output->type == DataType::URI || $output->type == DataType::STDOUT || $output->type == DataType::STDERR) {
                 if(!empty($output->value) && filter_var($output->value, FILTER_VALIDATE_URL)){
-                    $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-                    if(!ExperimentUtilities::endsWith($dataRoot, "/"))
-                        $dataRoot = $dataRoot . "/";
+
                     if(strpos($output->value, "airavata-dp") === 0){
                         $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $output->value);
                         $currentOutputPath = "";
@@ -746,12 +737,12 @@ class ExperimentUtilities
                                 break;
                             }
                         }
-                        $filePath = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
+                        $fileName = basename($currentOutputPath);
                     }else{
-                        $filePath = str_replace($dataRoot, "", parse_url($output->value, PHP_URL_PATH));
+                        $fileName = basename($output->value);
                     }
                     echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
-                        . '/download/?path=' . urlencode($filePath) . '">' . basename($filePath)
+                        . '/download/?id=' . urlencode($output->value) . '">' . $fileName
                         . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
 
                 }

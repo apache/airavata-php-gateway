@@ -99,13 +99,36 @@ Route::post("experiment/browse", "ExperimentController@browseView");
 
 
 Route::get("download", function(){
-    //FIXME check for no ../ parts in the path
     if(Input::has("path") && (0 == strpos(Input::get("path"), Session::get('username'))
             || 0 == strpos(Input::get("path"), "/" . Session::get('username')))){
         $path = Input::get("path");
+
+        if (strpos($path, '/../') !== false || strpos($path, '/..') !== false || strpos($path, '../') !== false)
+            return null;
+
         if(0 === strpos($path, '/')){
             $path = substr($path, 1);
         }
+        $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path;
+        return Response::download( $downloadLink);
+    }else if(Input::has("id") && (0 == strpos(Input::get("id"), "airavata-dp"))){
+        $id = Input::get("id");
+
+        $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+        if(!$dataRoot.endswith("/"))
+            $dataRoot = $dataRoot . "/";
+
+        $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $id);
+        $currentOutputPath = "";
+        foreach ($dataProductModel->replicaLocations as $rp) {
+            if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                $currentOutputPath = $rp->filePath;
+                break;
+            }
+        }
+
+        //TODO check permission
+        $path = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
         $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path;
         return Response::download( $downloadLink);
     }
