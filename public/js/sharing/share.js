@@ -12,7 +12,7 @@ var access_enum = {
 	ADMIN: 4
 };
 
-var dummy_data = [
+var dummy_user_data = [
 	{
 		username: 'testuser1',
 		firstname: 'Jane',
@@ -68,15 +68,17 @@ var dummy_data = [
 	 options += '<option value="' + access_enum.EDIT + '"' + (access === access_enum.EDIT ? "selected" : "") + '>Can Edit</option>';
 	 options += '<option value="' + access_enum.ADMIN + '"' + (access === access_enum.ADMIN ? "selected" : "") + '>All Privileges</option>';
 
-	 $thumbnail = $('<div class="user-thumbnail col-md-6"> \
+	 $thumbnail = $('<div class="sharing-thumbnail col-md-6"> \
 	 	<div class="thumbnail"> \
-			<div class="col-md-6"> \
-				<img class="user-thumbnail-image" src="' + img + '" alt="' + username + '" /> \
+			<button type="button" class="sharing-thumbnail-unshare close" aria-label="Close"><span aria-hidden="true">&times;</span></button> \
+			<div class="col-md-4"> \
+				<img class="sharing-thumbnail-image" src="' + img + '" alt="' + username + '" /> \
+				<h5>' + username + '</h5>\
 			</div> \
-			<div class="col-md-6"> \
-				<h5 class="user-thumbnail-name">' + firstname + ' ' + lastname + '</h5> \
-				<p class="user-thumbnail-email">' + email + '</p> \
-				<select class="user-thumbnail-access"> \
+			<div class="col-md-7"> \
+				<h5 class="sharing-thumbnail-name">' + firstname + ' ' + lastname + '</h5> \
+				<p class="sharing-thumbnail-email">' + email + '</p> \
+				<select class="sharing-thumbnail-access" disabled> \
 				' + options + ' \
 				</select> \
 			</div> \
@@ -87,31 +89,89 @@ var dummy_data = [
 		return $thumbnail;
  }
 
- var user_sorter = function(a, b) {
-	 var $a, $b;
-	 $a = $(a).data();
-	 $b = $(b).data();
+ var usernameComparator = function(a, b) {
+ 	var $a, $b;
+ 	$a = $(a).data();
+ 	$b = $(b).data();
 
-	 if ($a.lastname < $b.lastname) {
-		 return -1;
-	 }
-	 else if ($a.lastname > $b.lastname) {
-		 return 1;
-	 }
-	 else {
-		 if ($a.firstname < $b.firstname) {
-			 return -1;
-		 }
-		 else if ($a.firstname > $b.firstname) {
-			 return 1;
-		 }
-		 else {
-			 return 0;
-		 }
-	 }
+ 	if ($a.username < $b.username) {
+ 		return -1;
+ 	}
+ 	else if ($a.username > $b.username) {
+ 		return 1;
+ 	}
+ 	else {
+ 		return 0;
+ 	}
  }
 
+var firstLastComparator = function(a, b) {
+	var $a, $b;
+	$a = $(a).data();
+	$b = $(b).data();
+
+	if ($a.firstname < $b.firstname) {
+		return -1;
+	}
+	else if ($a.firstname > $b.firstname) {
+		return 1;
+	}
+	else {
+		if ($a.lastname < $b.lastname) {
+			return -1;
+		}
+		else if ($a.lastname > $b.lastname) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+}
+
+var lastFirstComparator = function(a, b) {
+	var $a, $b;
+	$a = $(a).data();
+	$b = $(b).data();
+
+	if ($a.lastname < $b.lastname) {
+		return -1;
+	}
+	else if ($a.lastname > $b.lastname) {
+		return 1;
+	}
+	else {
+		if ($a.firstname < $b.firstname) {
+			return -1;
+		}
+		else if ($a.firstname > $b.firstname) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+}
+
+var emailComparator = function(a, b) {
+	var $a, $b;
+	$a = $(a).data();
+	$b = $(b).data();
+
+	if ($a.email < $b.email) {
+		return -1;
+	}
+	else if ($a.email > $b.email) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
 $(function() {
+	var comparator = usernameComparator;
+
 	/* Share box functions */
 
 	/**
@@ -128,14 +188,27 @@ $(function() {
 			        <div class="modal-content"> \
 			            <div class="modal-header"> \
 			                <button type="button" id="share-box-x" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> \
-			                <h4 class="modal-title">Share this project</h4> \
+			                <h3 class="modal-title">Share this project</h3> \
 			            </div> \
 			            <div class="modal-body"> \
-			                <p>Click on the users you would like to share with.</p> \
+			                <label>Click on the users you would like to share with.</label> \
 			                <input id="share-box-filter" class="form-control" type="text" placeholder="Filter the user list" /> \
+							<div id="share-box-options" class="col-md-12"> \
+								<label>Show</label> \
+								<div id="show-results-group" class="btn-group" role="group" aria-label="Show Groups or Users">\
+									<button type="button" id="show-groups" class="show-results-btn btn btn-primary">Groups</button> \
+									<button type="button" id="show-users" class="show-results-btn btn btn-default">Users</button> \
+								</div> \
+								<label>Order By</label> \
+								<select id="order-results-selector"> \
+									<option value="username">Username</option> \
+									<option value="first-last">First, Last Name</option> \
+									<option value="last-first">Last, First Name</option> \
+									<option value="email">Email</option> \
+								</select> \
+							</div> \
 			                <ul id="share-box-users" class="form-control"></ul> \
-							<hr /> \
-			                <p>Set permissions with the drop-down menu on each user, or click the x to cancel sharing.</p> \
+			                <label>Set permissions with the drop-down menu on each user, or click the x to cancel sharing.</label> \
 							<ul id="share-box-share" class="form-control"></ul> \
 			            </div> \
 			            <div class="modal-footer"> \
@@ -159,21 +232,45 @@ $(function() {
 		$users = $('#share-box-users');
 		$share = $('#share-box-share');
 
-		for (var user in dummy_data) {
-			if (dummy_data.hasOwnProperty(user)) {
-				data = dummy_data[user];
+		for (var user in dummy_user_data) {
+			if (dummy_user_data.hasOwnProperty(user)) {
+				data = dummy_user_data[user];
 				$user = createThumbnail(data.username, data.firstname, data.lastname, data.email, data.access);
+				$user.addClass('user-thumbnail');
 				if (data.access === access_enum.NONE) {
 					$user.addClass('share-box-users-item');
-					$user.find('select').prop("disabled", true);
 					$users.append($user);
 				}
 				else {
 					$user.addClass('share-box-share-item');
+					$user.find('select').prop("disabled", false);
+					$user.find('.sharing-thumbnail-unshare').show();
 					$share.append($user);
 				}
 			}
 		}
+
+		$('.user-thumbnail').hide();
+	}
+
+	var changeShareState = function($target) {
+		// If the user has sharing privileges, revoke them
+		if ($target.hasClass('share-box-users-item')) {
+			console.log("Sharing");
+			$target.find('select').prop("disabled", false);
+			$target.find('.sharing-thumbnail-unshare').show();
+			$target.detach().prependTo('#share-box-share').show();
+		}
+		// Otherwise move to the shared list
+		else if ($target.hasClass('share-box-share-item')) {
+			console.log("Revoking share");
+			$target.find('select').val('0');
+			$target.find('select').prop("disabled", true);
+			$target.find('.sharing-thumbnail-unshare').hide();
+			$target.detach().appendTo('#share-box-users');
+			$('#share-box-filter').trigger('change');
+		}
+		$target.toggleClass('share-box-users-item share-box-share-item');
 	}
 
 
@@ -184,11 +281,19 @@ $(function() {
 
 	// Create, populate, and show the share box
 	$('body').on('click', 'button#project-share, button#experiment-share', function(e) {
+		var $share_list;
 		e.stopPropagation();
 		e.preventDefault();
 		if ($('#share-box').length === 0) {
 			$('body').append(createShareBox());
 			createTestData();
+		}
+		else {
+			$share_list = $('#shared-users').children();
+			$share_list.sort(user_sorter);
+			$share_list.each(function(index, element) {
+				$(element).detach().appendTo($('#share-box-share'));
+			})
 		}
 		$('#share-box').animate({top: "1%"})
 		return false;
@@ -202,7 +307,7 @@ $(function() {
 		$target = $(e.target);
 		pattern = $target.val();
 		if (pattern && pattern !== '') {
-			re = new RegExp(pattern, 'i');
+			re = new RegExp('$' + pattern, 'i');
 		}
 		else {
 			re = new RegExp(/.+/);
@@ -229,6 +334,27 @@ $(function() {
 		return false;
 	});
 
+	$('body').on('click', '.show-results-btn', function(e) {
+		var $target;
+		e.preventDefault();
+		e.stopPropagation();
+		$target = $(e.target);
+		$other = $target.siblings();
+		if ($target.attr('id') === "show-groups" && !$target.hasClass('btn-primary')) {
+			$('.group-thumbnail').show();
+			$('.user-thumbnail').hide();
+			$target.toggleClass('btn-primary btn-default');
+			$other.toggleClass('btn-primary btn-default');
+		}
+		else if ($target.attr('id') === "show-users" && !$target.hasClass('btn-primary')) {
+			$('.user-thumbnail').show();
+			$('.group-thumbnail').hide();
+			$target.toggleClass('btn-primary btn-default');
+			$other.toggleClass('btn-primary btn-default');
+		}
+		return false;
+	});
+
 	// Save the sharing permissions of each selected user
 	$('body').on('click', '#share-box-button', function(e) {
 		var data, resource_id, $share_list;
@@ -241,7 +367,20 @@ $(function() {
 			updateUserPrivileges(resource_id, $share_list);
 		}
 		else {
-			$share_list.each(function() {});
+			if ($share_list.length > 0) {
+				$('#shared-users').empty();
+				$('#shared-users').removeClass('text-align-center');
+				$share_list.sort(user_sorter);
+				$share_list.each(function(index, element) {
+					$(element).find('shared').prop('detached', true);
+					$(element).detach().appendTo($('#shared-users'));
+				});
+			}
+			else {
+				$('#shared-users').addClass('text-align-center');
+				$('#shared-users').prepend('<p>This project has not been shared</p>');
+			}
+			$('#share-box').animate({top: '100%'});
 		}
 		return false;
 	});
@@ -255,31 +394,16 @@ $(function() {
 	});
 
 	// Handle sharing and unsharing
-	$('body').on('click', '.user-thumbnail', function(e) {
+	$('body').on('click', '.share-box-users-item, .sharing-thumbnail-unshare', function(e) {
 		var $target;
 		e.stopPropagation();
 		e.preventDefault();
-		$target = $(e.target).closest('.user-thumbnail');
-		console.log($target);
-		// If the user has sharing privileges, revoke them
-		if ($target.hasClass('share-box-users-item')) {
-			console.log("Sharing");
-			$target.find('select').prop("disabled", false);
-			$target.detach().prependTo('#share-box-share').show();
-		}
-		// Otherwise move to the shared list
-		else if ($target.hasClass('share-box-share-item')) {
-			console.log("Revoking share");
-			$target.find('select').val('0');
-			$target.find('select').prop("disabled", true);
-			$target.detach().appendTo('#share-box-users');
-			$('#share-box-filter').trigger('change');
-		}
-		$target.toggleClass('share-box-users-item share-box-share-item');
+		$target = $(e.target).closest('.sharing-thumbnail');
+		changeShareState($target);
 		return false;
 	});
 
-	$('body').on('click', '.user-thumbnail-access', function(e) {
+	$('body').on('click', '.sharing-thumbnail-access', function(e) {
 		e.stopPropagation();
 		return false;
 	});
