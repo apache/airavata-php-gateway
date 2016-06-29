@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/sharing.css') }}
 @stop
 
 @section('content')
@@ -24,6 +25,10 @@
                       placeholder="Optional: Enter a short description of the project" maxlength="200"></textarea>
         </div>
 
+        <div class="form-group">
+            <button id="project-share">Share With Other Users</button>
+        </div>
+
         <input name="save" type="submit" class="btn btn-primary create-project" value="Save">
         <input name="clear" type="reset" class="btn btn-default" value="Clear">
 
@@ -41,4 +46,5 @@
         $(this).val($.trim($(this).val()));
     });
 </script>
+{{ HTML::script('js/sharing/share.js') }}
 @stop
