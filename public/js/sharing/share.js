@@ -37,7 +37,7 @@ var dummy_data = [
 	{
 		username: 'testuser4',
 		firstname: 'Grok',
-		lastname: '',
+		lastname: 'Smytheson',
 		email: 'popsicle@prehistoric.com',
 		access: access_enum.ADMIN
 	},
@@ -68,7 +68,7 @@ var dummy_data = [
 	 options += '<option value="' + access_enum.EDIT + '"' + (access === access_enum.EDIT ? "selected" : "") + '>Can Edit</option>';
 	 options += '<option value="' + access_enum.ADMIN + '"' + (access === access_enum.ADMIN ? "selected" : "") + '>All Privileges</option>';
 
-	 $thumbnail = $('<div class="user-thumbnail  col-md-6"> \
+	 $thumbnail = $('<div class="user-thumbnail col-md-6"> \
 	 	<div class="thumbnail"> \
 			<div class="col-md-6"> \
 				<img class="user-thumbnail-image" src="' + img + '" alt="' + username + '" /> \
@@ -85,6 +85,30 @@ var dummy_data = [
 		$thumbnail.data(data);
 
 		return $thumbnail;
+ }
+
+ var user_sorter = function(a, b) {
+	 var $a, $b;
+	 $a = $(a).data();
+	 $b = $(b).data();
+
+	 if ($a.lastname < $b.lastname) {
+		 return -1;
+	 }
+	 else if ($a.lastname > $b.lastname) {
+		 return 1;
+	 }
+	 else {
+		 if ($a.firstname < $b.firstname) {
+			 return -1;
+		 }
+		 else if ($a.firstname > $b.firstname) {
+			 return 1;
+		 }
+		 else {
+			 return 0;
+		 }
+	 }
  }
 
 $(function() {
@@ -108,19 +132,23 @@ $(function() {
 			            </div> \
 			            <div class="modal-body"> \
 			                <p>Click on the users you would like to share with.</p> \
-			                <input id="share-box-filter" type="text" placeholder="Filter the user list" /> \
-			                <ul id="share-box-users"></ul> \
+			                <input id="share-box-filter" class="form-control" type="text" placeholder="Filter the user list" /> \
+			                <ul id="share-box-users" class="form-control"></ul> \
+							<hr /> \
 			                <p>Set permissions with the drop-down menu on each user, or click the x to cancel sharing.</p> \
-							<ul id="share-box-share"></ul> \
+							<ul id="share-box-share" class="form-control"></ul> \
 			            </div> \
 			            <div class="modal-footer"> \
-							<button type="button" id="share-box-button" class="btn btn-primary">Share</button> \
-			                <button type="button" id="share-box-close" class="btn btn-default" data-dismiss="modal">Close</button> \
+							<button type="button" id="share-box-button" class="btn btn-primary">Save</button> \
+			                <button type="button" id="share-box-close" class="btn btn-default" data-dismiss="modal">Cancel</button> \
 			            </div> \
 			        </div> \
 			    </div> \
 			</div>');
-			$share_box.data({'resource_id': resource_id});
+
+			if (resource_id) {
+				$share_box.data({'resource_id': resource_id});
+			}
 		}
 		return $share_box;
 	}
@@ -137,6 +165,7 @@ $(function() {
 				$user = createThumbnail(data.username, data.firstname, data.lastname, data.email, data.access);
 				if (data.access === access_enum.NONE) {
 					$user.addClass('share-box-users-item');
+					$user.find('select').prop("disabled", true);
 					$users.append($user);
 				}
 				else {
@@ -166,7 +195,7 @@ $(function() {
 	});
 
 	// Filter the list as the user types
-	$('body').on('change', '#share-box-filter', function(e) {
+	$('body').on('keyup', '#share-box-filter', function(e) {
 		var $target, pattern, re, $users;
 		e.stopPropagation();
 		e.preventDefault();
@@ -206,13 +235,13 @@ $(function() {
 		e.stopPropagation();
 		e.preventDefault();
 		data = $("#share-box").data()
+		$share_list = $("#share-box-share").children();
 		if (data.hasOwnProperty('resource_id')) {
 			resource_id = data.resource_id;
-			$share_list = $("#share_list").children();
 			updateUserPrivileges(resource_id, $share_list);
 		}
 		else {
-			console.log("Error: unknown resource");
+			$share_list.each(function() {});
 		}
 		return false;
 	});
@@ -235,11 +264,14 @@ $(function() {
 		// If the user has sharing privileges, revoke them
 		if ($target.hasClass('share-box-users-item')) {
 			console.log("Sharing");
+			$target.find('select').prop("disabled", false);
 			$target.detach().prependTo('#share-box-share').show();
 		}
-		// IOther
+		// Otherwise move to the shared list
 		else if ($target.hasClass('share-box-share-item')) {
 			console.log("Revoking share");
+			$target.find('select').val('0');
+			$target.find('select').prop("disabled", true);
 			$target.detach().appendTo('#share-box-users');
 			$('#share-box-filter').trigger('change');
 		}
