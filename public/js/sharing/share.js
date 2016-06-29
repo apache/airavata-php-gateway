@@ -4,6 +4,32 @@
  * @author Jeff Kinnison <jkinniso@nd.edu>
  */
 
+ var createThumbnail = function(username, firstname, lastname, email, img) {
+	 var $thumbnail, data;
+
+	 data = {
+		 username: username,
+		 firstname: firstname,
+		 lastname: lastname,
+		 email: email
+	 };
+
+	 $thumbnail = $('<div class="col-md-6"> \
+	 	<div class="user-thumbnail thumbnail"> \
+			<div class="col-md-6"> \
+				<img src="' + img + '" alt="' + username + '" /> \
+			</div> \
+			<div class="col-md-6"> \
+				<h5>' + firstname + ' ' + lastname + '</h5> \
+				<p>' + email + '</p> \
+			</div> \
+		</div>');
+
+		$thumbnail.data(data);
+
+		return $thumbnail;
+ }
+
 $(function() {
 	/* Share box functions */
 
@@ -14,37 +40,34 @@ $(function() {
 	 * @return The share box JQuery element.
 	 */
 	var createShareBox = function(resource_id) {
-		var $box, $filter, $user_list, $share_list, $btn_share, $btn_cancel;
+		var $share_box, $user_section, $share_section, $button_section;
 		if (($('#share-box')).length === 0) {
-			$box = $('<div id="share-box" class="row"</div>');
-			$filter = $('<div class="col-md-8 col-md-offset-2"><input id="share-box-filter" type="text" placeholder="Filter users"></div>');
-			$user_list = $('<div class="col-md-8 col-md-offset-2"><ul id="share-box-users"></ul></div>');
-			$share_list = $('<ul id="share-box-share"></ul>');
-			$btn_share = $('<button id="share-box-button" class="btn btn-primary">Share</button>');
-			$btn_close = $('<button id="share-box-cancel" class="btn btn-default">Close</button>');
-
-			$box.data({'resource_id': id});
-
-			$box.append($search, $user_list, $share_list, $btn_share, $btn_close);
-
-			return $box
+			$share_box = $('<div id="share-box" class="modal-fade" tabindex="-1" role="dialog"> \
+			    <div class="modal-dialog modal-lg"> \
+			        <div class="modal-content"> \
+			            <div class="modal-header"> \
+			                <button type="button" id="share-box-x" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> \
+			                <h4 class="modal-title">Share this project</h4> \
+			            </div> \
+			            <div class="modal-body"> \
+			                <p>Click on the users you would like to share with.</p> \
+			                <input id="share-box-filter" type="text" placeholder="Filter the user list" /> \
+			                <ul id="share-box-users"></ul> \
+			                <p>Set permissions with the drop-down menu on each user, or click the x to cancel sharing.</p> \
+							<ul id="share-box-share"></ul> \
+			            </div> \
+			            <div class="modal-footer"> \
+							<button type="button" id="share-box-button" class="btn btn-primary">Share</button> \
+			                <button type="button" id="share-box-close" class="btn btn-default" data-dismiss="modal">Close</button> \
+			            </div> \
+			        </div> \
+			    </div> \
+			</div>');
+			$share_box.data({'resource_id': resource_id});
 		}
+		return $share_box;
 	}
 
-	/**
-	 * Remove the share box from the DOM and clean up.
-	 */
-	var destroyShareBox() {
-		$('#share-box').remove();
-	}
-
-
-	var updateUserPrivileges = function(resource_id, $share_list) {
-		$share_list.each(function(index, element) {
-			var data = element.data();
-			console.log(data.username + " can now view resource " + resource_id);
-		});
-	}
 
 
 
@@ -54,20 +77,26 @@ $(function() {
 	$('body').on('click', 'button#project-share, button#experiment-share', function(e) {
 		e.stopPropagation();
 		e.preventDefault();
-		createShareBox();
+		$('body').append(createShareBox());
+		$('#share-box').animate({top: "1%"})
 		return false;
 	});
 
 	// Filter the list as the user types
 	$('body').on('change', '#share-box-filter', function(e) {
-		var $target, pattern, $users;
+		var $target, pattern, re $users;
 		e.stopPropagation();
 		e.preventDefault();
 		pattern = $target.val();
+		if (pattern !== '') {
+			re = new RegExp(pattern, 'i');
+		}
+		else {
+			re = new RegExp(/.+/);
+		}
 		$users = $('#share-box-users').children();
 		$users.each(function(index, element) {
-			var re, data;
-			re = new RegExp(pattern, 'i');
+			var data;
 			data = element.data();
 
 			if (re.test(data.username)
@@ -91,7 +120,7 @@ $(function() {
 		e.preventDefault();
 		data = $("#share-box").data()
 		if (data.hasOwnProperty('resource_id')) {
-			resource_id = .resource_id;
+			resource_id = data.resource_id;
 			$share_list = $("#share_list").children();
 			updateUserPrivileges(resource_id, $share_list);
 		}
@@ -102,10 +131,10 @@ $(function() {
 	});
 
 	// Close the share box
-	$('body').on('click', '#share-box-close', function(e) {
+	$('body').on('click', '#share-box-close, #share-box-x', function(e) {
 		e.stopPropagation();
 		e.preventDefault();
-		destroyShareBox();
+		$('#share-box').animate({top: "100%"});
 		return false;
 	});
 
