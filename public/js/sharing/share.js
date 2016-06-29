@@ -4,24 +4,81 @@
  * @author Jeff Kinnison <jkinniso@nd.edu>
  */
 
- var createThumbnail = function(username, firstname, lastname, email, img) {
-	 var $thumbnail, data;
+var access_enum = {
+	NONE: 0,
+	VIEW: 1,
+	RUN: 2,
+	EDIT: 3,
+	ADMIN: 4
+};
+
+var dummy_data = [
+	{
+		username: 'testuser1',
+		firstname: 'Jane',
+		lastname: 'Doe',
+		email: 'jadoe@institution.edu',
+		access: access_enum.RUN
+	},
+	{
+		username: 'testuser2',
+		firstname: 'Ego',
+		lastname: 'Id',
+		email: 'freud@institution.gov',
+		access: access_enum.VIEW
+	},
+	{
+		username: 'testuser3',
+		firstname: 'Ivan',
+		lastname: 'Ivanov',
+		email: 'notkgb@totallynotkgb.ru',
+		access: access_enum.NONE
+	},
+	{
+		username: 'testuser4',
+		firstname: 'Grok',
+		lastname: '',
+		email: 'popsicle@prehistoric.com',
+		access: access_enum.ADMIN
+	},
+	{
+		username: 'testuser5',
+		firstname: 'Identifier',
+		lastname: 'Appellation',
+		email: 'idapp@institution.edu',
+		access: access_enum.EDIT
+	}
+];
+
+ var createThumbnail = function(username, firstname, lastname, email, access=access_enum.NONE, img="#") {
+	 var $thumbnail, data, options;
 
 	 data = {
 		 username: username,
 		 firstname: firstname,
 		 lastname: lastname,
-		 email: email
+		 email: email,
+		 access: access
 	 };
 
-	 $thumbnail = $('<div class="col-md-6"> \
-	 	<div class="user-thumbnail thumbnail"> \
+	 options = '';
+	 options += '<option value="' + access_enum.NONE + '"' + (access === access_enum.NONE ? "selected" : "") + '>Not Shared</option>';
+	 options += '<option value="' + access_enum.VIEW + '"' + (access === access_enum.VIEW ? "selected" : "") + '>Can View</option>';
+	 options += '<option value="' + access_enum.RUN + '"' + (access === access_enum.RUN ? "selected" : "") + '>Can Run</option>';
+	 options += '<option value="' + access_enum.EDIT + '"' + (access === access_enum.EDIT ? "selected" : "") + '>Can Edit</option>';
+	 options += '<option value="' + access_enum.ADMIN + '"' + (access === access_enum.ADMIN ? "selected" : "") + '>All Privileges</option>';
+
+	 $thumbnail = $('<div class="user-thumbnail  col-md-6"> \
+	 	<div class="thumbnail"> \
 			<div class="col-md-6"> \
-				<img src="' + img + '" alt="' + username + '" /> \
+				<img class="user-thumbnail-image" src="' + img + '" alt="' + username + '" /> \
 			</div> \
 			<div class="col-md-6"> \
-				<h5>' + firstname + ' ' + lastname + '</h5> \
-				<p>' + email + '</p> \
+				<h5 class="user-thumbnail-name">' + firstname + ' ' + lastname + '</h5> \
+				<p class="user-thumbnail-email">' + email + '</p> \
+				<select class="user-thumbnail-access"> \
+				' + options + ' \
+				</select> \
 			</div> \
 		</div>');
 
@@ -68,46 +125,76 @@ $(function() {
 		return $share_box;
 	}
 
+	var createTestData = function () {
+		var $users, $share, $user, data;
+
+		$users = $('#share-box-users');
+		$share = $('#share-box-share');
+
+		for (var user in dummy_data) {
+			if (dummy_data.hasOwnProperty(user)) {
+				data = dummy_data[user];
+				$user = createThumbnail(data.username, data.firstname, data.lastname, data.email, data.access);
+				if (data.access === access_enum.NONE) {
+					$user.addClass('share-box-users-item');
+					$users.append($user);
+				}
+				else {
+					$user.addClass('share-box-share-item');
+					$share.append($user);
+				}
+			}
+		}
+	}
+
 
 
 
 
 	/* Share box event handlers */
 
+	// Create, populate, and show the share box
 	$('body').on('click', 'button#project-share, button#experiment-share', function(e) {
 		e.stopPropagation();
 		e.preventDefault();
-		$('body').append(createShareBox());
+		if ($('#share-box').length === 0) {
+			$('body').append(createShareBox());
+			createTestData();
+		}
 		$('#share-box').animate({top: "1%"})
 		return false;
 	});
 
 	// Filter the list as the user types
 	$('body').on('change', '#share-box-filter', function(e) {
-		var $target, pattern, re $users;
+		var $target, pattern, re, $users;
 		e.stopPropagation();
 		e.preventDefault();
+		$target = $(e.target);
 		pattern = $target.val();
-		if (pattern !== '') {
+		if (pattern && pattern !== '') {
 			re = new RegExp(pattern, 'i');
 		}
 		else {
 			re = new RegExp(/.+/);
 		}
 		$users = $('#share-box-users').children();
+		console.log("Users: " + $users);
 		$users.each(function(index, element) {
 			var data;
-			data = element.data();
-
+			data = $(element).data();
+			console.log(data);
 			if (re.test(data.username)
 			    || re.test(data.firstname)
 			    || re.test(data.lastname)
 				|| re.test(data.email)
 			) {
-				element.show();
+				console.log("Showing the user");
+				$(element).show();
 			}
 			else {
-				element.hide();
+				console.log("Hiding the user");
+				$(element).hide();
 			}
 		});
 		return false;
@@ -138,28 +225,30 @@ $(function() {
 		return false;
 	});
 
-	// Select a user to share with
-	$('body').on('click', '.share-box-users-item', function(e) {
+	// Handle sharing and unsharing
+	$('body').on('click', '.user-thumbnail', function(e) {
 		var $target;
 		e.stopPropagation();
 		e.preventDefault();
-		$target = $(e.target);
-		$target.remove();
-		$('#share-box-share').prepend($target);
-		$target.addClass('.share-box-share-item');
-		$target.removeClass('.share-box-users-item');
+		$target = $(e.target).closest('.user-thumbnail');
+		console.log($target);
+		// If the user has sharing privileges, revoke them
+		if ($target.hasClass('share-box-users-item')) {
+			console.log("Sharing");
+			$target.detach().prependTo('#share-box-share').show();
+		}
+		// IOther
+		else if ($target.hasClass('share-box-share-item')) {
+			console.log("Revoking share");
+			$target.detach().appendTo('#share-box-users');
+			$('#share-box-filter').trigger('change');
+		}
+		$target.toggleClass('share-box-users-item share-box-share-item');
 		return false;
 	});
 
-	// Remove a user from the share list
-	$('body').on('click', '.share-box-share-item', function(e) {
+	$('body').on('click', '.user-thumbnail-access', function(e) {
 		e.stopPropagation();
-		e.preventDefault();
-		$target = $(e.target);
-		$target.remove();
-		$('#share-box-users').prepend($target);
-		$target.addClass('.share-box-users-item');
-		$target.removeClass('.share-box-share-item');
 		return false;
 	});
 });
