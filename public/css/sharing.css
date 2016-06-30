@@ -63,7 +63,7 @@
 	height: 100%;
 }
 
-#share-box-button, #share-box-close {
+#share-box-button {
 	margin-right: 5px;
 }
 
@@ -87,4 +87,8 @@
 
 .baseimage {
 	display: none;
+}
+
+#show-results-group .show-groups.btn-primary, #show-results-group .show-users.btn-primary {
+	box-shadow: inset 0px 0px 1px rgba(0,0,0,1);/*.075);*/
 }
