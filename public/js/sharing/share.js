@@ -5,11 +5,11 @@
  */
 
 var access_enum = {
-	NONE: 0,
-	VIEW: 1,
-	RUN: 2,
-	EDIT: 3,
-	ADMIN: 4
+	NONE: '0',
+	VIEW: '1',
+	RUN: '2',
+	EDIT: '3',
+	ADMIN: '4'
 };
 
 var dummy_user_data = [
@@ -18,14 +18,14 @@ var dummy_user_data = [
 		firstname: 'Jane',
 		lastname: 'Doe',
 		email: 'jadoe@institution.edu',
-		access: access_enum.RUN
+		access: access_enum.NONE
 	},
 	{
 		username: 'testuser2',
 		firstname: 'Ego',
 		lastname: 'Id',
 		email: 'freud@institution.gov',
-		access: access_enum.VIEW
+		access: access_enum.NONE
 	},
 	{
 		username: 'testuser3',
@@ -50,6 +50,44 @@ var dummy_user_data = [
 	}
 ];
 
+var dummy_group_data = [
+	{
+		username: 'Venusian Climate Studies',
+		firstname: 'Gazorpazorp',
+		lastname: 'Field',
+		email: 'gfield@venus.plt',
+		access: access_enum.NONE
+	},
+	{
+		username: 'Molecular Dynamics Rawks',
+		first: 'Jorgen',
+		lastname: 'Jorgenson',
+		email: 'jjorg@deshaw.org',
+		access: access_enum.NONE
+	},
+	{
+		username: 'Socialist Distributed Algorithms',
+		firstname: 'Richard',
+		lastname: 'Stallman',
+		email: 'allmayhaz@cloud.org',
+		access: access_enum.NONE
+	},
+	{
+		username: 'Stonferd Center for New Age Math',
+		firstname: 'Gugliermo',
+		lastname: 'Marconi',
+		email: 'gmarconi@stonferd.edu',
+		access: access_enum.VIEW
+	},
+	{
+		username: 'CIT Center for Autonomous Studies',
+		firstname: 'Madison',
+		lastname: 'Li',
+		email: 'madili@cit.edu',
+		access: access_enum.EDIT
+	},
+];
+
  var createThumbnail = function(username, firstname, lastname, email, access=access_enum.NONE, img="#") {
 	 var $thumbnail, data, options;
 
@@ -62,7 +100,7 @@ var dummy_user_data = [
 	 };
 
 	 options = '';
-	 options += '<option value="' + access_enum.NONE + '"' + (access === access_enum.NONE ? "selected" : "") + '>Not Shared</option>';
+	 options += '<option value="' + access_enum.NONE + '"' + (access === access_enum.NONE ? "selected" : "") + ' style="display: none;">Can View</option>';
 	 options += '<option value="' + access_enum.VIEW + '"' + (access === access_enum.VIEW ? "selected" : "") + '>Can View</option>';
 	 options += '<option value="' + access_enum.RUN + '"' + (access === access_enum.RUN ? "selected" : "") + '>Can Run</option>';
 	 options += '<option value="' + access_enum.EDIT + '"' + (access === access_enum.EDIT ? "selected" : "") + '>Can Edit</option>';
@@ -91,6 +129,7 @@ var dummy_user_data = [
 
  var usernameComparator = function(a, b) {
  	var $a, $b;
+	console.log("Sorting by username");
  	$a = $(a).data();
  	$b = $(b).data();
 
@@ -170,7 +209,14 @@ var emailComparator = function(a, b) {
 }
 
 $(function() {
-	var comparator = usernameComparator;
+	var comparator_map, comparator, $original_shared_list, $revoke_list;
+	comparator_map = {
+			"username": usernameComparator,
+			"firstlast": firstLastComparator,
+			"lastfirst": lastFirstComparator,
+			"email": emailComparator
+	};
+	comparator = usernameComparator;
 
 	/* Share box functions */
 
@@ -202,8 +248,8 @@ $(function() {
 								<label>Order By</label> \
 								<select id="order-results-selector"> \
 									<option value="username">Username</option> \
-									<option value="first-last">First, Last Name</option> \
-									<option value="last-first">Last, First Name</option> \
+									<option value="firstlast">First, Last Name</option> \
+									<option value="lastfirst">Last, First Name</option> \
 									<option value="email">Email</option> \
 								</select> \
 							</div> \
@@ -243,7 +289,7 @@ $(function() {
 				}
 				else {
 					$user.addClass('share-box-share-item');
-					$user.find('select').prop("disabled", false);
+					$user.find('sharing-thumbnail-access').prop("disabled", false).show();
 					$user.find('.sharing-thumbnail-unshare').show();
 					$share.append($user);
 				}
@@ -257,18 +303,18 @@ $(function() {
 		// If the user has sharing privileges, revoke them
 		if ($target.hasClass('share-box-users-item')) {
 			console.log("Sharing");
-			$target.find('select').prop("disabled", false);
+			$target.find('.sharing-thumbnail-access').val('1').prop("disabled", false).show();
 			$target.find('.sharing-thumbnail-unshare').show();
 			$target.detach().prependTo('#share-box-share').show();
 		}
 		// Otherwise move to the shared list
 		else if ($target.hasClass('share-box-share-item')) {
 			console.log("Revoking share");
-			$target.find('select').val('0');
-			$target.find('select').prop("disabled", true);
+			$target.find('select').val('0').prop("disabled", true).hide();
 			$target.find('.sharing-thumbnail-unshare').hide();
 			$target.detach().appendTo('#share-box-users');
-			$('#share-box-filter').trigger('change');
+			$('#share-box-filter').trigger('keydown');
+			$("#order-results-selector").trigger('change');
 		}
 		$target.toggleClass('share-box-users-item share-box-share-item');
 	}
@@ -290,11 +336,16 @@ $(function() {
 		}
 		else {
 			$share_list = $('#shared-users').children();
-			$share_list.sort(user_sorter);
+			$share_list.sort(comparator);
 			$share_list.each(function(index, element) {
-				$(element).detach().appendTo($('#share-box-share'));
+				var $e;
+				$e = $(element);
+				$e.find('.sharing-thumbnail-access').prop('disabled', false);
+				$e.find('.sharing-thumbnail-unshare').show();
+				$e.detach().appendTo($('#share-box-share'));
 			})
 		}
+		$original_shared_list = $('#share-box-share').children();
 		$('#share-box').animate({top: "1%"})
 		return false;
 	});
@@ -305,9 +356,9 @@ $(function() {
 		e.stopPropagation();
 		e.preventDefault();
 		$target = $(e.target);
-		pattern = $target.val();
+		pattern = $target.val().toLowerCase();
 		if (pattern && pattern !== '') {
-			re = new RegExp('$' + pattern, 'i');
+			re = new RegExp(pattern, 'i');
 		}
 		else {
 			re = new RegExp(/.+/);
@@ -318,10 +369,10 @@ $(function() {
 			var data;
 			data = $(element).data();
 			console.log(data);
-			if (re.test(data.username)
-			    || re.test(data.firstname)
-			    || re.test(data.lastname)
-				|| re.test(data.email)
+			if (re.test(data.username.toLowerCase())
+			    || re.test(data.firstname.toLowerCase())
+			    || re.test(data.lastname.toLowerCase())
+				|| re.test(data.email.toLowerCase())
 			) {
 				console.log("Showing the user");
 				$(element).show();
@@ -355,6 +406,17 @@ $(function() {
 		return false;
 	});
 
+	$('body').on('change', '#order-results-selector', function(e) {
+		var $target, $sorted;
+		$target = $(e.target);
+		console.log($target.val());
+		comparator = comparator_map[$target.val()];
+		$sorted = $('#share-box-users .sharing-thumbnail');
+		$sorted.detach();
+		$sorted.sort(comparator);
+		$('#share-box-users').append($sorted);
+	});
+
 	// Save the sharing permissions of each selected user
 	$('body').on('click', '#share-box-button', function(e) {
 		var data, resource_id, $share_list;
@@ -369,12 +431,20 @@ $(function() {
 		else {
 			if ($share_list.length > 0) {
 				$('#shared-users').empty();
-				$('#shared-users').removeClass('text-align-center');
-				$share_list.sort(user_sorter);
+				$share_list.sort(comparator_map.username);
 				$share_list.each(function(index, element) {
-					$(element).find('shared').prop('detached', true);
-					$(element).detach().appendTo($('#shared-users'));
+					var $e, data;
+					$e = $(element);
+					data = $e.data();
+					if (data.hasOwnProperty('currentaccess')) {
+						data.access = data.currentaccess;
+						$e.data(data);
+					}
+					$e.find('.sharing-thumbnail-access').prop('disabled', true);
+					$e.find('.sharing-thumbnail-unshare').hide();
 				});
+				$('#shared-users').removeClass('text-align-center');
+				$share_list.detach().appendTo($('#shared-users'));
 			}
 			else {
 				$('#shared-users').addClass('text-align-center');
@@ -389,6 +459,25 @@ $(function() {
 	$('body').on('click', '#share-box-close, #share-box-x', function(e) {
 		e.stopPropagation();
 		e.preventDefault();
+		$('#shared-users').empty();
+		if ($original_shared_list.length > 0) {
+			$original_shared_list.each(function(index, element) {
+				var $e, data;
+				$e = $(element);
+				data = $e.data();
+				if (data.hasOwnProperty('currentaccess')) {
+					data.currentaccess = data.access;
+				}
+				$e.find('select').val(data.access).prop('disabled', true);
+				$e.find('.sharing-thumbnail-unshare').hide();
+			});
+			$('shared-users').removeClass('text-align-center');
+			$original_shared_list.detach().appendTo('#shared-users');
+		}
+		else {
+			$('#shared-users').addClass('text-align-center');
+			$('#shared-users').prepend('<p>This project has not been shared</p>');
+		}
 		$('#share-box').animate({top: "100%"});
 		return false;
 	});
@@ -403,8 +492,13 @@ $(function() {
 		return false;
 	});
 
-	$('body').on('click', '.sharing-thumbnail-access', function(e) {
-		e.stopPropagation();
-		return false;
+	// Handle changing access level
+	$('body').on('change', '.sharing-thumbnail-access', function(e) {
+		var $target, $parent, data;
+		$target = $(e.target);
+		$parent = $target.closest('.sharing-thumbnail');
+		data = $parent.data();
+		data.currentaccess = $target.val();
+		$parent.data(data);
 	});
 });
