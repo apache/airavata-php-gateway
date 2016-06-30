@@ -2,9 +2,12 @@
 	position: fixed;
 	top: 100%;
 	z-index: 1000;
-	/*width: 90%;
-	height: 90%;*/
 	left: 25%;
+	font-size: large;
+}
+
+.modal-content {
+	background-color: #ecf0f1;
 }
 
 #share-box-filter {
@@ -13,27 +16,75 @@
 	font-size: large;
 }
 
-#share-box-users, #share-box-share {
-	background-color: #ffffff;
-	border: 1px solid #000000;
-	width: 100%;
-	min-height: 250px;
-}
-
-#share-box-filter, #share-box-users, #share-box-share {
+#share-box-options {
 	margin-bottom: 15px;
 }
 
-.share-box-users-item, .share-box-share-item {
-	background-color: #3255fe;
-	display: inline-block;
-	float: left;
-	border: 1px solid #000000;
-	color: #ffffff;
+#show-results-group {
+	margin-right: 15px;
+}
+
+#share-box-users, #share-box-share {
+	background-color: #ffffff;
+	border: 1px solid #cccccc;
+	width: 100%;
+	height: 250px;
+	padding-left: 5px;
+	padding-top: 10px;
+	overflow-y: scroll;
+}
+
+#share-box-users {
+	margin-top: 15px;
+}
+
+#share-box-filter, #share-box-users {
+	margin-bottom: 15px;
+}
+
+.text-align-center {
+	text-align: center;
+}
+
+.thumbnail {
+	min-height: 100px;
+	height: 11em;
+	padding: 3px;
+	background-color: #ecf0f1;
+	box-shadow: 0 1px 1px rgba(0,0,0,.075);
+}
+
+.sharing-thumbnail-unshare {
+	display: none;
+}
+
+.sharing-thumbnail-image {
+	width: 100%;
+	height: 100%;
 }
 
 #share-box-button, #share-box-close {
-	float: left;
+	margin-right: 5px;
+}
+
+#project-share, #experiment-share {
+	margin-bottom: 15px;
+}
+
+#shared-users {
+	background-color: #ffffff;
+	border: 1px solid #cccccc;
+	border-radius: 4px;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
 	margin-left: auto;
 	margin-right: auto;
+	margin-top: 15px;
+	padding-top: 10px;
+	min-height: 14px;
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+.baseimage {
+	display: none;
 }
