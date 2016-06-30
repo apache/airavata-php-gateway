@@ -116,7 +116,7 @@ var dummy_group_data = [
 			<div class="col-md-7"> \
 				<h5 class="sharing-thumbnail-name">' + firstname + ' ' + lastname + '</h5> \
 				<p class="sharing-thumbnail-email">' + email + '</p> \
-				<select class="sharing-thumbnail-access" disabled> \
+				<select class="sharing-thumbnail-access" style="display: none;" disabled> \
 				' + options + ' \
 				</select> \
 			</div> \
@@ -239,21 +239,21 @@ $(function() {
 			            <div class="modal-body"> \
 			                <label>Click on the users you would like to share with.</label> \
 			                <input id="share-box-filter" class="form-control" type="text" placeholder="Filter the user list" /> \
-							<div id="share-box-options" class="col-md-12"> \
-								<label>Show</label> \
+							'//<div id="share-box-options" class="col-md-12"> \
+								+'<label>Show</label> \
 								<div id="show-results-group" class="btn-group" role="group" aria-label="Show Groups or Users">\
-									<button type="button" id="show-groups" class="show-results-btn btn btn-primary">Groups</button> \
-									<button type="button" id="show-users" class="show-results-btn btn btn-default">Users</button> \
+									<button type="button" class="show-groups show-results-btn btn btn-primary">Groups</button> \
+									<button type="button" class="show-users show-results-btn btn btn-default">Users</button> \
 								</div> \
 								<label>Order By</label> \
-								<select id="order-results-selector"> \
+								<select class="order-results-selector"> \
 									<option value="username">Username</option> \
 									<option value="firstlast">First, Last Name</option> \
 									<option value="lastfirst">Last, First Name</option> \
 									<option value="email">Email</option> \
 								</select> \
-							</div> \
-			                <ul id="share-box-users" class="form-control"></ul> \
+							'//</div> \
+			                +'<ul id="share-box-users" class="form-control"></ul> \
 			                <label>Set permissions with the drop-down menu on each user, or click the x to cancel sharing.</label> \
 							<ul id="share-box-share" class="form-control"></ul> \
 			            </div> \
@@ -289,7 +289,7 @@ $(function() {
 				}
 				else {
 					$user.addClass('share-box-share-item');
-					$user.find('sharing-thumbnail-access').prop("disabled", false).show();
+					$user.find('.sharing-thumbnail-access').prop("disabled", false).show();
 					$user.find('.sharing-thumbnail-unshare').show();
 					$share.append($user);
 				}
@@ -314,7 +314,7 @@ $(function() {
 			$target.find('.sharing-thumbnail-unshare').hide();
 			$target.detach().appendTo('#share-box-users');
 			$('#share-box-filter').trigger('keydown');
-			$("#order-results-selector").trigger('change');
+			$(".order-results-selector").trigger('change');
 		}
 		$target.toggleClass('share-box-users-item share-box-share-item');
 	}
@@ -334,8 +334,10 @@ $(function() {
 			$('body').append(createShareBox());
 			createTestData();
 		}
-		else {
-			$share_list = $('#shared-users').children();
+
+		$share_list = $('#shared-users').children();
+
+		if ($share_list.filter('.sharing-thumbnail').length > 0) {
 			$share_list.sort(comparator);
 			$share_list.each(function(index, element) {
 				var $e;
@@ -391,13 +393,13 @@ $(function() {
 		e.stopPropagation();
 		$target = $(e.target);
 		$other = $target.siblings();
-		if ($target.attr('id') === "show-groups" && !$target.hasClass('btn-primary')) {
+		if ($target.hasClass("show-groups") && !$target.hasClass('btn-primary')) {
 			$('.group-thumbnail').show();
 			$('.user-thumbnail').hide();
 			$target.toggleClass('btn-primary btn-default');
 			$other.toggleClass('btn-primary btn-default');
 		}
-		else if ($target.attr('id') === "show-users" && !$target.hasClass('btn-primary')) {
+		else if ($target.hasClass("show-users") && !$target.hasClass('btn-primary')) {
 			$('.user-thumbnail').show();
 			$('.group-thumbnail').hide();
 			$target.toggleClass('btn-primary btn-default');
@@ -406,7 +408,7 @@ $(function() {
 		return false;
 	});
 
-	$('body').on('change', '#order-results-selector', function(e) {
+	$('body').on('change', '.order-results-selector', function(e) {
 		var $target, $sorted;
 		$target = $(e.target);
 		console.log($target.val());
@@ -429,8 +431,8 @@ $(function() {
 			updateUserPrivileges(resource_id, $share_list);
 		}
 		else {
-			if ($share_list.length > 0) {
-				$('#shared-users').empty();
+			$('#shared-users').empty();
+			if ($share_list.filter('.sharing-thumbnail').length > 0) {
 				$share_list.sort(comparator_map.username);
 				$share_list.each(function(index, element) {
 					var $e, data;
