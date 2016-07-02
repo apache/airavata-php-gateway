@@ -142,21 +142,21 @@
                         </tbody>
                     </table>
 
-                <h1 class="text-center">Amazon Credentials</h1>
+                {{--<h1 class="text-center">Amazon Credentials</h1>--}}
 
-                <table class="table table-striped table-condensed">
-                    <tr class="text-center">
-                        <td>Under Development</td>
-                    </tr>
-                </table>
+                {{--<table class="table table-striped table-condensed">--}}
+                    {{--<tr class="text-center">--}}
+                        {{--<td>Under Development</td>--}}
+                    {{--</tr>--}}
+                {{--</table>--}}
 
-                <h1 class="text-center">OAuth MyProxy</h1>
+                {{--<h1 class="text-center">OAuth MyProxy</h1>--}}
 
-                <table class="table table-striped table-condensed">
-                    <tr class="text-center">
-                        <td>Under Development</td>
-                    </tr>
-                </table>
+                {{--<table class="table table-striped table-condensed">--}}
+                    {{--<tr class="text-center">--}}
+                        {{--<td>Under Development</td>--}}
+                    {{--</tr>--}}
+                {{--</table>--}}
             </div>
         </div>
     </div>
