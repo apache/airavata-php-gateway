@@ -4,6 +4,8 @@
 function convertTimestamp(timestamp) {
     if( timestamp == null)
         return;
+    else
+        timestamp = $.trim( timestamp);
     if( timestamp.length <= 10)
         timestamp = timestamp * 1000;// Convert the passed timestamp to milliseconds    
     var d = new Date( parseInt( timestamp) ),
