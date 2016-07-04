@@ -984,8 +984,12 @@ class ExperimentUtilities
                         $filters[\Airavata\Model\Experiment\ExperimentSearchFields::APPLICATION_ID] = $inputs["search-value"];
                         break;
                     case 'creation-time':
-                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::FROM_DATE] = strtotime($inputs["from-date"]) * 1000;
-                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::TO_DATE] = strtotime($inputs["to-date"]) * 1000;
+                        $timeDifference = Session::get("user_timezone");
+                        $addOrSubtract = "-";
+                        if( $timeDifference > 0)
+                            $addOrSubtract = "+";
+                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::FROM_DATE] = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", strtotime($inputs["from-date"]) ) * 1000;
+                        $filters[\Airavata\Model\Experiment\ExperimentSearchFields::TO_DATE] = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", strtotime($inputs["to-date"]) ) * 1000;
                         break;
                     case '':
                 }
