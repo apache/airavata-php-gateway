@@ -466,7 +466,7 @@ class ExperimentUtilities
 
                 $dataProductModel->replicaLocations[] = $dataReplicationModel;
                 $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
-                $uriList = $uriList + $uri + ",";
+                $uriList = $uriList . $uri . ",";
             }
             $uriList = substr($uriList, -1);
             $optInput = new InputDataObjectType();
