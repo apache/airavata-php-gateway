@@ -74,6 +74,9 @@ class ExperimentUtilities
             $order[$index] = $input->inputOrder;
         }
         array_multisort($order, SORT_ASC, $experimentInputs);
+
+        $optFilesHtml = "";
+
         if( count( $experimentInputs) > 0 ) { 
             foreach ($experimentInputs as $input) {
                 $matchingAppInput = null;
@@ -102,7 +105,7 @@ class ExperimentUtilities
 
                     foreach($uriList as $uri){
                         if (strpos($uri, "airavata-dp") === 0) {
-                            $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
+                            $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $uri);
                             $currentInputPath = "";
                             foreach ($dataProductModel->replicaLocations as $rp) {
                                 if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
@@ -115,8 +118,8 @@ class ExperimentUtilities
                             $fileName = basename($input->value);
                         }
 
-                        echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?id='
-                            . $input->value . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        $optFilesHtml = $optFilesHtml . '<a target="_blank" href="' . URL::to("/") . '/download/?id='
+                            . $input->value . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a>&nbsp;';
 
                     }
 
@@ -125,6 +128,8 @@ class ExperimentUtilities
                     echo '<p>' . $input->name . ':&nbsp;' . $input->value . '</p>';
                 }
             }
+
+            echo '<p> Optional File Inputs:&nbsp;' . $optFilesHtml;
         }
     }
 
