@@ -432,7 +432,7 @@ class ExperimentUtilities
 
         if($_FILES['optInputFiles']){
             $uriList = "";
-            for($i=0; $i < len($_FILES['optInputFiles']['name']); $i++){
+            for($i=0; $i < count($_FILES['optInputFiles']['name']); $i++){
                 $filePath = ExperimentUtilities::$experimentPath . $_FILES['optInputFiles']['name'][$i];
 
                 // check if file already exists
@@ -522,7 +522,7 @@ class ExperimentUtilities
                     Please try again later or report a bug using the link in the Help menu.');
                 }
             }else if(is_array($file) and $file['name']){
-                for($i =0 ; $i< len($file['name']); $i++){
+                for($i =0 ; $i< count($file['name']); $i++){
                     if ($file['error'][$i] > 0) {
                         $uploadSuccessful = false;
                         CommonUtilities::print_error_message('<p>Error uploading file ' . $file['name'][$i] . ' !
