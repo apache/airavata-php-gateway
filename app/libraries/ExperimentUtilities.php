@@ -432,8 +432,8 @@ class ExperimentUtilities
 
         if($_FILES['optInputFiles']){
             $uriList = "";
-            foreach($_FILES['optInputFiles'] as $file){
-                $filePath = ExperimentUtilities::$experimentPath . $file['name'];
+            for($i=0; $i < len($_FILES['optInputFiles']['name']); $i++){
+                $filePath = ExperimentUtilities::$experimentPath . $_FILES['optInputFiles']['name'][$i];
 
                 // check if file already exists
                 if (is_file($filePath)) {
@@ -442,10 +442,10 @@ class ExperimentUtilities
                     CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
                 }
 
-                $moveFile = move_uploaded_file($file['tmp_name'], $filePath);
+                $moveFile = move_uploaded_file($_FILES['optInputFiles']['tmp_name'][$i], $filePath);
 
                 if (!$moveFile) {
-                    CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file['name'] . '!
+                    CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $_FILES['optInputFiles']['name'][$i] . '!
                         Please try again later or report a bug using the link in the Help menu.</p>');
                     $experimentAssemblySuccessful = false;
                 }
@@ -520,6 +520,14 @@ class ExperimentUtilities
                     $uploadSuccessful = false;
                     CommonUtilities::print_error_message('<p>Error uploading file ' . $file['name'] . ' !
                     Please try again later or report a bug using the link in the Help menu.');
+                }
+            }else if(is_array($file) and $file['name']){
+                for($i =0 ; $i< len($file['name']); $i++){
+                    if ($file['error'][$i] > 0) {
+                        $uploadSuccessful = false;
+                        CommonUtilities::print_error_message('<p>Error uploading file ' . $file['name'][$i] . ' !
+                    Please try again later or report a bug using the link in the Help menu.');
+                    }
                 }
             }
 
