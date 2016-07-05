@@ -468,7 +468,7 @@ class ExperimentUtilities
                 $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
                 $uriList = $uriList . $uri . ",";
             }
-            $uriList = substr($uriList, -1);
+            $uriList = substr($uriList,0, strlen($uriList) - 1);
             $optInput = new InputDataObjectType();
             $optInput->name = "Optional-File-Input-List";
             $optInput->type = DataType::URI_COLLECTION;
