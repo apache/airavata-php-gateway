@@ -28,7 +28,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">Application configuration</div>
     <div class="panel-body">
-        <label>Application input</label>
+        <label>Application Inputs</label>
 
         <div class="well">
             @if( $expInputs["clonedExp"] || $expInputs["savedExp"])
