@@ -328,15 +328,14 @@ class ExperimentUtilities
         $experimentAssemblySuccessful = true;
         $newExperimentInputs = array();
 
-        ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
-//        if (sizeof($_FILES) > 0) {
-//            if (ExperimentUtilities::file_upload_successful()) {
-//                // construct unique path
-//                ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
-//            } else {
-//                $experimentAssemblySuccessful = false;
-//            }
-//        }
+        if (sizeof($_FILES) > 0) {
+            if (ExperimentUtilities::file_upload_successful()) {
+                // construct unique path
+                ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
+            } else {
+                $experimentAssemblySuccessful = false;
+            }
+        }
 
         //sending application inputs in the order defined by the admins.
         $order = array();
@@ -477,12 +476,14 @@ class ExperimentUtilities
                 }
             }
 
-            $uriList = substr($uriList,0, strlen($uriList) - 1);
-            $optInput = new InputDataObjectType();
-            $optInput->name = "Optional-File-Input-List";
-            $optInput->type = DataType::URI_COLLECTION;
-            $optInput->value = $uriList;
-            $newExperimentInputs[] = $optInput;
+            if(strlen($uriList) > 0){
+                $uriList = substr($uriList,0, strlen($uriList) - 1);
+                $optInput = new InputDataObjectType();
+                $optInput->name = "Optional-File-Input-List";
+                $optInput->type = DataType::URI_COLLECTION;
+                $optInput->value = $uriList;
+                $newExperimentInputs[] = $optInput;
+            }
         }
 
         if ($experimentAssemblySuccessful) {
