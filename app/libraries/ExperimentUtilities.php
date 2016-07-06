@@ -328,14 +328,7 @@ class ExperimentUtilities
         $experimentAssemblySuccessful = true;
         $newExperimentInputs = array();
 
-        if (sizeof($_FILES) > 0) {
-            if (ExperimentUtilities::file_upload_successful()) {
-                // construct unique path
-                ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
-            } else {
-                $experimentAssemblySuccessful = false;
-            }
-        }
+        ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
 
         //sending application inputs in the order defined by the admins.
         $order = array();
