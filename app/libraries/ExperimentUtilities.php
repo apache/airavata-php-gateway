@@ -328,14 +328,17 @@ class ExperimentUtilities
         $experimentAssemblySuccessful = true;
         $newExperimentInputs = array();
 
-        if (sizeof($_FILES) > 0) {
-            if (ExperimentUtilities::file_upload_successful()) {
-                // construct unique path
-                ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
-            } else {
-                $experimentAssemblySuccessful = false;
-            }
+        if (ExperimentUtilities::$experimentPath == null) {
+            ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
         }
+//        if (sizeof($_FILES) > 0) {
+//            if (ExperimentUtilities::file_upload_successful()) {
+//                // construct unique path
+//                ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
+//            } else {
+//                $experimentAssemblySuccessful = false;
+//            }
+//        }
 
         //sending application inputs in the order defined by the admins.
         $order = array();
@@ -585,7 +588,10 @@ class ExperimentUtilities
             //updating the experiment inputs and output path
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $cloneId);
             $experimentInputs = $experiment->experimentInputs;
-            ExperimentUtilities::create_experiment_folder_path($experiment->projectId, $experiment->experimentName);
+
+            if (ExperimentUtilities::$experimentPath == null) {
+                ExperimentUtilities::create_experiment_folder_path($experiment->projectId, $experiment->experimentName);
+            }
 
             $hostName = $_SERVER['SERVER_NAME'];
 
