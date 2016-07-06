@@ -772,11 +772,14 @@ class ExperimentUtilities
             }
         }
 
-        echo '<div>
+        $appInterface = AppUtilities::get_application_interface($id);
+        if($appInterface->hasOptionalFileInputs){
+            echo '<div>
                 <label>Optional Input Files</label>
                 <input type="file" id="optInputFiles" name="optInputFiles[]" multiple onchange="javascript:updateList()" >
                 <div id="optFileList"></div>
             </div>';
+        }
     }
 
 
