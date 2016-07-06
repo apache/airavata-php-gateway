@@ -328,9 +328,7 @@ class ExperimentUtilities
         $experimentAssemblySuccessful = true;
         $newExperimentInputs = array();
 
-        if (ExperimentUtilities::$experimentPath == null) {
-            ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
-        }
+        ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
 //        if (sizeof($_FILES) > 0) {
 //            if (ExperimentUtilities::file_upload_successful()) {
 //                // construct unique path
@@ -441,41 +439,44 @@ class ExperimentUtilities
         if($_FILES['optInputFiles']){
             $uriList = "";
             for($i=0; $i < count($_FILES['optInputFiles']['name']); $i++){
-                $filePath = ExperimentUtilities::$experimentPath . $_FILES['optInputFiles']['name'][$i];
+                if(!empty($_FILES['optInputFiles']['name'][$i])){
+                    $filePath = ExperimentUtilities::$experimentPath . $_FILES['optInputFiles']['name'][$i];
 
-                // check if file already exists
-                if (is_file($filePath)) {
-                    unlink($filePath);
+                    // check if file already exists
+                    if (is_file($filePath)) {
+                        unlink($filePath);
 
-                    CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
-                }
+                        CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
+                    }
 
-                $moveFile = move_uploaded_file($_FILES['optInputFiles']['tmp_name'][$i], $filePath);
+                    $moveFile = move_uploaded_file($_FILES['optInputFiles']['tmp_name'][$i], $filePath);
 
-                if (!$moveFile) {
-                    CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $_FILES['optInputFiles']['name'][$i] . '!
+                    if (!$moveFile) {
+                        CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $_FILES['optInputFiles']['name'][$i] . '!
                         Please try again later or report a bug using the link in the Help menu.</p>');
-                    $experimentAssemblySuccessful = false;
+                        $experimentAssemblySuccessful = false;
+                    }
+
+                    $dataProductModel = new DataProductModel();
+                    $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
+                    $dataProductModel->ownerName = Session::get("username");
+                    $dataProductModel->productName = basename($filePath);
+                    $dataProductModel->dataProductType = DataProductType::FILE;
+
+                    $dataReplicationModel = new DataReplicaLocationModel();
+                    $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
+                    $dataReplicationModel->replicaName = basename($filePath) . " gateway data store copy";
+                    $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
+                    $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
+                    $hostName = $_SERVER['SERVER_NAME'];
+                    $dataReplicationModel->filePath = "file://" . $hostName . ":" . $filePath;
+
+                    $dataProductModel->replicaLocations[] = $dataReplicationModel;
+                    $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
+                    $uriList = $uriList . $uri . ",";
                 }
-
-                $dataProductModel = new DataProductModel();
-                $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
-                $dataProductModel->ownerName = Session::get("username");
-                $dataProductModel->productName = basename($filePath);
-                $dataProductModel->dataProductType = DataProductType::FILE;
-
-                $dataReplicationModel = new DataReplicaLocationModel();
-                $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
-                $dataReplicationModel->replicaName = basename($filePath) . " gateway data store copy";
-                $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
-                $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
-                $hostName = $_SERVER['SERVER_NAME'];
-                $dataReplicationModel->filePath = "file://" . $hostName . ":" . $filePath;
-
-                $dataProductModel->replicaLocations[] = $dataReplicationModel;
-                $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
-                $uriList = $uriList . $uri . ",";
             }
+
             $uriList = substr($uriList,0, strlen($uriList) - 1);
             $optInput = new InputDataObjectType();
             $optInput->name = "Optional-File-Input-List";
@@ -589,9 +590,7 @@ class ExperimentUtilities
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $cloneId);
             $experimentInputs = $experiment->experimentInputs;
 
-            if (ExperimentUtilities::$experimentPath == null) {
-                ExperimentUtilities::create_experiment_folder_path($experiment->projectId, $experiment->experimentName);
-            }
+            ExperimentUtilities::create_experiment_folder_path($experiment->projectId, $experiment->experimentName);
 
             $hostName = $_SERVER['SERVER_NAME'];
 
