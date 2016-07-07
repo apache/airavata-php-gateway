@@ -199,14 +199,14 @@ class ProjectUtilities
     }
 
 
-    public static function get_all_user_projects_with_pagination($limit, $offset)
+    public static function get_all_user_accessible_projects_with_pagination($limit, $offset)
     {
 
         $projects = array();
 
         try {
-            $projects = Airavata::getUserProjects(Session::get('authz-token'), Session::get("gateway_id"),
-                Session::get("username"), $limit, $offset);
+            $projects = $projects = Airavata::searchProjects(Session::get('authz-token'), Session::get("gateway_id"),
+                Session::get("username"), [], $limit, $offset);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
         } catch (AiravataClientException $ace) {
@@ -228,7 +228,7 @@ class ProjectUtilities
     }
 
 
-    public static function get_projsearch_results_with_pagination($searchKey, $searchValue, $limit, $offset)
+    public static function get_proj_search_results_with_pagination($searchKey, $searchValue, $limit, $offset)
     {
 
         $projects = array();
