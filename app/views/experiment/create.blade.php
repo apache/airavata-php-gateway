@@ -83,5 +83,6 @@
 
 @section('scripts')
 @parent
+{{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}
 @stop

@@ -64,5 +64,6 @@
         $(this).val($.trim($(this).val()));
     });
 </script>
+{{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}
 @stop

@@ -97,7 +97,6 @@ Route::get("experiment/browse", "ExperimentController@browseView");
 
 Route::post("experiment/browse", "ExperimentController@browseView");
 
-
 Route::get("download", function(){
     //FIXME check for no ../ parts in the path
     if(Input::has("path") && (0 == strpos(Input::get("path"), Session::get('username'))
@@ -114,6 +113,11 @@ Route::get("download", function(){
 Route::get("files/browse", "FilemanagerController@browse");
 
 Route::get("files/get","FilemanagerController@get");
+
+/*
+ * Group Routes
+ */
+Route::get("group/create", "GroupController@createView");
 
 /*
  * Compute Resources Routes
