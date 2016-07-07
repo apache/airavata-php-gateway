@@ -428,7 +428,7 @@ class ExperimentUtilities
             $newExperimentInputs[] = $experimentInput;
         }
 
-        if($_FILES['optInputFiles']){
+        if(isset($_FILES['optInputFiles'])){
             $uriList = "";
             for($i=0; $i < count($_FILES['optInputFiles']['name']); $i++){
                 if(!empty($_FILES['optInputFiles']['name'][$i])){
