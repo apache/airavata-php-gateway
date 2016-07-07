@@ -48,6 +48,10 @@
             <td><?php echo $project->name; ?></td>
         </tr>
         <tr>
+            <td><strong>Owner</strong></td>
+            <td><?php echo $project->owner; ?></td>
+        </tr>
+        <tr>
             <td><strong>Application</strong></td>
             <td><?php if (!empty($expVal["applicationInterface"])) {
                     echo $expVal["applicationInterface"]->applicationName;

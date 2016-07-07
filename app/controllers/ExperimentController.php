@@ -1,6 +1,8 @@
 <?php
 
 use Airavata\Model\Status\JobState;
+use Airavata\Model\Group\ResourceType;
+use Airavata\Model\Group\ResourcePermissionType;
 
 class ExperimentController extends BaseController
 {
