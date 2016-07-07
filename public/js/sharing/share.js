@@ -268,11 +268,11 @@ $(function() {
 		$target = $(e.target);
 		pattern = $target.val().toLowerCase();
 		if (!pattern || pattern === '') {
-			re = /.+/;
+			pattern = /.+/;
 		}
 		visible = ($('.show-groups').hasClass('btn-primary') ? '.group-thumbnail' : '.user-thumbnail');
 		$users = $('#share-box-users').children(visible);
-		userFilter($users, re);
+		userFilter($users, pattern);
 		return false;
 	});
 
