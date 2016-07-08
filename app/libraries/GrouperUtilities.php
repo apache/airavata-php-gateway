@@ -5,6 +5,15 @@ use Airavata\Model\Group\ResourcePermissionType;
 
 class GrouperUtilities
 {
+
+    /**
+     * @return mixed                array of usernames of the users in the gateway
+     */
+    public static function getAllGatewayUsers()
+    {
+        return Airavata::getAllUsersInGateway(Session::get('authz-token'), Config::get('pga_config.airavata')['gateway-id']);
+    }
+
     /**
      * @param $resourceId           Experiment or Project ID
      * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
