@@ -101,7 +101,7 @@ class ProjectUtilities
         $project->owner = Session::get('username');
         $project->name = $_POST['project-name'];
         $project->description = $_POST['project-description'];
-
+        $project->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
 
         $projectId = null;
 

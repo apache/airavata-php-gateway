@@ -129,7 +129,8 @@ class ExperimentUtilities
                 }
             }
 
-            echo '<p> Optional File Inputs:&nbsp;' . $optFilesHtml;
+            if(strlen($optFilesHtml) > 0)
+                echo '<p> Optional File Inputs:&nbsp;' . $optFilesHtml;
         }
     }
 
