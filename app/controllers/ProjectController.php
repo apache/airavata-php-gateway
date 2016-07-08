@@ -87,10 +87,10 @@ class ProjectController extends BaseController
 
         $searchValue = Input::get("search-value");
         if(!empty($searchValue)){
-            $projects = ProjectUtilities::get_projsearch_results_with_pagination(Input::get("search-key"),
+            $projects = ProjectUtilities::get_proj_search_results_with_pagination(Input::get("search-key"),
                 Input::get("search-value"), $this->limit, ($pageNo - 1) * $this->limit);
         }else{
-            $projects = ProjectUtilities::get_all_user_projects_with_pagination($this->limit, ($pageNo - 1) * $this->limit);
+            $projects = ProjectUtilities::get_all_user_accessible_projects_with_pagination($this->limit, ($pageNo - 1) * $this->limit);
         }
 
         return View::make('project/browse', array(

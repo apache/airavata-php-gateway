@@ -57,7 +57,8 @@ class AppUtilities
             "applicationName" => $appInterfaceValues["applicationName"],
             "applicationDescription" => $appInterfaceValues["applicationDescription"],
             "applicationModules" => $appInterfaceValues["applicationModules"],
-            "archiveWorkingDirectory" =>  intval( $appInterfaceValues["archiveWorkingDirectory"])
+            "archiveWorkingDirectory" =>  intval( $appInterfaceValues["archiveWorkingDirectory"]),
+            "hasOptionalFileInputs" =>  intval( $appInterfaceValues["hasOptionalFileInputs"])
         ));
 
         if (isset($appInterfaceValues["inputName"])) {
