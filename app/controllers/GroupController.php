@@ -15,17 +15,30 @@ class GroupController extends BaseController {
 
     public function createSubmit()
     {
-        // TODO: Write submission logic
+        // TODO: Get the group name and description
+        // TODO: Create the new group
+        // TODO: Get users to add
+        // TODO: Update membership of users in list
     }
 
-    public function editView()
+    public function editSubmit()
     {
-        // TODO: Write logic to load current group members
+        // TODO: Get users to edit
+        // TODO: Update membership of users in list
     }
 
     public function summaryView()
     {
-        // TODO: Write group display logic
+        // TODO: Determine if the user is a member of the group
+        // TODO: Determine if the user is owner of the group
+        // TODO: If not a member, load a page that says they cannot see the group
+        // TODO: If a standard member, display group name, description, members, projects(?) and experiments (?)
+        // TODO: If owner, display buttons to allow adding and removing members
+    }
+
+    protected function updateMembership() {
+        // TODO: Get users to update
+        // TODO: Update membership for selected users
     }
 
 }

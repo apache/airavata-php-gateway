@@ -119,6 +119,12 @@ Route::get("files/get","FilemanagerController@get");
  */
 Route::get("group/create", "GroupController@createView");
 
+Route::post("group/create", "GroupController@createSubmit");
+
+Route::get("group/view", "GroupController@viewView");
+
+Route::post("group/edit", "GroupController@editSubmit");
+
 /*
  * Compute Resources Routes
 */
