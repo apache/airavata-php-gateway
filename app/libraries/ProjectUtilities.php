@@ -5,6 +5,8 @@ use Airavata\API\Error\AiravataSystemException;
 use Airavata\API\Error\InvalidRequestException;
 use Airavata\Facades\Airavata;
 use Airavata\Model\Workspace\Project;
+use Airavata\Model\Group\ResourceType;
+use Airavata\Model\Group\ResourcePermissionType;
 
 class ProjectUtilities
 {
@@ -103,10 +105,30 @@ class ProjectUtilities
         $project->description = $_POST['project-description'];
         $project->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
 
+        $share = $_POST['share-settings'];
+
         $projectId = null;
 
         try {
             $projectId = Airavata::createProject(Session::get('authz-token'), Config::get('pga_config.airavata')['gateway-id'], $project);
+
+            $add = array();
+            $revoke = array();
+
+            $share = json_decode($share);
+
+            if (json_last_error() === JSON_ERROR_NONE) {
+                foreach ($share as $uname => $access) {
+                    if ($access !== 0) {
+                        $add[$uname] = $value;
+                    }
+                    else {
+                        $revoke[$uname] = $value;
+                    }
+                }
+                GrouperUtilities::shareResourceWithUsers($projectId, ResourceType.Project, $add);
+                GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType.Project, $revoke);
+            }
 
             if ($projectId) {
                 CommonUtilities::print_success_message("<p>Project {$_POST['project-name']} created!</p>" .
