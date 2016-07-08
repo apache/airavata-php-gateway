@@ -97,7 +97,6 @@ Route::get("experiment/browse", "ExperimentController@browseView");
 
 Route::post("experiment/browse", "ExperimentController@browseView");
 
-
 Route::get("download", function(){
     if(Input::has("path") && (0 == strpos(Input::get("path"), Session::get('username'))
             || 0 == strpos(Input::get("path"), "/" . Session::get('username')))){
@@ -137,6 +136,17 @@ Route::get("download", function(){
 Route::get("files/browse", "FilemanagerController@browse");
 
 Route::get("files/get","FilemanagerController@get");
+
+/*
+ * Group Routes
+ */
+Route::get("group/create", "GroupController@createView");
+
+Route::post("group/create", "GroupController@createSubmit");
+
+Route::get("group/view", "GroupController@viewView");
+
+Route::post("group/edit", "GroupController@editSubmit");
 
 /*
  * Compute Resources Routes
