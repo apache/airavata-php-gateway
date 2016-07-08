@@ -68,7 +68,7 @@ if( Session::get("theme") == "base"){?>
 
                 <div class="caption">
                     <p>
-                        Apache Airavata is a softwar    e framework which is dominantly used to build Web-based science
+                        Apache Airavata is a software framework which is dominantly used to build Web-based science
                         gateways and assist to compose, manage, execute and monitor large scale applications and
                         workflows on distributed computing resources such as local clusters, supercomputers, national
                         grids, academic and commercial clouds. Airavata mainly supports long running applications and
