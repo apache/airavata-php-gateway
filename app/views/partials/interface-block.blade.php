@@ -45,6 +45,16 @@
         </select>
     </div>
 
+    <div class="form-group">
+        <label class="control-label">Enable Optional File Inputs</label>
+        <select name="hasOptionalFileInputs" class="form-control" style="max-width: 200px" readonly>
+            <option value="0"
+                    @if( isset( $interfaceObject) ) @if( false == $interfaceObject->hasOptionalFileInputs ) selected @endif @endif>False</option>
+            <option value="1"
+                    @if( isset( $interfaceObject) ) @if( true == $interfaceObject->hasOptionalFileInputs ) selected @endif @endif>True</option>
+        </select>
+    </div>
+
     <div class="form-group form-horizontal">
         @if( isset( $interfaceObject))
         @foreach( (array)$interfaceObject->applicationInputs as $index => $appInputs)

@@ -20,6 +20,7 @@ use Airavata\Model\Data\Replica\DataProductType;
 use Airavata\Model\Data\Replica\DataReplicaLocationModel;
 use Airavata\Model\Data\Replica\ReplicaLocationCategory;
 use Airavata\Model\Data\Replica\ReplicaPersistentType;
+use Airavata\Model\Application\Io\InputDataObjectType;
 
 class ExperimentUtilities
 {
@@ -73,33 +74,63 @@ class ExperimentUtilities
             $order[$index] = $input->inputOrder;
         }
         array_multisort($order, SORT_ASC, $experimentInputs);
+
+        $optFilesHtml = "";
+
         if( count( $experimentInputs) > 0 ) { 
             foreach ($experimentInputs as $input) {
                 $matchingAppInput = null;
                 if ($input->type == DataType::URI) {
 
-                    if(strpos($input->value, "airavata-dp") === 0){
+                    if (strpos($input->value, "airavata-dp") === 0) {
                         $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
                         $currentInputPath = "";
                         foreach ($dataProductModel->replicaLocations as $rp) {
-                            if($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                            if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
                                 $currentInputPath = $rp->filePath;
                                 break;
                             }
                         }
                         $fileName = basename($currentInputPath);
-                    }else{
+                    } else {
                         $fileName = basename($input->value);
                     }
 
                     echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?id='
-                        . $input->value . '">' .  $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        . $input->value . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+
+                }else if($input->type == DataType::URI_COLLECTION) {
+                    $uriList = $input->value;
+                    $uriList = preg_split('/,/', $uriList);
+
+                    foreach($uriList as $uri){
+                        if (strpos($uri, "airavata-dp") === 0) {
+                            $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $uri);
+                            $currentInputPath = "";
+                            foreach ($dataProductModel->replicaLocations as $rp) {
+                                if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
+                                    $currentInputPath = $rp->filePath;
+                                    break;
+                                }
+                            }
+                            $fileName = basename($currentInputPath);
+                        } else {
+                            $fileName = basename($input->value);
+                        }
+
+                        $optFilesHtml = $optFilesHtml . '<a target="_blank" href="' . URL::to("/") . '/download/?id='
+                            . $uri . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a>&nbsp;';
+
+                    }
 
                 } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                     || $input->type == DataType::FLOAT) {
                     echo '<p>' . $input->name . ':&nbsp;' . $input->value . '</p>';
                 }
             }
+
+            if(strlen($optFilesHtml) > 0)
+                echo '<p> Optional File Inputs:&nbsp;' . $optFilesHtml;
         }
     }
 
@@ -298,14 +329,7 @@ class ExperimentUtilities
         $experimentAssemblySuccessful = true;
         $newExperimentInputs = array();
 
-        if (sizeof($_FILES) > 0) {
-            if (ExperimentUtilities::file_upload_successful()) {
-                // construct unique path
-                ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
-            } else {
-                $experimentAssemblySuccessful = false;
-            }
-        }
+        ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
 
         //sending application inputs in the order defined by the admins.
         $order = array();
@@ -405,6 +429,57 @@ class ExperimentUtilities
             $newExperimentInputs[] = $experimentInput;
         }
 
+        if(isset($_FILES['optInputFiles'])){
+            $uriList = "";
+            for($i=0; $i < count($_FILES['optInputFiles']['name']); $i++){
+                if(!empty($_FILES['optInputFiles']['name'][$i])){
+                    $filePath = ExperimentUtilities::$experimentPath . $_FILES['optInputFiles']['name'][$i];
+
+                    // check if file already exists
+                    if (is_file($filePath)) {
+                        unlink($filePath);
+
+                        CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
+                    }
+
+                    $moveFile = move_uploaded_file($_FILES['optInputFiles']['tmp_name'][$i], $filePath);
+
+                    if (!$moveFile) {
+                        CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $_FILES['optInputFiles']['name'][$i] . '!
+                        Please try again later or report a bug using the link in the Help menu.</p>');
+                        $experimentAssemblySuccessful = false;
+                    }
+
+                    $dataProductModel = new DataProductModel();
+                    $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
+                    $dataProductModel->ownerName = Session::get("username");
+                    $dataProductModel->productName = basename($filePath);
+                    $dataProductModel->dataProductType = DataProductType::FILE;
+
+                    $dataReplicationModel = new DataReplicaLocationModel();
+                    $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
+                    $dataReplicationModel->replicaName = basename($filePath) . " gateway data store copy";
+                    $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
+                    $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
+                    $hostName = $_SERVER['SERVER_NAME'];
+                    $dataReplicationModel->filePath = "file://" . $hostName . ":" . $filePath;
+
+                    $dataProductModel->replicaLocations[] = $dataReplicationModel;
+                    $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
+                    $uriList = $uriList . $uri . ",";
+                }
+            }
+
+            if(strlen($uriList) > 0){
+                $uriList = substr($uriList,0, strlen($uriList) - 1);
+                $optInput = new InputDataObjectType();
+                $optInput->name = "Optional-File-Input-List";
+                $optInput->type = DataType::URI_COLLECTION;
+                $optInput->value = $uriList;
+                $newExperimentInputs[] = $optInput;
+            }
+        }
+
         if ($experimentAssemblySuccessful) {
             return $newExperimentInputs;
         } else {
@@ -444,11 +519,19 @@ class ExperimentUtilities
 
         foreach ($_FILES as $file) {
             //var_dump($file);
-            if ($file['name']) {
+            if (!is_array($file) and $file['name']) {
                 if ($file['error'] > 0) {
                     $uploadSuccessful = false;
                     CommonUtilities::print_error_message('<p>Error uploading file ' . $file['name'] . ' !
                     Please try again later or report a bug using the link in the Help menu.');
+                }
+            }else if(is_array($file) and $file['name']){
+                for($i =0 ; $i< count($file['name']); $i++){
+                    if ($file['error'][$i] > 0) {
+                        $uploadSuccessful = false;
+                        CommonUtilities::print_error_message('<p>Error uploading file ' . $file['name'][$i] . ' !
+                    Please try again later or report a bug using the link in the Help menu.');
+                    }
                 }
             }
 
@@ -501,6 +584,7 @@ class ExperimentUtilities
             //updating the experiment inputs and output path
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $cloneId);
             $experimentInputs = $experiment->experimentInputs;
+
             ExperimentUtilities::create_experiment_folder_path($experiment->projectId, $experiment->experimentName);
 
             $hostName = $_SERVER['SERVER_NAME'];
@@ -681,6 +765,15 @@ class ExperimentUtilities
                     Please file a bug report using the link in the Help menu.');
                     break;
             }
+        }
+
+        $appInterface = AppUtilities::get_application_interface($id);
+        if($appInterface->hasOptionalFileInputs){
+            echo '<div>
+                <label>Optional Input Files</label>
+                <input type="file" id="optInputFiles" name="optInputFiles[]" multiple onchange="javascript:updateList()" >
+                <div id="optFileList"></div>
+            </div>';
         }
     }
 
