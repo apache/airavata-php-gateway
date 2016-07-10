@@ -274,6 +274,10 @@ class ComputeResourceController extends BaseController
         ));
 
     }
+
+    public function groupedApplicationsView(){
+        return CRUtilities::getApplicationsByResource();
+    }
 }
 
 ?>
