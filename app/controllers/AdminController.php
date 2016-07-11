@@ -9,7 +9,30 @@ class AdminController extends BaseController {
 	}
 
 	public function dashboard(){
-		return View::make("account/dashboard");
+        $userInfo = array();
+        
+        $userProfile = Session::get("user-profile");
+        Session::forget("new-gateway-provider");
+
+        if( in_array( "gateway-provider", $userProfile["roles"]) ){
+			$gatewayOfUser = "";
+        	$gatewaysInfo = CRUtilities::getAllGateways();
+            foreach( $gatewaysInfo as $index => $gateway){
+                if( $gateway->emailAddress == $userProfile["email"]){
+                    Session::set("gateway_id", $gateway->gatewayId);
+                    $gatewayOfUser = $gateway->gatewayId;
+                    Session::forget("super-admin");
+                    break;
+                }
+            }
+            if( $gatewayOfUser == ""){
+            	$userInfo["username"] = $userProfile["username"];
+            	$userInfo["email"] = $userProfile["email"];
+                Session::put("new-gateway-provider", true);
+            }
+        }
+        //var_dump( $userInfo); exit;
+		return View::make("account/dashboard", array("userInfo"=> $userInfo));
 	}
 
 	public function addAdminSubmit(){
