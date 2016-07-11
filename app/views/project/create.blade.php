@@ -63,6 +63,7 @@
     $(".projectName").blur(function () {
         $(this).val($.trim($(this).val()));
     });
+    var users = {{ $users }};
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}

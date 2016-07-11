@@ -118,16 +118,7 @@ class ProjectUtilities
             $share = json_decode($share);
 
             if (json_last_error() === JSON_ERROR_NONE) {
-                foreach ($share as $uname => $access) {
-                    if ($access !== 0) {
-                        $add[$uname] = $value;
-                    }
-                    else {
-                        $revoke[$uname] = $value;
-                    }
-                }
-                GrouperUtilities::shareResourceWithUsers($projectId, ResourceType.Project, $add);
-                GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType.Project, $revoke);
+                $this->share_project($projectId, $share);
             }
 
             if ($projectId) {
@@ -286,5 +277,34 @@ class ProjectUtilities
         }
 
         return $projects;
+    }
+
+    private function share_project($projectId, $users) {
+        $wadd = array();
+        $wrevoke = array();
+        $radd = array();
+        $rrevoke = array();
+
+        foreach ($users as $user => $perms) {
+            if ($perms['write']) {
+                $wadd[$user] = ResourcePermissionType::WRITE;
+            }
+            else {
+                $wrevoke[$user] = ResourcePermissionType::WRITE;
+            }
+
+            GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::Project, $wadd);
+            GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType.Project::Project, $wrevoke);
+
+            if ($perms['read']) {
+                $radd[$user] = ResourcePermissionType::READ;
+            }
+            else {
+                $rrevoke[$user] = ResourcePermissionType::READ;
+            }
+
+            GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::Project, $radd);
+            GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType.Project::Project, $rrevoke);
+        }
     }
 }

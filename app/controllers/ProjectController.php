@@ -1,5 +1,7 @@
 <?php
 
+
+
 class ProjectController extends BaseController
 {
 
@@ -23,7 +25,13 @@ class ProjectController extends BaseController
 
     public function createView()
     {
-        return View::make("project/create");
+        $uids = GrouperUtilities::getAllGatewayUsers();
+        $users = array();
+        for ($i = 0; $i < count($uids); $i++) {
+            $string = $uids[$i] . '@' . Config::get('pga_config.wsis')['tenant-domain'];
+            $users[$i] = WSIS::getUserProfile($string);
+        }
+        return View::make("project/create", array("users" => json_encode($users)));
     }
 
     public function createSubmit()
