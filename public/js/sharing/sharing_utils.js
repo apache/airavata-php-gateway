@@ -6,8 +6,26 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
       firstname: firstname,
       lastname: lastname,
       email: email,
-      access: access
+      access: {
+          read: false,
+          write: false
+      },
+      currentaccess: {
+          read: false,
+          write: false
+      }
   };
+
+  if (access === access_enum.READ) {
+      data.access.read = true;
+      data.currentaccess.read = true;
+  }
+  else if (access === access_enum.WRITE) {
+      data.access.read = true;
+      data.access.write = true;
+      data.currentaccess.read = true;
+      data.currentaccess.write = true;
+  }
 
   select = '';
 
@@ -15,11 +33,9 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
       select = '<select class="sharing-thumbnail-access" style="display: none;" disabled>';
 
       options = '';
-      options += '<option value="' + access_enum.NONE + '"' + (access === access_enum.NONE ? "selected" : "") + ' style="display: none;">Can View</option>';
-      options += '<option value="' + access_enum.VIEW + '"' + (access === access_enum.VIEW ? "selected" : "") + '>Can View</option>';
-      options += '<option value="' + access_enum.RUN + '"' + (access === access_enum.RUN ? "selected" : "") + '>Can Run</option>';
-      options += '<option value="' + access_enum.EDIT + '"' + (access === access_enum.EDIT ? "selected" : "") + '>Can Edit</option>';
-      options += '<option value="' + access_enum.ADMIN + '"' + (access === access_enum.ADMIN ? "selected" : "") + '>All Privileges</option>';
+      options += '<option value="' + access_enum.NONE + '"' + (access === access_enum.NONE ? "selected" : "") + ' style="display: none;">No Permissions</option>';
+      options += '<option value="' + access_enum.READ + '"' + (access === access_enum.VIEW ? "selected" : "") + '>Can Read</option>';
+      options += '<option value="' + access_enum.WRITE + '"' + (access === access_enum.RUN ? "selected" : "") + '>Can Write</option>';
 
       select += options;
       select += '</select>';
@@ -48,10 +64,14 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
 }
 
 var changeShareState = function($target) {
+    var data;
+    data = $target.data();
     // If the user has sharing privileges, revoke them
     if ($target.hasClass('share-box-users-item')) {
         console.log("Sharing");
         $target.find('.sharing-thumbnail-access').val('1').prop("disabled", false).show();
+        data.access.read = true;
+        $target.data(data);
         $target.find('.sharing-thumbnail-unshare').show();
         $target.detach().prependTo('#share-box-share').show();
     }
@@ -59,6 +79,9 @@ var changeShareState = function($target) {
     else if ($target.hasClass('share-box-share-item')) {
         console.log("Revoking share");
         $target.find('select').val('0').prop("disabled", true).hide();
+        data.access.read = true;
+        data.access.write = true;
+        $target.data(data);
         $target.find('.sharing-thumbnail-unshare').hide();
         $target.detach().appendTo('#share-box-users');
         $('#share-box-filter').trigger('keydown');

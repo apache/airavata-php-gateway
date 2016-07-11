@@ -6,10 +6,8 @@
 
 var access_enum = {
     NONE: '0',
-    VIEW: '1',
-    RUN: '2',
-    EDIT: '3',
-    ADMIN: '4'
+    READ: '1',
+    WRITE: '2'
 };
 
 var dummy_user_data = [
@@ -119,12 +117,12 @@ $(function() {
                         <div class="modal-body"> \
                             <label>Click on the users you would like to share with.</label> \
                             <input id="share-box-filter" class="form-control" type="text" placeholder="Filter the user list" /> \
-                            <label>Show</label> \
-                            <div id="show-results-group" class="btn-group" role="group" aria-label="Show Groups or Users">\
-                                <button type="button" class="show-groups show-results-btn btn btn-primary">Groups</button> \
-                                <button type="button" class="show-users show-results-btn btn btn-default">Users</button> \
-                            </div> \
-                            <label>Order By</label> \
+                            <label>Show</label>' //\
+                            // <div id="show-results-group" class="btn-group" role="group" aria-label="Show Groups or Users">\
+                            //     <button type="button" class="show-groups show-results-btn btn btn-primary">Groups</button> \
+                            //     <button type="button" class="show-users show-results-btn btn btn-default">Users</button> \
+                            // </div> \
+                            + '<label>Order By</label> \
                             <select class="order-results-selector"> \
                                 <option value="username">Username</option> \
                                 <option value="firstlast">First, Last Name</option> \
@@ -156,44 +154,36 @@ $(function() {
         $users = $('#share-box-users');
         $share = $('#share-box-share');
 
-        for (var user in dummy_user_data) {
-            if (dummy_user_data.hasOwnProperty(user)) {
-                data = dummy_user_data[user];
-                $user = createThumbnail(data.username, data.firstname, data.lastname, data.email, data.access);
+        for (var user in users) {
+            if (users.hasOwnProperty(user)) {
+                data = users[user];
+                $user = createThumbnail(user, data.firstname, data.lastname, data.email, access_enum.NONE);
                 $user.addClass('user-thumbnail');
-                if (data.access === access_enum.NONE) {
-                    $user.addClass('share-box-users-item');
-                    $users.append($user);
-                }
-                else {
-                    $user.addClass('share-box-share-item');
-                    $user.find('.sharing-thumbnail-access').prop("disabled", false).show();
-                    $user.find('.sharing-thumbnail-unshare').show();
-                    $share.append($user);
-                }
+                $user.addClass('share-box-users-item');
+                $users.append($user);
             }
         }
 
-        for (var group in dummy_group_data) {
-            if (dummy_group_data.hasOwnProperty(group)) {
-                data = dummy_group_data[group];
-                $group = createThumbnail(data.username, data.firstname, data.lastname, data.email, data.access);
-                $group.addClass('group-thumbnail');
-                if (data.access === access_enum.NONE) {
-                    $group.addClass('share-box-users-item');
-                    $users.append($group);
-                }
-                else {
-                    $group.addClass('share-box-share-item');
-                    $group.find('.sharing-thumbnail-access').prop("disabled", false).show();
-                    $group.find('.sharing-thumbnail-unshare').show();
-                    $share.append($group);
-                }
-            }
-        }
+        // for (var group in dummy_group_data) {
+        //     if (dummy_group_data.hasOwnProperty(group)) {
+        //         data = dummy_group_data[group];
+        //         $group = createThumbnail(data.username, data.firstname, data.lastname, data.email, data.access);
+        //         $group.addClass('group-thumbnail');
+        //         if (data.access === access_enum.NONE) {
+        //             $group.addClass('share-box-users-item');
+        //             $users.append($group);
+        //         }
+        //         else {
+        //             $group.addClass('share-box-share-item');
+        //             $group.find('.sharing-thumbnail-access').prop("disabled", false).show();
+        //             $group.find('.sharing-thumbnail-unshare').show();
+        //             $share.append($group);
+        //         }
+        //     }
+        // }
 
-        $('.user-thumbnail').hide();
-        $('.group-thumbnail').show();
+        $('.user-thumbnail').show();
+        //$('.group-thumbnail').show();
     }
 
 
@@ -295,11 +285,12 @@ $(function() {
 
     // Save the sharing permissions of each selected user
     $('body').on('click', '#share-box-button', function(e) {
-        var data, resource_id, $share_list;
+        var data, resource_id, $share_list, share_settings;
         e.stopPropagation();
         e.preventDefault();
         data = $("#share-box").data()
         $share_list = $("#share-box-share").children();
+        share_settings = {};
         if (data.hasOwnProperty('resource_id')) {
             resource_id = data.resource_id;
             updateUserPrivileges(resource_id, $share_list);
@@ -309,16 +300,18 @@ $(function() {
             if ($share_list.filter('.sharing-thumbnail').length > 0) {
                 $share_list.sort(comparator_map.username);
                 $share_list.each(function(index, element) {
-                    var $e, data;
+                    var $e, data, settings;
                     $e = $(element);
                     data = $e.data();
                     if (data.hasOwnProperty('currentaccess')) {
                         data.access = data.currentaccess;
                         $e.data(data);
                     }
+                    share_settings[data.username] = data.access;
                     $e.find('.sharing-thumbnail-access').prop('disabled', true);
                     $e.find('.sharing-thumbnail-unshare').hide();
                 });
+                $('#share-settings').val(JSON.stringify(share_settings));
                 $('#shared-users').removeClass('text-align-center');
                 $share_list.detach().appendTo($('#shared-users'));
             }

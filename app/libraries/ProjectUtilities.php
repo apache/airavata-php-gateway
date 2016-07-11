@@ -106,20 +106,14 @@ class ProjectUtilities
         $project->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
 
         $share = $_POST['share-settings'];
+        $share = json_decode($share);
+        var_dump($share);
+        exit;
 
         $projectId = null;
 
         try {
             $projectId = Airavata::createProject(Session::get('authz-token'), Config::get('pga_config.airavata')['gateway-id'], $project);
-
-            $add = array();
-            $revoke = array();
-
-            $share = json_decode($share);
-
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $this->share_project($projectId, $share);
-            }
 
             if ($projectId) {
                 CommonUtilities::print_success_message("<p>Project {$_POST['project-name']} created!</p>" .
@@ -135,6 +129,8 @@ class ProjectUtilities
         } catch (AiravataSystemException $ase) {
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
+
+        $this->share_project($projectId, ResourceType::Project, json_decode($share));
 
         return $projectId;
     }
@@ -293,18 +289,18 @@ class ProjectUtilities
                 $wrevoke[$user] = ResourcePermissionType::WRITE;
             }
 
-            GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::Project, $wadd);
-            GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType.Project::Project, $wrevoke);
-
             if ($perms['read']) {
                 $radd[$user] = ResourcePermissionType::READ;
             }
             else {
                 $rrevoke[$user] = ResourcePermissionType::READ;
             }
-
-            GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::Project, $radd);
-            GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType.Project::Project, $rrevoke);
         }
+
+        GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::Project, $wadd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType.Project::Project, $wrevoke);
+
+        GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::Project, $radd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType.Project::Project, $rrevoke);
     }
 }
