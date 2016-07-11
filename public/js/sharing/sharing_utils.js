@@ -70,7 +70,7 @@ var changeShareState = function($target) {
     if ($target.hasClass('share-box-users-item')) {
         console.log("Sharing");
         $target.find('.sharing-thumbnail-access').val('1').prop("disabled", false).show();
-        data.access.read = true;
+        data.currentaccess.read = true;
         $target.data(data);
         $target.find('.sharing-thumbnail-unshare').show();
         $target.detach().prependTo('#share-box-share').show();
@@ -79,8 +79,8 @@ var changeShareState = function($target) {
     else if ($target.hasClass('share-box-share-item')) {
         console.log("Revoking share");
         $target.find('select').val('0').prop("disabled", true).hide();
-        data.access.read = true;
-        data.access.write = true;
+        data.currentaccess.read = true;
+        data.currentaccess.write = true;
         $target.data(data);
         $target.find('.sharing-thumbnail-unshare').hide();
         $target.detach().appendTo('#share-box-users');
