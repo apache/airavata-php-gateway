@@ -294,10 +294,10 @@ class ProjectUtilities
             }
         }
 
-        GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::Project, $wadd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::Project, $wrevoke);
+        GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $wadd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::PROJECT, $wrevoke);
 
-        GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::Project, $radd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::Project, $rrevoke);
+        GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $radd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::PROJECT, $rrevoke);
     }
 }

@@ -1331,11 +1331,11 @@ class ExperimentUtilities
             }
         }
 
-        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::Experiment, $wadd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::Experiment, $wrevoke);
+        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $wadd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $wrevoke);
 
         GrouperUtilities::shareResourceWithUsers($expId, ResourceType::Experiment, $radd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::Experiment, $rrevoke);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
     }
 
 
