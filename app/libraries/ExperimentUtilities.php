@@ -21,6 +21,8 @@ use Airavata\Model\Data\Replica\DataReplicaLocationModel;
 use Airavata\Model\Data\Replica\ReplicaLocationCategory;
 use Airavata\Model\Data\Replica\ReplicaPersistentType;
 use Airavata\Model\Application\Io\InputDataObjectType;
+use Airavata\Model\Group\ResourceType;
+use Airavata\Model\Group\ResourcePermissionType;
 
 class ExperimentUtilities
 {
@@ -77,7 +79,7 @@ class ExperimentUtilities
 
         $optFilesHtml = "";
 
-        if( count( $experimentInputs) > 0 ) { 
+        if( count( $experimentInputs) > 0 ) {
             foreach ($experimentInputs as $input) {
                 $matchingAppInput = null;
                 if ($input->type == DataType::URI) {
@@ -788,6 +790,8 @@ class ExperimentUtilities
         $experiment = ExperimentUtilities::assemble_experiment();
         $expId = null;
 
+        $share = $_POST['share-settings'];
+
         try {
             if ($experiment) {
                 $expId = Airavata::createExperiment(Session::get('authz-token'), Session::get("gateway_id"), $experiment);
@@ -808,6 +812,8 @@ class ExperimentUtilities
         } catch (AiravataSystemException $ase) {
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
+
+        ExperimentUtilities::share_experiment($expId, json_decode($share));
 
         return $expId;
     }
@@ -932,14 +938,14 @@ class ExperimentUtilities
         if( is_object( $experiment->experimentStatus ) )
             $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus->state];
         else
-            $experimentStatusString = $experiment->experimentStatus; 
+            $experimentStatusString = $experiment->experimentStatus;
 
         $expVal["experimentStatusString"] = $experimentStatusString;
         if ( $experimentStatusString == ExperimentState::FAILED)
             $expVal["editable"] = false;
 
         $expVal["cancelable"] = false;
-        if ( $experimentStatusString == ExperimentState::LAUNCHED 
+        if ( $experimentStatusString == ExperimentState::LAUNCHED
             || $experimentStatusString == ExperimentState::EXECUTING)
             $expVal["cancelable"] = true;
 
@@ -1301,6 +1307,35 @@ class ExperimentUtilities
         }
 
         echo '</select>';
+    }
+
+    private static function share_experiment($expId, $users) {
+        $wadd = array();
+        $wrevoke = array();
+        $radd = array();
+        $rrevoke = array();
+
+        foreach ($users as $user => $perms) {
+            if ($perms['write']) {
+                $wadd[$user] = ResourcePermissionType::WRITE;
+            }
+            else {
+                $wrevoke[$user] = ResourcePermissionType::WRITE;
+            }
+
+            if ($perms['read']) {
+                $radd[$user] = ResourcePermissionType::READ;
+            }
+            else {
+                $rrevoke[$user] = ResourcePermissionType::READ;
+            }
+        }
+
+        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::Experiment, $wadd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::Experiment, $wrevoke);
+
+        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::Experiment, $radd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::Experiment, $rrevoke);
     }
 
 

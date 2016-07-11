@@ -106,9 +106,6 @@ class ProjectUtilities
         $project->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
 
         $share = $_POST['share-settings'];
-        $share = json_decode($share);
-        var_dump($share);
-        exit;
 
         $projectId = null;
 
@@ -298,9 +295,9 @@ class ProjectUtilities
         }
 
         GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::Project, $wadd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType.Project::Project, $wrevoke);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::Project, $wrevoke);
 
         GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::Project, $radd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType.Project::Project, $rrevoke);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::Project, $rrevoke);
     }
 }

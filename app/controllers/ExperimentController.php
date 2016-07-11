@@ -1,8 +1,6 @@
 <?php
 
 use Airavata\Model\Status\JobState;
-use Airavata\Model\Group\ResourceType;
-use Airavata\Model\Group\ResourcePermissionType;
 
 class ExperimentController extends BaseController
 {
@@ -27,7 +25,14 @@ class ExperimentController extends BaseController
     public function createView()
     {
         Session::forget('exp_create_continue');
-        return View::make('experiment/create');
+        $uids = GrouperUtilities::getAllGatewayUsers();
+        $users = array();
+        foreach ($uids as $uid) {
+            if (WSIS::usernameExists($uid)) {
+                $users[$uid] = WSIS::getUserProfile($uid);
+            }
+        }
+        return View::make('experiment/create', array("users" => json_encode($users)));
     }
 
     public function createSubmit()
@@ -54,7 +59,7 @@ class ExperimentController extends BaseController
             if( $serverLimit < $allowedFileSize)
                 $allowedFileSize = $serverLimit;
 
-            
+
             $experimentInputs = array(
                 "clonedExp" => $clonedExp,
                 "savedExp" => $savedExp,
@@ -114,7 +119,7 @@ class ExperimentController extends BaseController
             else
                 Session::forget("permissionDenied");
 
-        
+
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
@@ -129,7 +134,7 @@ class ExperimentController extends BaseController
                 }
             }
             $expVal["jobDetails"] = $jobDetails;
-            
+
             $data = array(
                 "expId" => Input::get("expId"),
                 "experiment" => $experiment,
