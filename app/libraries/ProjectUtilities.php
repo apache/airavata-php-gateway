@@ -127,7 +127,7 @@ class ProjectUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        ProjectUtilities::share_project($projectId, ResourceType::Project, json_decode($share));
+        ProjectUtilities::share_project($projectId, json_decode($share));
 
         return $projectId;
     }
