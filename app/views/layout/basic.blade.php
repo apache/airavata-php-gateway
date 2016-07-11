@@ -66,13 +66,6 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 	margin-top: 20px;
 }
 </style>
-@if( isset( $theme))
-<footer class="theme-footer">
-{{ $theme->partial("footer") }}
-</footer>
-@endif
-
-</body>
 
 @show
 
@@ -140,5 +133,14 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 @endif
 <!-- end google analytics --> 
 @show
+
+
+@if( isset( $theme))
+<footer class="theme-footer">
+{{ $theme->partial("footer") }}
+</footer>
+@endif
+
+</body>
 
 </html>

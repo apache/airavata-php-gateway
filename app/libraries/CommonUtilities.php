@@ -180,6 +180,8 @@ class CommonUtilities
             echo '</ul>
         </li>';
         }
+        if( count( $menus) == 0)
+            echo '<li class="brand-logo"></li>';
 
         $active = "";
         if(Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
