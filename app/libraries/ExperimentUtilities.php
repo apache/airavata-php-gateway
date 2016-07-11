@@ -1316,14 +1316,14 @@ class ExperimentUtilities
         $rrevoke = array();
 
         foreach ($users as $user => $perms) {
-            if ($perms['write']) {
+            if ($perms->write) {
                 $wadd[$user] = ResourcePermissionType::WRITE;
             }
             else {
                 $wrevoke[$user] = ResourcePermissionType::WRITE;
             }
 
-            if ($perms['read']) {
+            if ($perms->read) {
                 $radd[$user] = ResourcePermissionType::READ;
             }
             else {
