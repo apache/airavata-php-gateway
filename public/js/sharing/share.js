@@ -98,61 +98,11 @@ $(function() {
 
     /* Share box functions */
 
-    /**
-     * Create the popup containing sharing functionality
-     *
-     * @param id The id of the resource being shared
-     * @return The share box JQuery element.
-     */
-    var createShareBox = function(resource_id) {
-        var $share_box, $user_section, $share_section, $button_section;
-        if (($('#share-box')).length === 0) {
-            $share_box = $('<div id="share-box" class="modal-fade" tabindex="-1" role="dialog"> \
-                <div class="modal-dialog modal-lg"> \
-                    <div class="modal-content"> \
-                        <div class="modal-header"> \
-                            <button type="button" id="share-box-x" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> \
-                            <h3 class="modal-title">Share this project</h3> \
-                        </div> \
-                        <div class="modal-body"> \
-                            <label>Click on the users you would like to share with.</label> \
-                            <input id="share-box-filter" class="form-control" type="text" placeholder="Filter the user list" /> \
-                            <label>Show</label>' //\
-                            // <div id="show-results-group" class="btn-group" role="group" aria-label="Show Groups or Users">\
-                            //     <button type="button" class="show-groups show-results-btn btn btn-primary">Groups</button> \
-                            //     <button type="button" class="show-users show-results-btn btn btn-default">Users</button> \
-                            // </div> \
-                            + '<label>Order By</label> \
-                            <select class="order-results-selector"> \
-                                <option value="username">Username</option> \
-                                <option value="firstlast">First, Last Name</option> \
-                                <option value="lastfirst">Last, First Name</option> \
-                                <option value="email">Email</option> \
-                            </select> \
-                            <ul id="share-box-users" class="form-control"></ul> \
-                            <label>Set permissions with the drop-down menu on each user, or click the x to cancel sharing.</label> \
-                            <ul id="share-box-share" class="form-control"></ul> \
-                        </div> \
-                        <div class="modal-footer"> \
-                            <button type="button" id="share-box-button" class="btn btn-primary">Save</button> \
-                            <button type="button" id="share-box-close" class="btn btn-default" data-dismiss="modal">Cancel</button> \
-                        </div> \
-                    </div> \
-                </div> \
-            </div>');
-
-            if (resource_id) {
-                $share_box.data({'resource_id': resource_id});
-            }
-        }
-        return $share_box;
-    }
-
     var createTestData = function () {
         var $users, $share, $user, data, access;
 
         $users = $('#share-box-users');
-        $share = $('#share-box-share');
+        $share = $('#shared-users');
 
         for (var user in users) {
             if (users.hasOwnProperty(user)) {
@@ -167,9 +117,16 @@ $(function() {
                     }
                 }
                 $user = createThumbnail(user, data.firstname, data.lastname, data.email, access);
+
                 $user.addClass('user-thumbnail');
-                $user.addClass('share-box-users-item');
-                $users.append($user);
+                if (access == access_enum.NONE) {
+                    $user.addClass('share-box-users-item');
+                    $users.append($user);
+                }
+                else {
+                    $user.addClass('share-box-share-item');
+                    $share.append($user);
+                }
             }
         }
 
@@ -385,6 +342,5 @@ $(function() {
 
 
     /* Set up the sharing interface */
-    createShareBox();
     createTestData();
 });

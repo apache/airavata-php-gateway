@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/sharing.css') }}
 @stop
 
 @section('content')
@@ -19,7 +20,7 @@
     </h1>
     <div>
         <div>
-            <h3>{{ $project->name }} 
+            <h3>{{ $project->name }}
                 <a href="edit?projId={{ $project->projectID }}" title="Edit">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
@@ -39,13 +40,13 @@
                     <th>Job Status</th>
 
                 </tr>
-                <?php 
+                <?php
 
                 foreach ($experiments as $experiment) {
                     $expValues = ExperimentUtilities::get_experiment_values($experiment, true);
                     $expValues["jobState"] = ExperimentUtilities::get_job_status($experiment);
                     $applicationInterface = AppUtilities::get_application_interface($experiment->executionId);
-                    
+
                     try {
                         $cr = CRUtilities::get_compute_resource($experiment->userConfigurationData->computationalResourceScheduling->resourceHostId);
                         if (!empty($cr)) {
@@ -57,9 +58,9 @@
                     ?>
 
                 <tr>
-                    <td> 
+                    <td>
                         <a href="{{URL::to('/')}}/experiment/summary?expId={{$experiment->experimentId}}">
-                        {{ $experiment->experimentName }} 
+                        {{ $experiment->experimentName }}
                         </a>
                         @if( $expValues['editable'])
                             <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
@@ -96,10 +97,18 @@
             </table>
         </div>
     </div>
+    <div style="margin-top: 10%;">
+        @include('partials/sharing-display-body', array('form' => false))
+    </div>
 </div>
 
 @stop
 @section('scripts')
 @parent
 {{ HTML::script('js/time-conversion.js')}}
+<script>
+    var users = {{ $users }};
+</script>
+{{ HTML::script('js/sharing/sharing_utils.js') }}
+{{ HTML::script('js/sharing/share.js') }}
 @stop

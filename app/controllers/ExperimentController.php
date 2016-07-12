@@ -25,13 +25,7 @@ class ExperimentController extends BaseController
     public function createView()
     {
         Session::forget('exp_create_continue');
-        $uids = GrouperUtilities::getAllGatewayUsers();
-        $users = array();
-        foreach ($uids as $uid) {
-            if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
-                $users[$uid] = WSIS::getUserProfile($uid);
-            }
-        }
+        $users = SharingUtilities::getAllUserProfiles();
         return View::make('experiment/create', array("users" => json_encode($users)));
     }
 
@@ -249,7 +243,10 @@ class ExperimentController extends BaseController
             'cloning' => true,
             'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
         );
-        return View::make("experiment/edit", array("expInputs" => $experimentInputs));
+
+        $users = SharingUtilities::getAllUserProfiles($_GET['expId'], ResourceType::EXPERIMENT);
+
+        return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => $users));
     }
 
     public function cloneExperiment()

@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/sharing.css') }}
 @stop
 
 @section('content')
@@ -37,6 +38,10 @@
             <input type="hidden" name="projectId" value="{{ Input::get('projId') }}"/>
         </div>
 
+        <div class="form-group">
+            @include('partials/sharing-display-body', array('form' => true))
+        </div>
+
         <div class="btn-toolbar">
             <input name="save" type="submit" class="btn" value="Save">
         </div>
@@ -47,4 +52,15 @@
 
 </div>
 
+@include('partials/sharing-form-modal')
+
+@stop
+
+@section('scripts')
+@parent
+<script>
+    var users = {{ $users }};
+</script>
+{{ HTML::script('js/sharing/sharing_utils.js') }}
+{{ HTML::script('js/sharing/share.js') }}
 @stop

@@ -19,6 +19,13 @@ class GroupController extends BaseController {
         // TODO: Create the new group
         // TODO: Get users to add
         // TODO: Update membership of users in list
+        if (isset($_POST['save'])) {
+            $groupId = GroupUtilities::create_group();
+            return Redirect::to('group/summary?groupId=' . $groupId);
+        }
+        else {
+            return Redirect::to('group/create');
+        }
     }
 
     public function editSubmit()
@@ -34,13 +41,14 @@ class GroupController extends BaseController {
         // TODO: If not a member, load a page that says they cannot see the group
         // TODO: If a standard member, display group name, description, members, projects(?) and experiments (?)
         // TODO: If owner, display buttons to allow adding and removing members
+        if (Input::has('groupId')) {
+            Session::put('groupId', Input::get('groupId'));
+            return View::make('group/summary', array('groupId' => $groupId));
+        }
+        else {
+            return Redirect::to('home');
+        }
     }
-
-    protected function updateMembership() {
-        // TODO: Get users to update
-        // TODO: Update membership for selected users
-    }
-
 }
 
 ?>

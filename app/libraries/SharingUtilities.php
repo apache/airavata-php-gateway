@@ -94,8 +94,9 @@ class SharingUtilities {
         $perms = SharingUtilities::getAllUserPermissions($resourceId, $dataResourceType);
         $profs = SharingUtilities::getUserProfiles(array_keys($perms));
 
-        foreach ($profs as $uid) {
-            $profs[$uid]['access'] = $perms[$uid];
+        foreach ($profs as $uid => $prof) {
+            $prof["access"] = $perms[$uid];
+            $profs[$uid] = $prof;
         }
 
         return $profs;
@@ -109,7 +110,7 @@ class SharingUtilities {
      * @return An array [uid => [firstname => string, lastname => string, email => string]] of all users without access
      */
     public static function getProfilesForUnsharedUsers($resourceId, $dataResourceType) {
-        $users = GrouperUtilities::getAllUsersInGateway();
+        $users = GrouperUtilities::getAllGatewayUsers();
         $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
 
         $unshared = array_diff_key($users, $read);
@@ -127,7 +128,7 @@ class SharingUtilities {
      *         with access only defined for users with permissions.
      */
     public static function getAllUserProfiles($resourceId=null, $dataResourceType=null) {
-        $profs = SharingUtilities::getUserProfiles(GrouperUtilities::getAllUsersInGateway());
+        $profs = SharingUtilities::getUserProfiles(GrouperUtilities::getAllGatewayUsers());
         if ($resourceId) {
             $perms = SharingUtilities::getAllUserPermissions($resourceId, $dataResourceType);
 

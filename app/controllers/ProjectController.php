@@ -1,6 +1,6 @@
 <?php
 
-
+use Airavata\Model\Group\ResourceType;
 
 class ProjectController extends BaseController
 {
@@ -25,15 +25,9 @@ class ProjectController extends BaseController
 
     public function createView()
     {
-        $uids = GrouperUtilities::getAllGatewayUsers();
-        $users = array();
-        foreach ($uids as $uid) {
-            if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
-                $users[$uid] = WSIS::getUserProfile($uid);
-            }
-        }
+        $users = SharingUtilities::getAllUserProfiles();
         //var_dump($users);exit;
-        return View::make("project/create", array("users" => json_encode($users), "shared" => array()));
+        return View::make("project/create", array("users" => json_encode($users)));
     }
 
     public function createSubmit()
@@ -50,8 +44,11 @@ class ProjectController extends BaseController
     {
         if (Input::has("projId")) {
             Session::put("projId", Input::get("projId"));
+
+            $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
+
             return View::make("project/summary",
-                array("projectId" => Input::get("projId")));
+                array("projectId" => Input::get("projId"), "users" => json_encode($users)));
         } else
             return Redirect::to("home");
     }
@@ -59,9 +56,12 @@ class ProjectController extends BaseController
     public function editView()
     {
         if (Input::has("projId")) {
+            $users = SharingUtilities::getAllUserProfiles(Input::get('projId'), ResourceType::PROJECT);
+
             return View::make("project/edit",
                 array("projectId" => Input::get("projId"),
-                    "project" => ProjectUtilities::get_project($_GET['projId'])
+                    "project" => ProjectUtilities::get_project($_GET['projId']),
+                     "users" => json_encode($users)
                 ));
         } else
             return Redirect::to("home");
@@ -110,6 +110,33 @@ class ProjectController extends BaseController
         ));
     }
 
+    /**
+     * Generate JSON containing permissions information for this project.
+     *
+     * This function retrieves the user profile and permissions for every user
+     * other than the client that has access to the project. In the event that
+     * the project does not exist, return an error message.
+     */
+    public function sharedUsers()
+    {
+        $response = array();
+        if (Input::has('projId')) {
+            return Response::json(SharingUtilities::getProfilesForSharedUsers());
+        }
+        else {
+            return Response::json(array("error" => "Error: No project specified"));
+        }
+    }
+
+    public function unsharedUsers()
+    {
+        if (Input::has('projId')) {
+            return Response::json(SharingUtilities::getProfilesForUnsharedUsers);
+        }
+        else {
+            return Response::json(array("error" => "Error: No project specified"));
+        }
+    }
 }
 
 ?>
