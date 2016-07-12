@@ -28,7 +28,7 @@ class ExperimentController extends BaseController
         $uids = GrouperUtilities::getAllGatewayUsers();
         $users = array();
         foreach ($uids as $uid) {
-            if (WSIS::usernameExists($uid)) {
+            if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
                 $users[$uid] = WSIS::getUserProfile($uid);
             }
         }
@@ -78,7 +78,21 @@ class ExperimentController extends BaseController
                 "allowedFileSize" => $allowedFileSize
             );
 
-            return View::make("experiment/create-complete", array("expInputs" => $experimentInputs));
+            $s_users = json_decode($_POST['share-settings']);
+
+            $uids = GrouperUtilities::getAllGatewayUsers();
+            $users = array();
+            foreach ($uids as $uid) {
+                if (WSIS::usernameExists($uid) && $uid !== Session::get('username')) {
+                    $users[$uid] = WSIS::getUserProfile($uid);
+                }
+            }
+
+            foreach ($s_users as $uid => $perms) {
+                $users[$uid]['access'] = $perms;
+            }
+
+            return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
             $expId = ExperimentUtilities::create_experiment();
 

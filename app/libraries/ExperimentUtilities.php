@@ -1309,6 +1309,11 @@ class ExperimentUtilities
         echo '</select>';
     }
 
+    /**
+     * Set sharing privileges for a given experiment.
+     * @param $expId
+     * @param $users A map of username => {read_permission, write_permission}
+     */
     private static function share_experiment($expId, $users) {
         $wadd = array();
         $wrevoke = array();

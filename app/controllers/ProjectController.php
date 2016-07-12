@@ -28,12 +28,12 @@ class ProjectController extends BaseController
         $uids = GrouperUtilities::getAllGatewayUsers();
         $users = array();
         foreach ($uids as $uid) {
-            if (WSIS::usernameExists($uid)) {
+            if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
                 $users[$uid] = WSIS::getUserProfile($uid);
             }
         }
         //var_dump($users);exit;
-        return View::make("project/create", array("users" => json_encode($users)));
+        return View::make("project/create", array("users" => json_encode($users), "shared" => array()));
     }
 
     public function createSubmit()

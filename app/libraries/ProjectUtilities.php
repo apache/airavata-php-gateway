@@ -272,6 +272,11 @@ class ProjectUtilities
         return $projects;
     }
 
+    /**
+     * Set sharing settings for a given project.
+     * @param projectId
+     * @param $users A map of username => {read_permission, write_permission}
+     */
     private static function share_project($projectId, $users) {
         $wadd = array();
         $wrevoke = array();

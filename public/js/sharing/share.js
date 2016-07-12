@@ -149,7 +149,7 @@ $(function() {
     }
 
     var createTestData = function () {
-        var $users, $share, $user, data;
+        var $users, $share, $user, data, access;
 
         $users = $('#share-box-users');
         $share = $('#share-box-share');
@@ -157,7 +157,16 @@ $(function() {
         for (var user in users) {
             if (users.hasOwnProperty(user)) {
                 data = users[user];
-                $user = createThumbnail(user, data.firstname, data.lastname, data.email, access_enum.NONE);
+                access = access_enum.NONE;
+                if (data.hasOwnProperty(access)) {
+                    if (data.access.write) {
+                        access = access_enum.WRITE;
+                    }
+                    else if (data.access.read) {
+                        access = access_enu.READ;
+                    }
+                }
+                $user = createThumbnail(user, data.firstname, data.lastname, data.email, access);
                 $user.addClass('user-thumbnail');
                 $user.addClass('share-box-users-item');
                 $users.append($user);
