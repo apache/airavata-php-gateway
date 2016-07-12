@@ -305,25 +305,4 @@ class ProjectUtilities
         GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $radd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::PROJECT, $rrevoke);
     }
-
-    /**
-     * Retrieve the user sharing permissions for a project.
-     * @param $projectId
-     * @return An array of [uid => [read => bool, write => bool] indicating the permissions for each user with read or write access.
-     */
-    public static function get_sharing_settings($projectId) {
-        $read = GrouperUtilities::getAllAccessibleUsers($projectId, ResourceType::PROJECT, ResourcePermissionType::READ);
-        $write = GrouperUtilities::getAllAccessibleUsers($projectId, ResourceType::PROJECT, ResourcePermissionType::WRITE);
-
-        $share = array();
-        foreach($read as $uid) {
-            $share[$uid] = array("read" => true, "write" => false);
-        }
-
-        foreach($write as $uid) {
-            $share[$uid]["write"] = true;
-        }
-
-        return $share;
-    }
 }

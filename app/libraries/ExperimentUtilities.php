@@ -1342,25 +1342,4 @@ class ExperimentUtilities
         GrouperUtilities::shareResourceWithUsers($expId, ResourceType::Experiment, $radd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
     }
-
-    /**
-     * Retrieve the user sharing permissions for a project.
-     * @param $expId
-     * @return An array of [uid => [read => bool, write => bool] indicating the permissions for each user with read or write access.
-     */
-    public static function get_sharing_settings($expId) {
-        $read = GrouperUtilities::getAllAccessibleUsers($expId, ResourceType::PROJECT, ResourcePermissionType::READ);
-        $write = GrouperUtilities::getAllAccessibleUsers($expId, ResourceType::PROJECT, ResourcePermissionType::WRITE);
-
-        $share = array();
-        foreach($read as $uid) {
-            $share[$uid] = array("read" => true, "write" => false);
-        }
-
-        foreach($write as $uid) {
-            $share[$uid]["write"] = true;
-        }
-
-        return $share;
-    }
 }
