@@ -74,4 +74,68 @@ class GrouperUtilities
 
         return $userList;
     }
+
+    /**
+     * @param $group            Airavata/Model/Group/GrouoModel
+     */
+    public static function createGroup($group){
+        if (strpos($group->ownerId, '@') !== false) {
+            $parts = explode('@', $group->ownerId);
+            $group->ownerId = $parts[0] . "@" . Config::get('pga_config.airavata')['gateway-id'];
+        }else{
+            $group->ownerId = $group->ownerId . "@" . Config::get('pga_config.airavata')['gateway-id'];
+        }
+        Airavata::createGroup(Session::get('authz-token'),$group);
+    }
+
+
+    /**
+     * @param $group            Airavata/Model/Group/GrouoModel
+     */
+    public static function updateGroup($group){
+        if (strpos($group->ownerId, '@') !== false) {
+            $parts = explode('@', $group->ownerId);
+            $group->ownerId = $parts[0] . "@" . Config::get('pga_config.airavata')['gateway-id'];
+        }else{
+            $group->ownerId = $group->ownerId . "@" . Config::get('pga_config.airavata')['gateway-id'];
+        }
+        Airavata::updateGroup(Session::get('authz-token'),$group);
+    }
+
+
+    /**
+     * @param $groupId
+     * @param $ownerName
+     */
+    public static function deleteGroup($groupId, $ownerName){
+        if (strpos($ownerName, '@') !== false) {
+            $parts = explode('@', $ownerName);
+            $ownerName = $parts[0];
+        }
+
+        Airavata::deleteGroup(Session::get('authz-token'), $groupId, $ownerName, Config::get('pga_config.airavata')['gateway-id']);
+    }
+
+    /**
+     * @param $groupId
+     */
+    public static function getGroup($groupId){
+        return Airavata::getGroup(Session::get('authz-token'),$groupId);
+    }
+
+
+    /**
+     * @param $userName
+     * @return mixed
+     */
+    public static function getAllGroupsUserBelongs($userName){
+        if (strpos($userName, '@') !== false) {
+            $parts = explode('@', $userName);
+            $userName = $parts[0];
+        }
+
+        return Airavata::getAllGroupsUserBelongs(Session::get('authz-token'), $userName,
+            Config::get('pga_config.airavata')['gateway-id']);
+    }
+
 }
