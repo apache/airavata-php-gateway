@@ -17,6 +17,19 @@ use Thrift\Protocol\TBinaryProtocolAccelerated;
 use Thrift\Exception\TApplicationException;
 
 
+final class GatewayApprovalStatus {
+  const REQUESTED = 0;
+  const APPROVED = 1;
+  const ACTIVE = 2;
+  const DEACTIVATED = 3;
+  static public $__names = array(
+    0 => 'REQUESTED',
+    1 => 'APPROVED',
+    2 => 'ACTIVE',
+    3 => 'DEACTIVATED',
+  );
+}
+
 final class NotificationPriority {
   const LOW = 0;
   const NORMAL = 1;
@@ -140,10 +153,6 @@ class Project {
   /**
    * @var string
    */
-  public $gatewayId = null;
-  /**
-   * @var string
-   */
   public $name = null;
   /**
    * @var string
@@ -174,22 +183,18 @@ class Project {
           'type' => TType::STRING,
           ),
         3 => array(
-          'var' => 'gatewayId',
-          'type' => TType::STRING,
-          ),
-        4 => array(
           'var' => 'name',
           'type' => TType::STRING,
           ),
-        5 => array(
+        4 => array(
           'var' => 'description',
           'type' => TType::STRING,
           ),
-        6 => array(
+        5 => array(
           'var' => 'creationTime',
           'type' => TType::I64,
           ),
-        7 => array(
+        6 => array(
           'var' => 'sharedUsers',
           'type' => TType::LST,
           'etype' => TType::STRING,
@@ -197,7 +202,7 @@ class Project {
             'type' => TType::STRING,
             ),
           ),
-        8 => array(
+        7 => array(
           'var' => 'sharedGroups',
           'type' => TType::LST,
           'etype' => TType::STRING,
@@ -213,9 +218,6 @@ class Project {
       }
       if (isset($vals['owner'])) {
         $this->owner = $vals['owner'];
-      }
-      if (isset($vals['gatewayId'])) {
-        $this->gatewayId = $vals['gatewayId'];
       }
       if (isset($vals['name'])) {
         $this->name = $vals['name'];
@@ -270,33 +272,26 @@ class Project {
           break;
         case 3:
           if ($ftype == TType::STRING) {
-            $xfer += $input->readString($this->gatewayId);
+            $xfer += $input->readString($this->name);
           } else {
             $xfer += $input->skip($ftype);
           }
           break;
         case 4:
           if ($ftype == TType::STRING) {
-            $xfer += $input->readString($this->name);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        case 5:
-          if ($ftype == TType::STRING) {
             $xfer += $input->readString($this->description);
           } else {
             $xfer += $input->skip($ftype);
           }
           break;
-        case 6:
+        case 5:
           if ($ftype == TType::I64) {
             $xfer += $input->readI64($this->creationTime);
           } else {
             $xfer += $input->skip($ftype);
           }
           break;
-        case 7:
+        case 6:
           if ($ftype == TType::LST) {
             $this->sharedUsers = array();
             $_size0 = 0;
@@ -313,7 +308,7 @@ class Project {
             $xfer += $input->skip($ftype);
           }
           break;
-        case 8:
+        case 7:
           if ($ftype == TType::LST) {
             $this->sharedGroups = array();
             $_size6 = 0;
@@ -353,23 +348,18 @@ class Project {
       $xfer += $output->writeString($this->owner);
       $xfer += $output->writeFieldEnd();
     }
-    if ($this->gatewayId !== null) {
-      $xfer += $output->writeFieldBegin('gatewayId', TType::STRING, 3);
-      $xfer += $output->writeString($this->gatewayId);
-      $xfer += $output->writeFieldEnd();
-    }
     if ($this->name !== null) {
-      $xfer += $output->writeFieldBegin('name', TType::STRING, 4);
+      $xfer += $output->writeFieldBegin('name', TType::STRING, 3);
       $xfer += $output->writeString($this->name);
       $xfer += $output->writeFieldEnd();
     }
     if ($this->description !== null) {
-      $xfer += $output->writeFieldBegin('description', TType::STRING, 5);
+      $xfer += $output->writeFieldBegin('description', TType::STRING, 4);
       $xfer += $output->writeString($this->description);
       $xfer += $output->writeFieldEnd();
     }
     if ($this->creationTime !== null) {
-      $xfer += $output->writeFieldBegin('creationTime', TType::I64, 6);
+      $xfer += $output->writeFieldBegin('creationTime', TType::I64, 5);
       $xfer += $output->writeI64($this->creationTime);
       $xfer += $output->writeFieldEnd();
     }
@@ -377,7 +367,7 @@ class Project {
       if (!is_array($this->sharedUsers)) {
         throw new TProtocolException('Bad type in structure.', TProtocolException::INVALID_DATA);
       }
-      $xfer += $output->writeFieldBegin('sharedUsers', TType::LST, 7);
+      $xfer += $output->writeFieldBegin('sharedUsers', TType::LST, 6);
       {
         $output->writeListBegin(TType::STRING, count($this->sharedUsers));
         {
@@ -394,7 +384,7 @@ class Project {
       if (!is_array($this->sharedGroups)) {
         throw new TProtocolException('Bad type in structure.', TProtocolException::INVALID_DATA);
       }
-      $xfer += $output->writeFieldBegin('sharedGroups', TType::LST, 8);
+      $xfer += $output->writeFieldBegin('sharedGroups', TType::LST, 7);
       {
         $output->writeListBegin(TType::STRING, count($this->sharedGroups));
         {
@@ -420,75 +410,36 @@ class User {
   /**
    * @var string
    */
-  public $airavataInternalUserId = "DO_NOT_SET_AT_CLIENTS";
-  /**
-   * @var string
-   */
   public $userName = null;
   /**
-   * @var string
+   * @var \Airavata\Model\Workspace\Group[]
    */
-  public $gatewayId = null;
-  /**
-   * @var string
-   */
-  public $firstName = null;
-  /**
-   * @var string
-   */
-  public $lastName = null;
-  /**
-   * @var string
-   */
-  public $email = null;
+  public $groupList = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
       self::$_TSPEC = array(
         1 => array(
-          'var' => 'airavataInternalUserId',
-          'type' => TType::STRING,
-          ),
-        2 => array(
           'var' => 'userName',
           'type' => TType::STRING,
           ),
-        3 => array(
-          'var' => 'gatewayId',
-          'type' => TType::STRING,
-          ),
-        4 => array(
-          'var' => 'firstName',
-          'type' => TType::STRING,
-          ),
-        5 => array(
-          'var' => 'lastName',
-          'type' => TType::STRING,
-          ),
-        6 => array(
-          'var' => 'email',
-          'type' => TType::STRING,
+        2 => array(
+          'var' => 'groupList',
+          'type' => TType::LST,
+          'etype' => TType::STRUCT,
+          'elem' => array(
+            'type' => TType::STRUCT,
+            'class' => '\Airavata\Model\Workspace\Group',
+            ),
           ),
         );
     }
     if (is_array($vals)) {
-      if (isset($vals['airavataInternalUserId'])) {
-        $this->airavataInternalUserId = $vals['airavataInternalUserId'];
-      }
       if (isset($vals['userName'])) {
         $this->userName = $vals['userName'];
       }
-      if (isset($vals['gatewayId'])) {
-        $this->gatewayId = $vals['gatewayId'];
-      }
-      if (isset($vals['firstName'])) {
-        $this->firstName = $vals['firstName'];
-      }
-      if (isset($vals['lastName'])) {
-        $this->lastName = $vals['lastName'];
-      }
-      if (isset($vals['email'])) {
-        $this->email = $vals['email'];
+      if (isset($vals['groupList'])) {
+        $this->groupList = $vals['groupList'];
       }
     }
   }
@@ -514,42 +465,25 @@ class User {
       {
         case 1:
           if ($ftype == TType::STRING) {
-            $xfer += $input->readString($this->airavataInternalUserId);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        case 2:
-          if ($ftype == TType::STRING) {
             $xfer += $input->readString($this->userName);
           } else {
             $xfer += $input->skip($ftype);
           }
           break;
-        case 3:
-          if ($ftype == TType::STRING) {
-            $xfer += $input->readString($this->gatewayId);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        case 4:
-          if ($ftype == TType::STRING) {
-            $xfer += $input->readString($this->firstName);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        case 5:
-          if ($ftype == TType::STRING) {
-            $xfer += $input->readString($this->lastName);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        case 6:
-          if ($ftype == TType::STRING) {
-            $xfer += $input->readString($this->email);
+        case 2:
+          if ($ftype == TType::LST) {
+            $this->groupList = array();
+            $_size14 = 0;
+            $_etype17 = 0;
+            $xfer += $input->readListBegin($_etype17, $_size14);
+            for ($_i18 = 0; $_i18 < $_size14; ++$_i18)
+            {
+              $elem19 = null;
+              $elem19 = new \Airavata\Model\Workspace\Group();
+              $xfer += $elem19->read($input);
+              $this->groupList []= $elem19;
+            }
+            $xfer += $input->readListEnd();
           } else {
             $xfer += $input->skip($ftype);
           }
@@ -567,34 +501,26 @@ class User {
   public function write($output) {
     $xfer = 0;
     $xfer += $output->writeStructBegin('User');
-    if ($this->airavataInternalUserId !== null) {
-      $xfer += $output->writeFieldBegin('airavataInternalUserId', TType::STRING, 1);
-      $xfer += $output->writeString($this->airavataInternalUserId);
-      $xfer += $output->writeFieldEnd();
-    }
     if ($this->userName !== null) {
-      $xfer += $output->writeFieldBegin('userName', TType::STRING, 2);
+      $xfer += $output->writeFieldBegin('userName', TType::STRING, 1);
       $xfer += $output->writeString($this->userName);
       $xfer += $output->writeFieldEnd();
     }
-    if ($this->gatewayId !== null) {
-      $xfer += $output->writeFieldBegin('gatewayId', TType::STRING, 3);
-      $xfer += $output->writeString($this->gatewayId);
-      $xfer += $output->writeFieldEnd();
-    }
-    if ($this->firstName !== null) {
-      $xfer += $output->writeFieldBegin('firstName', TType::STRING, 4);
-      $xfer += $output->writeString($this->firstName);
-      $xfer += $output->writeFieldEnd();
-    }
-    if ($this->lastName !== null) {
-      $xfer += $output->writeFieldBegin('lastName', TType::STRING, 5);
-      $xfer += $output->writeString($this->lastName);
-      $xfer += $output->writeFieldEnd();
-    }
-    if ($this->email !== null) {
-      $xfer += $output->writeFieldBegin('email', TType::STRING, 6);
-      $xfer += $output->writeString($this->email);
+    if ($this->groupList !== null) {
+      if (!is_array($this->groupList)) {
+        throw new TProtocolException('Bad type in structure.', TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('groupList', TType::LST, 2);
+      {
+        $output->writeListBegin(TType::STRUCT, count($this->groupList));
+        {
+          foreach ($this->groupList as $iter20)
+          {
+            $xfer += $iter20->write($output);
+          }
+        }
+        $output->writeListEnd();
+      }
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
@@ -612,6 +538,10 @@ class Gateway {
    */
   public $gatewayId = null;
   /**
+   * @var int
+   */
+  public $gatewayApprovalStatus = null;
+  /**
    * @var string
    */
   public $gatewayName = null;
@@ -623,6 +553,22 @@ class Gateway {
    * @var string
    */
   public $emailAddress = null;
+  /**
+   * @var string
+   */
+  public $gatewayAcronym = null;
+  /**
+   * @var string
+   */
+  public $gatewayURL = null;
+  /**
+   * @var string
+   */
+  public $gatewayPublicAbstract = null;
+  /**
+   * @var string
+   */
+  public $reviewProposalDescription = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -632,15 +578,35 @@ class Gateway {
           'type' => TType::STRING,
           ),
         2 => array(
+          'var' => 'gatewayApprovalStatus',
+          'type' => TType::I32,
+          ),
+        3 => array(
           'var' => 'gatewayName',
           'type' => TType::STRING,
           ),
-        3 => array(
+        4 => array(
           'var' => 'domain',
           'type' => TType::STRING,
           ),
-        4 => array(
+        5 => array(
           'var' => 'emailAddress',
+          'type' => TType::STRING,
+          ),
+        6 => array(
+          'var' => 'gatewayAcronym',
+          'type' => TType::STRING,
+          ),
+        7 => array(
+          'var' => 'gatewayURL',
+          'type' => TType::STRING,
+          ),
+        8 => array(
+          'var' => 'gatewayPublicAbstract',
+          'type' => TType::STRING,
+          ),
+        9 => array(
+          'var' => 'reviewProposalDescription',
           'type' => TType::STRING,
           ),
         );
@@ -648,6 +614,9 @@ class Gateway {
     if (is_array($vals)) {
       if (isset($vals['gatewayId'])) {
         $this->gatewayId = $vals['gatewayId'];
+      }
+      if (isset($vals['gatewayApprovalStatus'])) {
+        $this->gatewayApprovalStatus = $vals['gatewayApprovalStatus'];
       }
       if (isset($vals['gatewayName'])) {
         $this->gatewayName = $vals['gatewayName'];
@@ -657,6 +626,18 @@ class Gateway {
       }
       if (isset($vals['emailAddress'])) {
         $this->emailAddress = $vals['emailAddress'];
+      }
+      if (isset($vals['gatewayAcronym'])) {
+        $this->gatewayAcronym = $vals['gatewayAcronym'];
+      }
+      if (isset($vals['gatewayURL'])) {
+        $this->gatewayURL = $vals['gatewayURL'];
+      }
+      if (isset($vals['gatewayPublicAbstract'])) {
+        $this->gatewayPublicAbstract = $vals['gatewayPublicAbstract'];
+      }
+      if (isset($vals['reviewProposalDescription'])) {
+        $this->reviewProposalDescription = $vals['reviewProposalDescription'];
       }
     }
   }
@@ -688,22 +669,57 @@ class Gateway {
           }
           break;
         case 2:
-          if ($ftype == TType::STRING) {
-            $xfer += $input->readString($this->gatewayName);
+          if ($ftype == TType::I32) {
+            $xfer += $input->readI32($this->gatewayApprovalStatus);
           } else {
             $xfer += $input->skip($ftype);
           }
           break;
         case 3:
           if ($ftype == TType::STRING) {
-            $xfer += $input->readString($this->domain);
+            $xfer += $input->readString($this->gatewayName);
           } else {
             $xfer += $input->skip($ftype);
           }
           break;
         case 4:
           if ($ftype == TType::STRING) {
+            $xfer += $input->readString($this->domain);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 5:
+          if ($ftype == TType::STRING) {
             $xfer += $input->readString($this->emailAddress);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 6:
+          if ($ftype == TType::STRING) {
+            $xfer += $input->readString($this->gatewayAcronym);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 7:
+          if ($ftype == TType::STRING) {
+            $xfer += $input->readString($this->gatewayURL);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 8:
+          if ($ftype == TType::STRING) {
+            $xfer += $input->readString($this->gatewayPublicAbstract);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 9:
+          if ($ftype == TType::STRING) {
+            $xfer += $input->readString($this->reviewProposalDescription);
           } else {
             $xfer += $input->skip($ftype);
           }
@@ -726,19 +742,44 @@ class Gateway {
       $xfer += $output->writeString($this->gatewayId);
       $xfer += $output->writeFieldEnd();
     }
+    if ($this->gatewayApprovalStatus !== null) {
+      $xfer += $output->writeFieldBegin('gatewayApprovalStatus', TType::I32, 2);
+      $xfer += $output->writeI32($this->gatewayApprovalStatus);
+      $xfer += $output->writeFieldEnd();
+    }
     if ($this->gatewayName !== null) {
-      $xfer += $output->writeFieldBegin('gatewayName', TType::STRING, 2);
+      $xfer += $output->writeFieldBegin('gatewayName', TType::STRING, 3);
       $xfer += $output->writeString($this->gatewayName);
       $xfer += $output->writeFieldEnd();
     }
     if ($this->domain !== null) {
-      $xfer += $output->writeFieldBegin('domain', TType::STRING, 3);
+      $xfer += $output->writeFieldBegin('domain', TType::STRING, 4);
       $xfer += $output->writeString($this->domain);
       $xfer += $output->writeFieldEnd();
     }
     if ($this->emailAddress !== null) {
-      $xfer += $output->writeFieldBegin('emailAddress', TType::STRING, 4);
+      $xfer += $output->writeFieldBegin('emailAddress', TType::STRING, 5);
       $xfer += $output->writeString($this->emailAddress);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->gatewayAcronym !== null) {
+      $xfer += $output->writeFieldBegin('gatewayAcronym', TType::STRING, 6);
+      $xfer += $output->writeString($this->gatewayAcronym);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->gatewayURL !== null) {
+      $xfer += $output->writeFieldBegin('gatewayURL', TType::STRING, 7);
+      $xfer += $output->writeString($this->gatewayURL);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->gatewayPublicAbstract !== null) {
+      $xfer += $output->writeFieldBegin('gatewayPublicAbstract', TType::STRING, 8);
+      $xfer += $output->writeString($this->gatewayPublicAbstract);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->reviewProposalDescription !== null) {
+      $xfer += $output->writeFieldBegin('reviewProposalDescription', TType::STRING, 9);
+      $xfer += $output->writeString($this->reviewProposalDescription);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
