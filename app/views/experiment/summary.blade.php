@@ -6,6 +6,9 @@
 
 @section('content')
 @include('partials/experiment-info')
+<div class="row">
+@include('partials/sharing-display-body')
+</div>
 @stop
 
 

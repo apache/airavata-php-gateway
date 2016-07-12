@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/sharing.css') }}
 @stop
 
 @section('content')
@@ -19,6 +20,10 @@
         @include('partials/experiment-inputs', array("expInputs" => $expInputs, "queueDefaults" =>
         $expInputs['queueDefaults']) )
 
+        <div class="form-control">
+            @include('partials/sharing-display-body', array("form" => true))
+        </div>
+
         <div class="form-group btn-toolbar">
             <div class="btn-group">
                 <button onclick="disableWarn()" name="save" type="submit" class="btn btn-primary" value="Save">Save</button>
@@ -35,11 +40,19 @@
 <input type="hidden" id="allowedFileSize" value="{{ $expInputs['allowedFileSize'] }}"/>
 </div>
 
+{{ HTML::image("assets/Profile_avatar_placeholder_large.png", 'placeholder image', array('class' => 'baseimage')) }}
+
+@include('partials/sharing-form-modal')
 
 @stop
 
 @section('scripts')
 @parent
+<script>
+    var users = {{ $users }};
+</script>
+{{ HTML::script('js/sharing/sharing_utils.js') }}
+{{ HTML::script('js/sharing/share.js') }}
 <script>
     var warn = true;
 

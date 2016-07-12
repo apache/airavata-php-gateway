@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/sharing.css') }}
 @stop
 
 @section('content')
@@ -25,6 +26,9 @@
             @include('partials/experiment-inputs', array( "expInputs", $expInputs))
 
             @if( count( $expInputs['computeResources']) > 0)
+            <div class="form-control">
+            @include('partials/sharing-display-body', array("form" => true))
+            </div>
             <div class="btn-toolbar">
                 <div class="btn-group">
                     <input name="save" type="submit" class="btn btn-primary"
@@ -43,11 +47,19 @@
 
 </div>
 
+{{ HTML::image("assets/Profile_avatar_placeholder_large.png", 'placeholder image', array('class' => 'baseimage')) }}
+
+@include('partials/sharing-form-modal')
 @stop
 
 
 @section('scripts')
 @parent
+<script>
+    var users = {{ $users }};
+</script>
+{{ HTML::script('js/sharing/sharing_utils.js') }}
+{{ HTML::script('js/sharing/share.js') }}
 <script>
     $('.file-input').bind('change', function () {
 

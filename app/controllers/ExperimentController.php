@@ -25,8 +25,7 @@ class ExperimentController extends BaseController
     public function createView()
     {
         Session::forget('exp_create_continue');
-        $users = SharingUtilities::getAllUserProfiles();
-        return View::make('experiment/create', array("users" => json_encode($users)));
+        return View::make('experiment/create');
     }
 
     public function createSubmit()
@@ -72,19 +71,7 @@ class ExperimentController extends BaseController
                 "allowedFileSize" => $allowedFileSize
             );
 
-            $s_users = json_decode($_POST['share-settings']);
-
-            $uids = GrouperUtilities::getAllGatewayUsers();
-            $users = array();
-            foreach ($uids as $uid) {
-                if (WSIS::usernameExists($uid) && $uid !== Session::get('username')) {
-                    $users[$uid] = WSIS::getUserProfile($uid);
-                }
-            }
-
-            foreach ($s_users as $uid => $perms) {
-                $users[$uid]['access'] = $perms;
-            }
+            $users = SharingUtilities::getAllUserProfiles();
 
             return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
