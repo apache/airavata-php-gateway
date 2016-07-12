@@ -292,7 +292,7 @@ class AccountController extends BaseController
     }
 
     public function dashboard(){
-        //if( Session::has("gateway-provider")){
+        if( Session::has("gateway-provider")){
             $gatewayOfUser = "";
             //var_dump( Session::get("authz-token")->accessToken); exit;
             $userProfile = Session::get("user-profile");
@@ -307,7 +307,7 @@ class AccountController extends BaseController
             if( $gatewayOfUser == ""){
                 Session::put("new-gateway-provider");
             }
-       // }
+        }
 
         return View::make("account/dashboard");
     }
