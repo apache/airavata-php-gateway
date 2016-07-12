@@ -25,8 +25,13 @@ class SharingUtilities {
      * @return True if the user has read permission, false otherwise.
      */
     public static function userCanRead($uid, $resourceId, $dataResourceType) {
-        $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
-        return (array_key_exists($uid, $read) ? true : false);
+        if (WSIS::usernameExists($uid)) {
+            $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
+            return (array_key_exists($uid, $read) ? true : false);
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -41,6 +46,14 @@ class SharingUtilities {
 
         $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
         $write = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::WRITE);
+
+        $read = array_filter($read, function($uid) {
+            return ($uid !== Session::get('username') && WSIS::usernameExists($uid));
+        });
+
+        $write = array_filter($write, function($uid) {
+            return ($uid !== Session::get('username') && WSIS::usernameExists($uid));
+        });
 
         foreach($read as $uid) {
             $users[$uid] = array('read' => true, 'write' => false);
@@ -60,11 +73,12 @@ class SharingUtilities {
      * @return An array [uid => [firstname => string, lastname => string, email => string]]
      */
     public static function getUserProfiles($uids) {
+        $uids = array_filter($uids, function($uid) {
+            return ($uid !== Session::get('username') && WSIS::usernameExists($uid));
+        });
         $profiles = array();
         foreach ($uids as $uid) {
-            if (WSIS::usernameExists($uid)) {
-                $profiles[$uid] = WSIS::getUserProfile($uid);
-            }
+            $profiles[$uid] = WSIS::getUserProfile($uid);
         }
         return $profiles;
     }
