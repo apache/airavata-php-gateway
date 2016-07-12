@@ -16,9 +16,7 @@
     <option value="lastfirst">Last, First Name</option>
     <option value="email">Email</option>
 </select>
-<div id="shared-users" class="text-align-center">
-    <p>This project has not been shared</p>
-</div>
+<div id="shared-users"></div>
 @if($form)
 <input id="share-settings" name="share-settings" type="hidden" value="" />
 @endif

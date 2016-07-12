@@ -99,31 +99,33 @@ $(function() {
     /* Share box functions */
 
     var createTestData = function () {
-        var $users, $share, $user, data, access;
+        var $users, $share, $user;
 
         $users = $('#share-box-users');
         $share = $('#shared-users');
 
         for (var user in users) {
             if (users.hasOwnProperty(user)) {
-                data = users[user];
-                access = access_enum.NONE;
-                if (data.hasOwnProperty(access)) {
+                var data = users[user];
+                var access = access_enum.NONE;
+                if (data.hasOwnProperty("access")) {
+                    console.log("Found access parameter");
                     if (data.access.write) {
                         access = access_enum.WRITE;
                     }
                     else if (data.access.read) {
-                        access = access_enu.READ;
+                        access = access_enum.READ;
                     }
                 }
                 $user = createThumbnail(user, data.firstname, data.lastname, data.email, access);
 
                 $user.addClass('user-thumbnail');
-                if (access == access_enum.NONE) {
+                if (access === access_enum.NONE) {
                     $user.addClass('share-box-users-item');
                     $users.append($user);
                 }
                 else {
+                    console.log("adding shared user");
                     $user.addClass('share-box-share-item');
                     $share.append($user);
                 }
@@ -147,7 +149,9 @@ $(function() {
         //         }
         //     }
         // }
-
+        if ($share.children.length === 0) {
+            $share.append($('<p>This project has not been shared</p>')).addClass('text-align-center');
+        }
         $('.user-thumbnail').show();
         //$('.group-thumbnail').show();
     }

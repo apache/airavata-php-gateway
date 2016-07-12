@@ -110,6 +110,7 @@
 {{ HTML::script('js/time-conversion.js')}}
 <script>
     var users = {{ $users }};
+    console.log(users);
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}
