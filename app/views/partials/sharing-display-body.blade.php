@@ -18,5 +18,5 @@
 </select>
 <div id="shared-users"></div>
 @if($form)
-<input id="share-settings" name="share-settings" type="hidden" value="" />
+<input id="share-settings" name="share-settings" type="hidden" value="{}" />
 @endif

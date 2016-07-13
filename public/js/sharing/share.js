@@ -70,7 +70,7 @@ $(function() {
         //     }
         // }
         if ($share.children().length === 0) {
-            $share.append($('<p>This project has not been shared</p>')).addClass('text-align-center');
+            $share.append($('<p>This has not been shared</p>')).addClass('text-align-center');
         }
         $('.user-thumbnail').show();
         //$('.group-thumbnail').show();
@@ -114,7 +114,7 @@ $(function() {
         $shared_users.detach().appendTo('#share-box-users');
         $('.order-results-selector').trigger('change');
         $('#shared-users').addClass('text-align-center');
-        $('#shared-users').prepend('<p>This project has not been shared</p>');
+        $('#shared-users').prepend('<p>This has not been shared</p>');
     });
 
     // Filter the list as the user types
@@ -205,7 +205,7 @@ $(function() {
             }
             else {
                 $('#shared-users').addClass('text-align-center');
-                $('#shared-users').prepend('<p>This project has not been shared</p>');
+                $('#shared-users').prepend('<p>This has not been shared</p>');
             }
             $('#share-box').animate({top: '100%'});
         }
@@ -235,7 +235,7 @@ $(function() {
         }
         else {
             $('#shared-users').addClass('text-align-center');
-            $('#shared-users').prepend('<p>This project has not been shared</p>');
+            $('#shared-users').prepend('<p>This has not been shared</p>');
         }
         $('.sharing-updated').removeClass('sharing-updated');
         $('#share-box').animate({top: "100%"});
