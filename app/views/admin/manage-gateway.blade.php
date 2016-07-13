@@ -59,47 +59,30 @@
                                 class="glyphicon glyphicon-plus"></span>Add a new gateway
                         </button>
                     </div>
-                    <div class="add-tenant col-md-6">
-                        <div class="form-group required">
-                            <label class="control-label">Enter Domain Name</label>
-                            <input type="text" name="domain" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Desired Gateway Name</label>
-                            <input type="text" name="gatewayName" class="form-control gatewayName" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Email Address</label>
-                            <input type="text" name="admin-email" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin First Name</label>
-                            <input type="text" name="admin-firstname" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Last Name</label>
-                            <input type="text" name="admin-lastname" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Username</label>
-                            <input type="text" name="admin-username" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Enter Admin Password</label>
-                            <input type="password" name="admin-password" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Re-enter Admin Password</label>
-                            <input type="password" name="admin-password-confirm" class="form-control" required="required"/>
-                        </div>
-                        <div class="form-group required">
-                            <input type="submit" class="col-md-2 form-control btn btn-primary" value="Register"/>
-                        </div>
-                    </div>
-                    <div class="col-md-6 loading-gif hide"><img  src='{{URL::to('/')}}/assets/ajax-loader.gif'/></div>
-                    <div class="col-md-6 alert alert-danger gateway-error hide"></div>
-                    <div class="col-md-6 alert alert-success gateway-success hide"></div>
+                    @include('partials/add-gateway-block')
                 </form>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Gateway Requests</h3>
+                    <table class="table table-striped table-bordered">
+                        <th>
+                            <tr>
+                                <td>Gateway Name</td>
+                                <td>Admin Name</td>
+                                <td>Gateway URL</td>
+                                <td>Project Details</td>
+                                <td>Status</td>
+                            </tr>
+                        </th>
+                        <tbody>
+                        <!-- foreach code -->
+                            <tr>
+                            </tr>
+                        <!-- foreach code ends -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="panel-group super-admin-gateways-view" id="accordion1">
@@ -333,7 +316,7 @@
                     $(".gateway-success").html("Gateway has been added. The page will be reloaded in a moment.").removeClass("hide");
                     setTimeout( function(){
                         location.reload();
-                    }, 2000);
+                    }, 3000);
                 }
                 else if( data == 0){
                     $(".gateway-error").html( "An unknown error occurred while trying to create the gateway.")

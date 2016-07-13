@@ -453,6 +453,7 @@ class CRUtilities
         else {
             $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
         }
+
         $selectedCRs = array();
         $selectedSRs = array();
         $allCRs = CRUtilities::getAllCRObjects();
@@ -502,6 +503,17 @@ class CRUtilities
                                 "allSRs" => $allSRs
                             );
         return $gatewaysInfo;
+    }
+
+    public static function getAllGateways()
+    {
+
+        if (Session::has("super-admin"))
+            $gateways = Airavata::getAllGateways(Session::get('authz-token'));
+        else {
+            $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
+        }
+        return $gateways;
     }
 
     public static function updateGatewayProfile( $data){

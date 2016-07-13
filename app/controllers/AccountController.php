@@ -70,9 +70,16 @@ class AccountController extends BaseController
             if(! in_array( "user-pending", $allRoles)){
                 WSIS::addRole( "user-pending");
             }
-            //$userRoles = (array)WSIS::getUserRoles( $username);
 
             $userRoles["new"] = "user-pending";
+
+            if(  Config::get('pga_config.portal')['super-admin-portal'] == true ){
+
+                if(! in_array( "gateway-provider", $allRoles)){
+                    WSIS::addRole( "gateway-provider");
+                }
+                $userRoles["new"] = array("gateway-provider", "admin");
+            }
             $userRoles["deleted"] = array();
             WSIS::updateUserRoles( $username, $userRoles);
 
@@ -137,6 +144,10 @@ class AccountController extends BaseController
             }
             if (in_array(Config::get('pga_config.wsis')['user-role-name'], $userRoles)) {
                 Session::put("authorized-user", true);
+            }
+            //gateway-provider-code
+            if (in_array("gateway-provider", $userRoles)) {
+                Session::put("gateway-provider", true);
             }
 
             //only for super admin
@@ -281,7 +292,30 @@ class AccountController extends BaseController
     }
 
     public function dashboard(){
-       return View::make("account/dashboard");
+
+        $userProfile = Session::get("user-profile");
+
+        if( in_array( "gateway-provider", $userProfile["roles"]) ) {
+            $gatewayOfUser = "";
+            $gatewaysInfo = CRUtilities::getAllGateways();
+            foreach ($gatewaysInfo as $index => $gateway) {
+                if ($gateway->emailAddress == $userProfile["email"]) {
+                    Session::set("gateway_id", $gateway->gatewayId);
+                    $gatewayOfUser = $gateway->gatewayId;
+                    Session::forget("super-admin");
+                    break;
+                }
+            }
+            if ($gatewayOfUser == "") {
+                $userInfo["username"] = $userProfile["username"];
+                $userInfo["email"] = $userProfile["email"];
+                Session::put("new-gateway-provider", true);
+            }
+        }
+        $errors = array();
+        if( Session::has("errors"))
+            $errors = Session::get("errors");
+        return View::make("account/dashboard",array("message"=> implode( "," , $errors)));
     }
 
     public function resetPassword()

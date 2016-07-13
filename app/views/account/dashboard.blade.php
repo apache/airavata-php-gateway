@@ -19,7 +19,47 @@
         {{ Session::forget("message") }}
         @endif
 
-        @if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') )
+        @if( Session::has('new-gateway-provider') )
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <form id="add-tenant-form" action="{{ URL::to('/') }}/provider/request-gateway">
+                    <div class="col-md-12 text-center" style="margin-top:50px;">
+                        <h3>Request your gateway now!</h3>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Gateway Name</label>
+                        <input type="text" name="gateway-name" class="form-control" required="required"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Gateway Acronym <i>(optional)</i></label>
+                        <input type="text" name="gateway-acronym" class="form-control"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Gateway Admin Username</label>
+                        <input type="text" name="admin-username" class="form-control" required="required"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Gateway Admin Password</label>
+                        <input type="text" name="admin-password" class="form-control" required="required"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Gateway Email</label>
+                        <input type="text" name="email-address" class="form-control" required="required"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Project Details</label>
+                        <textarea type="text" name="project-details" class="form-control" required="required"></textarea>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Public Project Description</label>
+                        <textarea type="text" name="public-project-description" class="form-control" required="required"></textarea>
+                    </div>
+                    <input type="submit" value="Send Request" class="btn btn-primary"/>
+                    <input type="reset" value="Reset" class="btn">
+                </form>
+            </div>
+        </div>
+        @elseif( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') )
         <div class="row text-center breathing-space">
             <h1>Let's get started!</h1>
         </div>
@@ -228,4 +268,60 @@
 
 </div>
 
+@stop
+
+@section('scripts')
+@parent
+<script>
+
+    $(".add-tenant").slideUp();
+
+    $(".toggle-add-tenant").click(function () {
+        $('html, body').animate({
+            scrollTop: $(".toggle-add-tenant").offset().top
+        }, 500);
+        $(".add-tenant").slideDown();
+    });
+
+    $("#add-tenant-form").submit(function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var formData = $("#add-tenant-form").serialize();
+        $("#add-gateway-loading").modal("show");
+        $(".loading-gif").removeClass("hide");
+        $.ajax({
+            type: "POST",
+            data: formData,
+            url: '{{ URL::to("/") }}/admin/add-gateway',
+            success: function (data) {
+                if( data.gateway == $(".gatewayName").val() ){
+                    $(".gateway-success").html("Gateway has been added. The page will be reloaded in a moment.").removeClass("hide");
+                    setTimeout( function(){
+                        location.reload();
+                    }, 2000);
+                }
+                else if( data == 0){
+                    $(".gateway-error").html( "An unknown error occurred while trying to create the gateway.")
+                                        .removeClass("hide");
+                }
+                else{
+                    errors = data;
+                    $(".gateway-error").html("").removeClass("hide");
+                    for( input in data)
+                    {
+                        $(".gateway-error").append(" -- " + input + " : " + data[input] + "<br/><br/>");
+                    }
+                }
+            },
+            error: function( data){
+                var error = $.parseJSON( data.responseText);
+                $(".gateway-error").html(error.error.message).removeClass("hide");
+            }
+        }).complete(function () {
+            $("#add-gateway-loading").modal("hide");
+            $(".loading-gif").addClass("hide");
+        });
+    });
+
+</script>
 @stop
