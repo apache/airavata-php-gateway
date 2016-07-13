@@ -22,6 +22,26 @@ class AdminUtilities
         return Airavata::addGateway(Session::get('authz-token'), $gateway);
     }
 
+    public static function request_gateway( $inputs)
+    {
+        $gateway = new Gateway( $input);
+        $gateway->gatewayId = $input["gateway-name"];
+        $gateway->GatewayApprovalStatus = GatewayApprovalStatus::REQUESTED;
+        $gateway->domain = $input["domain"];
+        $gateway->gatewayName = $input["gateway-name"];
+        $gateway->emailAddress = $input["admin-email"];
+        $gateway->gatewayAcronym = $input["gateway-acronym"];
+        $gateway->gatewayURL = $input["gateway-url"];
+        $gateway->gatewayAdminFirstName = $input["admin-firstname"];
+        $gateway->gatewayAdminLastName = $input["admin-lastname"];
+        $gateway->identityServerUserName = $input["admin-username"];
+        $gateway->identityServerPasswordToken  = $input["admin-password"];
+        $gateway->reviewProposalDescription = $input["project-details"];
+        $gateway->gatewayPublicAbstract - $input["public-project-description"];
+
+        return Airavata::addGateway(Session::get('authz-token'), $gateway);
+    }
+
     /**
      * Method to get experiment execution statistics object
      * @param $fromTime

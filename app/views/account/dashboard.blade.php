@@ -22,14 +22,40 @@
         @if( Session::has('new-gateway-provider') )
         <div class="row">
             <div class="col-md-offset-2 col-md-8">
-                <form id="add-tenant-form" action="{{ URL::to("/") }}/provider/add-gateway">
+                <form id="add-tenant-form" action="{{ URL::to('/') }}/provider/request-gateway">
                     <div class="col-md-12 text-center" style="margin-top:50px;">
-                        <h3>Register your gateway now!</h3>
-                        <button type="button" class="btn btn-default toggle-add-tenant"><span
-                                class="glyphicon glyphicon-plus"></span>Add a new gateway
-                        </button>
+                        <h3>Request your gateway now!</h3>
                     </div>
-                    @include('partials/add-gateway-block', $userInfo)
+                    <div class="form-group required">
+                        <label class="control-label">Gateway Name</label>
+                        <input type="text" name="gateway-name" class="form-control" required="required"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Gateway Acronym <i>(optional)</i></label>
+                        <input type="text" name="gateway-acronym" class="form-control"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Gateway Admin Username</label>
+                        <input type="text" name="admin-username" class="form-control" required="required"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Gateway Admin Password</label>
+                        <input type="text" name="admin-password" class="form-control" required="required"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Gateway Email</label>
+                        <input type="text" name="email-address" class="form-control" required="required"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Project Details</label>
+                        <textarea type="text" name="project-details" class="form-control" required="required"></textarea>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Public Project Description</label>
+                        <textarea type="text" name="public-project-description" class="form-control" required="required"></textarea>
+                    </div>
+                    <input type="submit" value="Send Request" class="btn btn-primary"/>
+                    <input type="reset" value="Reset" class="btn">
                 </form>
             </div>
         </div>

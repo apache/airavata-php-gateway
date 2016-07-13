@@ -322,6 +322,8 @@ Route::post("admin/create-pwd-token", "AdminController@createPWD");
 
 Route::post("admin/remove-pwd-token", "AdminController@removePWD");
 
+//GatewayProviders
+Route::post("provider/request-gateway", "GatewayController@requestGateway");
 
 //notices
 Route::get("admin/dashboard/notices", "AdminController@noticesView");
