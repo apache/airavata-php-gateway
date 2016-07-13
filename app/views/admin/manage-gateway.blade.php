@@ -62,6 +62,28 @@
                     @include('partials/add-gateway-block')
                 </form>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Gateway Requests</h3>
+                    <table class="table table-striped table-bordered">
+                        <th>
+                            <tr>
+                                <td>Gateway Name</td>
+                                <td>Admin Name</td>
+                                <td>Gateway URL</td>
+                                <td>Project Details</td>
+                                <td>Status</td>
+                            </tr>
+                        </th>
+                        <tbody>
+                        <!-- foreach code -->
+                            <tr>
+                            </tr>
+                        <!-- foreach code ends -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <div class="panel-group super-admin-gateways-view" id="accordion1">
                 @foreach( $gateways as $indexGP => $gp )
