@@ -43,7 +43,7 @@
         </div>
 
         <div class="btn-toolbar">
-            <input name="save" type="submit" class="btn" value="Save">
+            <input name="save" type="submit" class="btn btn-primary" value="Save">
         </div>
 
 

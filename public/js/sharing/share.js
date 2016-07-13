@@ -218,13 +218,15 @@ $(function() {
         $('#shared-users').empty();
         if ($original_shared_list.length > 0) {
             $original_shared_list.each(function(index, element) {
-                var $e, data;
+                var $e, data, access;
                 $e = $(element);
                 data = $e.data();
                 if (data.hasOwnProperty('currentaccess')) {
                     data.currentaccess = data.access;
                 }
-                $e.find('select').val(data.access).prop('disabled', true);
+                access = (data.access.write ? access_enum.WRITE : access_enum.READ);
+                $e.find('.sharing-thumbnail-access').val(access).prop('disabled', true).hide();
+                $e.find('.sharing-thumbnail-access-text').text(access_text[access]).show();
                 $e.find('.sharing-thumbnail-unshare').hide();
             });
             $('shared-users').removeClass('text-align-center');

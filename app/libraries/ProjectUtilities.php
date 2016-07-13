@@ -190,6 +190,10 @@ class ProjectUtilities
         $updatedProject->owner = $projectDetails["owner"];
         $updatedProject->name = $projectDetails["name"];
         $updatedProject->description = $projectDetails["description"];
+        $updatedProject->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
+
+        $share = $_POST['share-settings'];
+
         try {
             Airavata::updateProject(Session::get('authz-token'), $projectId, $updatedProject);
 
@@ -203,6 +207,8 @@ class ProjectUtilities
         } catch (AiravataSystemException $ase) {
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
+
+        ProjectUtilities::share_project($projectId, json_decode($share));
     }
 
 
