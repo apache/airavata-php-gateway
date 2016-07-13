@@ -551,6 +551,7 @@ class ExperimentUtilities
      */
     public static function update_experiment($expId, $updatedExperiment)
     {
+        $share = $_POST['share-settings'];
         try {
             Airavata::updateExperiment(Session::get('authz-token'), $expId, $updatedExperiment);
         } catch (InvalidRequestException $ire) {
@@ -570,6 +571,8 @@ class ExperimentUtilities
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
                 '<p>AiravataSystemException: ' . $ase->getMessage() . '</p>');
         }
+
+        ExperimentUtilities::share_experiment($expId, json_decode($share));
     }
 
 
@@ -1339,7 +1342,7 @@ class ExperimentUtilities
         GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $wadd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $wrevoke);
 
-        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::Experiment, $radd);
+        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $radd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
     }
 }

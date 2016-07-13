@@ -1,3 +1,4 @@
+{{ HTML::style('css/sharing.css') }}
 <div class="container" style="max-width: 750px;">
     <!--
     @if(isset( $invalidExperimentId ) )
@@ -190,6 +191,10 @@
         @endforeach
     </table>
 
+    <div class="form-group">
+    @include('partials/sharing-display-body', array("form" => false))
+    </div>
+
     @if( !isset( $dashboard))
     <form action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
         <div class="btn-toolbar">
@@ -307,7 +312,7 @@
                 </li>
             </ul>
         </li>
-                
+
 
     </ul>
 </div>
@@ -316,5 +321,10 @@
 @section('scripts')
 @parent
 {{ HTML::script('js/time-conversion.js')}}
+<script>
+    var users = {{ $users }};
+</script>
+{{ HTML::script('js/sharing/sharing_utils.js') }}
+{{ HTML::script('js/sharing/share.js') }}
 
 @stop

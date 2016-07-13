@@ -171,11 +171,12 @@ $(function() {
 
     // Save the sharing permissions of each selected user
     $('body').on('click', '#share-box-button', function(e) {
-        var data, resource_id, $share_list, share_settings, access;
+        var data, resource_id, $share_list, $update_list, share_settings, access;
         e.stopPropagation();
         e.preventDefault();
         data = $("#share-box").data()
         $share_list = $("#share-box-share").children();
+        $update_list = $('.sharing-updated');
         share_settings = {};
         if (data.hasOwnProperty('resource_id')) {
             resource_id = data.resource_id;
@@ -185,7 +186,7 @@ $(function() {
             $('#shared-users').empty();
             if ($share_list.filter('.sharing-thumbnail').length > 0) {
                 $share_list.sort(comparator_map.username);
-                $share_list.each(function(index, element) {
+                $update_list.each(function(index, element) {
                     var $e, data, settings;
                     $e = $(element);
                     data = $e.data();
@@ -236,6 +237,7 @@ $(function() {
             $('#shared-users').addClass('text-align-center');
             $('#shared-users').prepend('<p>This project has not been shared</p>');
         }
+        $('.sharing-updated').removeClass('sharing-updated');
         $('#share-box').animate({top: "100%"});
         return false;
     });
@@ -275,6 +277,7 @@ $(function() {
         }
         $parent.find('.sharing-thumbnail-access-text').val(access_text[access]);
         $parent.data(data);
+        $parent.addClass('sharing-updated');
     });
 
 

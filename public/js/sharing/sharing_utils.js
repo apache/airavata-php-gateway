@@ -80,6 +80,7 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
 var changeShareState = function($target) {
     var data;
     data = $target.data();
+    $target.addClass('sharing-updated');
     if ($target.hasClass('share-box-users-item')) {
         $target.find('.sharing-thumbnail-access').val('1').prop("disabled", false).show();
         $target.find('.sharing-thumbnail-access-text').text(access_text[access_enum.READ]).hide();
