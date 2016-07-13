@@ -4,88 +4,6 @@
  * @author Jeff Kinnison <jkinniso@nd.edu>
  */
 
-var access_enum = {
-    NONE: '0',
-    READ: '1',
-    WRITE: '2'
-};
-
-var dummy_user_data = [
-    {
-        username: 'testuser1',
-        firstname: 'Jane',
-        lastname: 'Doe',
-        email: 'jadoe@institution.edu',
-        access: access_enum.NONE
-    },
-    {
-        username: 'testuser2',
-        firstname: 'Ego',
-        lastname: 'Id',
-        email: 'freud@institution.gov',
-        access: access_enum.NONE
-    },
-    {
-        username: 'testuser3',
-        firstname: 'Ivan',
-        lastname: 'Ivanov',
-        email: 'notkgb@totallynotkgb.ru',
-        access: access_enum.NONE
-    },
-    {
-        username: 'testuser4',
-        firstname: 'Grok',
-        lastname: 'Smytheson',
-        email: 'popsicle@prehistoric.com',
-        access: access_enum.ADMIN
-    },
-    {
-        username: 'testuser5',
-        firstname: 'Identifier',
-        lastname: 'Appellation',
-        email: 'idapp@institution.edu',
-        access: access_enum.EDIT
-    }
-];
-
-var dummy_group_data = [
-    {
-        username: 'Venusian Climate Studies',
-        firstname: 'Gazorpazorp',
-        lastname: 'Field',
-        email: 'gfield@venus.plt',
-        access: access_enum.NONE
-    },
-    {
-        username: 'Molecular Dynamics Rawks',
-        firstname: 'Jorgen',
-        lastname: 'Jorgenson',
-        email: 'jjorg@deshaw.org',
-        access: access_enum.NONE
-    },
-    {
-        username: 'Socialist Distributed Algorithms',
-        firstname: 'Richard',
-        lastname: 'Stallman',
-        email: 'allmayhaz@cloud.org',
-        access: access_enum.NONE
-    },
-    {
-        username: 'Stonferd Center for New Age Math',
-        firstname: 'Gugliermo',
-        lastname: 'Marconi',
-        email: 'gmarconi@stonferd.edu',
-        access: access_enum.VIEW
-    },
-    {
-        username: 'CIT Center for Autonomous Studies',
-        firstname: 'Madison',
-        lastname: 'Li',
-        email: 'madili@cit.edu',
-        access: access_enum.EDIT
-    },
-];
-
 $(function() {
     var comparator_map, comparator, $original_shared_list, $revoke_list;
     comparator_map = {
@@ -117,7 +35,9 @@ $(function() {
                         access = access_enum.READ;
                     }
                 }
+
                 $user = createThumbnail(user, data.firstname, data.lastname, data.email, access);
+                $user.find('.sharing-thumbnail-access').hide();
 
                 $user.addClass('user-thumbnail');
                 if (access === access_enum.NONE) {
@@ -149,7 +69,7 @@ $(function() {
         //         }
         //     }
         // }
-        if ($share.children.length === 0) {
+        if ($share.children().length === 0) {
             $share.append($('<p>This project has not been shared</p>')).addClass('text-align-center');
         }
         $('.user-thumbnail').show();
@@ -179,7 +99,8 @@ $(function() {
             $share_list.each(function(index, element) {
                 var $e;
                 $e = $(element);
-                $e.find('.sharing-thumbnail-access').prop('disabled', false);
+                $e.find('.sharing-thumbnail-access-text').hide();
+                $e.find('.sharing-thumbnail-access').prop('disabled', false).show();
                 $e.find('.sharing-thumbnail-unshare').show();
                 $e.detach().appendTo($('#share-box-share'));
             })
@@ -243,7 +164,6 @@ $(function() {
     $('body').on('change', '.order-results-selector', function(e) {
         var $target, $sibling, $sorted;
         $target = $(e.target);
-        console.log($target);
         comparator = comparator_map[$target.val()];
         $('.order-results-selector').val($target.val());
         $sibling = $target.siblings('#shared-users, #share-box-users');
@@ -328,16 +248,33 @@ $(function() {
         e.preventDefault();
         $target = $(e.target).closest('.sharing-thumbnail');
         changeShareState($target);
+        // if ($target.closest('ul, div').hasClass('share-box-share')) {
+        //     $target.find('.sharing-thumbnail-access-text').hide();
+        //     $target.find('.sharing-thumbnail-access').show();
+        // }
+        // else {
+        //     $target.find('.sharing-thumbnail-access').hide();
+        //     $target.find('.sharing-thumbnail-access-text').show();
+        // }
+        $('.share-box-filter').trigger('keydown');
+        $('.order-results-selector').trigger('change');
         return false;
     });
 
     // Handle changing access level
     $('body').on('change', '.sharing-thumbnail-access', function(e) {
-        var $target, $parent, data;
+        var $target, $parent, data, access;
         $target = $(e.target);
         $parent = $target.closest('.sharing-thumbnail');
         data = $parent.data();
-        data.currentaccess = $target.val();
+        access = parseInt($target.val());
+        if (access > 0) {
+            data.currentaccess.read = true;
+        }
+        if (access > 1) {
+            data.currentaccess.write = true;
+        }
+        $parent.find('.sharing-thumbnail-access-text').val(access_text[access]);
         $parent.data(data);
     });
 

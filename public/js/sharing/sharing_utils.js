@@ -1,5 +1,17 @@
+var access_enum = {
+    NONE: 0,
+    READ: 1,
+    WRITE: 2
+};
+
+var access_text = [
+  'Cannot access',
+  'Can read',
+  'can write'
+];
+
 var createThumbnail = function(username, firstname, lastname, email, access = access_enum.NONE, share = true) {
-  var $thumbnail, data, select, options;
+  var $thumbnail, data, select, options, access_text_current;
 
   data = {
       username: username,
@@ -16,14 +28,15 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
       }
   };
 
-  if (access === access_enum.READ) {
+  access_text_current = access_text[access];
+
+  if (access !== access_enum.NONE) {
       data.access.read = true;
       data.currentaccess.read = true;
   }
-  else if (access === access_enum.WRITE) {
-      data.access.read = true;
+
+  if (access === access_enum.WRITE) {
       data.access.write = true;
-      data.currentaccess.read = true;
       data.currentaccess.write = true;
   }
 
@@ -54,6 +67,7 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
                               <h5 class="sharing-thumbnail-name">' + firstname + ' ' + lastname + '</h5> \
                               <p class="sharing-thumbnail-email">' + email + '</p> \
                               ' + select + ' \
+                              <label class="sharing-thumbnail-access-text">' + access_text_current + '</label> \
                           </div> \
                       </div>');
 
@@ -66,21 +80,19 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
 var changeShareState = function($target) {
     var data;
     data = $target.data();
-    // If the user has sharing privileges, revoke them
     if ($target.hasClass('share-box-users-item')) {
-        console.log("Sharing");
         $target.find('.sharing-thumbnail-access').val('1').prop("disabled", false).show();
+        $target.find('.sharing-thumbnail-access-text').val(access_text[access_enum.READ]).hide();
         data.currentaccess.read = true;
         $target.data(data);
         $target.find('.sharing-thumbnail-unshare').show();
         $target.detach().prependTo('#share-box-share').show();
     }
-    // Otherwise move to the shared list
     else if ($target.hasClass('share-box-share-item')) {
-        console.log("Revoking share");
-        $target.find('select').val('0').prop("disabled", true).hide();
-        data.currentaccess.read = true;
-        data.currentaccess.write = true;
+        $target.find('.sharing-thumbnail-access').val('0').prop("disabled", true).hide();
+        $target.find('.sharing-thumbnail-access-text').val(access_text[access_enum.NONE]).show();
+        data.currentaccess.read = false;
+        data.currentaccess.write = false;
         $target.data(data);
         $target.find('.sharing-thumbnail-unshare').hide();
         $target.detach().appendTo('#share-box-users');
@@ -92,7 +104,6 @@ var changeShareState = function($target) {
 
 var usernameComparator = function(a, b) {
    var $a, $b;
-   console.log("Sorting by username");
    $a = $(a).data();
    $b = $(b).data();
 
@@ -169,10 +180,8 @@ var userFilter = function(users, pattern) {
            re.test(data.lastname.toLowerCase()) ||
            re.test(data.email.toLowerCase())
        ) {
-           console.log("Showing the user");
            $(element).show();
        } else {
-           console.log("Hiding the user");
            $(element).hide();
        }
    });
