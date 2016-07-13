@@ -7,7 +7,7 @@ var access_enum = {
 var access_text = [
   'Cannot access',
   'Can read',
-  'can write'
+  'Can write'
 ];
 
 var createThumbnail = function(username, firstname, lastname, email, access = access_enum.NONE, share = true) {
@@ -47,8 +47,8 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
 
       options = '';
       options += '<option value="' + access_enum.NONE + '"' + (access === access_enum.NONE ? "selected" : "") + ' style="display: none;">No Permissions</option>';
-      options += '<option value="' + access_enum.READ + '"' + (access === access_enum.VIEW ? "selected" : "") + '>Can Read</option>';
-      options += '<option value="' + access_enum.WRITE + '"' + (access === access_enum.RUN ? "selected" : "") + '>Can Write</option>';
+      options += '<option value="' + access_enum.READ + '"' + (access === access_enum.READ ? "selected" : "") + '>Can Read</option>';
+      options += '<option value="' + access_enum.WRITE + '"' + (access === access_enum.WRITE ? "selected" : "") + '>Can Write</option>';
 
       select += options;
       select += '</select>';
@@ -82,7 +82,7 @@ var changeShareState = function($target) {
     data = $target.data();
     if ($target.hasClass('share-box-users-item')) {
         $target.find('.sharing-thumbnail-access').val('1').prop("disabled", false).show();
-        $target.find('.sharing-thumbnail-access-text').val(access_text[access_enum.READ]).hide();
+        $target.find('.sharing-thumbnail-access-text').text(access_text[access_enum.READ]).hide();
         data.currentaccess.read = true;
         $target.data(data);
         $target.find('.sharing-thumbnail-unshare').show();
@@ -90,7 +90,7 @@ var changeShareState = function($target) {
     }
     else if ($target.hasClass('share-box-share-item')) {
         $target.find('.sharing-thumbnail-access').val('0').prop("disabled", true).hide();
-        $target.find('.sharing-thumbnail-access-text').val(access_text[access_enum.NONE]).show();
+        $target.find('.sharing-thumbnail-access-text').text(access_text[access_enum.NONE]).show();
         data.currentaccess.read = false;
         data.currentaccess.write = false;
         $target.data(data);

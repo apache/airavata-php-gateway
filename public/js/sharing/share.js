@@ -87,10 +87,6 @@ $(function() {
         var $share_list;
         e.stopPropagation();
         e.preventDefault();
-        if ($('#share-box').length === 0) {
-            $('body').append(createShareBox());
-            createTestData();
-        }
 
         $share_list = $('#shared-users').children();
 
@@ -175,7 +171,7 @@ $(function() {
 
     // Save the sharing permissions of each selected user
     $('body').on('click', '#share-box-button', function(e) {
-        var data, resource_id, $share_list, share_settings;
+        var data, resource_id, $share_list, share_settings, access;
         e.stopPropagation();
         e.preventDefault();
         data = $("#share-box").data()
@@ -198,7 +194,8 @@ $(function() {
                         $e.data(data);
                     }
                     share_settings[data.username] = data.access;
-                    $e.find('.sharing-thumbnail-access').prop('disabled', true);
+                    access = parseInt($e.find('.sharing-thumbnail-access').prop('disabled', true).hide().val(), 10);
+                    $e.find('.sharing-thumbnail-access-text').text(access_text[access]).show();
                     $e.find('.sharing-thumbnail-unshare').hide();
                 });
                 $('#share-settings').val(JSON.stringify(share_settings));
