@@ -295,24 +295,24 @@ class AccountController extends BaseController
 
         $userProfile = Session::get("user-profile");
 
-        if( in_array( "gateway-provider", $userProfile["roles"]) ){
+        if( in_array( "gateway-provider", $userProfile["roles"]) ) {
             $gatewayOfUser = "";
             $gatewaysInfo = CRUtilities::getAllGateways();
-            foreach( $gatewaysInfo as $index => $gateway){
-                if( $gateway->emailAddress == $userProfile["email"]){
+            foreach ($gatewaysInfo as $index => $gateway) {
+                if ($gateway->emailAddress == $userProfile["email"]) {
                     Session::set("gateway_id", $gateway->gatewayId);
                     $gatewayOfUser = $gateway->gatewayId;
                     Session::forget("super-admin");
                     break;
                 }
             }
-            if( $gatewayOfUser == ""){
+            if ($gatewayOfUser == "") {
                 $userInfo["username"] = $userProfile["username"];
                 $userInfo["email"] = $userProfile["email"];
                 Session::put("new-gateway-provider", true);
             }
         }
-
+        
         $errors = array();
         if( Session::has("errors"))
             $errors = Session::get("errors");
