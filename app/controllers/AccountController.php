@@ -78,7 +78,7 @@ class AccountController extends BaseController
                 if(! in_array( "gateway-provider", $allRoles)){
                     WSIS::addRole( "gateway-provider");
                 }
-                $userRoles["new"] = array("gateway-provider");
+                $userRoles["new"] = array("gateway-provider", "admin");
             }
             $userRoles["deleted"] = array();
             WSIS::updateUserRoles( $username, $userRoles);
@@ -292,24 +292,30 @@ class AccountController extends BaseController
     }
 
     public function dashboard(){
-        if( Session::has("gateway-provider")){
+
+        $userProfile = Session::get("user-profile");
+
+        if( in_array( "gateway-provider", $userProfile["roles"]) ){
             $gatewayOfUser = "";
-            //var_dump( Session::get("authz-token")->accessToken); exit;
-            $userProfile = Session::get("user-profile");
             $gatewaysInfo = CRUtilities::getAllGateways();
             foreach( $gatewaysInfo as $index => $gateway){
                 if( $gateway->emailAddress == $userProfile["email"]){
                     Session::set("gateway_id", $gateway->gatewayId);
                     $gatewayOfUser = $gateway->gatewayId;
+                    Session::forget("super-admin");
                     break;
                 }
             }
             if( $gatewayOfUser == ""){
-                Session::put("new-gateway-provider");
+                $userInfo["username"] = $userProfile["username"];
+                $userInfo["email"] = $userProfile["email"];
+                Session::put("new-gateway-provider", true);
             }
-        }
 
-        return View::make("account/dashboard");
+        $errors = array();
+        if( Session::has("errors"))
+            $errors = Session::get("errors");
+        return View::make("account/dashboard",array("message"=> implode( "," , $errors)));
     }
 
     public function resetPassword()

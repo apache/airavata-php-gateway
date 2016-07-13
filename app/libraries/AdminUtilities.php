@@ -32,8 +32,13 @@ class AdminUtilities
         $gateway->emailAddress = $input["admin-email"];
         $gateway->gatewayAcronym = $input["gateway-acronym"];
         $gateway->gatewayURL = $input["gateway-url"];
-        $gateway->reviewProposalDescription = $input["project-description"];
-        $gateway->gatewayPublicAbstract - $input["public-project-description"]
+        $gateway->gatewayAdminFirstName = $input["admin-firstname"];
+        $gateway->gatewayAdminLastName = $input["admin-lastname"];
+        $gateway->identityServerUserName = $input["admin-username"];
+        $gateway->identityServerPasswordToken  = $input["admin-password"];
+        $gateway->reviewProposalDescription = $input["project-details"];
+        $gateway->gatewayPublicAbstract - $input["public-project-description"];
+
         return Airavata::addGateway(Session::get('authz-token'), $gateway);
     }
 

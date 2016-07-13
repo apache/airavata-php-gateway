@@ -22,7 +22,7 @@
         @if( Session::has('new-gateway-provider') )
         <div class="row">
             <div class="col-md-offset-2 col-md-8">
-                <form id="add-tenant-form" action="{{ URL::to("/") }}/provider/request-gateway">
+                <form id="add-tenant-form" action="{{ URL::to('/') }}/provider/request-gateway">
                     <div class="col-md-12 text-center" style="margin-top:50px;">
                         <h3>Request your gateway now!</h3>
                     </div>
@@ -48,11 +48,11 @@
                     </div>
                     <div class="form-group required">
                         <label class="control-label">Project Details</label>
-                        <textarea type="text" name="domain" class="form-control" required="required"></textarea>
+                        <textarea type="text" name="project-details" class="form-control" required="required"></textarea>
                     </div>
                     <div class="form-group required">
                         <label class="control-label">Public Project Description</label>
-                        <textarea type="text" name="domain" class="form-control" required="required"></textarea>
+                        <textarea type="text" name="public-project-description" class="form-control" required="required"></textarea>
                     </div>
                     <input type="submit" value="Send Request" class="btn btn-primary"/>
                     <input type="reset" value="Reset" class="btn">

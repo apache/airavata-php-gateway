@@ -24,21 +24,20 @@ class GatewayController extends BaseController {
 
         $validator = Validator::make( $checkValidation, $rules, $messages);
         if ($validator->fails()) {
-            return Response::json( $validator->messages() );
+            return Redirect::to("account/dashboard", array( "errors"=>$validator->messages() );
         }
         else{
-	        $gateway = AdminUtilities::add_gateway(Input::all());
+	        $gateway = AdminUtilities::request_gateway(Input::all());
 
 			//$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"], inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
 
-			Session::put("message", "Gateway " . $inputs["gatewayName"] . " has been added.");
+			Session::put("message", "Your request for Gateway " . $inputs["gatewayName"] . " has been created.");
 			
 			return Response::json( array( "gateway" =>$gateway, "tm" => $tm ) ); 
 			if( $gateway ==  $inputs["gatewayName"] && is_object( $tm ) )
 				return Response::json( array( "gateway" =>$gateway, "tm" => $tm ) ); 
 			else
 				return 0;
-			//return Redirect::to("admin/dashboard/gateway")->with("message", "Gateway has been successfully added.");
 		}
 	}
 
