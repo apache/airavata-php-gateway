@@ -311,11 +311,13 @@ class AccountController extends BaseController
                 $userInfo["email"] = $userProfile["email"];
                 Session::put("new-gateway-provider", true);
             }
+        }
 
         $errors = array();
         if( Session::has("errors"))
             $errors = Session::get("errors");
-        return View::make("account/dashboard",array("message"=> implode( "," , $errors)));
+
+        return View::make("account/dashboard",array("message"=> implode( "," , $errors) ));
     }
 
     public function resetPassword()
