@@ -1,6 +1,7 @@
 <?php
 
 use Airavata\Model\Status\JobState;
+use Airavata\Model\Group\ResourceType;
 
 class ExperimentController extends BaseController
 {
@@ -130,13 +131,16 @@ class ExperimentController extends BaseController
             }
             $expVal["jobDetails"] = $jobDetails;
 
+            $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
+
             $data = array(
                 "expId" => Input::get("expId"),
                 "experiment" => $experiment,
                 "project" => $project,
                 "jobDetails" => $jobDetails,
                 "expVal" => $expVal,
-                "autoRefresh"=> $autoRefresh
+                "autoRefresh"=> $autoRefresh,
+                "users" => json_encode($users)
             );
             if( Input::has("dashboard"))
             {
@@ -233,7 +237,7 @@ class ExperimentController extends BaseController
 
         $users = SharingUtilities::getAllUserProfiles($_GET['expId'], ResourceType::EXPERIMENT);
 
-        return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => $users));
+        return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
     }
 
     public function cloneExperiment()

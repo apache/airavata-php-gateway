@@ -54,6 +54,10 @@
 	box-shadow: 0 1px 1px rgba(0,0,0,.075);
 }
 
+.share-box-users-item :hover {
+	border-color: #888888;
+}
+
 .sharing-thumbnail-unshare {
 	display: none;
 }

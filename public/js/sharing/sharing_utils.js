@@ -7,7 +7,7 @@ var access_enum = {
 var access_text = [
   'Cannot access',
   'Can read',
-  'can write'
+  'Can write'
 ];
 
 var createThumbnail = function(username, firstname, lastname, email, access = access_enum.NONE, share = true) {
@@ -47,8 +47,8 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
 
       options = '';
       options += '<option value="' + access_enum.NONE + '"' + (access === access_enum.NONE ? "selected" : "") + ' style="display: none;">No Permissions</option>';
-      options += '<option value="' + access_enum.READ + '"' + (access === access_enum.VIEW ? "selected" : "") + '>Can Read</option>';
-      options += '<option value="' + access_enum.WRITE + '"' + (access === access_enum.RUN ? "selected" : "") + '>Can Write</option>';
+      options += '<option value="' + access_enum.READ + '"' + (access === access_enum.READ ? "selected" : "") + '>Can Read</option>';
+      options += '<option value="' + access_enum.WRITE + '"' + (access === access_enum.WRITE ? "selected" : "") + '>Can Write</option>';
 
       select += options;
       select += '</select>';
@@ -80,9 +80,10 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
 var changeShareState = function($target) {
     var data;
     data = $target.data();
+    $target.addClass('sharing-updated');
     if ($target.hasClass('share-box-users-item')) {
         $target.find('.sharing-thumbnail-access').val('1').prop("disabled", false).show();
-        $target.find('.sharing-thumbnail-access-text').val(access_text[access_enum.READ]).hide();
+        $target.find('.sharing-thumbnail-access-text').text(access_text[access_enum.READ]).hide();
         data.currentaccess.read = true;
         $target.data(data);
         $target.find('.sharing-thumbnail-unshare').show();
@@ -90,7 +91,7 @@ var changeShareState = function($target) {
     }
     else if ($target.hasClass('share-box-share-item')) {
         $target.find('.sharing-thumbnail-access').val('0').prop("disabled", true).hide();
-        $target.find('.sharing-thumbnail-access-text').val(access_text[access_enum.NONE]).show();
+        $target.find('.sharing-thumbnail-access-text').text(access_text[access_enum.NONE]).show();
         data.currentaccess.read = false;
         data.currentaccess.write = false;
         $target.data(data);
@@ -103,13 +104,13 @@ var changeShareState = function($target) {
 }
 
 var usernameComparator = function(a, b) {
-   var $a, $b;
-   $a = $(a).data();
-   $b = $(b).data();
+   var username_a, username_b;
+   username_a = $(a).data().username.toLowerCase();
+   username_b = $(b).data().username.toLowerCase();
 
-   if ($a.username < $b.username) {
+   if (username_a < username_b) {
        return -1;
-   } else if ($a.username > $b.username) {
+   } else if (username_a > username_b) {
        return 1;
    } else {
        return 0;
@@ -117,18 +118,20 @@ var usernameComparator = function(a, b) {
 }
 
 var firstLastComparator = function(a, b) {
-   var $a, $b;
-   $a = $(a).data();
-   $b = $(b).data();
+   var firstname_a, firstname_b, lastname_a, lastname_b;
+   firstname_a = $(a).data().firstname.toLowerCase();
+   firstname_b = $(b).data().firstname.toLowerCase();
+   lastname_a = $(a).data().lastname.toLowerCase();
+   lastname_b = $(b).data().lastname.toLowerCase();
 
-   if ($a.firstname < $b.firstname) {
+   if (firstname_a < firstname_b) {
        return -1;
-   } else if ($a.firstname > $b.firstname) {
+   } else if (firstname_a > firstname_b) {
        return 1;
    } else {
-       if ($a.lastname < $b.lastname) {
+       if (lastname_a < lastname_b) {
            return -1;
-       } else if ($a.lastname > $b.lastname) {
+       } else if (lastname_a > lastname_b) {
            return 1;
        } else {
            return 0;
@@ -137,18 +140,20 @@ var firstLastComparator = function(a, b) {
 }
 
 var lastFirstComparator = function(a, b) {
-   var $a, $b;
-   $a = $(a).data();
-   $b = $(b).data();
+  var firstname_a, firstname_b, lastname_a, lastname_b;
+  firstname_a = $(a).data().firstname.toLowerCase();
+  firstname_b = $(b).data().firstname.toLowerCase();
+  lastname_a = $(a).data().lastname.toLowerCase();
+  lastname_b = $(b).data().lastname.toLowerCase();
 
-   if ($a.lastname < $b.lastname) {
+   if (lastname_a < lastname_b) {
        return -1;
-   } else if ($a.lastname > $b.lastname) {
+   } else if (lastname_a > lastname_b) {
        return 1;
    } else {
-       if ($a.firstname < $b.firstname) {
+       if (firstname_a < firstname_b) {
            return -1;
-       } else if ($a.firstname > $b.firstname) {
+       } else if (firstname_a > firstname_b) {
            return 1;
        } else {
            return 0;
@@ -157,13 +162,13 @@ var lastFirstComparator = function(a, b) {
 }
 
 var emailComparator = function(a, b) {
-   var $a, $b;
-   $a = $(a).data();
-   $b = $(b).data();
+   var email_a, email_b;
+   email_a = $(a).data().email.toLowerCase();
+   email_b = $(b).data().email.toLowerCase();
 
-   if ($a.email < $b.email) {
+   if (email_a < email_b) {
        return -1;
-   } else if ($a.email > $b.email) {
+   } else if (email_a > email_b) {
        return 1;
    } else {
        return 0;

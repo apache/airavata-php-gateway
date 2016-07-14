@@ -87,10 +87,6 @@ $(function() {
         var $share_list;
         e.stopPropagation();
         e.preventDefault();
-        if ($('#share-box').length === 0) {
-            $('body').append(createShareBox());
-            createTestData();
-        }
 
         $share_list = $('#shared-users').children();
 
@@ -175,11 +171,12 @@ $(function() {
 
     // Save the sharing permissions of each selected user
     $('body').on('click', '#share-box-button', function(e) {
-        var data, resource_id, $share_list, share_settings;
+        var data, resource_id, $share_list, $update_list, share_settings, access;
         e.stopPropagation();
         e.preventDefault();
         data = $("#share-box").data()
         $share_list = $("#share-box-share").children();
+        $update_list = $('.sharing-updated');
         share_settings = {};
         if (data.hasOwnProperty('resource_id')) {
             resource_id = data.resource_id;
@@ -189,7 +186,7 @@ $(function() {
             $('#shared-users').empty();
             if ($share_list.filter('.sharing-thumbnail').length > 0) {
                 $share_list.sort(comparator_map.username);
-                $share_list.each(function(index, element) {
+                $update_list.each(function(index, element) {
                     var $e, data, settings;
                     $e = $(element);
                     data = $e.data();
@@ -198,7 +195,8 @@ $(function() {
                         $e.data(data);
                     }
                     share_settings[data.username] = data.access;
-                    $e.find('.sharing-thumbnail-access').prop('disabled', true);
+                    access = parseInt($e.find('.sharing-thumbnail-access').prop('disabled', true).hide().val(), 10);
+                    $e.find('.sharing-thumbnail-access-text').text(access_text[access]).show();
                     $e.find('.sharing-thumbnail-unshare').hide();
                 });
                 $('#share-settings').val(JSON.stringify(share_settings));
@@ -221,13 +219,15 @@ $(function() {
         $('#shared-users').empty();
         if ($original_shared_list.length > 0) {
             $original_shared_list.each(function(index, element) {
-                var $e, data;
+                var $e, data, access;
                 $e = $(element);
                 data = $e.data();
                 if (data.hasOwnProperty('currentaccess')) {
                     data.currentaccess = data.access;
                 }
-                $e.find('select').val(data.access).prop('disabled', true);
+                access = (data.access.write ? access_enum.WRITE : access_enum.READ);
+                $e.find('.sharing-thumbnail-access').val(access).prop('disabled', true).hide();
+                $e.find('.sharing-thumbnail-access-text').text(access_text[access]).show();
                 $e.find('.sharing-thumbnail-unshare').hide();
             });
             $('shared-users').removeClass('text-align-center');
@@ -237,6 +237,7 @@ $(function() {
             $('#shared-users').addClass('text-align-center');
             $('#shared-users').prepend('<p>This project has not been shared</p>');
         }
+        $('.sharing-updated').removeClass('sharing-updated');
         $('#share-box').animate({top: "100%"});
         return false;
     });
@@ -276,6 +277,7 @@ $(function() {
         }
         $parent.find('.sharing-thumbnail-access-text').val(access_text[access]);
         $parent.data(data);
+        $parent.addClass('sharing-updated');
     });
 
 

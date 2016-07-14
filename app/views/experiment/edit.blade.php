@@ -26,9 +26,6 @@
             @include('partials/experiment-inputs', array( "expInputs", $expInputs))
 
             @if( count( $expInputs['computeResources']) > 0)
-            <div class="form-control">
-            @include('partials/sharing-display-body', array("form" => true))
-            </div>
             <div class="btn-toolbar">
                 <div class="btn-group">
                     <input name="save" type="submit" class="btn btn-primary"

@@ -25,6 +25,10 @@
     {{ ExperimentUtilities::create_application_select($expInputs['application'], false) }}
 </div>
 
+<div class="form-group">
+    @include('partials/sharing-display-body', array("form" => true))
+</div>
+
 <div class="panel panel-default">
     <div class="panel-heading">Application configuration</div>
     <div class="panel-body">
