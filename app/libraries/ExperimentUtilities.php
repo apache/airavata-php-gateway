@@ -632,6 +632,10 @@ class ExperimentUtilities
             }
             $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
+
+            $share = json_encode(SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT));
+            ExperimentUtilities::share_experiment($cloneId, json_decode($share));
+
             return $cloneId;
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem cloning the experiment.

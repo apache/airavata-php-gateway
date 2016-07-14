@@ -244,9 +244,7 @@ class ExperimentController extends BaseController
     public function cloneExperiment()
     {
         if (isset($_GET['expId'])) {
-            $users = getAllUserPermissions($_GET['expId'], ResourceType::EXPERIMENT);
             $cloneId = ExperimentUtilities::clone_experiment($_GET['expId']);
-            ExperimentUtilities::share_experiment($cloneId, $users);
             $experiment = ExperimentUtilities::get_experiment($cloneId);
             $project = ProjectUtilities::get_project($experiment->projectId);
 
