@@ -287,8 +287,10 @@ class ProjectUtilities
     private static function share_project($projectId, $users) {
         $wadd = array();
         $wrevoke = array();
+        $ewrevoke = array();
         $radd = array();
         $rrevoke = array();
+        $errevoke = array();
 
         foreach ($users as $user => $perms) {
             if ($perms->write) {
@@ -304,6 +306,11 @@ class ProjectUtilities
             else {
                 $rrevoke[$user] = ResourcePermissionType::READ;
             }
+
+            if (!$perms->read && !$perms->write) {
+                $ewrevoke[$user] = ResourcePermissionType::WRITE;
+                $errevoke[$user] = ResourcePermissionType::READ;
+            }
         }
 
         GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $wadd);
@@ -311,5 +318,12 @@ class ProjectUtilities
 
         GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $radd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::PROJECT, $rrevoke);
+
+        $experiments = ProjectUtilities::get_experiments_in_project($projectId);
+
+        foreach ($experiments as $exp) {
+            GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $ewrevoke);
+            GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $errevoke);
+        }
     }
 }
