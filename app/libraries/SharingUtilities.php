@@ -139,9 +139,9 @@ class SharingUtilities {
         return $profs;
     }
 
-    public static function mixProjectPermissionsWithExperiment($projectId, $expId=null) {
+    public static function mixProjectPermissionsWithExperiment($projectId, $expId) {
         $proj = SharingUtilities::getProfilesForSharedUsers($projectId, ResourceType::PROJECT);
-        $exp = SharingUtilities::getAllUserProfiles($expId, ResourceType::EXPERIMENT);
+        $exp = SharingUtilities::getProfilesForSharedUsers($expId, ResourceType::EXPERIMENT);
 
         foreach ($proj as $uid => $prof) {
             if (!array_key_exists($uid, $exp)) {
@@ -150,6 +150,16 @@ class SharingUtilities {
         }
 
         return $exp;
+    }
+
+    public static function updateAllUsersListWithPrivileges($shared) {
+        $users = SharingUtilities::getAllUserProfiles();
+
+        foreach ($shared as $uid => $prof) {
+            $users[$uid] = $shared[$uid];
+        }
+
+        return $users;
     }
 }
 

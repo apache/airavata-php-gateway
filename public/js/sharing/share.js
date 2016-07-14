@@ -17,10 +17,12 @@ $(function() {
     /* Share box functions */
 
     var createTestData = function () {
-        var $users, $share, $user;
+        var $users, $share, $user, share_settings;
 
         $users = $('#share-box-users');
         $share = $('#shared-users');
+
+        share_settings = {};
 
         for (var user in users) {
             if (users.hasOwnProperty(user)) {
@@ -46,7 +48,8 @@ $(function() {
                 }
                 else {
                     console.log("adding shared user");
-                    $user.addClass('share-box-share-item');
+                    $user.addClass('share-box-share-item sharing-updated');
+                    share_settings[user] = data.access;
                     $share.append($user);
                 }
             }
@@ -72,6 +75,7 @@ $(function() {
         if ($share.children().length === 0) {
             $share.append($('<p>This has not been shared</p>')).addClass('text-align-center');
         }
+        $('#share-settings').val(JSON.stringify(share_settings));
         $('.user-thumbnail').show();
         //$('.group-thumbnail').show();
     }

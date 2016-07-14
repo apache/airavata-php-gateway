@@ -73,7 +73,7 @@ class ExperimentController extends BaseController
                 "allowedFileSize" => $allowedFileSize
             );
 
-            $users = SharingUtilities::mixProjectPermissionsWithExperiment($_POST['project']);
+            $users = SharingUtilities::getAllUserProfiles($_POST['project'], ResourceType::PROJECT);
 
             return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
@@ -236,7 +236,7 @@ class ExperimentController extends BaseController
             'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
         );
 
-        $users = SharingUtilities::mixProjectPermissionsWithExperiment($experiment->project, $_GET['expId']);
+        $users = SharingUtilities::getAllUserProfiles($_GET['expId'], ResourceType::EXPERIMENT);
 
         return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
     }
