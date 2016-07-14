@@ -30,17 +30,40 @@
                         <label class="control-label">Gateway Name</label>
                         <input type="text" name="gateway-name" class="form-control" required="required"/>
                     </div>
-                    <div class="form-group required">
+                    <div class="form-group">
                         <label class="control-label">Gateway Acronym <i>(optional)</i></label>
                         <input type="text" name="gateway-acronym" class="form-control"/>
                     </div>
                     <div class="form-group required">
+                        <label class="control-label">Domain</label>
+                        <input type="text" name="domain" class="form-control"/>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label">Gateway URL</label>
+                        <input type="text" name="gateway-url" class="form-control"/>
+                    </div>
+                    <div class="form-group required">
                         <label class="control-label">Gateway Admin Username</label>
-                        <input type="text" name="admin-username" class="form-control" required="required"/>
+                        <input type="text" name="admin-username" value="{{ Session::get('username') }}" readonly="true" class="form-control" required="required"/>
                     </div>
                     <div class="form-group required">
                         <label class="control-label">Gateway Admin Password</label>
-                        <input type="text" name="admin-password" class="form-control" required="required"/>
+                        <input type="password" name="admin-password" class="form-control" required="required"/>
+                    </div>
+                    <div class="form-group required">
+                        <label class="control-label">Admin Password Confirmation</label>
+                        <input type="password" name="admin-password-confirm" class="form-control" required="required"/>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label">Admin First Name</label>
+                        <input type="text" name="admin-firstname" class="form-control" required="required"/>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label">Admin Last Name</label>
+                        <input type="text" name="admin-lastname" class="form-control" required="required"/>
                     </div>
                     <div class="form-group required">
                         <label class="control-label">Gateway Email</label>
@@ -59,6 +82,14 @@
                 </form>
             </div>
         </div>
+        @elseif( Session::has("existing-gateway-provider") )
+            @if( Session::get("approvalStatus") == "Requested")
+                <blockquote>Gateway you have request is yet to be approved. Please log back in after sometime.</blockquote>
+            @elseif( Session::get("approvalStatus") == "Denied")
+                <div class="well alert alert-danger">Unfortunately, Your Request has been denied at this moment.</div>
+            @else
+                <blockquote>Download Credentials | Get Started with your PGA View</blockquote>
+            @endif
         @elseif( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') )
         <div class="row text-center breathing-space">
             <h1>Let's get started!</h1>
@@ -283,45 +314,6 @@
         $(".add-tenant").slideDown();
     });
 
-    $("#add-tenant-form").submit(function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        var formData = $("#add-tenant-form").serialize();
-        $("#add-gateway-loading").modal("show");
-        $(".loading-gif").removeClass("hide");
-        $.ajax({
-            type: "POST",
-            data: formData,
-            url: '{{ URL::to("/") }}/admin/add-gateway',
-            success: function (data) {
-                if( data.gateway == $(".gatewayName").val() ){
-                    $(".gateway-success").html("Gateway has been added. The page will be reloaded in a moment.").removeClass("hide");
-                    setTimeout( function(){
-                        location.reload();
-                    }, 2000);
-                }
-                else if( data == 0){
-                    $(".gateway-error").html( "An unknown error occurred while trying to create the gateway.")
-                                        .removeClass("hide");
-                }
-                else{
-                    errors = data;
-                    $(".gateway-error").html("").removeClass("hide");
-                    for( input in data)
-                    {
-                        $(".gateway-error").append(" -- " + input + " : " + data[input] + "<br/><br/>");
-                    }
-                }
-            },
-            error: function( data){
-                var error = $.parseJSON( data.responseText);
-                $(".gateway-error").html(error.error.message).removeClass("hide");
-            }
-        }).complete(function () {
-            $("#add-gateway-loading").modal("hide");
-            $(".loading-gif").addClass("hide");
-        });
-    });
 
 </script>
 @stop

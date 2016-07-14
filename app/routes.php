@@ -313,7 +313,7 @@ Route::post("admin/create-pwd-token", "AdminController@createPWD");
 Route::post("admin/remove-pwd-token", "AdminController@removePWD");
 
 //GatewayProviders
-Route::post("provider/request-gateway", "GatewayController@requestGateway");
+Route::get("provider/request-gateway", "AdminController@requestGateway");
 
 //notices
 Route::get("admin/dashboard/notices", "AdminController@noticesView");
@@ -330,6 +330,8 @@ Route::post("notice-seen-ack", "AccountController@noticeSeenAck");
 
 Route::post("admin/add-gateway", "AdminController@addGateway");
 Route::get("admin/add-gateway", "AdminController@addGateway");
+
+Route::get("admin/update-gateway-request", "AdminController@updateGatewayRequest");
 
 /*
 * Theme Pages Routes

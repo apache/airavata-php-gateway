@@ -20,24 +20,19 @@ class GatewayController extends BaseController {
         $checkValidation["username"] = $inputs["admin-username"];
         $checkValidation["password"] = $inputs["admin-password"];
         $checkValidation["confirm_password"] = $inputs["admin-password-confirm"];
-        $checkValidation["email"] = $inputs["admin-email"];
+        $checkValidation["email"] = $inputs["email-address"];
 
         $validator = Validator::make( $checkValidation, $rules, $messages);
         if ($validator->fails()) {
-            return Redirect::to("account/dashboard", array( "errors"=>$validator->messages() );
+            Session::put("message", implode(",", $validator->messages() ));
+            return Redirect::to("admin/dashboard");
         }
         else{
 	        $gateway = AdminUtilities::request_gateway(Input::all());
 
-			//$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"], inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
-
 			Session::put("message", "Your request for Gateway " . $inputs["gatewayName"] . " has been created.");
 			
-			return Response::json( array( "gateway" =>$gateway, "tm" => $tm ) ); 
-			if( $gateway ==  $inputs["gatewayName"] && is_object( $tm ) )
-				return Response::json( array( "gateway" =>$gateway, "tm" => $tm ) ); 
-			else
-				return 0;
+            return Redirect::to("admin/dashboard");
 		}
 	}
 
