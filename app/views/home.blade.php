@@ -28,8 +28,8 @@ if( Session::get("theme") == "base"){?>
         </p>
         <p><a href="https://github.com/apache/airavata-php-gateway"
                 target="_blank">See the code <span class="glyphicon glyphicon-new-window"></span></a></p>
-        <p><a href="https://cwiki.apache.org/confluence/display/AIRAVATA/XSEDE+2015+Tutorial"
-            target="_blank">XSEDE 2015 tutorial documentation <span class="glyphicon glyphicon-new-window"></span></a>
+        <p><a href="https://cwiki.apache.org/confluence/display/AIRAVATA/XSEDE+2016+Tutorials"
+            target="_blank">XSEDE 2016 tutorial documentation <span class="glyphicon glyphicon-new-window"></span></a>
         </p>
     </div>
 </div>
