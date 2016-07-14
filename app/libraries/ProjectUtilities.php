@@ -133,6 +133,7 @@ class ProjectUtilities
         $project->name = "Default Project";
         $project->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
         $project->description = "This is the default project for user " . $project->owner;
+        $project->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
 
 
         $projectId = null;

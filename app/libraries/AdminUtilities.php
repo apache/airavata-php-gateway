@@ -1,6 +1,7 @@
 <?php
 
 use Airavata\Model\Workspace\Gateway;
+use Airavata\Model\Workspace\GatewayApprovalStatus;
 use Airavata\Model\Workspace\Notification;
 use Airavata\Model\Workspace\NotificationPriority;
 
@@ -20,6 +21,45 @@ class AdminUtilities
         $gateway->gatewayName = $input["gatewayName"];
         $gateway->emailAddress = $input["admin-email"];
         return Airavata::addGateway(Session::get('authz-token'), $gateway);
+    }
+
+    public static function request_gateway( $inputs)
+    {
+        $gateway = new Gateway( $inputs);
+        $gateway->gatewayId = $inputs["gateway-name"];
+        $gateway->gatewayApprovalStatus = GatewayApprovalStatus::REQUESTED;
+        $gateway->domain = $inputs["domain"];
+        $gateway->gatewayName = $inputs["gateway-name"];
+        $gateway->emailAddress = $inputs["email-address"];
+        $gateway->gatewayAcronym = $inputs["gateway-acronym"];
+        $gateway->gatewayURL = $inputs["gateway-url"];
+        $gateway->gatewayAdminFirstName = $inputs["admin-firstname"];
+        $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
+        $gateway->identityServerUserName = $inputs["admin-username"];
+        $gateway->identityServerPasswordToken  = $inputs["admin-password"];
+        $gateway->reviewProposalDescription = $inputs["project-details"];
+        $gateway->gatewayPublicAbstract - $inputs["public-project-description"];
+
+        return Airavata::addGateway(Session::get('authz-token'), $gateway);
+
+    }
+
+    public static function update_gateway_status( $gatewayId, $status){
+        $gateway = Airavata::getGateway( Session::get('authz-token'), $gatewayId);
+        $gateway->gatewayApprovalStatus = intval( $status);
+        
+        if( Airavata::updateGateway( Session::get('authz-token'), $gateway->gatewayId, $gateway) ){
+            if( $gateway->gatewayApprovalStatus == GatewayApprovalStatus::APPROVED){
+                if( AdminUtilities::add_tenant( $gateway) ){
+                    Adminutilities::update_gateway_status( Input::get("gateway_id"), GatewayApprovalStatus::ACTIVE);
+                }
+            }
+
+        }
+    }
+
+    public static function add_tenant( $gateway){
+        return WSIS::createTenant(1, $gateway->identityServerUserName . "@" . $gateway->domain, $gateway->identityServerPasswordToken, $gateway->emailAddress,$gateway->gatewayAdminFirstName, $gateway->gatewayAdminLastName, $gateway->domain);
     }
 
     /**
