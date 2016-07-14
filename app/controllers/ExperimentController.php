@@ -41,6 +41,7 @@ class ExperimentController extends BaseController
                 "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
             );
 
+
             $clonedExp = false; $savedExp = false;
             if( Input::has("clonedExp"))
                 $clonedExp = true;
@@ -72,7 +73,7 @@ class ExperimentController extends BaseController
                 "allowedFileSize" => $allowedFileSize
             );
 
-            $users = SharingUtilities::getAllUserProfiles();
+            $users = SharingUtilities::mixProjectPermissionsWithExperiment($_POST['project']);
 
             return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
@@ -235,7 +236,7 @@ class ExperimentController extends BaseController
             'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
         );
 
-        $users = SharingUtilities::getAllUserProfiles($_GET['expId'], ResourceType::EXPERIMENT);
+        $users = SharingUtilities::mixProjectPermissionsWithExperiment($experiment->project, $_GET['expId']);
 
         return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
     }
@@ -243,7 +244,9 @@ class ExperimentController extends BaseController
     public function cloneExperiment()
     {
         if (isset($_GET['expId'])) {
+            $users = getAllUserPermissions($_GET['expId'], ResourceType::EXPERIMENT);
             $cloneId = ExperimentUtilities::clone_experiment($_GET['expId']);
+            ExperimentUtilities::share_experiment($cloneId, $users);
             $experiment = ExperimentUtilities::get_experiment($cloneId);
             $project = ProjectUtilities::get_project($experiment->projectId);
 

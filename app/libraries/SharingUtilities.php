@@ -138,6 +138,19 @@ class SharingUtilities {
         }
         return $profs;
     }
+
+    public static function mixProjectPermissionsWithExperiment($projectId, $expId=null) {
+        $proj = SharingUtilities::getProfilesForSharedUsers($projectId, ResourceType::PROJECT);
+        $exp = SharingUtilities::getAllUserProfiles($expId, ResourceType::EXPERIMENT);
+
+        foreach ($proj as $uid => $prof) {
+            if (!array_key_exists($uid, $exp)) {
+                $exp[$uid] = $prof;
+            }
+        }
+
+        return $exp;
+    }
 }
 
 ?>
