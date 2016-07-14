@@ -63,7 +63,7 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
                         <div class="col-md-4"> \
                            <img class="sharing-thumbnail-image" src="' + $('.baseimage').prop('src') + '" alt="' + username + '" /> \
                         </div> \
-                         <div class="col-md-7"> \
+                         <div class="col-md-8"> \
                               <h5 class="sharing-thumbnail-name">' + firstname + ' ' + lastname + '</h5> \
                               <p class="sharing-thumbnail-email">' + email + '</p> \
                               ' + select + ' \

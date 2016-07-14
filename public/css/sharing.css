@@ -64,7 +64,9 @@
 
 .sharing-thumbnail-image {
 	width: 100%;
+	max-width: 100px;
 	height: 100%;
+	max-width: 100px;
 }
 
 #share-box-button {
