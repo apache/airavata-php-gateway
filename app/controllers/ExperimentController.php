@@ -112,7 +112,7 @@ class ExperimentController extends BaseController
                 if (Input::has("dashboard"))
                     return View::make("partials/experiment-info", array("invalidExperimentId" => 1, "users" => json_encode(array())));
                 else
-                    return View::make("experiment/summary", array("invalidExperimentId" => 1), "users" => json_encode(array()));
+                    return View::make("experiment/summary", array("invalidExperimentId" => 1, "users" => json_encode(array())));
             }
             else
                 Session::forget("permissionDenied");
