@@ -77,8 +77,9 @@ $(function() {
         }
         $('#share-settings').val(JSON.stringify(share_settings));
         $('.user-thumbnail').show();
+        $('.order-results-selector').trigger('change');
         //$('.group-thumbnail').show();
-    }
+    };
 
 
 
@@ -103,10 +104,10 @@ $(function() {
                 $e.find('.sharing-thumbnail-access').prop('disabled', false).show();
                 $e.find('.sharing-thumbnail-unshare').show();
                 $e.detach().appendTo($('#share-box-share'));
-            })
+            });
         }
         $original_shared_list = $('#share-box-share').children();
-        $('#share-box').animate({top: "1%"})
+        $('#share-box').animate({top: "1%"});
         return false;
     });
 
@@ -178,7 +179,7 @@ $(function() {
         var data, resource_id, $share_list, $update_list, share_settings, access;
         e.stopPropagation();
         e.preventDefault();
-        data = $("#share-box").data()
+        data = $("#share-box").data();
         $share_list = $("#share-box-share").children();
         $update_list = $('.sharing-updated');
         share_settings = {};
@@ -188,7 +189,7 @@ $(function() {
         }
         else {
             $('#shared-users').empty();
-            if ($share_list.filter('.sharing-thumbnail').length > 0) {
+            if ($update_list.length > 0) {
                 $share_list.sort(comparator_map.username);
                 $update_list.each(function(index, element) {
                     var $e, data, settings;
@@ -207,7 +208,7 @@ $(function() {
                 $('#shared-users').removeClass('text-align-center');
                 $share_list.detach().appendTo($('#shared-users'));
             }
-            else {
+            if ($share_list.length === 0) {
                 $('#shared-users').addClass('text-align-center');
                 $('#shared-users').prepend('<p>This has not been shared</p>');
             }

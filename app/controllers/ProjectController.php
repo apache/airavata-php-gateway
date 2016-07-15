@@ -70,6 +70,7 @@ class ProjectController extends BaseController
     public function editSubmit()
     {
         if (isset($_POST['save'])) {
+            $projectDetails = array();
             $projectDetails["owner"] = Session::get("username");
             $projectDetails["name"] = Input::get("project-name");
             $projectDetails["description"] = Input::get("project-description");

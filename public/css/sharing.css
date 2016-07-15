@@ -8,6 +8,8 @@
 
 .modal-content {
 	background-color: #ecf0f1;
+	max-height: 90%;
+	overflow: scroll;
 }
 
 #share-box-filter {

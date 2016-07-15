@@ -185,7 +185,6 @@ class ProjectUtilities
 
     public static function update_project($projectId, $projectDetails)
     {
-
         $updatedProject = new Project();
         $updatedProject->owner = $projectDetails["owner"];
         $updatedProject->name = $projectDetails["name"];

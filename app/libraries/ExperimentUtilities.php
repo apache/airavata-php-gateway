@@ -633,9 +633,9 @@ class ExperimentUtilities
             $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
-            $share = json_encode(SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT));
+            $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
             $share[Session::get("username")] = array("read" => true, "write" => true);
-            ExperimentUtilities::share_experiment($cloneId, json_decode($share));
+            ExperimentUtilities::share_experiment($cloneId, json_decode(json_encode($share)));
 
             return $cloneId;
         } catch (InvalidRequestException $ire) {
@@ -1323,6 +1323,7 @@ class ExperimentUtilities
      * @param $users A map of username => {read_permission, write_permission}
      */
     private static function share_experiment($expId, $users) {
+        $experiement = ExperimentUtilities::getExperiment(Session::get('authz-token'), $expId);
         $wadd = array();
         $wrevoke = array();
         $radd = array();
@@ -1349,5 +1350,7 @@ class ExperimentUtilities
 
         GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $radd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
+
+        GrouperUtilities::shareResourceWithUsers($experiment->projectId, ResourceType::PROJECT, $radd);
     }
 }

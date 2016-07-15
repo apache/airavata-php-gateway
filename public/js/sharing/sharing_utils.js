@@ -10,7 +10,7 @@ var access_text = [
   'Can write'
 ];
 
-var createThumbnail = function(username, firstname, lastname, email, access = access_enum.NONE, share = true) {
+var createThumbnail = function(username, firstname, lastname, email, access, share) {
   var $thumbnail, data, select, options, access_text_current;
 
   data = {
@@ -75,7 +75,7 @@ var createThumbnail = function(username, firstname, lastname, email, access = ac
    $thumbnail.data(data);
 
    return $thumbnail;
-}
+};
 
 var changeShareState = function($target) {
     var data;
@@ -101,7 +101,7 @@ var changeShareState = function($target) {
         $(".order-results-selector").trigger('change');
     }
     $target.toggleClass('share-box-users-item share-box-share-item');
-}
+};
 
 var usernameComparator = function(a, b) {
    var username_a, username_b;
@@ -115,7 +115,7 @@ var usernameComparator = function(a, b) {
    } else {
        return 0;
    }
-}
+};
 
 var firstLastComparator = function(a, b) {
    var firstname_a, firstname_b, lastname_a, lastname_b;
@@ -137,7 +137,7 @@ var firstLastComparator = function(a, b) {
            return 0;
        }
    }
-}
+};
 
 var lastFirstComparator = function(a, b) {
   var firstname_a, firstname_b, lastname_a, lastname_b;
@@ -159,7 +159,7 @@ var lastFirstComparator = function(a, b) {
            return 0;
        }
    }
-}
+};
 
 var emailComparator = function(a, b) {
    var email_a, email_b;
@@ -173,7 +173,7 @@ var emailComparator = function(a, b) {
    } else {
        return 0;
    }
-}
+};
 
 var userFilter = function(users, pattern) {
    re = new RegExp(pattern, 'i');
@@ -190,4 +190,4 @@ var userFilter = function(users, pattern) {
            $(element).hide();
        }
    });
-}
+};

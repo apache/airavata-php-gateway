@@ -2,7 +2,7 @@
 <label for="project-share">Sharing Settings</label><br />
 <button class="btn btn-default" name="project-share" id="project-share">Share With Other Users</button><br />
 @else
-<h3>Sharing Settings</h3>
+<h3>Sharing Details</h3>
 @endif
 <!-- <label>Show</label>
 <div id="show-results-group" class="btn-group" role="group" aria-label="Show Groups or Users">
