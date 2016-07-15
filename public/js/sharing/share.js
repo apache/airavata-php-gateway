@@ -38,7 +38,7 @@ $(function() {
                     }
                 }
 
-                $user = createThumbnail(user, data.firstname, data.lastname, data.email, access);
+                $user = createThumbnail(user, data.firstname, data.lastname, data.email, access, true);
                 $user.find('.sharing-thumbnail-access').hide();
 
                 $user.addClass('user-thumbnail');
@@ -176,7 +176,7 @@ $(function() {
 
     // Save the sharing permissions of each selected user
     $('body').on('click', '#share-box-button', function(e) {
-        var data, resource_id, $share_list, $update_list, share_settings, access;
+        var data, resource_id, $share_list, $update_list, share_settings;
         e.stopPropagation();
         e.preventDefault();
         data = $("#share-box").data();
@@ -200,17 +200,23 @@ $(function() {
                         $e.data(data);
                     }
                     share_settings[data.username] = data.access;
-                    access = parseInt($e.find('.sharing-thumbnail-access').prop('disabled', true).hide().val(), 10);
-                    $e.find('.sharing-thumbnail-access-text').text(access_text[access]).show();
-                    $e.find('.sharing-thumbnail-unshare').hide();
                 });
                 $('#share-settings').val(JSON.stringify(share_settings));
                 $('#shared-users').removeClass('text-align-center');
-                $share_list.detach().appendTo($('#shared-users'));
             }
             if ($share_list.length === 0) {
                 $('#shared-users').addClass('text-align-center');
                 $('#shared-users').prepend('<p>This has not been shared</p>');
+            }
+            else {
+                $share_list.each(function(index, element) {
+                    var $e, access;
+                    $e = $(element);
+                    access = parseInt($e.find('.sharing-thumbnail-access').prop('disabled', true).hide().val(), 10);
+                    $e.find('.sharing-thumbnail-access-text').text(access_text[access]).show();
+                    $e.find('.sharing-thumbnail-unshare').hide();
+                });
+                $share_list.detach().appendTo($('#shared-users'));
             }
             $('#share-box').animate({top: '100%'});
         }
@@ -286,7 +292,7 @@ $(function() {
         }
         $parent.find('.sharing-thumbnail-access-text').val(access_text[access]);
         $parent.data(data);
-        $parent.addClass('sharing-updated');
+        $parent.addClass('sharing-to-update');
     });
 
 
