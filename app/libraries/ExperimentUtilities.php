@@ -634,6 +634,7 @@ class ExperimentUtilities
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
             $share = json_encode(SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT));
+            $share[Session::get("username")] = array("read" => true, "write" => true);
             ExperimentUtilities::share_experiment($cloneId, json_decode($share));
 
             return $cloneId;
