@@ -7,7 +7,7 @@
 </div> -->
 <label>Order By</label>
 <select class="order-results-selector">
-    <option value="username">Username</option>
+    <option value="username" selected>Username</option>
     <option value="firstlast">First, Last Name</option>
     <option value="lastfirst">Last, First Name</option>
     <option value="email">Email</option>

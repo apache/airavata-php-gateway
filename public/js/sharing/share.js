@@ -181,8 +181,8 @@ $(function() {
         e.preventDefault();
         data = $("#share-box").data();
         $share_list = $("#share-box-share").children();
-        $update_list = $('.sharing-updated');
-        share_settings = {};
+        $update_list = $('.sharing-to-update');
+        share_settings = JSON.parse($('#share-settings').val());
         if (data.hasOwnProperty('resource_id')) {
             resource_id = data.resource_id;
             updateUserPrivileges(resource_id, $share_list);
@@ -214,6 +214,8 @@ $(function() {
             }
             $('#share-box').animate({top: '100%'});
         }
+        $update_list.removeClass('sharing-to-update');
+        $update_list.addClass('updated');
         return false;
     });
 
@@ -235,15 +237,17 @@ $(function() {
                 $e.find('.sharing-thumbnail-access-text').text(access_text[access]).show();
                 $e.find('.sharing-thumbnail-unshare').hide();
             });
-            $('shared-users').removeClass('text-align-center');
+            $('#shared-users').removeClass('text-align-center');
             $original_shared_list.detach().appendTo('#shared-users');
         }
         else {
             $('#shared-users').addClass('text-align-center');
             $('#shared-users').prepend('<p>This has not been shared</p>');
         }
-        $('.sharing-updated').removeClass('sharing-updated');
+        $('.sharing-to-update').detach().appendTo($('#share-box-users'));
+        $('.sharing-to-update').addClass('share-box-users-item').removeClass('sharing-to-update share-box-share-item');
         $('#share-box').animate({top: "100%"});
+        $('.order-results-selector').trigger('change');
         return false;
     });
 
