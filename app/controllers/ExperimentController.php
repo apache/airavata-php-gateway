@@ -90,6 +90,7 @@ class ExperimentController extends BaseController
                     <a href=' . URL::to('/') . '"/experiment/summary?expId=' . $expId . '">go directly</a> to experiment summary page.</p>');
 
             }*/
+            $users = SharingUtilities::getAllUserProfiles($expId, ResourceType::EXPERIMENT);
             return Redirect::to('experiment/summary?expId=' . $expId);
         } else
             return Redirect::to("home")->with("message", "Something went wrong here. Please file a bug report using the link in the Help menu.");
@@ -109,9 +110,9 @@ class ExperimentController extends BaseController
                 Session::put("permissionDenied", true);
                 CommonUtilities::print_error_message('It seems that you do not have permissions to view this experiment or it belongs to another gateway.');
                 if (Input::has("dashboard"))
-                    return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
+                    return View::make("partials/experiment-info", array("invalidExperimentId" => 1, "users" => json_encode(array())));
                 else
-                    return View::make("experiment/summary", array("invalidExperimentId" => 1));
+                    return View::make("experiment/summary", array("invalidExperimentId" => 1), "users" => json_encode(array()));
             }
             else
                 Session::forget("permissionDenied");
@@ -161,9 +162,9 @@ class ExperimentController extends BaseController
             }
         } else {
             if (Input::has("dashboard"))
-                return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
+                return View::make("partials/experiment-info", array("invalidExperimentId" => 1, "users" => json_encode(array())));
             else
-                return View::make("experiment/summary", array("invalidExperimentId" => 1));
+                return View::make("experiment/summary", array("invalidExperimentId" => 1, "users" => json_encode(array())));
         }
     }
 
