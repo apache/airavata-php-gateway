@@ -1323,7 +1323,7 @@ class ExperimentUtilities
      * @param $users A map of username => {read_permission, write_permission}
      */
     private static function share_experiment($expId, $users) {
-        $experiement = ExperimentUtilities::getExperiment(Session::get('authz-token'), $expId);
+        $experiment = ExperimentUtilities::get_experiment($expId);
         $wadd = array();
         $wrevoke = array();
         $radd = array();
