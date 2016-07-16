@@ -64,7 +64,7 @@ if( Session::get("theme") == "base"){?>
         </div>
         <div class="col-md-6">
             <div class="thumbnail" style="border:none">
-                <img src="assets/PoweredbyAiravata_Small.png" alt="Apache Airavata">
+                <img src="assets/powered-by-airavata-transparent.png" width="260px" alt="Apache Airavata">
 
                 <div class="caption">
                     <p>
@@ -80,7 +80,46 @@ if( Session::get("theme") == "base"){?>
                 </div>
             </div>
         </div>
+
+        <div class="col-md-12">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1 text-center breathing-spaces">
+            <h3>Contact Us</h3>
+            <div class="col-md-6">
+                <span class="glyphicon glyphicon-envelope" style="font-size:6em;"></span><br/>
+            You can contact SEAGrid by sending a mail to <a href="mailto:psd@scigap.atlassian.net">Scigap E-mail</a>
+            </div>
+            <div class="col-md-6">
+                <span class="glyphicon glyphicon-edit" style="font-size:6em;"></span><br/>
+                You can also create a <span id="serviceDeskHelp">JIRA ticket</span> by signing in <a href="https://scigap.atlassian.net/servicedesk/customer/portal/8" target="_blank">here</a>.
+            </div>
+        </div>
     </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="serviceDeskHelp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        Hello
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    </div>
+
+
 
 </div>
 
