@@ -48,7 +48,7 @@
                         <th>Delete</th>
                         @endif
                     </tr>
-                    <tbody class="token-values">
+                    <tbody class="token-values-ssh">
                     @foreach( $tokens as $token => $publicKey)
                     <tr>
                         <td class="">
@@ -59,7 +59,7 @@
                         </td>
                         @if( Session::has("admin"))
                         <td>
-                            <span data-token="{{$token}}" class="glyphicon glyphicon-trash remove=ssh-token"></span>
+                            <span data-token="{{$token}}" class="glyphicon glyphicon-trash remove-ssh-token"></span>
                         </td>
                         @endif
                     </tr>
@@ -109,7 +109,7 @@
                                 </td>
                             </tr>
                         </table>
-                        <div class="loading-img text-center hide">
+                        <div class="loading-img-pwd text-center hide">
                             <img src="../../assets/ajax-loader.gif"/>
                         </div>
                     @endif
@@ -230,7 +230,7 @@
             //$(".token-values").html("");
             $(".generate-ssh").after("<div class='alert alert-success new-token-msg'>New Token has been generated.</div>");
 
-            $(".token-values").prepend("<tr class='alert alert-success'><td>" + tokenJson.token + "</td><td class='public-key'>" + tokenJson.pubkey + "</td>" + "<td><a href=''><span data-token='"+tokenJson.token+"' class='glyphicon glyphicon-trash remove-token'></span></a></td></<tr>");
+            $(".token-values-ssh").prepend("<tr class='alert alert-success'><td>" + tokenJson.token + "</td><td class='public-key'>" + tokenJson.pubkey + "</td>" + "<td><a href=''><span data-token='"+tokenJson.token+"' class='glyphicon glyphicon-trash remove-token'></span></a></td></<tr>");
             $(".loading-img").addClass("hide");
             
             setInterval( function(){
@@ -292,7 +292,7 @@
 
 
        tr.find( ".remove-token-confirmation").click( function(){
-           $(".loading-img").removeClass("hide");
+           $(".loading-img-pwd").removeClass("hide");
            $.ajax({
                type: "POST",
                data:{ "token" : tokenToRemove},
@@ -304,7 +304,7 @@
            }).fail( function( data){
                tr.after("<tr class='alert alert-danger'><td></td><td>Error occurred : " + $.parseJSON( data.responseText).error.message + "</td><td></td></tr>");
            }).complete( function(){
-               $(".loading-img").addClass("hide");
+               $(".loading-img-pwd").addClass("hide");
 
            });
        });
