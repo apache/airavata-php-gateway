@@ -284,11 +284,18 @@ $(function() {
         $parent = $target.closest('.sharing-thumbnail');
         data = $parent.data();
         access = parseInt($target.val());
-        if (access > 0) {
-            data.currentaccess.read = true;
-        }
-        if (access > 1) {
-            data.currentaccess.write = true;
+        switch(access) {
+            case 1:
+                data.currentaccess.read = true;
+                data.currentaccess.write = false;
+                break;
+            case 2:
+                data.currentaccess.read = true;
+                data.currentaccess.write = true;
+                break;
+            default:
+                data.currentaccess.read = false;
+                data.currentaccess.write = false;
         }
         $parent.find('.sharing-thumbnail-access-text').val(access_text[access]);
         $parent.data(data);

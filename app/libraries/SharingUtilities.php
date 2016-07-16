@@ -47,20 +47,16 @@ class SharingUtilities {
         $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
         $write = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::WRITE);
 
-        $read = array_filter($read, function($uid) {
-            return ($uid !== Session::get('username') && WSIS::usernameExists($uid));
-        });
-
-        $write = array_filter($write, function($uid) {
-            return ($uid !== Session::get('username') && WSIS::usernameExists($uid));
-        });
-
         foreach($read as $uid) {
-            $users[$uid] = array('read' => true, 'write' => false);
+            if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
+                $users[$uid] = array('read' => true, 'write' => false);
+            }
         }
 
         foreach($write as $uid) {
-            $users[$uid]['write'] = true;
+            if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
+                $users[$uid]['write'] = true;
+            }
         }
 
         return $users;

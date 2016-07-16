@@ -635,7 +635,10 @@ class ExperimentUtilities
 
             $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
             $share[Session::get("username")] = array("read" => true, "write" => true);
-            ExperimentUtilities::share_experiment($cloneId, json_decode(json_encode($share)));
+            foreach ($share as $uid => $perms) {
+                $share[$uid] = (object) $perms;
+            }
+            ExperimentUtilities::share_experiment($cloneId, $share);
 
             return $cloneId;
         } catch (InvalidRequestException $ire) {
@@ -1329,6 +1332,10 @@ class ExperimentUtilities
         $radd = array();
         $rrevoke = array();
 
+        $projperms = GrouperUtilities::getAllAccessibleUsers($experiment->projectId, ResourceType::PROJECT, ResourcePermissionType::READ);
+        $prrevoke = array();
+        $pwrevoke = array();
+
         foreach ($users as $user => $perms) {
             if ($perms->write) {
                 $wadd[$user] = ResourcePermissionType::WRITE;
@@ -1343,6 +1350,11 @@ class ExperimentUtilities
             else {
                 $rrevoke[$user] = ResourcePermissionType::READ;
             }
+
+            if (array_search($user, $projperms) === false) {
+                $prrevoke[$user] = ResourcePermissionType::READ;
+                $pwrevoke[$user] = ResourcePermissionType::WRITE;
+            }
         }
 
         GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $wadd);
@@ -1352,5 +1364,13 @@ class ExperimentUtilities
         GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
 
         GrouperUtilities::shareResourceWithUsers($experiment->projectId, ResourceType::PROJECT, $radd);
+
+        $experiments = ProjectUtilities::get_experiments_in_project($experiment->projectId);
+        foreach ($experiments as $exp) {
+            if ($exp->experimentId !== $expId) {
+                GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $prrevoke);
+                GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $pwrevoke);
+            }
+        }
     }
 }
