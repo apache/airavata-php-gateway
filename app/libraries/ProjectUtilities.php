@@ -127,7 +127,11 @@ class ProjectUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        ProjectUtilities::share_project($projectId, json_decode($share));
+        $share = json_decode($share);
+        $share->{Session::get('username')} = new stdClass();
+        $share->{Session::get('username')}->read = true;
+        $share->{Session::get('username')}->write = true;
+        ProjectUtilities::share_project($projectId, $share);
 
         return $projectId;
     }
