@@ -507,7 +507,6 @@ class CRUtilities
 
     public static function getAllGateways()
     {
-
         if (Session::has("super-admin"))
             $gateways = Airavata::getAllGateways(Session::get('authz-token'));
         else {

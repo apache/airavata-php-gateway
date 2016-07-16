@@ -66,19 +66,32 @@
                 <div class="col-md-12">
                     <h3>Gateway Requests</h3>
                     <table class="table table-striped table-bordered">
-                        <th>
+                        <thead>
                             <tr>
-                                <td>Gateway Name</td>
-                                <td>Admin Name</td>
-                                <td>Gateway URL</td>
-                                <td>Project Details</td>
-                                <td>Status</td>
+                                <th>Gateway Name</th>
+                                <th>Admin Name</th>
+                                <th>Gateway URL</th>
+                                <th>Project Details</th>
+                                <th>Project Abstract</th>
+                                <th>Actions</th>
                             </tr>
-                        </th>
+                        </thead>
                         <tbody>
-                        <!-- foreach code -->
+                        @foreach( $gateways as $indexGP => $gp )
+                            @if( $gp->gatewayApprovalStatus == 0)
                             <tr>
+                                <td>{{$gp->gatewayName }}</td>
+                                <td>{{ $gp->gatewayAdminFirstName }} {{ $gp->gatewayAdminLastName }} </td>
+                                <td>{{ $gp->gatewayURL }}</td>
+                                <td>{{ $gp->reviewProposalDescription}}</td>
+                                <td>{{ $gp->gatewayPublicAbstract}}</td>
+                                <td>
+                                    <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=1"><input type="button" class="btn btn-primary" value="Approve"/></a>
+                                    <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=3"><input type="button" class="btn btn-danger" value="Deny"/></a>
+                                </td>
                             </tr>
+                            @endif
+                        @endforeach
                         <!-- foreach code ends -->
                         </tbody>
                     </table>
@@ -86,6 +99,7 @@
             </div>
 
             <div class="panel-group super-admin-gateways-view" id="accordion1">
+                <h3>Approved Gateways</h3>
                 @foreach( $gateways as $indexGP => $gp )
                     @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
                 @endforeach

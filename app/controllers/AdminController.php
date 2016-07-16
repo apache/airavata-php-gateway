@@ -13,21 +13,29 @@ class AdminController extends BaseController {
         
         $userProfile = Session::get("user-profile");
         Session::forget("new-gateway-provider");
-
-        if( in_array( "gateway-provider", $userProfile["roles"]) ){
-			$gatewayOfUser = "";
-        	$gatewaysInfo = CRUtilities::getAllGateways();
-            foreach( $gatewaysInfo as $index => $gateway){
-                if( $gateway->emailAddress == $userProfile["email"]){
+        if( in_array( "gateway-provider", $userProfile["roles"]) ) {
+            $gatewayOfUser = "";
+            $gatewaysInfo = CRUtilities::getAllGateways();
+            //var_dump( $gatewaysInfo); exit;
+            foreach ($gatewaysInfo as $index => $gateway) {
+                if ($gateway->identityServerUserName == $userProfile["username"]) {
                     Session::set("gateway_id", $gateway->gatewayId);
                     $gatewayOfUser = $gateway->gatewayId;
                     Session::forget("super-admin");
+                    Session::put("existing-gateway-provider", true);
+                    if( $gateway->gatewayApprovalStatus == 0){
+                    	Session::put("approvalStatus", "Requested");
+                    }
+                    elseif( $gateway->gatewayApprovalStatus == 3){
+                    	Session::put("approvalStatus", "Denied");
+                    }
                     break;
                 }
             }
-            if( $gatewayOfUser == ""){
-            	$userInfo["username"] = $userProfile["username"];
-            	$userInfo["email"] = $userProfile["email"];
+
+            if ($gatewayOfUser == "") {
+                $userInfo["username"] = $userProfile["username"];
+                $userInfo["email"] = $userProfile["email"];
                 Session::put("new-gateway-provider", true);
             }
         }
@@ -129,6 +137,12 @@ class AdminController extends BaseController {
 		{
 			echo ("username doesn't exist only."); exit;
 		}
+	}
+
+	public function updateGatewayRequest(){
+		AdminUtilities::update_gateway_status( Input::get("gateway_id"), Input::get("status"));
+
+		return Redirect::to("admin/dashboard/gateway");
 	}
 
 	public function rolesView(){
@@ -371,6 +385,43 @@ class AdminController extends BaseController {
 			else
 				return 0;
 			//return Redirect::to("admin/dashboard/gateway")->with("message", "Gateway has been successfully added.");
+		}
+	}
+
+
+	public function requestGateway(){
+		$inputs = Input::all();
+		
+		$rules = array(
+            "username" => "required|min:6",
+            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
+            "confirm_password" => "required|same:password",
+            "email" => "required|email",
+        );
+
+        $messages = array(
+            'password.regex' => 'Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$&*',
+        );
+
+        $checkValidation = array();
+        $checkValidation["username"] = $inputs["admin-username"];
+        $checkValidation["password"] = $inputs["admin-password"];
+        $checkValidation["confirm_password"] = $inputs["admin-password-confirm"];
+        $checkValidation["email"] = $inputs["email-address"];
+
+        $validator = Validator::make( $checkValidation, $rules, $messages);
+        if ($validator->fails()) {
+            Session::put("message", $validator->messages() );
+            return Redirect::to("admin/dashboard");
+        }
+        else{
+	        $gateway = AdminUtilities::request_gateway(Input::all());
+
+			//$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"], inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
+
+			Session::put("message", "Your request for Gateway " . $inputs["gateway-name"] . " has been created.");
+			
+            return Redirect::to("admin/dashboard");
 		}
 	}
 

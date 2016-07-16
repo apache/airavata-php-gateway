@@ -297,7 +297,9 @@ class AccountController extends BaseController
 
         if( in_array( "gateway-provider", $userProfile["roles"]) ) {
             $gatewayOfUser = "";
+
             $gatewaysInfo = CRUtilities::getAllGateways();
+            var_dump( $gatewaysInfo); exit;
             foreach ($gatewaysInfo as $index => $gateway) {
                 if ($gateway->emailAddress == $userProfile["email"]) {
                     Session::set("gateway_id", $gateway->gatewayId);
@@ -312,12 +314,8 @@ class AccountController extends BaseController
                 Session::put("new-gateway-provider", true);
             }
         }
-        
-        $errors = array();
-        if( Session::has("errors"))
-            $errors = Session::get("errors");
 
-        return View::make("account/dashboard",array("message"=> implode( "," , $errors) ));
+        return View::make("account/dashboard");
     }
 
     public function resetPassword()
