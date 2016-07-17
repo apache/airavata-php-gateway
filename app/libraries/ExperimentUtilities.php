@@ -604,6 +604,9 @@ class ExperimentUtilities
                     $parts = explode('/', rtrim($currentInputPath, '/'));
                     $fileName = array_pop($parts);
                     $newInputPath = ExperimentUtilities::$experimentPath . $fileName;
+                    if(parse_url($currentInputPath)){
+                        $currentInputPath = parse_url($currentInputPath, PHP_URL_PATH);
+                    }
                     copy($currentInputPath, $newInputPath);
 
                     $dataProductModel = new DataProductModel();
