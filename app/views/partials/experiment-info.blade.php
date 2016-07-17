@@ -50,7 +50,7 @@
         </tr>
         <tr>
             <td><strong>Owner</strong></td>
-            <td><?php echo $project->owner; ?></td>
+            <td><?php echo $experiment->userName; ?></td>
         </tr>
         <tr>
             <td><strong>Application</strong></td>
