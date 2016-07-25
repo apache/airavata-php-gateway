@@ -49,6 +49,11 @@ return array(
         'oauth-client-secret' => 'KNTf_LPLuGBDbRVZwkrP_fF5z2Ea',
 
         /**
+         * OAuth Grant Type (password or authorization_code)
+         */
+        'oauth-grant-type' => 'authorization_code',
+
+        /**
          * Identity server domain
          */
         'server' => 'idp.scigap.org',
