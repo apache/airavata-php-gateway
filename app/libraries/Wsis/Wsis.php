@@ -222,10 +222,10 @@ class Wsis {
                 $temp = $userName;
             }
             $roles = $this->getUserRoles($temp);
-            $roles = explode(",", $roles);
         }else{
             $roles = $userProfile->roles;
         }
+        $roles = explode(",", $roles);
         return array('username'=>$userName, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
             'lastname'=>$userProfile->family_name, 'roles'=>$roles);
     }
