@@ -54,6 +54,11 @@ return array(
         'oauth-grant-type' => 'authorization_code',
 
         /**
+         * OAuth call back url (only if the grant type is authorization_code)
+         */
+        'oauth-callback-url' => 'https://dev.seagrid.org/callback-url',
+
+        /**
          * Identity server domain
          */
         'server' => 'idp.scigap.org',

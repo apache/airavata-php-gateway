@@ -175,16 +175,11 @@ class AccountController extends BaseController
 
         $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
         $username = $userProfile['username'];
-
-        //Fixme - OpenID profile takes some time to get synced (WSO2 IS Issue)
-        //$userRoles = $userProfile['roles'];
-        $userRoles = (array)WSIS::getUserRoles($username);
-
-        $username = $userProfile['username'];
+        $userRoles = $userProfile['roles'];
 
         $authzToken = new Airavata\Model\Security\AuthzToken();
         $authzToken->accessToken = $accessToken;
-        $authzToken->claimsMap = array('userName'=>$username);
+        $authzToken->claimsMap = array('userName'=>$username, 'gatewayID'=> Config::get('pga_config.airavata')['gateway-id']);
         Session::put('authz-token',$authzToken);
         Session::put('oauth-refresh-code',$refreshToken);
         Session::put('oauth-expiration-time',$expirationTime);
