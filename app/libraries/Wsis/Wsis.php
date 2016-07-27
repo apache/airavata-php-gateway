@@ -222,6 +222,7 @@ class Wsis {
                 $temp = $userName;
             }
             $roles = $this->getUserRoles($temp);
+            $roles = explode(",", $roles);
         }else{
             $roles = $userProfile->roles;
         }
