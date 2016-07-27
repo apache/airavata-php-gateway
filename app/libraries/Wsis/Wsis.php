@@ -217,7 +217,7 @@ class Wsis {
         $userName = $userProfile->sub;
         if(!isset($userProfile->roles)){
             if(substr( $userName, 0, 7 ) === "http://"){
-                $temp = substr($userName, 7);
+                $temp = substr($userName, 6);
             }else{
                 $temp = $userName;
             }
