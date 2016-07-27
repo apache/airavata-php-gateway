@@ -21,6 +21,8 @@ use Airavata\Model\Data\Replica\DataReplicaLocationModel;
 use Airavata\Model\Data\Replica\ReplicaLocationCategory;
 use Airavata\Model\Data\Replica\ReplicaPersistentType;
 use Airavata\Model\Application\Io\InputDataObjectType;
+use Airavata\Model\Group\ResourceType;
+use Airavata\Model\Group\ResourcePermissionType;
 
 class ExperimentUtilities
 {
@@ -77,7 +79,7 @@ class ExperimentUtilities
 
         $optFilesHtml = "";
 
-        if( count( $experimentInputs) > 0 ) { 
+        if( count( $experimentInputs) > 0 ) {
             foreach ($experimentInputs as $input) {
                 $matchingAppInput = null;
                 if ($input->type == DataType::URI) {
@@ -549,6 +551,7 @@ class ExperimentUtilities
      */
     public static function update_experiment($expId, $updatedExperiment)
     {
+        $share = $_POST['share-settings'];
         try {
             Airavata::updateExperiment(Session::get('authz-token'), $expId, $updatedExperiment);
         } catch (InvalidRequestException $ire) {
@@ -568,6 +571,8 @@ class ExperimentUtilities
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
                 '<p>AiravataSystemException: ' . $ase->getMessage() . '</p>');
         }
+
+        ExperimentUtilities::share_experiment($expId, json_decode($share));
     }
 
 
@@ -630,6 +635,14 @@ class ExperimentUtilities
             }
             $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
+
+            $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
+            $share[Session::get("username")] = array("read" => true, "write" => true);
+            foreach ($share as $uid => $perms) {
+                $share[$uid] = (object) $perms;
+            }
+            ExperimentUtilities::share_experiment($cloneId, $share);
+
             return $cloneId;
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem cloning the experiment.
@@ -791,6 +804,8 @@ class ExperimentUtilities
         $experiment = ExperimentUtilities::assemble_experiment();
         $expId = null;
 
+        $share = $_POST['share-settings'];
+
         try {
             if ($experiment) {
                 $expId = Airavata::createExperiment(Session::get('authz-token'), Session::get("gateway_id"), $experiment);
@@ -811,6 +826,12 @@ class ExperimentUtilities
         } catch (AiravataSystemException $ase) {
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
+
+        $share = json_decode($share);
+        $share->{Session::get('username')} = new stdClass();
+        $share->{Session::get('username')}->read = true;
+        $share->{Session::get('username')}->write = true;
+        ExperimentUtilities::share_experiment($expId, $share);
 
         return $expId;
     }
@@ -935,14 +956,14 @@ class ExperimentUtilities
         if( is_object( $experiment->experimentStatus ) )
             $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus->state];
         else
-            $experimentStatusString = $experiment->experimentStatus; 
+            $experimentStatusString = $experiment->experimentStatus;
 
         $expVal["experimentStatusString"] = $experimentStatusString;
         if ( $experimentStatusString == ExperimentState::FAILED)
             $expVal["editable"] = false;
 
         $expVal["cancelable"] = false;
-        if ( $experimentStatusString == ExperimentState::LAUNCHED 
+        if ( $experimentStatusString == ExperimentState::LAUNCHED
             || $experimentStatusString == ExperimentState::EXECUTING)
             $expVal["cancelable"] = true;
 
@@ -1306,5 +1327,57 @@ class ExperimentUtilities
         echo '</select>';
     }
 
+    /**
+     * Set sharing privileges for a given experiment.
+     * @param $expId
+     * @param $users A map of username => {read_permission, write_permission}
+     */
+    private static function share_experiment($expId, $users) {
+        $experiment = ExperimentUtilities::get_experiment($expId);
+        $wadd = array();
+        $wrevoke = array();
+        $radd = array();
+        $rrevoke = array();
 
+        $projperms = GrouperUtilities::getAllAccessibleUsers($experiment->projectId, ResourceType::PROJECT, ResourcePermissionType::READ);
+        $prrevoke = array();
+        $pwrevoke = array();
+
+        foreach ($users as $user => $perms) {
+            if ($perms->write) {
+                $wadd[$user] = ResourcePermissionType::WRITE;
+            }
+            else {
+                $wrevoke[$user] = ResourcePermissionType::WRITE;
+            }
+
+            if ($perms->read) {
+                $radd[$user] = ResourcePermissionType::READ;
+            }
+            else {
+                $rrevoke[$user] = ResourcePermissionType::READ;
+            }
+
+            if (array_search($user, $projperms) === false) {
+                $prrevoke[$user] = ResourcePermissionType::READ;
+                $pwrevoke[$user] = ResourcePermissionType::WRITE;
+            }
+        }
+
+        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $wadd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $wrevoke);
+
+        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $radd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
+
+        GrouperUtilities::shareResourceWithUsers($experiment->projectId, ResourceType::PROJECT, $radd);
+
+        $experiments = ProjectUtilities::get_experiments_in_project($experiment->projectId);
+        foreach ($experiments as $exp) {
+            if ($exp->experimentId !== $expId) {
+                GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $prrevoke);
+                GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $pwrevoke);
+            }
+        }
+    }
 }

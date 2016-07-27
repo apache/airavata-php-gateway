@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/sharing.css') }}
 @stop
 
 @section('content')
@@ -46,6 +47,7 @@
             {{ ExperimentUtilities::create_application_select($application, !$disabled) }}
 
         </div>
+
         <div class="btn-toolbar">
             <input name="continue" type="submit" class="btn btn-primary" value="Continue">
             <input name="clear" type="reset" class="btn btn-default" value="Reset values">
@@ -54,4 +56,10 @@
 
 </div>
 
+{{ HTML::image("assets/Profile_avatar_placeholder_large.png", 'placeholder image', array('class' => 'baseimage')) }}
+
+@stop
+
+@section('scripts')
+@parent
 @stop
