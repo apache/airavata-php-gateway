@@ -226,7 +226,7 @@ class Wsis {
             $roles = $userProfile->roles;
         }
         return array('username'=>$userName, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
-            'lastname'=>$userProfile->family_name, 'roles'=> $roles);
+            'lastname'=>$userProfile->family_name, 'roles'=>explode(",",$roles));
     }
 
     /**
