@@ -212,23 +212,8 @@ class Wsis {
      */
     public function getUserProfileFromOAuthToken($token){
         $userProfile = $this->oauthManger->getUserProfile($token);
-
-        //FIXME - Hacky way to fix CILogon JIT provisioning in IS
-        $userName = $userProfile->sub;
-        if(!isset($userProfile->roles)){
-            if(substr( $userName, 0, 7 ) === "http://"){
-                $temp = substr($userName, 6);
-            }else{
-                $temp = $userName;
-            }
-            $roles = $this->getUserRoles($temp);
-        }else{
-            $roles = $userProfile->roles;
-        }
-        if(!is_array($roles))
-            $roles = explode(",", $roles);
-        return array('username'=>$userName, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
-            'lastname'=>$userProfile->family_name, 'roles'=>$roles);
+        return array('username'=>$userProfile->sub, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
+            'lastname'=>$userProfile->family_name, 'roles'=>explode(",",$userProfile->roles));
     }
 
     /**
