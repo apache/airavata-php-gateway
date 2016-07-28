@@ -10,37 +10,55 @@ class AdminController extends BaseController {
 
 	public function dashboard(){
         $userInfo = array();
-        
+        $data = array();
         $userProfile = Session::get("user-profile");
         Session::forget("new-gateway-provider");
         if( in_array( "gateway-provider", $userProfile["roles"]) ) {
             $gatewayOfUser = "";
+            Session::put("super-admin", true);
             $gatewaysInfo = CRUtilities::getAllGateways();
-            //var_dump( $gatewaysInfo); exit;
+            $requestedGateways = array();
             foreach ($gatewaysInfo as $index => $gateway) {
                 if ($gateway->identityServerUserName == $userProfile["username"]) {
-                    Session::set("gateway_id", $gateway->gatewayId);
                     $gatewayOfUser = $gateway->gatewayId;
                     Session::forget("super-admin");
+                    Session::put("new-gateway-provider", true);
                     Session::put("existing-gateway-provider", true);
+                    $requestedGateways[ $gateway->gatewayId]["gatewayInfo"] = $gateway;
+                    $requestedGateways[ $gateway->gatewayId]["approvalStatus"] = "Approved";
                     if( $gateway->gatewayApprovalStatus == 0){
-                    	Session::put("approvalStatus", "Requested");
+                    	$requestedGateways[ $gateway->gatewayId]["approvalStatus"] = "Requested";
+                    }
+                    if( $gateway->gatewayApprovalStatus == 1){
+                    	$requestedGateways[ $gateway->gatewayId]["approvalStatus"] = "Approved";
+		            	Session::put("gateway_id", $gateway->gatewayId);
                     }
                     elseif( $gateway->gatewayApprovalStatus == 3){
-                    	Session::put("approvalStatus", "Denied");
+                    	$requestedGateways[ $gateway->gatewayId]["approvalStatus"] = "Denied";
                     }
-                    break;
+                    //seeing if admin wants to start managing one of the gateways
+		            if( Input::has("gatewayId")){
+		            	if( Input::get("gatewayId") == $gateway->gatewayId)
+		            	{
+		            		Session::put("gateway_id", $gateway->gatewayId);
+		            	}
+		            }
                 }
             }
+            $data["requestedGateways"] = $requestedGateways;
+            //to make it accessible to navbar
+            Session::put("requestedGateways", $requestedGateways);
 
             if ($gatewayOfUser == "") {
                 $userInfo["username"] = $userProfile["username"];
                 $userInfo["email"] = $userProfile["email"];
+    			$data["userInfo"] = $userInfo;
+    			$data["gatewaysInfo"] = $gatewaysInfo;
                 Session::put("new-gateway-provider", true);
             }
         }
         //var_dump( $userInfo); exit;
-		return View::make("account/dashboard", array("userInfo"=> $userInfo));
+		return View::make("account/dashboard", $data);
 	}
 
 	public function addAdminSubmit(){
@@ -411,8 +429,10 @@ class AdminController extends BaseController {
 
         $validator = Validator::make( $checkValidation, $rules, $messages);
         if ($validator->fails()) {
-            Session::put("message", $validator->messages() );
-            return Redirect::to("admin/dashboard");
+            Session::put("validationMessages", $validator->messages() );
+            return Redirect::to("admin/dashboard")
+            	->withInput(Input::except('password', 'password_confirm'))
+            	->withErrors($validator);
         }
         else{
 	        $gateway = AdminUtilities::request_gateway(Input::all());

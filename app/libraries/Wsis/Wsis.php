@@ -412,6 +412,14 @@ class Wsis {
         }
     }
 
+    public function getTenants(){
+        try {
+            return $this->tenantManager->retrieveTenants();
+        } catch (Exception $ex) {
+            throw new Exception("Unable to get Tenants.", 0, $ex);
+        }
+    }
+
     /**
      * Function to update the user profile
      * @param $username

@@ -78,19 +78,21 @@
                         </thead>
                         <tbody>
                         @foreach( $gateways as $indexGP => $gp )
-                            @if( $gp->gatewayApprovalStatus == 0)
                             <tr>
                                 <td>{{$gp->gatewayName }}</td>
                                 <td>{{ $gp->gatewayAdminFirstName }} {{ $gp->gatewayAdminLastName }} </td>
                                 <td>{{ $gp->gatewayURL }}</td>
                                 <td>{{ $gp->reviewProposalDescription}}</td>
                                 <td>{{ $gp->gatewayPublicAbstract}}</td>
-                                <td>
-                                    <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=1"><input type="button" class="btn btn-primary" value="Approve"/></a>
-                                    <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=3"><input type="button" class="btn btn-danger" value="Deny"/></a>
-                                </td>
+                                @if( $gp->gatewayApprovalStatus == 0)
+                                    <td>
+                                        <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=1"><input type="button" class="btn btn-primary" value="Approve"/></a>
+                                        <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=3"><input type="button" class="btn btn-danger" value="Deny"/></a>
+                                    </td>
+                                @elseif( $gp->gatewayApprovalStatus == 1)
+                                    <td>Approved</td>
+                                @endif
                             </tr>
-                            @endif
                         @endforeach
                         <!-- foreach code ends -->
                         </tbody>
