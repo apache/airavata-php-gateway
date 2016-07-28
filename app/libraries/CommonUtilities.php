@@ -221,6 +221,15 @@ class CommonUtilities
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">' . Session::get("username") . ' <span class="caret"></span></a>';
             echo '<ul class="dropdown-menu" role="menu">';
 
+            if ( Session::has("existing-gateway-provider")) {
+                $requestedGateways = Session::get("requestedGateways");
+                foreach( $requestedGateways as $gatewayId => $gateway){
+                    if( $gateway["approvalStatus"] == "Approved"){
+                        echo '<li><a href="' . URL::to('/') . '/admin/dashboard?gatewayId=' . $gateway["gatewayInfo"]->gatewayId . '">Manage ' . $gateway["gatewayInfo"]->gatewayName . '</a></li>';
+                    }
+                }
+            }
+
             echo '<li><a href="' . URL::to('/') . '/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>';
             echo '</ul></li></ul>';
         } else {

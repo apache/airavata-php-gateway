@@ -47,11 +47,19 @@ class AdminUtilities
     public static function update_gateway_status( $gatewayId, $status){
         $gateway = Airavata::getGateway( Session::get('authz-token'), $gatewayId);
         $gateway->gatewayApprovalStatus = intval( $status);
-        
         if( Airavata::updateGateway( Session::get('authz-token'), $gateway->gatewayId, $gateway) ){
             if( $gateway->gatewayApprovalStatus == GatewayApprovalStatus::APPROVED){
-                if( AdminUtilities::add_tenant( $gateway) ){
-                    Adminutilities::update_gateway_status( Input::get("gateway_id"), GatewayApprovalStatus::ACTIVE);
+                $tenants = WSIS::getTenants();
+                $tenantExists = false;
+                foreach( $tenants as $tenant){
+                    if( $tenant->tenantDomain == $gateway->gatewayURL){
+                        $tenantExists = true;
+                    }
+                }
+                if( !$tenantExists){
+                    if( AdminUtilities::add_tenant( $gateway) ){
+                            Adminutilities::update_gateway_status( Input::get("gateway_id"), GatewayApprovalStatus::ACTIVE);
+                    }
                 }
             }
 
