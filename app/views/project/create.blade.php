@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/sharing.css') }}
 @stop
 
 @section('content')
@@ -24,13 +25,20 @@
                       placeholder="Optional: Enter a short description of the project" maxlength="200"></textarea>
         </div>
 
+        <div class="form-group">
+            @include('partials/sharing-display-body', array('form' => true))
+        </div>
+
         <input name="save" type="submit" class="btn btn-primary create-project" value="Save">
         <input name="clear" type="reset" class="btn btn-default" value="Clear">
-
 
     </form>
 
 </div>
+
+@include('partials/sharing-form-modal')
+
+{{ HTML::image("assets/Profile_avatar_placeholder_large.png", 'placeholder image', array('class' => 'baseimage')) }}
 
 @stop
 
@@ -40,5 +48,8 @@
     $(".projectName").blur(function () {
         $(this).val($.trim($(this).val()));
     });
+    var users = {{ $users }};
 </script>
+{{ HTML::script('js/sharing/sharing_utils.js') }}
+{{ HTML::script('js/sharing/share.js') }}
 @stop

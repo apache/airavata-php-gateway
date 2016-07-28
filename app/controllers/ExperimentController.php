@@ -1,6 +1,7 @@
 <?php
 
 use Airavata\Model\Status\JobState;
+use Airavata\Model\Group\ResourceType;
 
 class ExperimentController extends BaseController
 {
@@ -40,6 +41,7 @@ class ExperimentController extends BaseController
                 "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
             );
 
+
             $clonedExp = false; $savedExp = false;
             if( Input::has("clonedExp"))
                 $clonedExp = true;
@@ -52,7 +54,7 @@ class ExperimentController extends BaseController
             if( $serverLimit < $allowedFileSize)
                 $allowedFileSize = $serverLimit;
 
-            
+
             $experimentInputs = array(
                 "clonedExp" => $clonedExp,
                 "savedExp" => $savedExp,
@@ -71,7 +73,9 @@ class ExperimentController extends BaseController
                 "allowedFileSize" => $allowedFileSize
             );
 
-            return View::make("experiment/create-complete", array("expInputs" => $experimentInputs));
+            $users = SharingUtilities::getAllUserProfiles($_POST['project'], ResourceType::PROJECT);
+
+            return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
             $expId = ExperimentUtilities::create_experiment();
 
@@ -86,6 +90,7 @@ class ExperimentController extends BaseController
                     <a href=' . URL::to('/') . '"/experiment/summary?expId=' . $expId . '">go directly</a> to experiment summary page.</p>');
 
             }*/
+            $users = SharingUtilities::getAllUserProfiles($expId, ResourceType::EXPERIMENT);
             return Redirect::to('experiment/summary?expId=' . $expId);
         } else
             return Redirect::to("home")->with("message", "Something went wrong here. Please file a bug report using the link in the Help menu.");
@@ -105,14 +110,14 @@ class ExperimentController extends BaseController
                 Session::put("permissionDenied", true);
                 CommonUtilities::print_error_message('It seems that you do not have permissions to view this experiment or it belongs to another gateway.');
                 if (Input::has("dashboard"))
-                    return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
+                    return View::make("partials/experiment-info", array("invalidExperimentId" => 1, "users" => json_encode(array())));
                 else
-                    return View::make("experiment/summary", array("invalidExperimentId" => 1));
+                    return View::make("experiment/summary", array("invalidExperimentId" => 1, "users" => json_encode(array())));
             }
             else
                 Session::forget("permissionDenied");
 
-        
+
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
@@ -127,14 +132,17 @@ class ExperimentController extends BaseController
                 }
             }
             $expVal["jobDetails"] = $jobDetails;
-            
+
+            $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
+
             $data = array(
                 "expId" => Input::get("expId"),
                 "experiment" => $experiment,
                 "project" => $project,
                 "jobDetails" => $jobDetails,
                 "expVal" => $expVal,
-                "autoRefresh"=> $autoRefresh
+                "autoRefresh"=> $autoRefresh,
+                "users" => json_encode($users)
             );
             if( Input::has("dashboard"))
             {
@@ -154,9 +162,9 @@ class ExperimentController extends BaseController
             }
         } else {
             if (Input::has("dashboard"))
-                return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
+                return View::make("partials/experiment-info", array("invalidExperimentId" => 1, "users" => json_encode(array())));
             else
-                return View::make("experiment/summary", array("invalidExperimentId" => 1));
+                return View::make("experiment/summary", array("invalidExperimentId" => 1, "users" => json_encode(array())));
         }
     }
 
@@ -228,7 +236,10 @@ class ExperimentController extends BaseController
             'cloning' => true,
             'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
         );
-        return View::make("experiment/edit", array("expInputs" => $experimentInputs));
+
+        $users = SharingUtilities::getAllUserProfiles($_GET['expId'], ResourceType::EXPERIMENT);
+
+        return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
     }
 
     public function cloneExperiment()

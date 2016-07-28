@@ -14,15 +14,19 @@
 </div>
 <div class="form-group required">
     <label for="project" class="control-label">Project</label>
-    @if( $expInputs["clonedExp"] || $expInputs["savedExp"])
+    {{-- @if( $expInputs["clonedExp"] || $expInputs["savedExp"]) --}}
         {{ ProjectUtilities::create_project_select($expInputs["project"], false) }}
-    @else
-        {{ ProjectUtilities::create_project_select($expInputs["project"], true) }}
-    @endif
+    {{-- @else --}}
+        {{-- {{ ProjectUtilities::create_project_select($expInputs["project"], true) }} --}}
+    {{-- @endif --}}
 </div>
 <div class="form-group">
     <label for="application">Application</label>
     {{ ExperimentUtilities::create_application_select($expInputs['application'], false) }}
+</div>
+
+<div class="form-group">
+    @include('partials/sharing-display-body', array("form" => true))
 </div>
 
 <div class="panel panel-default">

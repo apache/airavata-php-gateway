@@ -1,5 +1,7 @@
 <?php
 
+use Airavata\Model\Group\ResourceType;
+
 class ProjectController extends BaseController
 {
 
@@ -23,7 +25,9 @@ class ProjectController extends BaseController
 
     public function createView()
     {
-        return View::make("project/create");
+        $users = SharingUtilities::getAllUserProfiles();
+        //var_dump($users);exit;
+        return View::make("project/create", array("users" => json_encode($users)));
     }
 
     public function createSubmit()
@@ -40,8 +44,11 @@ class ProjectController extends BaseController
     {
         if (Input::has("projId")) {
             Session::put("projId", Input::get("projId"));
+
+            $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
+
             return View::make("project/summary",
-                array("projectId" => Input::get("projId")));
+                array("projectId" => Input::get("projId"), "users" => json_encode($users)));
         } else
             return Redirect::to("home");
     }
@@ -49,9 +56,12 @@ class ProjectController extends BaseController
     public function editView()
     {
         if (Input::has("projId")) {
+            $users = SharingUtilities::getAllUserProfiles(Input::get('projId'), ResourceType::PROJECT);
+
             return View::make("project/edit",
                 array("projectId" => Input::get("projId"),
-                    "project" => ProjectUtilities::get_project($_GET['projId'])
+                    "project" => ProjectUtilities::get_project($_GET['projId']),
+                     "users" => json_encode($users)
                 ));
         } else
             return Redirect::to("home");
@@ -60,6 +70,7 @@ class ProjectController extends BaseController
     public function editSubmit()
     {
         if (isset($_POST['save'])) {
+            $projectDetails = array();
             $projectDetails["owner"] = Session::get("username");
             $projectDetails["name"] = Input::get("project-name");
             $projectDetails["description"] = Input::get("project-description");
@@ -87,10 +98,10 @@ class ProjectController extends BaseController
 
         $searchValue = Input::get("search-value");
         if(!empty($searchValue)){
-            $projects = ProjectUtilities::get_projsearch_results_with_pagination(Input::get("search-key"),
+            $projects = ProjectUtilities::get_proj_search_results_with_pagination(Input::get("search-key"),
                 Input::get("search-value"), $this->limit, ($pageNo - 1) * $this->limit);
         }else{
-            $projects = ProjectUtilities::get_all_user_projects_with_pagination($this->limit, ($pageNo - 1) * $this->limit);
+            $projects = ProjectUtilities::get_all_user_accessible_projects_with_pagination($this->limit, ($pageNo - 1) * $this->limit);
         }
 
         return View::make('project/browse', array(
@@ -100,6 +111,33 @@ class ProjectController extends BaseController
         ));
     }
 
+    /**
+     * Generate JSON containing permissions information for this project.
+     *
+     * This function retrieves the user profile and permissions for every user
+     * other than the client that has access to the project. In the event that
+     * the project does not exist, return an error message.
+     */
+    public function sharedUsers()
+    {
+        $response = array();
+        if (Input::has('projId')) {
+            return Response::json(SharingUtilities::getProfilesForSharedUsers());
+        }
+        else {
+            return Response::json(array("error" => "Error: No project specified"));
+        }
+    }
+
+    public function unsharedUsers()
+    {
+        if (Input::has('projId')) {
+            return Response::json(SharingUtilities::getProfilesForUnsharedUsers);
+        }
+        else {
+            return Response::json(array("error" => "Error: No project specified"));
+        }
+    }
 }
 
 ?>
