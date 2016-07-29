@@ -212,8 +212,20 @@ class Wsis {
      */
     public function getUserProfileFromOAuthToken($token){
         $userProfile = $this->oauthManger->getUserProfile($token);
-        return array('username'=>$userProfile->sub, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
-            'lastname'=>$userProfile->family_name, 'roles'=>explode(",",$userProfile->roles));
+
+        //FIXME hacky fix for the CILogon -> OpenID issue in WSO2 IS
+        $sub = $userProfile->sub;
+        if(0 === strpos($sub, 'http:/')){
+            $mod_sub = substr ($sub ,6);
+        }else{
+            $mod_sub = $sub;
+        }
+        $userProfile = $this->getUserProfile($mod_sub);
+        $lastname = $userProfile['lastname'];
+        $firstname = $userProfile['firstname'];
+        $email = $userProfile['email'];
+        $roles = $this->getUserRoles($mod_sub);
+        return array('username'=>$sub, 'firstname'=>$firstname, 'lastname'=>$lastname, 'email'=>$email, 'roles'=>$roles);
     }
 
     /**
@@ -463,6 +475,10 @@ class Wsis {
      * @param $username
      */
     public function getUserProfile($username){
+        //FIXME hacky fix for the CILogon -> OpenID issue in WSO2 IS
+        if(0 === strpos($username, 'http:/')){
+            $username = substr ($username ,6);
+        }
         return $this->userProfileManager->getUserProfile($username);
     }
 
