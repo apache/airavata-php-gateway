@@ -220,7 +220,6 @@ class Wsis {
         }else{
             $mod_sub = $sub;
         }
-        var_dump($mod_sub);exit;
         $userProfile = $this->getUserProfile($mod_sub);
         $lastname = $userProfile['lastname'];
         $firstname = $userProfile['firstname'];
