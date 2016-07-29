@@ -35,78 +35,112 @@
             {{ Session::forget("message") }}
             @endif
         </div>
+
+        <div class="col-md-12">
+            <ul class="nav nav-tabs nav-justified" id="tabs" role="tablist">
+                <li class="active"><a href="#tab-currentGateway" data-toggle="tab">Gateway - {{ Session::get("gateway_id") }}</a></li>
+                @if( Session::has('super-admin'))
+                    <li><a href="#tab-allGateways" data-toggle="tab">Approved Gateways</a></li>
+                    <li><a href="#tab-requestedGateways" data-toggle="tab">Gateway Requests</a></li>
+                @endif
+            </ul>
+        </div>
         <div class="container-fluid">
-            <div class="panel-group" id="accordion2">
-                <h3>Edit your Gateway Profile</h3>
-                @foreach( $gateways as $indexGP => $gp )
-                    @if( $gp->gatewayId == Session::get("gateway_id"))
-                        @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion2") )
-                    @endif
-                @endforeach
-            </div>
 
-            @if( Session::has('super-admin'))
-            <div class="row">
-                <div class="col-md-6">
-                    <h3>Check all Gateway Profiles</h3>
-                </div>
-                <div class="col-md-6" style="margin-top:2%">
-                    <input type="text" class="col-md-12 filterinput" placeholder="Search by Gateway Name"/>
-                </div>
-                <form id="add-tenant-form" action="{{ URL::to("/") }}/admin/add-gateway">
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-default toggle-add-tenant"><span
-                                class="glyphicon glyphicon-plus"></span>Add a new gateway
-                        </button>
-                    </div>
-                    @include('partials/add-gateway-block')
-                </form>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h3>Gateway Requests</h3>
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Gateway Name</th>
-                                <th>Admin Name</th>
-                                <th>Gateway URL</th>
-                                <th>Project Details</th>
-                                <th>Project Abstract</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <div class="tab-content col-md-12">
+
+                <div class="tab-pane active" id="tab-currentGateway">
+
+                    <div class="panel-group" id="accordion2">
+                        <h3>Edit your Gateway Profile</h3>
                         @foreach( $gateways as $indexGP => $gp )
-                            <tr>
-                                <td>{{$gp->gatewayName }}</td>
-                                <td>{{ $gp->gatewayAdminFirstName }} {{ $gp->gatewayAdminLastName }} </td>
-                                <td>{{ $gp->gatewayURL }}</td>
-                                <td>{{ $gp->reviewProposalDescription}}</td>
-                                <td>{{ $gp->gatewayPublicAbstract}}</td>
-                                @if( $gp->gatewayApprovalStatus == 0)
-                                    <td>
-                                        <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=1"><input type="button" class="btn btn-primary" value="Approve"/></a>
-                                        <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=3"><input type="button" class="btn btn-danger" value="Deny"/></a>
-                                    </td>
-                                @elseif( $gp->gatewayApprovalStatus == 1)
-                                    <td>Approved</td>
-                                @endif
-                            </tr>
+                            @if( $gp->gatewayId == Session::get("gateway_id"))
+                                @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion2") )
+                            @endif
                         @endforeach
-                        <!-- foreach code ends -->
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
-            </div>
 
-            <div class="panel-group super-admin-gateways-view" id="accordion1">
-                <h3>Approved Gateways</h3>
-                @foreach( $gateways as $indexGP => $gp )
-                    @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
-                @endforeach
+                @if( Session::has('super-admin'))
+
+                <div class="tab-pane" id="tab-requestedGateways">
+
+                    <div class="row">
+                        <form id="add-tenant-form" action="{{ URL::to("/") }}/admin/add-gateway">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-default toggle-add-tenant"><span
+                                        class="glyphicon glyphicon-plus"></span>Add a new gateway
+                                </button>
+                            </div>
+                            @include('partials/add-gateway-block')
+                        </form>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3>Gateway Requests</h3>
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Gateway Name</th>
+                                        <th>Admin Name</th>
+                                        <th>Gateway URL</th>
+                                        <th>Project Details</th>
+                                        <th>Project Abstract</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach( $gateways as $indexGP => $gp )
+                                    <tr>
+                                        <td>{{$gp->gatewayName }}</td>
+                                        <td>{{ $gp->gatewayAdminFirstName }} {{ $gp->gatewayAdminLastName }} </td>
+                                        <td>{{ $gp->gatewayURL }}</td>
+                                        <td>{{ $gp->reviewProposalDescription}}</td>
+                                        <td>{{ $gp->gatewayPublicAbstract}}</td>
+                                        @if( $gp->gatewayApprovalStatus == 0)
+                                            <td>
+                                                <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=1"><input type="button" class="btn btn-primary" value="Approve"/></a>
+                                                <br/><br/>
+                                                <form action="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=3" method="POST">
+                                                    <textarea style="width:100%; height:80px" width="100%" name="declineReason" placeholder="Reason for Decline"></textarea>
+                                                    <br/>
+                                                    <input type="submit" class="btn btn-danger" value="Deny"/>
+                                                </form>
+                                            </td>
+                                        @elseif( $gp->gatewayApprovalStatus == 1)
+                                            <td>Approved</td>
+                                        @endif
+                                    </tr>
+                                @endforeach
+                                <!-- foreach code ends -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="tab-allGateways">
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3>Check all Gateway Profiles</h3>
+                        </div>
+                        <div class="col-md-6" style="margin-top:2%">
+                            <input type="text" class="col-md-12 filterinput" placeholder="Search by Gateway Name"/>
+                        </div>
+                    </div>
+
+                    <div class="panel-group super-admin-gateways-view" id="accordion1">
+                        @foreach( $gateways as $indexGP => $gp )
+                            @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
+                        @endforeach
+                    </div>
+                </div>
+
+                @endif
             </div>
-            @endif
+            <!-- ends tabs -->
 
         </div>
         <!-- /.container-fluid -->
@@ -238,7 +272,7 @@
 <script>
     //make first tab of accordion open by default.
     //temporary fix
-    $("#accordion2 #accordion2-collapse-gateway-0").addClass("in");
+    $("#accordion2 .accordion-toggle").first().addClass("in").removeClass("collapsed");
 
     $(".credential-store-token-change > form").submit( function(e){
         $(this).prepend( "<img id='loading-gif' src='{{URL::to('/')}}/assets/ajax-loader.gif'/>");
