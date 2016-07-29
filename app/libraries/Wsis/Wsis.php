@@ -225,6 +225,8 @@ class Wsis {
         $firstname = $userProfile['firstname'];
         $email = $userProfile['email'];
         $roles = $this->getUserRoles($mod_sub);
+        if(!is_array($roles))
+            $roles = explode(",", $roles);
         return array('username'=>$sub, 'firstname'=>$firstname, 'lastname'=>$lastname, 'email'=>$email, 'roles'=>$roles);
     }
 
@@ -479,7 +481,7 @@ class Wsis {
         if(0 === strpos($username, 'http:/')){
             $username = substr ($username ,6);
         }
-        $username = str_replace("@"+Config::get('pga_config.wsis')['tenant-domain'], "", $username);
+        $username = str_replace("@".Config::get('pga_config.wsis')['tenant-domain'], "", $username);
         return $this->userProfileManager->getUserProfile($username);
     }
 
