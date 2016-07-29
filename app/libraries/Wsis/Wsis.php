@@ -220,6 +220,7 @@ class Wsis {
         }else{
             $mod_sub = $sub;
         }
+        var_dump($mod_sub);exit;
         $userProfile = $this->getUserProfile($mod_sub);
         $lastname = $userProfile['lastname'];
         $firstname = $userProfile['firstname'];
@@ -479,6 +480,7 @@ class Wsis {
         if(0 === strpos($username, 'http:/')){
             $username = substr ($username ,6);
         }
+        $username = str_replace("@"+Config::get('pga_config.wsis')['tenant-domain'], "", $username);
         return $this->userProfileManager->getUserProfile($username);
     }
 
