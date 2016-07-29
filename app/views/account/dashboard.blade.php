@@ -41,7 +41,7 @@
                                     <div class="btn-group" role="group" aria-label="...">
                                         <button type="button" class="btn btn-default">Download Credentials</button>
                                         <button type="button" class="btn btn-default"><a href="{{URL::to('/')}}/admin/dashboard?gatewayId={{$gatewayId}}">Manage Gateway</a></button>
-                                        <button type="button" class="btn btn-default">Remove Gateway</button>
+                                        <button type="button" class="btn btn-danger deactivateGateway-button" data-toggle="modal" data-target="#deactivateGateway" data-gatewayid="{{$gatewayId}}">Deactivate Gateway</button>
                                     </div>
                                 @elseif( $gateway["approvalStatus"] == "Requested")
                                     <button type="button" class="btn btn-danger">Cancel Request</button>
@@ -125,6 +125,27 @@
             </div>
             <hr/>
             </div>
+        <!-- Deactivate Modal -->
+        <div class="modal fade" id="deactivateGateway" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Deactivate Confirmation</h4>
+              </div>
+              <div class="modal-body">
+                Are you sure, you want to deactivate this Gateway? This action cannot be undone.
+              </div>
+              <div class="modal-footer">
+                <form action="{{URL::to('/')}}/admin/update-gateway-request?status=3" method="GET">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <input type="hidden" id="deactivateGatewayId" name="gateway_id" value=""/>
+                    <button type="submit" class="btn btn-danger">Deactivate</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
         @endif
         @if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') )
         <div class="row text-center breathing-space">
@@ -360,5 +381,9 @@
         'trigger':'focus'
     });
 
+    $(".deactivateGateway-button").click( function(){
+        var gatewayId = $(this).data("gatewayid");
+        $("#deactivateGatewayId").val( gatewayId);
+    });
 </script>
 @stop
