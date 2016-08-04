@@ -97,8 +97,9 @@ $(function() {
             ajax_data = $(e.target).data();
 
             $.ajax({
-                url: url,
-                data: {},
+                url: ajax_data.url,
+                method: 'post',
+                data: {resourceId: ajax_data.resourceId},
                 dataType: "json",
                 error: function(xhr, status, error) {
                     $('#shared-users').addClass('text-align-center').text("Unable to load users from Airavata server.");
