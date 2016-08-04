@@ -25,8 +25,7 @@ class ProjectController extends BaseController
 
     public function createView()
     {
-        $users = array();
-        //var_dump($users);exit;
+        $users = SharingUtilities::getAllUserProfiles();
         return View::make("project/create", array("users" => json_encode($users)));
     }
 
