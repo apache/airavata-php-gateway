@@ -89,9 +89,41 @@ $(function() {
 
     // Create, populate, and show the share box
     $('body').on('click', 'button#project-share, button#experiment-share', function(e) {
-        var $share_list;
+        var $share_list, ajax_data;
         e.stopPropagation();
         e.preventDefault();
+
+        if ($('#share-box-users').find('.user-thumbnail').length === 0) {
+            ajax_data = $(e.target).data();
+
+            $.ajax({
+                url: url,
+                data: {},
+                dataType: "json",
+                error: function(xhr, status, error) {
+                    $('#shared-users').addClass('text-align-center').text("Unable to load users from Airavata server.");
+                },
+                success: function(data, status, xhr) {
+                    var user, $user, $users;
+
+                    $users = $('#share-box-users');
+                    $users.empty().removeClass('text-align-center');
+
+                    for (user in data) {
+                        if (data.hasOwnProperty(user)) {
+                            $user = createThumbnail(user, data.firstname, data.lastname, data.email, access_enum.NONE, true);
+                            $user.find('.sharing-thumbnail-access').hide();
+
+                            $user.addClass('user-thumbnail');
+                            $user.addClass('share-box-users-item');
+                            $users.append($user);
+                        }
+                    }
+                }
+            });
+        }
+
+        $('#share-box-users').addClass('text-align-center').text('Loading user list');
 
         $share_list = $('#shared-users').children();
 
