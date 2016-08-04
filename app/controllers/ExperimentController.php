@@ -73,7 +73,7 @@ class ExperimentController extends BaseController
                 "allowedFileSize" => $allowedFileSize
             );
 
-            $users = SharingUtilities::getAllUserProfiles($_POST['project'], ResourceType::PROJECT);
+            $users = SharingUtilities::getProfilesForSharedUsers($_POST['project'], ResourceType::PROJECT);
 
             return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
@@ -90,7 +90,7 @@ class ExperimentController extends BaseController
                     <a href=' . URL::to('/') . '"/experiment/summary?expId=' . $expId . '">go directly</a> to experiment summary page.</p>');
 
             }*/
-            $users = SharingUtilities::getAllUserProfiles($expId, ResourceType::EXPERIMENT);
+            $users = SharingUtilities::getProfilesForSharedUsers($expId, ResourceType::EXPERIMENT);
             return Redirect::to('experiment/summary?expId=' . $expId);
         } else
             return Redirect::to("home")->with("message", "Something went wrong here. Please file a bug report using the link in the Help menu.");
@@ -237,7 +237,7 @@ class ExperimentController extends BaseController
             'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
         );
 
-        $users = SharingUtilities::getAllUserProfiles($_GET['expId'], ResourceType::EXPERIMENT);
+        $users = SharingUtilities::getProfilesForSharedUsers($_GET['expId'], ResourceType::EXPERIMENT);
 
         return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
     }
@@ -312,6 +312,33 @@ class ExperimentController extends BaseController
             'expStates' => $experimentStates,
             'expContainer' => $expContainer
         ));
+    }
+
+    /**
+     * Generate JSON containing permissions information for this project.
+     *
+     * This function retrieves the user profile and permissions for every user
+     * other than the client that has access to the project. In the event that
+     * the project does not exist, return an error message.
+     */
+    public function sharedUsers()
+    {
+        if (array_key_exists('projId', $_POST)) {
+            return Response::json(SharingUtilities::getProfilesForSharedUsers());
+        }
+        else {
+            return Response::json(array("error" => "Error: No project specified"));
+        }
+    }
+
+    public function unsharedUsers()
+    {
+        if (array_key_exists('projId', $_POST)) {
+            return Response::json(SharingUtilities::getProfilesForUnsharedUsers());
+        }
+        else {
+            return Response::json(array("error" => "Error: No project specified"));
+        }
     }
 }
 

@@ -25,7 +25,7 @@ class ProjectController extends BaseController
 
     public function createView()
     {
-        $users = SharingUtilities::getAllUserProfiles();
+        $users = array();
         //var_dump($users);exit;
         return View::make("project/create", array("users" => json_encode($users)));
     }
@@ -120,8 +120,7 @@ class ProjectController extends BaseController
      */
     public function sharedUsers()
     {
-        $response = array();
-        if (Input::has('projId')) {
+        if (array_key_exists('expId', $_POST)) {
             return Response::json(SharingUtilities::getProfilesForSharedUsers());
         }
         else {
@@ -131,8 +130,8 @@ class ProjectController extends BaseController
 
     public function unsharedUsers()
     {
-        if (Input::has('projId')) {
-            return Response::json(SharingUtilities::getProfilesForUnsharedUsers);
+        if (array_key_exists('expId', $_POST)) {
+            return Response::json(SharingUtilities::getProfilesForUnsharedUsers());
         }
         else {
             return Response::json(array("error" => "Error: No project specified"));
