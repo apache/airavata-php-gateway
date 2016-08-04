@@ -99,16 +99,18 @@
                                         <td>{{ $gp->gatewayPublicAbstract}}</td>
                                         @if( $gp->gatewayApprovalStatus == 0)
                                             <td>
-                                                <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=1"><input type="button" class="btn btn-primary" value="Approve"/></a>
-                                                <br/><br/>
-                                                <form action="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gp->gatewayId}}&status=3" method="POST">
-                                                    <textarea style="width:100%; height:80px" width="100%" name="declineReason" placeholder="Reason for Decline"></textarea>
+                                                <form action="{{URL::to('/')}}/admin/update-gateway-request" method="GET">
+                                                    <input type="hidden" name="gateway_id" value="{{$gp->gatewayId}}">
+                                                    <textarea style="width:100%; height:80px" width="100%" name="comments" placeholder="Comments"></textarea>
                                                     <br/>
-                                                    <input type="submit" class="btn btn-danger" value="Deny"/>
+                                                    <input type="submit" name="status" class="btn btn-primary" value="Approve"/>
+                                                    <input type="submit" name="status" class="btn btn-danger" value="Deny"/>
                                                 </form>
                                             </td>
                                         @elseif( $gp->gatewayApprovalStatus == 1)
-                                            <td>Approved</td>
+                                            <td>Approved @if( $gp->declinedReason != "")<br/><br/>Comment: {{$gp->declinedReason}} @endif</td>
+                                        @elseif( $gp->gatewayApprovalStatus == 5)
+                                            <td>Denied @if( $gp->declinedReason != "")<br/><br/>Comment: {{$gp->declinedReason}} @endif</td>
                                         @endif
                                     </tr>
                                 @endforeach
