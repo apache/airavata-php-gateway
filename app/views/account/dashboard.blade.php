@@ -40,7 +40,7 @@
                             <td>
                                 @if( $gateway["approvalStatus"] == "Approved")
                                     <div class="btn-group" role="group" aria-label="...">
-                                        <button type="button" class="btn btn-default">Download Credentials</button>
+                                        <button type="button" class="btn btn-default view-credentials" data-gatewayobject="{{ htmlentities( json_encode( $gateway['gatewayInfo'])) }}">View Credentials</button>
                                         <!--
                                         <button type="button" class="btn btn-default"><a href="{{URL::to('/')}}/admin/dashboard?gatewayId={{$gatewayId}}">Manage Gateway</a></button>
                                         
@@ -135,6 +135,54 @@
             </div>
             <hr/>
             </div>
+        <!-- View Credentials -->
+        <div class="modal fade" id="viewCredentials" tabindex="-1" role="dialog" aria-labelledby="vc">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Gateway Credentials</h4>
+              </div>
+              <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Gateway Id</td>
+                            <td class="gateway-id"></td>
+                        </tr>
+                        <tr>
+                            <td>Admin Username</td>
+                            <td class="admin-username"></td>
+                        </tr>
+                        <tr>
+                            <td>Admin Password</td>
+                            <td class="admin-password"></td>
+                        </tr>
+                        <tr>
+                            <td>Oauth Client Key</td>
+                            <td class="oauth-client-key"></td>
+                        </tr>
+                        <tr>
+                            <td>Oauth Client Secret</td>
+                            <td class="oauth-client-secret"></td>
+                        </tr>
+                    </tbody>
+                </table>
+              </div>
+              <!--
+              <div class="modal-footer">
+              </div>
+              -->
+            </div>
+          </div>
+        </div>
+
         <!-- Deactivate Modal -->
         <div class="modal fade" id="deactivateGateway" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
           <div class="modal-dialog" role="document">
@@ -404,6 +452,15 @@
     $(".deactivateGateway-button").click( function(){
         var gatewayId = $(this).data("gatewayid");
         $("#deactivateGatewayId").val( gatewayId);
+    });
+
+    $(".view-credentials").click( function(){
+        var gatewayObject = $(this).data("gatewayobject");
+        console.log( gatewayObject);
+        $(".admin-username").html( gatewayObject["identityServerUserName"]);
+        $(".admin-password").html( gatewayObject["identityServerPasswordToken"]);
+        $(".gateway-id").html( gatewayObject["gatewayId"]);
+        $("#viewCredentials").modal("show");
     });
 </script>
 @stop
