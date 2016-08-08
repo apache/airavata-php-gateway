@@ -158,9 +158,21 @@ class AdminController extends BaseController {
 	}
 
 	public function updateGatewayRequest(){
-		AdminUtilities::update_gateway_status( Input::get("gateway_id"), Input::get("status"));
+		$status = Input::get("status");
+		if( $status == "Approve")
+			$status = 1;
+		if( $status == "Deny")
+			$status = 5;
 
-		return Redirect::to("admin/dashboard/gateway");
+		$comments = "";
+		if( Input::has("comments"))
+			$comments = Input::get("comments");
+
+		AdminUtilities::update_gateway_status( Input::get("gateway_id"), $status, $comments);
+		if( Session::has("super-admin"))
+			return Redirect::to("admin/dashboard/gateway");
+		else
+			return Redirect::to("admin/dashboard");
 	}
 
 	public function rolesView(){

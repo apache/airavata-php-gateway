@@ -29,6 +29,7 @@
                             <th>Gateway Name</th>
                             <th>Request Status</th>
                             <th>Actions</th>
+                            <th>Comments</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,18 +40,27 @@
                             <td>
                                 @if( $gateway["approvalStatus"] == "Approved")
                                     <div class="btn-group" role="group" aria-label="...">
-                                        <button type="button" class="btn btn-default">Download Credentials</button>
+                                        <button type="button" class="btn btn-default view-credentials" data-gatewayobject="{{ htmlentities( json_encode( $gateway['gatewayInfo'])) }}">View Credentials</button>
+                                        <!--
                                         <button type="button" class="btn btn-default"><a href="{{URL::to('/')}}/admin/dashboard?gatewayId={{$gatewayId}}">Manage Gateway</a></button>
+                                        
                                         <button type="button" class="btn btn-danger deactivateGateway-button" data-toggle="modal" data-target="#deactivateGateway" data-gatewayid="{{$gatewayId}}">Deactivate Gateway</button>
+                                        -->
                                     </div>
                                 @elseif( $gateway["approvalStatus"] == "Requested")
-                                    <button type="button" class="btn btn-danger">Cancel Request</button>
+                                    <button type="button" class="btn btn-danger"><a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gatewayId}}&status=4">Cancel Request</a></button>
                                 @endif
+                            </td>
+                            <td>
+                                {{$gateway["gatewayInfo"]->declinedReason}}
                             </td>
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
+                <div class="well">
+                <h4 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:contact@scigap.org">contact@scigap.org</a></h4>
+                </div>
             @endif
             </div>
             <div class="col-md-12">
@@ -82,7 +92,7 @@
 
                         <div class="form-group required">
                             <label class="control-label">Gateway URL</label>
-                            <input type="text" name="gateway-url" class="form-control" value="{{Input::old('gateway-url') }}"/>
+                            <input type="text" name="gateway-url" id="gateway-url" class="form-control" value="{{Input::old('gateway-url') }}" data-container="body" data-toggle="popover" data-placement="left" data-content="URL to Portal home page or Download URL (for desktop applications). This is required if the gateway is Production Ready above."/>
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Gateway Admin Username</label>
@@ -112,11 +122,11 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Project Details</label>
-                            <textarea type="text" name="project-details" class="form-control" required="required">{{Input::old('project-details') }}</textarea>
+                            <textarea type="text" name="project-details" id="project-details" class="form-control" required="required"  data-container="body" data-toggle="popover" data-placement="left" data-content="This information will help us to understand and identify your gateway requirements, such as local or remote resources, user management, field of science and communities supported, applications and interfaces, license handling, allocation management, data management, etc... It will help us in serving you and providing you with the best option for you and your research community.">{{Input::old('project-details') }}</textarea>
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Public Project Description</label>
-                            <textarea type="text" name="public-project-description" class="form-control" required="required">{{Input::old('public-project-description') }}</textarea>
+                            <textarea type="text" name="public-project-description" id="public-project-description" class="form-control" required="required"  data-container="body" data-toggle="popover" data-placement="left" data-content="This description will be used to describe the gateway in the Science Gateways List. It help a user decide whether or not this gateway will be useful to them.">{{Input::old('public-project-description') }}</textarea>
                         </div>
                         <input type="submit" value="Send Request" class="btn btn-primary"/>
                         <input type="reset" value="Reset" class="btn">
@@ -125,6 +135,54 @@
             </div>
             <hr/>
             </div>
+        <!-- View Credentials -->
+        <div class="modal fade" id="viewCredentials" tabindex="-1" role="dialog" aria-labelledby="vc">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Gateway Credentials</h4>
+              </div>
+              <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Gateway Id</td>
+                            <td class="gateway-id"></td>
+                        </tr>
+                        <tr>
+                            <td>Admin Username</td>
+                            <td class="admin-username"></td>
+                        </tr>
+                        <tr>
+                            <td>Admin Password</td>
+                            <td class="admin-password"></td>
+                        </tr>
+                        <tr>
+                            <td>Oauth Client Key</td>
+                            <td class="oauth-client-key"></td>
+                        </tr>
+                        <tr>
+                            <td>Oauth Client Secret</td>
+                            <td class="oauth-client-secret"></td>
+                        </tr>
+                    </tbody>
+                </table>
+              </div>
+              <!--
+              <div class="modal-footer">
+              </div>
+              -->
+            </div>
+          </div>
+        </div>
+
         <!-- Deactivate Modal -->
         <div class="modal fade" id="deactivateGateway" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
           <div class="modal-dialog" role="document">
@@ -146,8 +204,7 @@
             </div>
           </div>
         </div>
-        @endif
-        @if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') )
+        @elseif( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') )
         <div class="row text-center breathing-space">
             <h1>Gateway: {{Session::get("gateway_id")}}</h1>
             <h3>Let's get started!</h3>
@@ -376,14 +433,34 @@
         $(".gateway-request-form").removeClass("hide");
     });
 
-
     $("#password").popover({
+        'trigger':'focus'
+    });
+
+    $("#gateway-url").popover({
+        'trigger':'focus'
+    });
+
+    $("#project-details").popover({
+        'trigger':'focus'
+    });
+
+    $("#public-project-description").popover({
         'trigger':'focus'
     });
 
     $(".deactivateGateway-button").click( function(){
         var gatewayId = $(this).data("gatewayid");
         $("#deactivateGatewayId").val( gatewayId);
+    });
+
+    $(".view-credentials").click( function(){
+        var gatewayObject = $(this).data("gatewayobject");
+        console.log( gatewayObject);
+        $(".admin-username").html( gatewayObject["identityServerUserName"]);
+        $(".admin-password").html( gatewayObject["identityServerPasswordToken"]);
+        $(".gateway-id").html( gatewayObject["gatewayId"]);
+        $("#viewCredentials").modal("show");
     });
 </script>
 @stop

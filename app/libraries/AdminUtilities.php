@@ -38,16 +38,19 @@ class AdminUtilities
         $gateway->identityServerUserName = $inputs["admin-username"];
         $gateway->identityServerPasswordToken  = $inputs["admin-password"];
         $gateway->reviewProposalDescription = $inputs["project-details"];
-        $gateway->gatewayPublicAbstract - $inputs["public-project-description"];
+        $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
 
         return Airavata::addGateway(Session::get('authz-token'), $gateway);
-
     }
 
-    public static function update_gateway_status( $gatewayId, $status){
+    public static function update_gateway_status( $gatewayId, $status, $comments = null){
         $gateway = Airavata::getGateway( Session::get('authz-token'), $gatewayId);
         $gateway->gatewayApprovalStatus = intval( $status);
+        if( $comments != null)
+            $gateway->declinedReason = $comments;
+
         if( Airavata::updateGateway( Session::get('authz-token'), $gateway->gatewayId, $gateway) ){
+        $gateway = Airavata::getGateway( Session::get('authz-token'), $gatewayId);
             if( $gateway->gatewayApprovalStatus == GatewayApprovalStatus::APPROVED){
                 $tenants = WSIS::getTenants();
                 $tenantExists = false;
