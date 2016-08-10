@@ -18,24 +18,17 @@ class AdminController extends BaseController {
             Session::put("super-admin", true);
             $gatewaysInfo = CRUtilities::getAllGateways();
             $requestedGateways = array();
+            $gatewayApprovalStatuses = AdminUtilities::get_gateway_approval_statuses();
+
             foreach ($gatewaysInfo as $index => $gateway) {
                 if ($gateway->identityServerUserName == $userProfile["username"]) {
                     $gatewayOfUser = $gateway->gatewayId;
                     Session::forget("super-admin");
                     Session::put("new-gateway-provider", true);
                     Session::put("existing-gateway-provider", true);
+
                     $requestedGateways[ $gateway->gatewayId]["gatewayInfo"] = $gateway;
-                    $requestedGateways[ $gateway->gatewayId]["approvalStatus"] = "Approved";
-                    if( $gateway->gatewayApprovalStatus == 0){
-                    	$requestedGateways[ $gateway->gatewayId]["approvalStatus"] = "Requested";
-                    }
-                    if( $gateway->gatewayApprovalStatus == 1){
-                    	$requestedGateways[ $gateway->gatewayId]["approvalStatus"] = "Approved";
-		            	Session::put("gateway_id", $gateway->gatewayId);
-                    }
-                    elseif( $gateway->gatewayApprovalStatus == 3){
-                    	$requestedGateways[ $gateway->gatewayId]["approvalStatus"] = "Denied";
-                    }
+                    $requestedGateways[ $gateway->gatewayId]["approvalStatus"] = $gatewayApprovalStatuses[ $gateway->gatewayApprovalStatus];
                     //seeing if admin wants to start managing one of the gateways
 		            if( Input::has("gatewayId")){
 		            	if( Input::get("gatewayId") == $gateway->gatewayId)
@@ -46,6 +39,7 @@ class AdminController extends BaseController {
                 }
             }
             $data["requestedGateways"] = $requestedGateways;
+            $data["gatewayApprovalStatuses"] = $gatewayApprovalStatuses;
             //to make it accessible to navbar
             Session::put("requestedGateways", $requestedGateways);
 
@@ -136,7 +130,8 @@ class AdminController extends BaseController {
 								"tokens" => $tokens,
 								"pwdTokens" => $pwdTokens,
 								"unselectedCRs" => $unselectedCRs,
-								"unselectedSRs" => $unselectedSRs
+								"unselectedSRs" => $unselectedSRs,
+								"gatewayApprovalStatuses" => AdminUtilities::get_gateway_approval_statuses()
 							);
 		$view = "admin/manage-gateway";
 
@@ -159,8 +154,14 @@ class AdminController extends BaseController {
 
 	public function updateGatewayRequest(){
 		$status = Input::get("status");
-		if( $status == "Approve")
+		$oauthData = array();
+
+		if( $status == "Approve"){			
 			$status = 1;
+
+			$oauthData["oauthClientId"] = Input::get("oauth-client-id");
+			$oauthData["oauthClientSecret"] = Input::get("oauth-client-secret");
+		}
 		if( $status == "Deny")
 			$status = 5;
 
@@ -168,7 +169,8 @@ class AdminController extends BaseController {
 		if( Input::has("comments"))
 			$comments = Input::get("comments");
 
-		AdminUtilities::update_gateway_status( Input::get("gateway_id"), $status, $comments);
+
+		AdminUtilities::update_gateway_status( Input::get("gateway_id"), $status, $oauthData, $comments);
 		if( Session::has("super-admin"))
 			return Redirect::to("admin/dashboard/gateway");
 		else

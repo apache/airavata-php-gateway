@@ -97,20 +97,15 @@
                                         <td>{{ $gp->gatewayURL }}</td>
                                         <td>{{ $gp->reviewProposalDescription}}</td>
                                         <td>{{ $gp->gatewayPublicAbstract}}</td>
-                                        @if( $gp->gatewayApprovalStatus == 0)
+                                        @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "REQUESTED")
                                             <td>
-                                                <form action="{{URL::to('/')}}/admin/update-gateway-request" method="GET">
-                                                    <input type="hidden" name="gateway_id" value="{{$gp->gatewayId}}">
-                                                    <textarea style="width:100%; height:80px" width="100%" name="comments" placeholder="Comments"></textarea>
-                                                    <br/>
-                                                    <input type="submit" name="status" class="btn btn-primary" value="Approve"/>
-                                                    <input type="submit" name="status" class="btn btn-danger" value="Deny"/>
-                                                </form>
+                                                    <input type="button" class="btn btn-primary start-approval" data-gatewayid="{{$gp->gatewayId}}" value="Approve"/>
+                                                    <input type="button" class="btn btn-danger deny-approval" data-gatewayid="{{$gp->gatewayId}}" value="Deny"/>
                                             </td>
-                                        @elseif( $gp->gatewayApprovalStatus == 1)
-                                            <td>Approved @if( $gp->declinedReason != "")<br/><br/>Comment: {{$gp->declinedReason}} @endif</td>
-                                        @elseif( $gp->gatewayApprovalStatus == 5)
-                                            <td>Denied @if( $gp->declinedReason != "")<br/><br/>Comment: {{$gp->declinedReason}} @endif</td>
+                                        @else
+                                            <td>{{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus]}}
+                                                @if( $gp->declinedReason != "")<br/><br/>Comment: {{$gp->declinedReason}} @endif
+                                            </td>
                                         @endif
                                     </tr>
                                 @endforeach
@@ -190,6 +185,77 @@
         </form>
     </div>
 </div>
+
+@if( Session::has("super-admin"))
+<!-- Approve a Gateway request -->
+<div class="modal fade" id="approve-gateway" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{URL::to('/')}}/admin/update-gateway-request" method="GET">
+            
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h3>Approve Gateway Request</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <h4>GatewayId: <span class="gatewayid-for-approval"></span></h4>
+                    </div>
+                    <div class="form-group">
+                        <label>Oauth Client Id</label>
+                        <input type="text" name="oauth-client-id" class="form-control" required="required"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Oauth Client Secret</label>
+                        <input type="text" name="oauth-client-secret" class="form-control" required="required" >
+                    </div>
+                    <div class="form-group">
+                        <label>Comments</label>
+                        <textarea style="width:100%; height:80px" width="100%" name="comments"></textarea>
+                    </div>
+                    <input type="hidden" class="gatewayid-for-approval" name="gateway_id">
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" name="status" class="btn btn-primary" value="Approve"/>
+                    <input type="cancel"  data-dismiss="modal"  class="btn btn-default" value="Cancel"/>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Deny a Gateway request -->
+<div class="modal fade" id="deny-gateway" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{URL::to('/')}}/admin/update-gateway-request" method="GET">
+            
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h3>Deny Gateway Request</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Comments</label>
+                        <textarea style="width:100%; height:80px" width="100%" name="comments"></textarea>
+                    </div>
+                </div>
+                <input type="hidden" class="gatewayid-for-approval" name="gateway_id">
+                <div class="modal-footer">
+                    <input type="submit" name="status" class="btn btn-danger" value="Deny"/>
+                    <input type="cancel"  data-dismiss="modal"  class="btn btn-default" value="Cancel"/>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+@endif
 
 <!-- Remove a Compute Resource from a Gateway -->
 <div class="modal fade" id="remove-compute-resource-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
@@ -408,6 +474,16 @@
         elem.find("button").attr("disabled", "true");
         elem.find(".glyphicon").hide();
     }
+
+    $(".start-approval").click( function(){
+        $(".gatewayid-for-approval").val( $(this).data("gatewayid")).html(  $(this).data("gatewayid"));
+        $("#approve-gateway").modal("show");
+    });
+
+    $(".deny-approval").click( function(){
+        $(".gatewayid-for-approval").val( $(this).data("gatewayid")).html(  $(this).data("gatewayid"));
+        $("#deny-gateway").modal("show");
+    });
 
 </script>
 @stop

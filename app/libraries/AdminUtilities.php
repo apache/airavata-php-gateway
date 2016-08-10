@@ -28,10 +28,14 @@ class AdminUtilities
         $gateway = new Gateway( $inputs);
         $gateway->gatewayId = $inputs["gateway-name"];
         $gateway->gatewayApprovalStatus = GatewayApprovalStatus::REQUESTED;
+        if( strpos($input["domain"], "//") != false)
+            $input["domain"] = substr( $input["domain"], 1 + strpos($input["domain"], "//"));
         $gateway->domain = $inputs["domain"];
         $gateway->gatewayName = $inputs["gateway-name"];
         $gateway->emailAddress = $inputs["email-address"];
         $gateway->gatewayAcronym = $inputs["gateway-acronym"];
+        if( strpos($input["gateway-url"], "//") != false)
+            $input["gateway-url"] = substr( $input["gateway-url"], 1 + strpos($input["gateway-url"], "//"));
         $gateway->gatewayURL = $inputs["gateway-url"];
         $gateway->gatewayAdminFirstName = $inputs["admin-firstname"];
         $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
@@ -43,18 +47,32 @@ class AdminUtilities
         return Airavata::addGateway(Session::get('authz-token'), $gateway);
     }
 
-    public static function update_gateway_status( $gatewayId, $status, $comments = null){
+    public static function get_gateway_approval_statuses()
+    {
+        $gatewayApprovalStatusObject = new GatewayApprovalStatus();
+        return $gatewayApprovalStatusObject::$__names;
+    }
+
+    public static function update_gateway_status( $gatewayId, $status, $oauthData, $comments = null){
         $gateway = Airavata::getGateway( Session::get('authz-token'), $gatewayId);
         $gateway->gatewayApprovalStatus = intval( $status);
+        if( count( $oauthData) != 0)
+        {
+            $gateway->oauthClientId = $oauthData["oauthClientId"];
+            $gateway->oauthClientSecret = $oauthData["oauthClientSecret"];
+        }
         if( $comments != null)
             $gateway->declinedReason = $comments;
 
         if( Airavata::updateGateway( Session::get('authz-token'), $gateway->gatewayId, $gateway) ){
-        $gateway = Airavata::getGateway( Session::get('authz-token'), $gatewayId);
+            $gateway = Airavata::getGateway( Session::get('authz-token'), $gatewayId);
             if( $gateway->gatewayApprovalStatus == GatewayApprovalStatus::APPROVED){
                 $tenants = WSIS::getTenants();
                 $tenantExists = false;
                 foreach( $tenants as $tenant){
+                    $gatewayURL = $gateway->gatewayURL;
+                    if( strpos($gateway->gatewayURL, "//") != false)
+                        $gatewayURL = substr( $gateway->gatewayURL, 2 + strpos($gateway->gatewayURL, "//"));
                     if( $tenant->tenantDomain == $gateway->gatewayURL){
                         $tenantExists = true;
                     }
@@ -64,13 +82,23 @@ class AdminUtilities
                             Adminutilities::update_gateway_status( Input::get("gateway_id"), GatewayApprovalStatus::ACTIVE);
                     }
                 }
+                else
+                    echo "Tenant Name is already in use";
             }
 
         }
     }
 
     public static function add_tenant( $gateway){
-        return WSIS::createTenant(1, $gateway->identityServerUserName . "@" . $gateway->domain, $gateway->identityServerPasswordToken, $gateway->emailAddress,$gateway->gatewayAdminFirstName, $gateway->gatewayAdminLastName, $gateway->domain);
+        $gatewayURL = $gateway->gatewayURL;
+        $gatewayDomain = $gateway->domain;
+        if( strpos($gateway->gatewayURL, "//") != false)
+            $gatewayURL = substr( $gateway->gatewayURL, 2 + strpos($gateway->gatewayURL, "//"));
+
+        if( strpos($gateway->domain, "//") != false)
+            $gatewayDomain = substr( $gateway->domain, 2 + strpos( $gateway->domain, "//"));
+
+        return WSIS::createTenant(1, $gateway->identityServerUserName . "@" . $gatewayDomain, $gateway->identityServerPasswordToken, $gateway->emailAddress,$gateway->gatewayAdminFirstName, $gateway->gatewayAdminLastName, $gatewayURL);
     }
 
     /**

@@ -38,7 +38,7 @@
                             <td>{{ $gateway["gatewayInfo"]->gatewayName }}</td>
                             <td>{{ $gateway["approvalStatus"] }}</td>
                             <td>
-                                @if( $gateway["approvalStatus"] == "Approved")
+                                @if( $gateway["approvalStatus"] == "APPROVED")
                                     <div class="btn-group" role="group" aria-label="...">
                                         <button type="button" class="btn btn-default view-credentials" data-gatewayobject="{{ htmlentities( json_encode( $gateway['gatewayInfo'])) }}">View Credentials</button>
                                         <!--
@@ -47,8 +47,10 @@
                                         <button type="button" class="btn btn-danger deactivateGateway-button" data-toggle="modal" data-target="#deactivateGateway" data-gatewayid="{{$gatewayId}}">Deactivate Gateway</button>
                                         -->
                                     </div>
-                                @elseif( $gateway["approvalStatus"] == "Requested")
-                                    <button type="button" class="btn btn-danger"><a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gatewayId}}&status=4">Cancel Request</a></button>
+                                @elseif( $gateway["approvalStatus"] == "REQUESTED")
+                                    <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gatewayId}}&status=4">
+                                        <button type="button" class="btn btn-danger">Cancel Request</button>
+                                    </a>
                                 @endif
                             </td>
                             <td>
@@ -87,12 +89,12 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Domain</label>
-                            <input type="text" name="domain" class="form-control" value="{{Input::old('domain') }}"/>
+                            <input type="url" name="domain" id="domain" class="form-control" value="{{Input::old('domain') }}"  data-container="body" data-toggle="popover" data-placement="left" data-content="Domain's main URL. eg:domain.org"/>
                         </div>
 
                         <div class="form-group required">
                             <label class="control-label">Gateway URL</label>
-                            <input type="text" name="gateway-url" id="gateway-url" class="form-control" value="{{Input::old('gateway-url') }}" data-container="body" data-toggle="popover" data-placement="left" data-content="URL to Portal home page or Download URL (for desktop applications). This is required if the gateway is Production Ready above."/>
+                            <input type="url" name="gateway-url" id="gateway-url" class="form-control" value="{{Input::old('gateway-url') }}" data-container="body" data-toggle="popover" data-placement="left" data-content="URL to Portal home page or Download URL (for desktop applications) where gateway has been deployed. eg:portal.domain.org"/>
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Gateway Admin Username</label>
@@ -437,6 +439,10 @@
         'trigger':'focus'
     });
 
+    $("#domain").popover({
+        'trigger':'focus'
+    });
+
     $("#gateway-url").popover({
         'trigger':'focus'
     });
@@ -456,10 +462,11 @@
 
     $(".view-credentials").click( function(){
         var gatewayObject = $(this).data("gatewayobject");
-        console.log( gatewayObject);
         $(".admin-username").html( gatewayObject["identityServerUserName"]);
         $(".admin-password").html( gatewayObject["identityServerPasswordToken"]);
         $(".gateway-id").html( gatewayObject["gatewayId"]);
+        $(".oauth-client-key").html( gatewayObject["oauthClientId"]);
+        $(".oauth-client-secret").html( gatewayObject["oauthClientSecret"]);
         $("#viewCredentials").modal("show");
     });
 </script>

@@ -447,19 +447,20 @@ class CRUtilities
 
     public static function getAllGatewayProfilesData()
     {
-
-        if (Session::has("super-admin"))
-            $gateways = Airavata::getAllGateways(Session::get('authz-token'));
-        else {
-            $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
-        }
-
         $selectedCRs = array();
         $selectedSRs = array();
         $allCRs = CRUtilities::getAllCRObjects();
         $allSRs = SRUtilities::getAllSRObjects();
         $allCRArray = array();
         $allSRArray = array();
+
+        if (Session::has("super-admin"))
+
+            $gateways = Airavata::getAllGateways(Session::get('authz-token'));
+        else {
+            $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
+        }
+
         foreach( $allCRs as $index => $crObject)
         {
             $allCRArray[$crObject->computeResourceId] = $crObject;
@@ -500,7 +501,8 @@ class CRUtilities
                                 "selectedCRs" => $selectedCRs, 
                                 "selectedSRs" => $selectedSRs, 
                                 "allCRs" => $allCRs,
-                                "allSRs" => $allSRs
+                                "allSRs" => $allSRs,
+                                "gatewayApprovalStatuses" => AdminUtilities::get_gateway_approval_statuses()
                             );
         return $gatewaysInfo;
     }
