@@ -280,7 +280,6 @@ class AccountController extends BaseController
             $gatewayOfUser = "";
 
             $gatewaysInfo = CRUtilities::getAllGateways();
-            var_dump( $gatewaysInfo); exit;
             foreach ($gatewaysInfo as $index => $gateway) {
                 if ($gateway->emailAddress == $userProfile["email"]) {
                     Session::set("gateway_id", $gateway->gatewayId);

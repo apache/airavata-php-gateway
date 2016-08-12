@@ -334,7 +334,9 @@
 @section('scripts')
 @parent
 {{ HTML::script('js/gateway.js') }}
+{{ HTML::script('js/moment.js')}}
 {{ HTML::script('js/datetimepicker.js')}}
+
 <script>
     //make first tab of accordion open by default.
     //temporary fix

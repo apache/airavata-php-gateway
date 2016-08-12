@@ -148,7 +148,7 @@ class AdminController extends BaseController {
 		}
 		else
 		{
-			echo ("username doesn't exist only."); exit;
+			echo ("username doesn't exist."); exit;
 		}
 	}
 
