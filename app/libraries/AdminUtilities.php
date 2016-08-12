@@ -29,13 +29,13 @@ class AdminUtilities
         $gateway->gatewayId = $inputs["gateway-name"];
         $gateway->gatewayApprovalStatus = GatewayApprovalStatus::REQUESTED;
         if( strpos($inputs["domain"], "//") != false)
-            $inputs["domain"] = substr( $inputs["domain"], 1 + strpos($inputs["domain"], "//"));
+            $inputs["domain"] = substr( $inputs["domain"], 2 + strpos($inputs["domain"], "//"));
         $gateway->domain = $inputs["domain"];
         $gateway->gatewayName = $inputs["gateway-name"];
         $gateway->emailAddress = $inputs["email-address"];
         $gateway->gatewayAcronym = $inputs["gateway-acronym"];
         if( strpos($inputs["gateway-url"], "//") != false)
-            $inputs["gateway-url"] = substr( $inputs["gateway-url"], 1 + strpos($inputs["gateway-url"], "//"));
+            $inputs["gateway-url"] = substr( $inputs["gateway-url"], 2 + strpos($inputs["gateway-url"], "//"));
         $gateway->gatewayURL = $inputs["gateway-url"];
         $gateway->gatewayAdminFirstName = $inputs["admin-firstname"];
         $gateway->gatewayAdminLastName = $inputs["admin-lastname"];

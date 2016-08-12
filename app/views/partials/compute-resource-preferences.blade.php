@@ -134,18 +134,24 @@
 <div class="form-group col-md-6">
     <label class="control-label col-md-3">Reservation Start Time</label>
 
-    <div class="col-md-9">
-        <input type="text" id="datetimepicker1" name="qualityOfService" class="form-control"
+    <div class="col-md-9 input-group date" id="datetimepicker1">
+        <input type="text" name="reservationStartTime" class="form-control"
                value="@if( isset( $preferences) ){{$preferences->qualityOfService}}@endif"/>
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
     </div>
 </div>
 
 <div class="form-group col-md-6">
     <label class="control-label col-md-3">Reservation End Time</label>
 
-    <div class="col-md-9">
-        <input type="text" id="datetimepicker2" name="reservationEndTime" class="form-control"
+    <div class="col-md-9 input-group date"  id="datetimepicker2">
+        <input type="text" name="reservationEndTime" class="form-control"
                value="@if( isset( $preferences) ){{$preferences->reservationEndTime}}@endif"/>
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
     </div>
 </div>
 
