@@ -46,11 +46,8 @@
             </ul>
         </div>
         <div class="container-fluid">
-
             <div class="tab-content col-md-12">
-
                 <div class="tab-pane active" id="tab-currentGateway">
-
                     <div class="panel-group" id="accordion2">
                         <h3>Edit your Gateway Profile</h3>
                         @foreach( $gateways as $indexGP => $gp )
@@ -337,6 +334,7 @@
 @section('scripts')
 @parent
 {{ HTML::script('js/gateway.js') }}
+{{ HTML::script('js/datetimepicker.js')}}
 <script>
     //make first tab of accordion open by default.
     //temporary fix
@@ -483,6 +481,29 @@
     $(".deny-approval").click( function(){
         $(".gatewayid-for-approval").val( $(this).data("gatewayid")).html(  $(this).data("gatewayid"));
         $("#deny-gateway").modal("show");
+    });
+
+
+    /* making datetimepicker work for reservation start and end date */
+
+    $('#datetimepicker1').datetimepicker({
+        pick12HourFormat: false
+    });
+    $('#datetimepicker2').datetimepicker({
+        pick12HourFormat: false
+    });
+    $("#datetimepicker1").on("dp.change", function (e) {
+        $('#datetimepicker2').data("DateTimePicker").setMinDate(e.date);
+
+        //hack to close calendar on selecting date
+        $(this).find(".glyphicon-calendar").click();
+    });
+    $("#datetimepicker2").on("dp.change", function (e) {
+        $('#datetimepicker1').data("DateTimePicker").setMaxDate(e.date);
+
+        //hack to close calendar on selecting date
+        $(this).find(".glyphicon-calendar").click();
+
     });
 
 </script>

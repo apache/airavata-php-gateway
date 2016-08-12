@@ -113,6 +113,42 @@
 </div>
 @endif
 
+<div class="form-group">
+    <label class="control-label col-md-3">Quality of Service</label>
+
+    <div class="col-md-9">
+        <input type="text" name="qualityOfService" class="form-control"
+               value="@if( isset( $preferences) ){{$preferences->qualityOfService}}@endif"/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-3">Reservation</label>
+
+    <div class="col-md-9">
+        <input type="text" name="reservation" class="form-control"
+               value="@if( isset( $preferences) ){{$preferences->reservation}}@endif"/>
+    </div>
+</div>
+
+<div class="form-group col-md-6">
+    <label class="control-label col-md-3">Reservation Start Time</label>
+
+    <div class="col-md-9">
+        <input type="text" id="datetimepicker1" name="qualityOfService" class="form-control"
+               value="@if( isset( $preferences) ){{$preferences->qualityOfService}}@endif"/>
+    </div>
+</div>
+
+<div class="form-group col-md-6">
+    <label class="control-label col-md-3">Reservation End Time</label>
+
+    <div class="col-md-9">
+        <input type="text" id="datetimepicker2" name="reservationEndTime" class="form-control"
+               value="@if( isset( $preferences) ){{$preferences->reservationEndTime}}@endif"/>
+    </div>
+</div>
+
 @if(Session::has("admin"))
 <div class="form-group text-center">
     <input type="submit" class="btn btn-primary submit-crp-form" value="Set preferences"/>
