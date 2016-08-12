@@ -29,7 +29,7 @@ class AdminUtilities
         $gateway->gatewayId = $inputs["gateway-name"];
         $gateway->gatewayApprovalStatus = GatewayApprovalStatus::REQUESTED;
         if( strpos($inputs["domain"], "//") != false)
-            $input["domain"] = substr( $inputs["domain"], 1 + strpos($inputs["domain"], "//"));
+            $inputs["domain"] = substr( $inputs["domain"], 1 + strpos($inputs["domain"], "//"));
         $gateway->domain = $inputs["domain"];
         $gateway->gatewayName = $inputs["gateway-name"];
         $gateway->emailAddress = $inputs["email-address"];
