@@ -71,6 +71,10 @@ Route::get("project/browse", "ProjectController@browseView");
 
 Route::post("project/browse", "ProjectController@browseView");
 
+Route::get("project/shared-users", "ProjectController@sharedUsers");
+
+Route::get("project/unshared-users", "ProjectController@unsharedUsers");
+
 /*
  * Experiment Routes
 */
@@ -96,6 +100,10 @@ Route::get("experiment/getQueueView", "ExperimentController@getQueueView");
 Route::get("experiment/browse", "ExperimentController@browseView");
 
 Route::post("experiment/browse", "ExperimentController@browseView");
+
+Route::get("experiment/shared-users", "ExperimentController@sharedUsers");
+
+Route::get("experiment/unshared-users", "ExperimentController@unsharedUsers");
 
 Route::get("download", function(){
     if(Input::has("path") && (0 == strpos(Input::get("path"), Session::get('username'))
