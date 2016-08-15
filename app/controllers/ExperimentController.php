@@ -333,11 +333,11 @@ class ExperimentController extends BaseController
 
     public function unsharedUsers()
     {
-        if (array_key_exists('resourceId', $_POST)) {
+        if (array_key_exists('resourceId', $_GET)) {
             return Response::json(SharingUtilities::getProfilesForUnsharedUsers($_GET['resourceId'], ResourceType::EXPERIMENT));
         }
         else {
-            return Response::json(array("error" => "Error: No project specified"));
+            return Response::json(array("error" => "Error: No experiment specified"));
         }
     }
 }

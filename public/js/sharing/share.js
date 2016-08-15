@@ -110,11 +110,11 @@ $(function() {
                     var user, $user, $users;
 
                     $users = $('#share-box-users');
-                    $users.empty().removeClass('text-align-center');
-                    console.log(data);
+                    $users.removeClass('text-align-center');
+                    $users.text('');
                     for (user in data) {
                         if (data.hasOwnProperty(user)) {
-                            $user = createThumbnail(user, data.firstname, data.lastname, data.email, access_enum.NONE, true);
+                            $user = createThumbnail(user, data[user].firstname, data[user].lastname, data[user].email, access_enum.NONE, true);
                             $user.find('.sharing-thumbnail-access').hide();
 
                             $user.addClass('user-thumbnail');

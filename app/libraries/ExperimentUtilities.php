@@ -634,10 +634,8 @@ class ExperimentUtilities
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
             $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
-            $share->{Session::get('username')} = new stdClass();
-            $share->{Session::get('username')}->read = true;
-            $share->{Session::get('username')}->write = true;
-            ExperimentUtilities::share_experiment($cloneId, $share);
+            $share[Session::get('username')] = ["read" => true, "write" => true];
+            ExperimentUtilities::share_experiment($cloneId, json_decode(json_encode($share)));
 
             return $cloneId;
         } catch (InvalidRequestException $ire) {
@@ -1131,7 +1129,7 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            if (SharingUtilities::userCanRead(Session::get('username'), $experiment, ResourceType::EXPERIMENT)) {
+            if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId, ResourceType::EXPERIMENT)) {
                 $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
                 $expContainer[$expNum]['experiment'] = $experiment;
                 if ($expValue["experimentStatusString"] == "FAILED")

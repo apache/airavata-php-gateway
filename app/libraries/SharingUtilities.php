@@ -25,12 +25,14 @@ class SharingUtilities {
      * @return True if the user has read permission, false otherwise.
      */
     public static function userCanRead($uid, $resourceId, $dataResourceType) {
-        if (WSIS::usernameExists($uid)) {
-            $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
-            return (array_key_exists($uid, $read) ? true : false);
-        }
-        else {
-            return false;
+        $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
+        foreach($read as $user) {
+            if (strcmp($uid, $user) === 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     }
 
