@@ -572,7 +572,12 @@ class ExperimentUtilities
                 '<p>AiravataSystemException: ' . $ase->getMessage() . '</p>');
         }
 
-        ExperimentUtilities::share_experiment($expId, json_decode($share));
+        $share = json_decode($share);
+        $share->{Session::get("username")} = new stdClass();
+        $share->{Session::get("username")}->read = true;
+        $share->{Session::get("username")}->write = true;
+
+        ExperimentUtilities::share_experiment($expId, $share);
     }
 
 
