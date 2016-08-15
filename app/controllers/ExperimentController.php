@@ -323,8 +323,8 @@ class ExperimentController extends BaseController
      */
     public function sharedUsers()
     {
-        if (array_key_exists('projId', $_POST)) {
-            return Response::json(SharingUtilities::getProfilesForSharedUsers());
+        if (array_key_exists('resourceId', $_GET)) {
+            return Response::json(SharingUtilities::getProfilesForSharedUsers($_GET['resourceId'], ResourceType::EXPERIMENT));
         }
         else {
             return Response::json(array("error" => "Error: No project specified"));
@@ -333,8 +333,8 @@ class ExperimentController extends BaseController
 
     public function unsharedUsers()
     {
-        if (array_key_exists('projId', $_POST)) {
-            return Response::json(SharingUtilities::getProfilesForUnsharedUsers());
+        if (array_key_exists('resourceId', $_POST)) {
+            return Response::json(SharingUtilities::getProfilesForUnsharedUsers($_GET['resourceId'], ResourceType::EXPERIMENT));
         }
         else {
             return Response::json(array("error" => "Error: No project specified"));

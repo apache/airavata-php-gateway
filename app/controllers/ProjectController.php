@@ -55,7 +55,7 @@ class ProjectController extends BaseController
     public function editView()
     {
         if (Input::has("projId")) {
-            $users = SharingUtilities::getAllUserProfiles(Input::get('projId'), ResourceType::PROJECT);
+            $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
 
             return View::make("project/edit",
                 array("projectId" => Input::get("projId"),
@@ -119,8 +119,8 @@ class ProjectController extends BaseController
      */
     public function sharedUsers()
     {
-        if (array_key_exists('expId', $_POST)) {
-            return Response::json(SharingUtilities::getProfilesForSharedUsers());
+        if (array_key_exists('resourceId', $_GET)) {
+            return Response::json(SharingUtilities::getProfilesForSharedUsers($_GET['resourceId'], ResourceType::PROJECT));
         }
         else {
             return Response::json(array("error" => "Error: No project specified"));
@@ -129,8 +129,8 @@ class ProjectController extends BaseController
 
     public function unsharedUsers()
     {
-        if (array_key_exists('expId', $_POST)) {
-            return Response::json(SharingUtilities::getProfilesForUnsharedUsers());
+        if (array_key_exists('resourceId', $_GET)) {
+            return Response::json(SharingUtilities::getProfilesForUnsharedUsers($_GET['resourceId'], ResourceType::PROJECT));
         }
         else {
             return Response::json(array("error" => "Error: No project specified"));

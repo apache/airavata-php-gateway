@@ -29,7 +29,7 @@ $(function() {
                 var data = users[user];
                 var access = access_enum.NONE;
                 if (data.hasOwnProperty("access")) {
-                    console.log("Found access parameter");
+                    //console.log("Found access parameter");
                     if (data.access.write) {
                         access = access_enum.WRITE;
                     }
@@ -47,7 +47,7 @@ $(function() {
                     $users.append($user);
                 }
                 else {
-                    console.log("adding shared user");
+                    //console.log("adding shared user");
                     $user.addClass('share-box-share-item sharing-updated');
                     share_settings[user] = data.access;
                     $share.append($user);
@@ -96,9 +96,11 @@ $(function() {
         if ($('#share-box-users').find('.user-thumbnail').length === 0) {
             ajax_data = $(e.target).data();
 
+            $('#share-box-users').addClass('text-align-center').text('Loading user list');
+
             $.ajax({
                 url: ajax_data.url,
-                method: 'post',
+                method: 'get',
                 data: {resourceId: ajax_data.resourceId},
                 dataType: "json",
                 error: function(xhr, status, error) {
@@ -109,7 +111,7 @@ $(function() {
 
                     $users = $('#share-box-users');
                     $users.empty().removeClass('text-align-center');
-
+                    console.log(data);
                     for (user in data) {
                         if (data.hasOwnProperty(user)) {
                             $user = createThumbnail(user, data.firstname, data.lastname, data.email, access_enum.NONE, true);
@@ -124,10 +126,7 @@ $(function() {
             });
         }
 
-        $('#share-box-users').addClass('text-align-center').text('Loading user list');
-
         $share_list = $('#shared-users').children();
-
         if ($share_list.filter('.sharing-thumbnail').length > 0) {
             $share_list.sort(comparator);
             $share_list.each(function(index, element) {

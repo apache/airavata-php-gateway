@@ -54,7 +54,7 @@
 @parent
 <script>
     var users = {{ $users }};
-    $('#experiment-share').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
+    $('#project-share').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}

@@ -634,10 +634,9 @@ class ExperimentUtilities
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
             $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
-            $share[Session::get("username")] = array("read" => true, "write" => true);
-            foreach ($share as $uid => $perms) {
-                $share[$uid] = (object) $perms;
-            }
+            $share->{Session::get('username')} = new stdClass();
+            $share->{Session::get('username')}->read = true;
+            $share->{Session::get('username')}->write = true;
             ExperimentUtilities::share_experiment($cloneId, $share);
 
             return $cloneId;
@@ -1132,12 +1131,14 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
-            $expContainer[$expNum]['experiment'] = $experiment;
-            if ($expValue["experimentStatusString"] == "FAILED")
-                $expValue["editable"] = false;
-            $expContainer[$expNum]['expValue'] = $expValue;
-            $expNum++;
+            if (SharingUtilities::userCanRead(Session::get('username'), $experiment, ResourceType::EXPERIMENT)) {
+                $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
+                $expContainer[$expNum]['experiment'] = $experiment;
+                if ($expValue["experimentStatusString"] == "FAILED")
+                    $expValue["editable"] = false;
+                $expContainer[$expNum]['expValue'] = $expValue;
+                $expNum++;
+            }
         }
 
         return $expContainer;
