@@ -305,6 +305,10 @@ class ProjectUtilities
      * @param $users A map of username => {read_permission, write_permission}
      */
     private static function share_project($projectId, $users) {
+        $project = Airavata::getProject(Session::get("authz-token"), $projectId);
+        $users->{$project->owner}->read = true;
+        $users->{$project->owner}->write = true;
+
         $wadd = array();
         $wrevoke = array();
         $ewrevoke = array();
