@@ -62,8 +62,10 @@
 @parent
 <script>
     var users = {{ $users }};
+    var owner = {{ $owner }};
     $('#project-share').data({url: "{{ URL::to('/') }}/project/unshared-users", resourceId: "{{ Input::get('projId') }}"})
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}
+
 @stop

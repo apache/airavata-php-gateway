@@ -108,11 +108,12 @@
 @stop
 @section('scripts')
 @parent
-{{ HTML::script('js/time-conversion.js')}}
 <script>
-    var users = {{ $users }};
-    //console.log(users);
+var users = {{ $users }};
+var owner = {{ $owner }};
 </script>
+{{ HTML::script('js/time-conversion.js')}}
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}
+
 @stop

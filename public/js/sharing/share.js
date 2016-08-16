@@ -4,6 +4,8 @@
  * @author Jeff Kinnison <jkinniso@nd.edu>
  */
 
+var createThumbnails;
+
 $(function() {
     var comparator_map, comparator, $original_shared_list, $revoke_list;
     comparator_map = {
@@ -16,7 +18,7 @@ $(function() {
 
     /* Share box functions */
 
-    var createTestData = function () {
+    createThumbnails = function () {
         var $users, $share, $user, share_settings;
 
         $users = $('#share-box-users');
@@ -55,23 +57,16 @@ $(function() {
             }
         }
 
-        // for (var group in dummy_group_data) {
-        //     if (dummy_group_data.hasOwnProperty(group)) {
-        //         data = dummy_group_data[group];
-        //         $group = createThumbnail(data.username, data.firstname, data.lastname, data.email, data.access);
-        //         $group.addClass('group-thumbnail');
-        //         if (data.access === access_enum.NONE) {
-        //             $group.addClass('share-box-users-item');
-        //             $users.append($group);
-        //         }
-        //         else {
-        //             $group.addClass('share-box-share-item');
-        //             $group.find('.sharing-thumbnail-access').prop("disabled", false).show();
-        //             $group.find('.sharing-thumbnail-unshare').show();
-        //             $share.append($group);
-        //         }
-        //     }
-        // }
+        for (var o in owner) {
+            if (owner.hasOwnProperty(o)) {
+                var odata = owner[o];
+                $owner = createThumbnail(o, odata.firstname, odata.lastname, odata.email, access_enum.OWNER, false);
+                $owner.find(".sharing-thumbnail-unshare").detach();
+                $owner.addClass("share-box-share-item owner");
+                $share.prepend($owner);
+            }
+        }
+
         if ($share.children().length === 0) {
             $share.append($('<p>This has not been shared</p>')).addClass('text-align-center');
         }
@@ -132,7 +127,9 @@ $(function() {
             $share_list.each(function(index, element) {
                 var $e;
                 $e = $(element);
-                $e.find('.sharing-thumbnail-access-text').hide();
+                if (!$e.hasClass('owner')) {
+                    $e.find('.sharing-thumbnail-access-text').hide();
+                }
                 $e.find('.sharing-thumbnail-access').prop('disabled', false).show();
                 $e.find('.sharing-thumbnail-unshare').show();
                 $e.detach().appendTo($('#share-box-share'));
@@ -339,5 +336,5 @@ $(function() {
 
 
     /* Set up the sharing interface */
-    createTestData();
+    createThumbnails();
 });

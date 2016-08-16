@@ -127,11 +127,7 @@ class ProjectUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        $share = json_decode($share);
-        $share->{Session::get('username')} = new stdClass();
-        $share->{Session::get('username')}->read = true;
-        $share->{Session::get('username')}->write = true;
-        ProjectUtilities::share_project($projectId, $share);
+        ProjectUtilities::share_project($projectId, json_decode($share));
 
         return $projectId;
     }
@@ -223,12 +219,7 @@ class ProjectUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        $share = json_decode($share);
-        $share->{Session::get('username')} = new stdClass();
-        $share->{Session::get('username')}->read = true;
-        $share->{Session::get('username')}->write = true;
-
-        ProjectUtilities::share_project($projectId, $share);
+        ProjectUtilities::share_project($projectId, json_decode($share));
     }
 
 
@@ -306,6 +297,7 @@ class ProjectUtilities
      */
     private static function share_project($projectId, $users) {
         $project = Airavata::getProject(Session::get("authz-token"), $projectId);
+        $users->{$project->owner} = new stdClass();
         $users->{$project->owner}->read = true;
         $users->{$project->owner}->write = true;
 

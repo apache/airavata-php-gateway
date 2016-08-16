@@ -26,7 +26,7 @@ class ProjectController extends BaseController
     public function createView()
     {
         $users = SharingUtilities::getAllUserProfiles();
-        return View::make("project/create", array("users" => json_encode($users)));
+        return View::make("project/create", array("users" => json_encode($users), "owner" => json_encode(array())));
     }
 
     public function createSubmit()
@@ -44,7 +44,15 @@ class ProjectController extends BaseController
         if (Input::has("projId")) {
             Session::put("projId", Input::get("projId"));
 
+            $project = ProjectUtilities::get_project(Input::get('projId'));
+
             $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
+
+            $owner = array();
+            if (strcmp(Session::get("username"), $project->owner) !== 0) {
+                $owner[$project->owner] = $users[$project->owner];
+                $users = array_diff_key($users, $owner);
+            }
 
             $experiments = ProjectUtilities::get_experiments_in_project(Input::get("projId"));
 
@@ -62,6 +70,7 @@ class ProjectController extends BaseController
                 array("projectId" => Input::get("projId"),
                       "experiments" => $experiments,
                       "users" => json_encode($users),
+                      "owner" => json_encode($owner),
                       "project_can_write" => SharingUtilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT),
                       "experiment_can_write" => $experiment_can_write
                   ));
@@ -78,8 +87,8 @@ class ProjectController extends BaseController
                 $owner = array();
 
                 if (strcmp(Session::get("username"), $project->owner) !== 0) {
-                    $owner = array($project->owner => $users[$project->owner]);
-                    $users = array_key_diff($users, $owner);
+                    $owner[$project->owner] = $users[$project->owner];
+                    $users = array_diff_key($users, $owner);
                 }
 
                 return View::make("project/edit",
@@ -98,7 +107,7 @@ class ProjectController extends BaseController
 
     public function editSubmit()
     {
-        if (isset($_POST['save']) && SharingUtilities::userCanWrite(Session::get("username"))) {
+        if (isset($_POST['save']) && SharingUtilities::userCanWrite(Session::get("username"), Input::get("projectId"), ResourceType::PROJECT)) {
             $projectDetails = array();
             $projectDetails["owner"] = Session::get("username");
             $projectDetails["name"] = Input::get("project-name");
