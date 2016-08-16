@@ -150,6 +150,12 @@ class ProjectUtilities
         try {
             $projectId = Airavata::createProject(Session::get('authz-token'), Config::get('pga_config.airavata')['gateway-id'], $project);
 
+            $share = new stdClass();
+            $share->{$username} = new stdClass();
+            $share->{$username}->read = true;
+            $share->{$username}->write = true;
+            ProjectUtilities::share_project($projectId, $share);
+
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
         } catch (AiravataClientException $ace) {
