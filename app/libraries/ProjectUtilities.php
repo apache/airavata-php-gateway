@@ -184,6 +184,12 @@ class ProjectUtilities
             CommonUtilities::print_error_message('TTransportException!<br><br>' . $tte->getMessage());
         }
 
+        for($i = 0; $i < count($experiments); $i++) {
+            if (!SharingUtilities::userCanRead(Session::get("username"), $experiments[$i]->experimentId, ResourceType::EXPERIMENT)) {
+                array_splice($experiments, $i, 1);
+            }
+        }
+
         return $experiments;
     }
 
