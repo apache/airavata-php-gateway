@@ -98,6 +98,16 @@
             </tr>
         @endif
         -->
+        @if( isset( $experiment->enableEmailNotification))
+            <tr>
+                <td>Notifications Enabled for:</td>
+                <td>
+                    @foreach( $experiment->emailAddresses as $email)
+                        {{ $email}}<br/>
+                    @endforeach
+                </td>
+            </tr>
+        @endif
 
         @if( isset($dashboard))
         <tr>

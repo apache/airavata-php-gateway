@@ -23,7 +23,7 @@
         <div class="col-md-6">
             <input type="text" class="form-control experimentId"/>
         </div>
-        <button class="col-md-3 btn btn-primary get-experiment">Get</button>
+        <button class="col-md-3 btn btn-primary get-experiment" disabled="disabled">Get</button>
         <div class="loading-img hide text-center"><img src="{{URL::to('/')}}/assets/ajax-loader.gif"/></div>
 
         </div>
@@ -354,6 +354,13 @@ to be uncommented when actually in use.
             $(this).attr('title', 'Collapse this branch').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
         }
         e.stopPropagation();
+    });
+
+    $(".experimentId").keyup( function(){
+        if( $.trim( $(this).val()) == "")
+            $(".get-experiment").attr("disabled", "disabled");
+        else
+            $(".get-experiment").removeAttr("disabled");
     });
 
     $(".get-experiment").click(function () {

@@ -202,7 +202,6 @@ class ExperimentUtilities
      */
     public static function get_experiment($expId)
     {
-
         try {
             return Airavata::getExperiment(Session::get('authz-token'), $expId);
         } catch (InvalidRequestException $ire) {
