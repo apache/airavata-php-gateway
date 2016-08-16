@@ -153,6 +153,7 @@ class AdminController extends BaseController {
 	}
 
 	public function updateGatewayRequest(){
+
 		$status = Input::get("status");
 		$oauthData = array();
 
@@ -169,12 +170,19 @@ class AdminController extends BaseController {
 		if( Input::has("comments"))
 			$comments = Input::get("comments");
 
-
-		AdminUtilities::update_gateway_status( Input::get("gateway_id"), $status, $oauthData, $comments);
-		if( Session::has("super-admin"))
-			return Redirect::to("admin/dashboard/gateway");
-		else
-			return Redirect::to("admin/dashboard");
+		if( Request::ajax()){
+			//first step of adding tenant and changing gateway request status to Approved.
+			AdminUtilities::update_gateway_status( Input::get("gateway_id"), $status, $oauthData, $comments, true);
+			return 1;
+		}
+		else{
+			//second step of changing gateway request status to active if tenant has been created and oauth credentials are entered.
+			AdminUtilities::update_gateway_status( Input::get("gateway_id"), $status, $oauthData, $comments, false);
+			if( Session::has("super-admin"))
+				return Redirect::to("admin/dashboard/gateway");
+			else
+				return Redirect::to("admin/dashboard");
+		}
 	}
 
 	public function rolesView(){
