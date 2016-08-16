@@ -87,7 +87,7 @@
              aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog">
 
-                <form action="{{URL::to('/')}}/app/module-create" method="POST">
+                <form action="{{URL::to('/')}}/app/module-create" id="create-app-module-form" method="POST">
 
                     <div class="modal-content">
                         <div class="modal-header">
@@ -203,7 +203,7 @@
 
             $(".create-app-module").click(function () {
                 //reset form to clear it out if it got filled by edit modules
-                $(".reset-create-form").click();
+                $("#create-app-module-form").trigger('reset');
             })
 
             $(".edit-app-module").click(function () {
