@@ -10,7 +10,6 @@
 <div class="container" style="max-width: 80%;">
     <?php
         $project = ProjectUtilities::get_project($_GET['projId']);
-        $experiments = ProjectUtilities::get_experiments_in_project($project->projectID);
     ?>
     <h1>Project Summary
         @if( !isset($dashboard))
@@ -21,9 +20,11 @@
     <div>
         <div>
             <h3>{{ $project->name }}
+                @if($project_can_write === true)
                 <a href="edit?projId={{ $project->projectID }}" title="Edit">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
+                @endif
             </h3>
             <p>{{ $project->description }}</p>
         </div>
@@ -62,7 +63,7 @@
                         <a href="{{URL::to('/')}}/experiment/summary?expId={{$experiment->experimentId}}">
                         {{ $experiment->experimentName }}
                         </a>
-                        @if( $expValues['editable'])
+                        @if( $expValues['editable'] and $experiment_can_write[$experiment->experimentId] === true)
                             <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
                         @endif
                     </td>

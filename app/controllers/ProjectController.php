@@ -46,8 +46,25 @@ class ProjectController extends BaseController
 
             $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
 
+            $experiments = ProjectUtilities::get_experiments_in_project(Input::get("projId"));
+
+            $experiment_can_write = array();
+            foreach($experiments as $experiment) {
+                if (SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT)) {
+                    $experiment_can_write[$experiment->experimentId] = true;
+                }
+                else {
+                    $experiment_can_write[$experiment->experimentId] = false;
+                }
+            }
+
             return View::make("project/summary",
-                array("projectId" => Input::get("projId"), "users" => json_encode($users)));
+                array("projectId" => Input::get("projId"),
+                      "experiments" => $experiments,
+                      "users" => json_encode($users),
+                      "project_can_write" => SharingUtilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT),
+                      "experiment_can_write" => $experiment_can_write
+                  ));
         } else
             return Redirect::to("home");
     }
@@ -55,20 +72,33 @@ class ProjectController extends BaseController
     public function editView()
     {
         if (Input::has("projId")) {
-            $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
+            if (SharingUtilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT)) {
+                $project = ProjectUtilities::get_project($_GET['projId']);
+                $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
+                $owner = array();
 
-            return View::make("project/edit",
-                array("projectId" => Input::get("projId"),
-                    "project" => ProjectUtilities::get_project($_GET['projId']),
-                     "users" => json_encode($users)
-                ));
+                if (strcmp(Session::get("username"), $project->owner) !== 0) {
+                    $owner = array($project->owner => $users[$project->owner]);
+                    $users = array_key_diff($users, $owner);
+                }
+
+                return View::make("project/edit",
+                    array("projectId" => Input::get("projId"),
+                        "project" => $project,
+                        "users" => json_encode($users),
+                        "owner" => json_encode($owner)
+                    ));
+                }
+            else {
+                return Redirect::to('project/summary?projId=' . Input::get("projId"))->with("error", "You do not have permission to edit this project.");
+            }
         } else
             return Redirect::to("home");
     }
 
     public function editSubmit()
     {
-        if (isset($_POST['save'])) {
+        if (isset($_POST['save']) && SharingUtilities::userCanWrite(Session::get("username"))) {
             $projectDetails = array();
             $projectDetails["owner"] = Session::get("username");
             $projectDetails["name"] = Input::get("project-name");
@@ -103,10 +133,22 @@ class ProjectController extends BaseController
             $projects = ProjectUtilities::get_all_user_accessible_projects_with_pagination($this->limit, ($pageNo - 1) * $this->limit);
         }
 
+        $can_write = array();
+        $user = Session::get("username");
+        foreach($projects as $project) {
+            if (SharingUtilities::userCanWrite($user, $project->projectID, ResourceType::PROJECT)) {
+                $can_write[$project->projectID] = true;
+            }
+            else {
+                $can_write[$project->projectID] = false;
+            }
+        }
+
         return View::make('project/browse', array(
             'pageNo' => $pageNo,
             'limit' => $this->limit,
-            'projects' => $projects
+            'projects' => $projects,
+            'can_write' => $can_write
         ));
     }
 
@@ -119,7 +161,7 @@ class ProjectController extends BaseController
      */
     public function sharedUsers()
     {
-        if (array_key_exists('resourceId', $_GET)) {
+        if (Session::has("authz-token") && array_key_exists('resourceId', $_GET)) {
             return Response::json(SharingUtilities::getProfilesForSharedUsers($_GET['resourceId'], ResourceType::PROJECT));
         }
         else {
@@ -129,7 +171,7 @@ class ProjectController extends BaseController
 
     public function unsharedUsers()
     {
-        if (array_key_exists('resourceId', $_GET)) {
+        if (Session::has("authz-token") && array_key_exists('resourceId', $_GET)) {
             return Response::json(SharingUtilities::getProfilesForUnsharedUsers($_GET['resourceId'], ResourceType::PROJECT));
         }
         else {
