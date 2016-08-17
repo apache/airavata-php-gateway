@@ -313,12 +313,19 @@ class ExperimentController extends BaseController
         $expContainer = ExperimentUtilities::get_expsearch_results_with_pagination(Input::all(), $this->limit,
             ($pageNo - 1) * $this->limit);
         $experimentStates = ExperimentUtilities::getExpStates();
+
+        $can_write = array();
+        foreach ($expContainer as $experiment) {
+            $can_write[$experiment->experimentId] = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
+        }
+
         return View::make('experiment/browse', array(
             'input' => Input::all(),
             'pageNo' => $pageNo,
             'limit' => $this->limit,
             'expStates' => $experimentStates,
             'expContainer' => $expContainer,
+            'can_write' => $can_write
         ));
     }
 

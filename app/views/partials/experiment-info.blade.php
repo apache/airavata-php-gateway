@@ -225,6 +225,7 @@
                 Clone
             </a>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
+            @if($can_write === true)
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
                class="btn btn-default"
                role="button"
@@ -232,6 +233,7 @@
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit
             </a>
+            @endif
         </div>
     </form>
     @endif
