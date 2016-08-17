@@ -199,47 +199,52 @@ class ExperimentController extends BaseController
 
     public function editView()
     {
-        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
-            "nodeCount" => Config::get('pga_config.airavata')["node-count"],
-            "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
-            "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
-        );
+        if (SharingUtilities::userCanWrite(Session::get("username"), $_GET['expId'], ResourceType::EXPERIMENT) === true) {
+            $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
+                "nodeCount" => Config::get('pga_config.airavata')["node-count"],
+                "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
+                "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
+            );
 
-        $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
-        $expVal = ExperimentUtilities::get_experiment_values($experiment);
-        $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
+            $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
+            $expVal = ExperimentUtilities::get_experiment_values($experiment);
+            $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
 
-        $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
+            $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
 
-        $clonedExp = false; $savedExp = false;
-        if( Input::has("clonedExp"))
-            $clonedExp = true;
-        if( Input::has("savedExp"))
-            $savedExp = true;
+            $clonedExp = false; $savedExp = false;
+            if( Input::has("clonedExp"))
+                $clonedExp = true;
+            if( Input::has("savedExp"))
+                $savedExp = true;
 
-        $experimentInputs = array(
-            "clonedExp" => $clonedExp,
-            "savedExp" => $savedExp,
-            "disabled" => ' ',
-            "experimentName" => $experiment->experimentName,
-            "experimentDescription" => $experiment->description,
-            "application" => $experiment->executionId,
-            "autoSchedule" => $experiment->userConfigurationData->airavataAutoSchedule,
-            "userDN" => $experiment->userConfigurationData->userDN,
-            "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
-            'experiment' => $experiment,
-            "queueDefaults" => $queueDefaults,
-            'computeResources' => $computeResources,
-            "resourceHostId" => $expVal['scheduling']->resourceHostId,
-            'project' => $experiment->projectId,
-            'expVal' => $expVal,
-            'cloning' => true,
-            'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
-        );
+            $experimentInputs = array(
+                "clonedExp" => $clonedExp,
+                "savedExp" => $savedExp,
+                "disabled" => ' ',
+                "experimentName" => $experiment->experimentName,
+                "experimentDescription" => $experiment->description,
+                "application" => $experiment->executionId,
+                "autoSchedule" => $experiment->userConfigurationData->airavataAutoSchedule,
+                "userDN" => $experiment->userConfigurationData->userDN,
+                "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
+                'experiment' => $experiment,
+                "queueDefaults" => $queueDefaults,
+                'computeResources' => $computeResources,
+                "resourceHostId" => $expVal['scheduling']->resourceHostId,
+                'project' => $experiment->projectId,
+                'expVal' => $expVal,
+                'cloning' => true,
+                'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
+            );
 
-        $users = SharingUtilities::getProfilesForSharedUsers($_GET['expId'], ResourceType::EXPERIMENT);
+            $users = SharingUtilities::getProfilesForSharedUsers($_GET['expId'], ResourceType::EXPERIMENT);
 
-        return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
+            return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
+        }
+        else {
+            Redirect::to("experiment/summary?expId=" . $experiment->experimentId)->with("error", "You do not have permission to edit this experiment");
+        }
     }
 
     public function cloneExperiment()
@@ -258,22 +263,27 @@ class ExperimentController extends BaseController
 
     public function editSubmit()
     {
-        if (isset($_POST['save']) || isset($_POST['launch'])) {
-            $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
-            $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
-
-            ExperimentUtilities::update_experiment($experiment->experimentId, $updatedExperiment);
-
-            if (isset($_POST['save'])) {
+        if (SharingUtilities::userCanWrite(Session::get("username"), Input::get('expId'), ResourceType::EXPERIMENT)) {
+            if (isset($_POST['save']) || isset($_POST['launch'])) {
                 $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
-            }
-            if (isset($_POST['launch'])) {
-                ExperimentUtilities::launch_experiment($experiment->experimentId);
-            }
+                $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
 
-            return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
-        } else
-            return View::make("home");
+                ExperimentUtilities::update_experiment($experiment->experimentId, $updatedExperiment);
+
+                if (isset($_POST['save'])) {
+                    $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
+                }
+                if (isset($_POST['launch'])) {
+                    ExperimentUtilities::launch_experiment($experiment->experimentId);
+                }
+
+                return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
+            } else
+                return View::make("home");
+        }
+        else {
+            return Redirect::to("experiment/summary?expId=" . Input::get('expId'))->with("error", "You do not have permission to edit this experiment");
+        }
     }
 
     public function getQueueView()
@@ -310,7 +320,7 @@ class ExperimentController extends BaseController
             'pageNo' => $pageNo,
             'limit' => $this->limit,
             'expStates' => $experimentStates,
-            'expContainer' => $expContainer
+            'expContainer' => $expContainer,
         ));
     }
 
@@ -323,7 +333,7 @@ class ExperimentController extends BaseController
      */
     public function sharedUsers()
     {
-        if (array_key_exists('resourceId', $_GET)) {
+        if (Session::has("authz-token") && array_key_exists('resourceId', $_GET)) {
             return Response::json(SharingUtilities::getProfilesForSharedUsers($_GET['resourceId'], ResourceType::EXPERIMENT));
         }
         else {
@@ -333,7 +343,7 @@ class ExperimentController extends BaseController
 
     public function unsharedUsers()
     {
-        if (array_key_exists('resourceId', $_GET)) {
+        if (Session::has("authz-token") && array_key_exists('resourceId', $_GET)) {
             return Response::json(SharingUtilities::getProfilesForUnsharedUsers($_GET['resourceId'], ResourceType::EXPERIMENT));
         }
         else {
