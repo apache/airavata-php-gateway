@@ -1326,9 +1326,9 @@ class ExperimentUtilities
      */
     private static function share_experiment($expId, $users) {
         $experiment = ExperimentUtilities::get_experiment($expId);
-        $users->{$experiment->owner} = new stdClass();
-        $users->{$experiment->owner}->read = true;
-        $users->{$experiment->owner}->write = true;
+        $users->{$experiment->userName} = new stdClass();
+        $users->{$experiment->userName}->read = true;
+        $users->{$experiment->userName}->write = true;
 
         $wadd = array();
         $wrevoke = array();
