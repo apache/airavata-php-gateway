@@ -25,13 +25,31 @@ class SharingUtilities {
      * @return True if the user has read permission, false otherwise.
      */
     public static function userCanRead($uid, $resourceId, $dataResourceType) {
-        if (WSIS::usernameExists($uid)) {
-            $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
-            return (array_key_exists($uid, $read) ? true : false);
+        $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
+        foreach($read as $user) {
+            if (strcmp($uid, $user) === 0) {
+                return true;
+            }
         }
-        else {
-            return false;
+        return false;
+    }
+
+    /**
+     * Determine if the user has write privileges on the resource.
+     *
+     * @param $uid                  The user to check
+     * @param $resourceId           Experiment or Project ID
+     * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
+     * @return True if the user has write permission, false otherwise.
+     */
+    public static function userCanWrite($uid, $resourceId, $dataResourceType) {
+        $write = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::WRITE);
+        foreach($write as $user) {
+            if (strcmp($uid, $user) === 0) {
+                return true;
+            }
         }
+        return false;
     }
 
     /**

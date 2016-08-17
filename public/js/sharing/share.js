@@ -4,6 +4,8 @@
  * @author Jeff Kinnison <jkinniso@nd.edu>
  */
 
+var createThumbnails;
+
 $(function() {
     var comparator_map, comparator, $original_shared_list, $revoke_list;
     comparator_map = {
@@ -16,7 +18,7 @@ $(function() {
 
     /* Share box functions */
 
-    var createTestData = function () {
+    createThumbnails = function () {
         var $users, $share, $user, share_settings;
 
         $users = $('#share-box-users');
@@ -29,7 +31,7 @@ $(function() {
                 var data = users[user];
                 var access = access_enum.NONE;
                 if (data.hasOwnProperty("access")) {
-                    console.log("Found access parameter");
+                    //console.log("Found access parameter");
                     if (data.access.write) {
                         access = access_enum.WRITE;
                     }
@@ -47,7 +49,7 @@ $(function() {
                     $users.append($user);
                 }
                 else {
-                    console.log("adding shared user");
+                    //console.log("adding shared user");
                     $user.addClass('share-box-share-item sharing-updated');
                     share_settings[user] = data.access;
                     $share.append($user);
@@ -55,23 +57,16 @@ $(function() {
             }
         }
 
-        // for (var group in dummy_group_data) {
-        //     if (dummy_group_data.hasOwnProperty(group)) {
-        //         data = dummy_group_data[group];
-        //         $group = createThumbnail(data.username, data.firstname, data.lastname, data.email, data.access);
-        //         $group.addClass('group-thumbnail');
-        //         if (data.access === access_enum.NONE) {
-        //             $group.addClass('share-box-users-item');
-        //             $users.append($group);
-        //         }
-        //         else {
-        //             $group.addClass('share-box-share-item');
-        //             $group.find('.sharing-thumbnail-access').prop("disabled", false).show();
-        //             $group.find('.sharing-thumbnail-unshare').show();
-        //             $share.append($group);
-        //         }
-        //     }
-        // }
+        for (var o in owner) {
+            if (owner.hasOwnProperty(o)) {
+                var odata = owner[o];
+                $owner = createThumbnail(o, odata.firstname, odata.lastname, odata.email, access_enum.OWNER, false);
+                $owner.find(".sharing-thumbnail-unshare").detach();
+                $owner.addClass("share-box-share-item owner");
+                $share.prepend($owner);
+            }
+        }
+
         if ($share.children().length === 0) {
             $share.append($('<p>This has not been shared</p>')).addClass('text-align-center');
         }
@@ -89,18 +84,52 @@ $(function() {
 
     // Create, populate, and show the share box
     $('body').on('click', 'button#project-share, button#experiment-share', function(e) {
-        var $share_list;
+        var $share_list, ajax_data;
         e.stopPropagation();
         e.preventDefault();
 
-        $share_list = $('#shared-users').children();
+        if ($('#share-box-users').find('.user-thumbnail').length === 0) {
+            ajax_data = $(e.target).data();
 
+            $('#share-box-users').addClass('text-align-center').text('Loading user list');
+
+            $.ajax({
+                url: ajax_data.url,
+                method: 'get',
+                data: {resourceId: ajax_data.resourceId},
+                dataType: "json",
+                error: function(xhr, status, error) {
+                    $('#shared-users').addClass('text-align-center').text("Unable to load users from Airavata server.");
+                },
+                success: function(data, status, xhr) {
+                    var user, $user, $users;
+
+                    $users = $('#share-box-users');
+                    $users.removeClass('text-align-center');
+                    $users.text('');
+                    for (user in data) {
+                        if (data.hasOwnProperty(user)) {
+                            $user = createThumbnail(user, data[user].firstname, data[user].lastname, data[user].email, access_enum.NONE, true);
+                            $user.find('.sharing-thumbnail-access').hide();
+
+                            $user.addClass('user-thumbnail');
+                            $user.addClass('share-box-users-item');
+                            $users.append($user);
+                        }
+                    }
+                }
+            });
+        }
+
+        $share_list = $('#shared-users').children();
         if ($share_list.filter('.sharing-thumbnail').length > 0) {
             $share_list.sort(comparator);
             $share_list.each(function(index, element) {
                 var $e;
                 $e = $(element);
-                $e.find('.sharing-thumbnail-access-text').hide();
+                if (!$e.hasClass('owner')) {
+                    $e.find('.sharing-thumbnail-access-text').hide();
+                }
                 $e.find('.sharing-thumbnail-access').prop('disabled', false).show();
                 $e.find('.sharing-thumbnail-unshare').show();
                 $e.detach().appendTo($('#share-box-share'));
@@ -307,5 +336,5 @@ $(function() {
 
 
     /* Set up the sharing interface */
-    createTestData();
+    createThumbnails();
 });
