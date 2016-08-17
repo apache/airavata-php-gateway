@@ -74,8 +74,9 @@ class ExperimentController extends BaseController
             );
 
             $users = SharingUtilities::getProfilesForSharedUsers($_POST['project'], ResourceType::PROJECT);
+            $owner = array();
 
-            return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
+            return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users), "owner" => json_encode($owner)));
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
             $expId = ExperimentUtilities::create_experiment();
 
