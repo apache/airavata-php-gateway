@@ -142,7 +142,8 @@ class ExperimentController extends BaseController
                 "jobDetails" => $jobDetails,
                 "expVal" => $expVal,
                 "autoRefresh"=> $autoRefresh,
-                "users" => json_encode($users)
+                "users" => json_encode($users),
+                "can_write" => SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT)
             );
             if( Input::has("dashboard"))
             {
