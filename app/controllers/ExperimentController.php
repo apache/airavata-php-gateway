@@ -281,9 +281,6 @@ class ExperimentController extends BaseController
             } else
                 return View::make("home");
         }
-        else {
-            return Redirect::to("experiment/summary?expId=" . Input::get('expId'))->with("error", "You do not have permission to edit this experiment");
-        }
     }
 
     public function getQueueView()
