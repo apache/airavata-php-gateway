@@ -634,11 +634,8 @@ class ExperimentUtilities
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
             $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
-            $share[Session::get("username")] = array("read" => true, "write" => true);
-            foreach ($share as $uid => $perms) {
-                $share[$uid] = (object) $perms;
-            }
-            ExperimentUtilities::share_experiment($cloneId, $share);
+            $share[Session::get('username')] = ["read" => true, "write" => true];
+            ExperimentUtilities::share_experiment($cloneId, json_decode(json_encode($share)));
 
             return $cloneId;
         } catch (InvalidRequestException $ire) {
@@ -824,11 +821,7 @@ class ExperimentUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        $share = json_decode($share);
-        $share->{Session::get('username')} = new stdClass();
-        $share->{Session::get('username')}->read = true;
-        $share->{Session::get('username')}->write = true;
-        ExperimentUtilities::share_experiment($expId, $share);
+        ExperimentUtilities::share_experiment($expId, json_decode($share));
 
         return $expId;
     }
@@ -1132,12 +1125,14 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
-            $expContainer[$expNum]['experiment'] = $experiment;
-            if ($expValue["experimentStatusString"] == "FAILED")
-                $expValue["editable"] = false;
-            $expContainer[$expNum]['expValue'] = $expValue;
-            $expNum++;
+            if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId, ResourceType::EXPERIMENT)) {
+                $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
+                $expContainer[$expNum]['experiment'] = $experiment;
+                if ($expValue["experimentStatusString"] == "FAILED")
+                    $expValue["editable"] = false;
+                $expContainer[$expNum]['expValue'] = $expValue;
+                $expNum++;
+            }
         }
 
         return $expContainer;
@@ -1331,6 +1326,10 @@ class ExperimentUtilities
      */
     private static function share_experiment($expId, $users) {
         $experiment = ExperimentUtilities::get_experiment($expId);
+        $users->{$experiment->userName} = new stdClass();
+        $users->{$experiment->userName}->read = true;
+        $users->{$experiment->userName}->write = true;
+
         $wadd = array();
         $wrevoke = array();
         $radd = array();
