@@ -572,12 +572,7 @@ class ExperimentUtilities
                 '<p>AiravataSystemException: ' . $ase->getMessage() . '</p>');
         }
 
-        $share = json_decode($share);
-        $share->{Session::get("username")} = new stdClass();
-        $share->{Session::get("username")}->read = true;
-        $share->{Session::get("username")}->write = true;
-
-        ExperimentUtilities::share_experiment($expId, $share);
+        ExperimentUtilities::share_experiment($expId, json_decode($share));
     }
 
 
@@ -826,11 +821,7 @@ class ExperimentUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        $share = json_decode($share);
-        $share->{Session::get('username')} = new stdClass();
-        $share->{Session::get('username')}->read = true;
-        $share->{Session::get('username')}->write = true;
-        ExperimentUtilities::share_experiment($expId, $share);
+        ExperimentUtilities::share_experiment($expId, json_decode($share));
 
         return $expId;
     }
@@ -1335,6 +1326,10 @@ class ExperimentUtilities
      */
     private static function share_experiment($expId, $users) {
         $experiment = ExperimentUtilities::get_experiment($expId);
+        $users->{$experiment->owner} = new stdClass();
+        $users->{$experiment->owner}->read = true;
+        $users->{$experiment->owner}->write = true;
+
         $wadd = array();
         $wrevoke = array();
         $radd = array();

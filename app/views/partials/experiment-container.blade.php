@@ -28,7 +28,7 @@
                         <a href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}" target="_blank">
                         {{ $experiment['experiment']->name }}
                         </a>
-                        @if( $experiment['expValue']['editable'] and $can_write[$experiment->experimentId] === true)
+                        @if( $experiment['expValue']['editable'] and $can_write[$experiment['experiment']->experimentId] === true)
                             <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment['experiment']->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
                         @endif
                     </td>

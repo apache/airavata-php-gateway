@@ -192,7 +192,11 @@
     </table>
 
     <div class="form-group">
+    @if($can_write === true)
+    @include('partials/sharing-display-body', array("form" => true))
+    @else
     @include('partials/sharing-display-body', array("form" => false))
+    @endif
     </div>
 
     @if( !isset( $dashboard))
@@ -320,11 +324,17 @@
 </div>
 @endif
 
+@if($can_write === true)
+@include('partials/sharing-form-modal')
+@endif
+
 @section('scripts')
 @parent
 {{ HTML::script('js/time-conversion.js')}}
 <script>
     var users = {{ $users }};
+    var owner = {{ $owner }};
+    $('#project-share').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}

@@ -135,6 +135,12 @@ class ExperimentController extends BaseController
 
             $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
 
+            $owner = array();
+            if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
+                $owner[$experiment->userName] = $users[$experiment->userName];
+                $users = array_diff_key($users, $owner);
+            }
+
             $data = array(
                 "expId" => Input::get("expId"),
                 "experiment" => $experiment,
@@ -143,6 +149,7 @@ class ExperimentController extends BaseController
                 "expVal" => $expVal,
                 "autoRefresh"=> $autoRefresh,
                 "users" => json_encode($users),
+                "owner" => json_encode($owner),
                 "can_write" => SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT)
             );
             if( Input::has("dashboard"))
@@ -241,7 +248,13 @@ class ExperimentController extends BaseController
 
             $users = SharingUtilities::getProfilesForSharedUsers($_GET['expId'], ResourceType::EXPERIMENT);
 
-            return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users)));
+            $owner = array();
+            if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
+                $owner[$experiment->userName] = $users[$experiment->userName];
+                $users = array_diff_key($users, $owner);
+            }
+
+            return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users), "owner" => json_encode($owner)));
         }
         else {
             Redirect::to("experiment/summary?expId=" . $experiment->experimentId)->with("error", "You do not have permission to edit this experiment");
@@ -316,7 +329,7 @@ class ExperimentController extends BaseController
 
         $can_write = array();
         foreach ($expContainer as $experiment) {
-            $can_write[$experiment->experimentId] = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
+            $can_write[$experiment['experiment']->experimentId] = SharingUtilities::userCanWrite(Session::get("username"), $experiment['experiment']->experimentId, ResourceType::EXPERIMENT);
         }
 
         return View::make('experiment/browse', array(
