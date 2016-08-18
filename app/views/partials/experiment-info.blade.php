@@ -195,6 +195,10 @@
     @include('partials/sharing-display-body', array("form" => false))
     </div>
 
+    @if(strcmp($expVal["applicationInterface"]->applicationName, "OpenMM_Stampede") === 0)
+    @include('partials/streaming-data')
+    @endif
+
     @if( !isset( $dashboard))
     <form action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
         <div class="btn-toolbar">
@@ -326,5 +330,10 @@
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.bundle.min.js"></script>
+{{ HTML::script('js/simstream.js') }}
+<script>
+    checkAuth("http://localhost:8888/auth", "ws://localhost:8888/experiment/openmm");
+</script>
 
 @stop
