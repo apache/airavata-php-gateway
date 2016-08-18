@@ -89,12 +89,12 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Domain</label>
-                            <input type="url" name="domain" id="domain" class="form-control" value="{{Input::old('domain') }}"  data-container="body" data-toggle="popover" data-placement="left" data-content="Domain's main URL. eg:domain.org"/>
+                            <input type="url" name="domain" id="domain" class="form-control" value="{{Input::old('domain') }}"  data-container="body" data-toggle="popover" data-placement="left" data-content="Domain's main URL. eg:http://domain.org"/>
                         </div>
 
                         <div class="form-group required">
                             <label class="control-label">Gateway URL</label>
-                            <input type="url" name="gateway-url" id="gateway-url" class="form-control" value="{{Input::old('gateway-url') }}" data-container="body" data-toggle="popover" data-placement="left" data-content="URL to Portal home page or Download URL (for desktop applications) where gateway has been deployed. eg:portal.domain.org"/>
+                            <input type="url" name="gateway-url" id="gateway-url" class="form-control" value="{{Input::old('gateway-url') }}" data-container="body" data-toggle="popover" data-placement="left" data-content="URL to Portal home page or Download URL (for desktop applications) where gateway has been deployed. eg:http://portal.domain.org"/>
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Gateway Admin Username</label>

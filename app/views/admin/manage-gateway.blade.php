@@ -63,7 +63,7 @@
                 <div class="tab-pane" id="tab-requestedGateways">
 
                     <div class="row">
-                        <form id="add-tenant-form" action="{{ URL::to("/") }}/admin/add-gateway">
+                        <form id="add-tenant-form" action="{{ URL::to('/') }}/admin/add-gateway">
                             <div class="col-md-12">
                                 <button type="button" class="btn btn-default toggle-add-tenant"><span
                                         class="glyphicon glyphicon-plus"></span>Add a new gateway
@@ -186,7 +186,7 @@
 @if( Session::has("super-admin"))
 <!-- Approve a Gateway request -->
 <div class="modal fade" id="approve-gateway" tabindex="-1" role="dialog" aria-labelledby="add-modal"
-     aria-hidden="true">
+     aria-hidden="true" data-backdrop="static" >
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="{{URL::to('/')}}/admin/update-gateway-request" method="GET">
@@ -196,7 +196,11 @@
                                 aria-hidden="true">&times;</span></button>
                     <h3>Approve Gateway Request</h3>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body onTenantLoad">
+                    Adding tenant for GatewayId: <span class="gatewayid-for-approval"></span>. Please do not refresh or close this page!
+                </div>
+                <div class="modal-body onTenantComplete hide">
+                    <h3>Gateway Tenant has been added. Please fill in rest of the required details.</h3>
                     <div class="form-group">
                         <h4>GatewayId: <span class="gatewayid-for-approval"></span></h4>
                     </div>
@@ -214,7 +218,7 @@
                     </div>
                     <input type="hidden" class="gatewayid-for-approval" name="gateway_id">
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer onTenantComplete hide">
                     <input type="submit" name="status" class="btn btn-primary" value="Approve"/>
                     <input type="cancel"  data-dismiss="modal"  class="btn btn-default" value="Cancel"/>
                 </div>
@@ -476,8 +480,21 @@
     }
 
     $(".start-approval").click( function(){
-        $(".gatewayid-for-approval").val( $(this).data("gatewayid")).html(  $(this).data("gatewayid"));
+        var gatewayId = $(this).data("gatewayid");
+        $(".onTenantLoad").removeClass("hide");
+        $(".gatewayid-for-approval").val( gatewayId).html(  $(this).data("gatewayid"));
+        $(".onTenantComplete").addClass("hide");
         $("#approve-gateway").modal("show");
+
+        $.ajax({
+            url: "{{URL::to('/')}}/admin/update-gateway-request",
+            method: "GET",
+            data: { gateway_id : gatewayId, status: 1}
+        }).done( function( data){
+            $(".onTenantComplete").removeClass("hide");
+            $(".onTenantLoad").addClass("hide");
+            $(".onTenantComplete").removeClass("hide");
+        });
     });
 
     $(".deny-approval").click( function(){

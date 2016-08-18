@@ -10,7 +10,7 @@
                 @include('partials/sharing-form-body')
             </div>
             <div class="modal-footer">
-                <button type="button" id="share-box-button" class="btn btn-primary">Save</button>
+                <button type="button" id="share-box-button" class="btn btn-primary">Update</button>
                 <button type="button" id="share-box-close" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>
         </div>

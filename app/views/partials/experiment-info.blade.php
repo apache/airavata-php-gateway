@@ -98,6 +98,18 @@
             </tr>
         @endif
         -->
+        @if( isset( $experiment->enableEmailNotification))
+            <tr>
+                <td>Notifications Enabled for:</td>
+                <td>
+                    @if(isset($experiment->emailAddresses))
+                        @foreach( $experiment->emailAddresses as $email)
+                            {{ $email}}<br/>
+                        @endforeach
+                    @endif
+                </td>
+            </tr>
+        @endif
 
         @if( isset($dashboard))
         <tr>
@@ -192,7 +204,11 @@
     </table>
 
     <div class="form-group">
+    @if($can_write === true)
+    @include('partials/sharing-display-body', array("form" => true))
+    @else
     @include('partials/sharing-display-body', array("form" => false))
+    @endif
     </div>
 
     @if(strcmp($expVal["applicationInterface"]->applicationName, "OpenMM_Stampede") === 0)
@@ -229,6 +245,7 @@
                 Clone
             </a>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
+            @if($can_write === true)
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
                class="btn btn-default"
                role="button"
@@ -236,6 +253,7 @@
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit
             </a>
+            @endif
         </div>
     </form>
     @endif
@@ -322,11 +340,17 @@
 </div>
 @endif
 
+@if($can_write === true)
+@include('partials/sharing-form-modal')
+@endif
+
 @section('scripts')
 @parent
 {{ HTML::script('js/time-conversion.js')}}
 <script>
     var users = {{ $users }};
+    var owner = {{ $owner }};
+    $('#project-share').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}
