@@ -27,7 +27,7 @@
                     <thead>
                         <tr class="text-center">
                             <th>Gateway Name</th>
-                            <th>Request Status</th>
+                            <th>Gateway Request Status</th>
                             <th>Actions</th>
                             <th>Comments</th>
                         </tr>
@@ -81,24 +81,20 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Gateway Name</label>
-                            <input type="text" name="gateway-name" class="form-control" required="required" value="{{Input::old('gateway-name') }}" />
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Gateway Acronym <i>(optional)</i></label>
-                            <input type="text" name="gateway-acronym" class="form-control" value="{{Input::old('gateway-acronym') }}"/>
+                            <input type="text" maxlength="50" name="gateway-name" class="form-control" required="required" value="{{Input::old('gateway-name') }}" />
                         </div>
                         <div class="form-group required">
-                            <label class="control-label">Domain</label>
-                            <input type="url" name="domain" id="domain" class="form-control" value="{{Input::old('domain') }}"  data-container="body" data-toggle="popover" data-placement="left" data-content="Domain's main URL. eg:http://domain.org"/>
+                            <label class="control-label">Gateway Acronym </label>
+                            <input type="text" name="gateway-acronym" class="gateway-acronym form-control" required="required" value="{{Input::old('gateway-acronym') }}" maxlength="6" data-toggle="popover" data-placement="left" data-content="Acronym cannot contain digits or special characters."/>
                         </div>
 
                         <div class="form-group required">
                             <label class="control-label">Gateway URL</label>
-                            <input type="url" name="gateway-url" id="gateway-url" class="form-control" value="{{Input::old('gateway-url') }}" data-container="body" data-toggle="popover" data-placement="left" data-content="URL to Portal home page or Download URL (for desktop applications) where gateway has been deployed. eg:http://portal.domain.org"/>
+                            <input type="text" name="gateway-url" id="gateway-url" class="form-control" value="{{Input::old('gateway-url') }}" data-container="body" data-toggle="popover" data-placement="left" data-content="URL to Portal home page or Download URL (for desktop applications) where gateway has been deployed."/>
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Gateway Admin Username</label>
-                            <input type="text" name="admin-username" value="{{ Session::get('username') }}" readonly="true" class="form-control" required="required" />
+                            <input type="text" name="admin-username" value="{{Input::old('admin-username')}}" class="form-control" required="required" />
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Gateway Admin Password</label>
@@ -119,7 +115,7 @@
                             <input type="text" name="admin-lastname" class="form-control" required="required" value="{{Input::old('admin-lastname') }}"/>
                         </div>
                         <div class="form-group required">
-                            <label class="control-label">Gateway Email</label>
+                            <label class="control-label">Gateway Contact Email</label>
                             <input type="text" name="email-address" class="form-control" required="required" value="{{Input::old('email-address') }}"/>
                         </div>
                         <div class="form-group required">
@@ -447,12 +443,21 @@
         'trigger':'focus'
     });
 
+    $(".gateway-acronym").popover({
+        'trigger':'focus'
+    });
+
     $("#project-details").popover({
         'trigger':'focus'
     });
 
     $("#public-project-description").popover({
         'trigger':'focus'
+    });
+
+    $("#add-tenant-form").on("submit", function(e){
+        e.preventDefault();
+        console.log( !/[^a-z]/i.test( $(".gateway-acronym").val()));
     });
 
     $(".deactivateGateway-button").click( function(){

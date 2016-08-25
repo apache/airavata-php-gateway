@@ -3,6 +3,7 @@
 @section('page-header')
 @parent
 {{ HTML::style('css/admin.css')}}
+{{ HTML::style('css/datetimepicker.css')}}
 @stop
 
 @section('content')
@@ -505,24 +506,26 @@
 
     /* making datetimepicker work for reservation start and end date */
 
-    $('#datetimepicker1').datetimepicker({
+    $('.datetimepicker1').datetimepicker({
         pick12HourFormat: false
     });
-    $('#datetimepicker2').datetimepicker({
-        pick12HourFormat: false
+    $('.datetimepicker2').datetimepicker({
+        pick12HourFormat: false,
+        useCurrent: false //Important! See issue #1075
     });
-    $("#datetimepicker1").on("dp.change", function (e) {
-        $('#datetimepicker2').data("DateTimePicker").setMinDate(e.date);
 
-        //hack to close calendar on selecting date
-        $(this).find(".glyphicon-calendar").click();
+    $(".datetimepicker1 input").focus( function(){
+        $(this).parent().find(".glyphicon-calendar").click();
     });
-    $("#datetimepicker2").on("dp.change", function (e) {
-        $('#datetimepicker1').data("DateTimePicker").setMaxDate(e.date);
+    $(".datetimepicker2 input").focus( function(){
+        $(this).parent().find(".glyphicon-calendar").click();
+    });
 
-        //hack to close calendar on selecting date
-        $(this).find(".glyphicon-calendar").click();
-
+    $(".datetimepicker1").on("dp.change", function (e) {
+        $('.datetimepicker2').data("DateTimePicker").setMinDate(e.date);
+    });
+    $(".datetimepicker2").on("dp.change", function (e) {
+        $('.datetimepicker1').data("DateTimePicker").setMaxDate(e.date);
     });
 
 </script>

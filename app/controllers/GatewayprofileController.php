@@ -39,7 +39,7 @@ class GatewayprofileController extends BaseController {
 	public function modifyCRP()
 	{
 		if( CRUtilities::add_or_update_CRP( Input::all()) )
-		{
+		{            
 			if( Request::ajax()){
 				return 1;
 			}

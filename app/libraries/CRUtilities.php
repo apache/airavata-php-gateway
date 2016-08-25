@@ -525,6 +525,14 @@ class CRUtilities
 
     public static function add_or_update_CRP($inputs)
     {
+
+        $timeDifference = Session::get("user_timezone");
+        $addOrSubtract = "-";
+        if( $timeDifference > 0)
+            $addOrSubtract = "+";
+        $inputs = Input::all();
+        $inputs["reservationStartTime"] = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", strtotime( $inputs["reservationStartTime"]) ) * 1000;
+        $inputs["reservationEndTime"] = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", strtotime($inputs["reservationEndTime"]) ) * 1000;
         $computeResourcePreferences = new computeResourcePreference($inputs);
 
         if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
