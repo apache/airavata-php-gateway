@@ -788,6 +788,9 @@ class TypeTable {
  * @copyright {copyright}
  * @package   {package}
  */
+
+67377932bbc662c02ae7e30210680aa82d38fcf5
+
 class AuthenticationAdminStub extends SoapClient {
 
   private static $classmap = array(

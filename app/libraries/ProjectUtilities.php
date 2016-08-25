@@ -127,11 +127,7 @@ class ProjectUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        $share = json_decode($share);
-        $share->{Session::get('username')} = new stdClass();
-        $share->{Session::get('username')}->read = true;
-        $share->{Session::get('username')}->write = true;
-        ProjectUtilities::share_project($projectId, $share);
+        ProjectUtilities::share_project($projectId, json_decode($share));
 
         return $projectId;
     }
@@ -149,6 +145,12 @@ class ProjectUtilities
 
         try {
             $projectId = Airavata::createProject(Session::get('authz-token'), Config::get('pga_config.airavata')['gateway-id'], $project);
+
+            $share = new stdClass();
+            $share->{$username} = new stdClass();
+            $share->{$username}->read = true;
+            $share->{$username}->write = true;
+            ProjectUtilities::share_project($projectId, $share);
 
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
@@ -182,6 +184,12 @@ class ProjectUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         } catch (TTransportException $tte) {
             CommonUtilities::print_error_message('TTransportException!<br><br>' . $tte->getMessage());
+        }
+
+        for($i = 0; $i < count($experiments); $i++) {
+            if (!SharingUtilities::userCanRead(Session::get("username"), $experiments[$i]->experimentId, ResourceType::EXPERIMENT)) {
+                array_splice($experiments, $i, 1);
+            }
         }
 
         return $experiments;
@@ -288,6 +296,11 @@ class ProjectUtilities
      * @param $users A map of username => {read_permission, write_permission}
      */
     private static function share_project($projectId, $users) {
+        $project = Airavata::getProject(Session::get("authz-token"), $projectId);
+        $users->{$project->owner} = new stdClass();
+        $users->{$project->owner}->read = true;
+        $users->{$project->owner}->write = true;
+
         $wadd = array();
         $wrevoke = array();
         $ewrevoke = array();

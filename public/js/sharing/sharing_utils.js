@@ -1,13 +1,15 @@
 var access_enum = {
     NONE: 0,
     READ: 1,
-    WRITE: 2
+    WRITE: 2,
+    OWNER: 3
 };
 
 var access_text = [
   'Cannot access',
   'Can read',
-  'Can write'
+  'Can write',
+  'Owner'
 ];
 
 var createThumbnail = function(username, firstname, lastname, email, access, share) {
@@ -30,7 +32,7 @@ var createThumbnail = function(username, firstname, lastname, email, access, sha
 
   access_text_current = access_text[access];
 
-  if (access !== access_enum.NONE) {
+  if (access !== access_enum.NONE && access !== access_enum.OWNER) {
       data.access.read = true;
       data.currentaccess.read = true;
   }
