@@ -507,11 +507,12 @@
     /* making datetimepicker work for reservation start and end date */
 
     $('.datetimepicker1').datetimepicker({
-        pick12HourFormat: false
+        pick12HourFormat: false,
+        pickTime: false
     });
     $('.datetimepicker2').datetimepicker({
         pick12HourFormat: false,
-        useCurrent: false //Important! See issue #1075
+        pickTime: false
     });
 
     $(".datetimepicker1 input").focus( function(){

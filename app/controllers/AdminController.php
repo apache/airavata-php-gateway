@@ -17,6 +17,7 @@ class AdminController extends BaseController {
             $gatewayOfUser = "";
             Session::put("super-admin", true);
             $gatewaysInfo = CRUtilities::getAllGateways();
+            //var_dump( $gatewaysInfo); exit;
             $requestedGateways = array();
             $gatewayApprovalStatuses = AdminUtilities::get_gateway_approval_statuses();
 
@@ -99,7 +100,7 @@ class AdminController extends BaseController {
     public function gatewayView(){
     	//only for super admin
 		//Session::put("super-admin", true);
-		$crData = CRUtilities::getEditCRData();
+		
 		$gatewaysInfo = CRUtilities::getAllGatewayProfilesData();
 		$gateways = $gatewaysInfo["gateways"];
 		$tokens = AdminUtilities::get_all_ssh_tokens();

@@ -40,6 +40,7 @@ class AdminUtilities
         $gateway->identityServerPasswordToken  = $inputs["admin-password"];
         $gateway->reviewProposalDescription = $inputs["project-details"];
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
+        
         $userProfile = Session::get("user-profile");
         $gateway->requesterUsername = $userProfile["username"];
 

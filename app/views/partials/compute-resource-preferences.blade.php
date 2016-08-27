@@ -135,7 +135,7 @@
 
     <div class="input-group date datetimepicker1">
         <input type="text" name="reservationStartTime" class="form-control"
-               value="@if( isset( $preferences) ){{date('m/d/Y h:i:s A',$preferences->reservationStartTime) }}@endif"/>
+               value="@if( isset( $preferences) ){{date('m/d/Y A',$preferences->reservationStartTime/1000) }}@endif"/>
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>
@@ -147,7 +147,7 @@
 
     <div class="input-group date datetimepicker2">
         <input type="text" name="reservationEndTime" class="form-control"
-               value="@if( isset( $preferences) ){{date('m/d/Y h:i:s A',$preferences->reservationEndTime) }}@endif"/>
+               value="@if( isset( $preferences) ){{date('m/d/Y A',$preferences->reservationEndTime/1000) }}@endif"/>
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>

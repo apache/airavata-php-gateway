@@ -531,8 +531,8 @@ class CRUtilities
         if( $timeDifference > 0)
             $addOrSubtract = "+";
         $inputs = Input::all();
-        $inputs["reservationStartTime"] = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", strtotime( $inputs["reservationStartTime"]) ) * 1000;
-        $inputs["reservationEndTime"] = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", strtotime($inputs["reservationEndTime"]) ) * 1000;
+        $inputs["reservationStartTime"] = strtotime( $inputs["reservationStartTime"]) * 1000;
+        $inputs["reservationEndTime"] = strtotime($inputs["reservationEndTime"]) * 1000;
         $computeResourcePreferences = new computeResourcePreference($inputs);
 
         if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {
