@@ -21,7 +21,7 @@ class AdminController extends BaseController {
             $gatewayApprovalStatuses = AdminUtilities::get_gateway_approval_statuses();
 
             foreach ($gatewaysInfo as $index => $gateway) {
-                if ($gateway->identityServerUserName == $userProfile["username"]) {
+                if ($gateway->requesterUsername == $userProfile["username"]) {
                     $gatewayOfUser = $gateway->gatewayId;
                     Session::forget("super-admin");
                     Session::put("new-gateway-provider", true);

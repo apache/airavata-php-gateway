@@ -29,14 +29,10 @@ class AdminUtilities
         $gateway = new Gateway( $inputs);
         $gateway->gatewayId = $inputs["gateway-name"];
         $gateway->gatewayApprovalStatus = GatewayApprovalStatus::REQUESTED;
-        if( strpos($inputs["domain"], "//") != false)
-            $inputs["domain"] = substr( $inputs["domain"], 2 + strpos($inputs["domain"], "//"));
-        $gateway->domain = $inputs["domain"];
+        $gateway->domain = 'airavata.' . $inputs["gateway-acronym"];
         $gateway->gatewayName = $inputs["gateway-name"];
         $gateway->emailAddress = $inputs["email-address"];
         $gateway->gatewayAcronym = $inputs["gateway-acronym"];
-        if( strpos($inputs["gateway-url"], "//") != false)
-            $inputs["gateway-url"] = substr( $inputs["gateway-url"], 2 + strpos($inputs["gateway-url"], "//"));
         $gateway->gatewayURL = $inputs["gateway-url"];
         $gateway->gatewayAdminFirstName = $inputs["admin-firstname"];
         $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
@@ -44,6 +40,8 @@ class AdminUtilities
         $gateway->identityServerPasswordToken  = $inputs["admin-password"];
         $gateway->reviewProposalDescription = $inputs["project-details"];
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
+        $userProfile = Session::get("user-profile");
+        $gateway->requesterUsername = $userProfile["username"];
 
         return Airavata::addGateway(Session::get('authz-token'), $gateway);
     }
@@ -86,10 +84,7 @@ class AdminUtilities
             $tenants = WSIS::getTenants();
             $tenantExists = false;
             foreach( $tenants as $tenant){
-                $gatewayURL = $gateway->gatewayURL;
-                if( strpos($gateway->gatewayURL, "//") != false)
-                    $gatewayURL = substr( $gateway->gatewayURL, 2 + strpos($gateway->gatewayURL, "//"));
-                if( $tenant->tenantDomain == $gateway->gatewayURL){
+                if( $tenant->tenantDomain == $gateway->domain){
                     $tenantExists = true;
                 }
             }
@@ -97,13 +92,9 @@ class AdminUtilities
                 $gatewayURL = $gateway->gatewayURL;
                 $gatewayDomain = $gateway->domain;
                 if( strpos($gateway->gatewayURL, "//") != false)
-                    $gatewayURL = substr( $gateway->gatewayURL, 2 + strpos($gateway->gatewayURL, "//"));
-
-                if( strpos($gateway->domain, "//") != false)
-                    $gatewayDomain = substr( $gateway->domain, 2 + strpos( $gateway->domain, "//"));
 
                 //finally create tenant
-                return WSIS::createTenant(1, $gateway->identityServerUserName . "@" . $gatewayDomain, $gateway->identityServerPasswordToken, $gateway->emailAddress,$gateway->gatewayAdminFirstName, $gateway->gatewayAdminLastName, $gatewayURL);
+                return WSIS::createTenant(1, $gateway->identityServerUserName, $gateway->identityServerPasswordToken, $gateway->emailAddress, $gateway->gatewayAdminFirstName, $gateway->gatewayAdminLastName, $gatewayDomain);
             }
             else
                 return false;

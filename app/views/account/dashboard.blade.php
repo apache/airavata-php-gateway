@@ -435,10 +435,6 @@
         'trigger':'focus'
     });
 
-    $("#domain").popover({
-        'trigger':'focus'
-    });
-
     $("#gateway-url").popover({
         'trigger':'focus'
     });
@@ -455,10 +451,12 @@
         'trigger':'focus'
     });
 
+    /*
     $("#add-tenant-form").on("submit", function(e){
         e.preventDefault();
         console.log( !/[^a-z]/i.test( $(".gateway-acronym").val()));
     });
+    */
 
     $(".deactivateGateway-button").click( function(){
         var gatewayId = $(this).data("gatewayid");
