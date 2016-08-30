@@ -531,8 +531,11 @@ class CRUtilities
         if( $timeDifference > 0)
             $addOrSubtract = "+";
         $inputs = Input::all();
-        $inputs["reservationStartTime"] = strtotime( $inputs["reservationStartTime"]) * 1000;
-        $inputs["reservationEndTime"] = strtotime($inputs["reservationEndTime"]) * 1000;
+        if( $inputs["reservationStartTime"] != "")
+            $inputs["reservationStartTime"] = strtotime( $inputs["reservationStartTime"]) * 1000;
+        if( $inputs["reservationEndTime"] != "")
+            $inputs["reservationEndTime"] = strtotime($inputs["reservationEndTime"]) * 1000;
+
         $computeResourcePreferences = new computeResourcePreference($inputs);
 
         if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {

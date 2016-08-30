@@ -155,35 +155,9 @@ class AdminController extends BaseController {
 
 	public function updateGatewayRequest(){
 
-		$status = Input::get("status");
-		$oauthData = array();
-
-		if( $status == "Approve"){			
-			$status = 1;
-
-			$oauthData["oauthClientId"] = Input::get("oauth-client-id");
-			$oauthData["oauthClientSecret"] = Input::get("oauth-client-secret");
-		}
-		if( $status == "Deny")
-			$status = 5;
-
-		$comments = "";
-		if( Input::has("comments"))
-			$comments = Input::get("comments");
-
-		if( Request::ajax()){
-			//first step of adding tenant and changing gateway request status to Approved.
-			AdminUtilities::update_gateway_status( Input::get("gateway_id"), $status, $oauthData, $comments, true);
-			return 1;
-		}
-		else{
-			//second step of changing gateway request status to active if tenant has been created and oauth credentials are entered.
-			AdminUtilities::update_gateway_status( Input::get("gateway_id"), $status, $oauthData, $comments, false);
-			if( Session::has("super-admin"))
-				return Redirect::to("admin/dashboard/gateway");
-			else
-				return Redirect::to("admin/dashboard");
-		}
+		//first step of adding tenant and changing gateway request status to Approved.
+		AdminUtilities::update_gateway( Input::get("gateway_id"), Input::all());
+		//return 1;
 	}
 
 	public function rolesView(){

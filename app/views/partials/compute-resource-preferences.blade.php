@@ -117,25 +117,28 @@
     <label class="control-label col-md-3">Quality of Service</label>
 
     <div class="col-md-9">
-        <input type="text" name="qualityOfService" class="form-control"
-               value="@if( isset( $preferences) ){{$preferences->qualityOfService}}@endif"/>
+        <input type="text" name="qualityOfService" class="qualityOfService form-control"
+               value="@if( isset( $preferences) ){{$preferences->qualityOfService}}@endif" data-toggle="popover" data-placement="bottom" data-content="Format: <queue name1>=<qos1>,<queue name2>=<qos2>"/>
     </div>
 </div>
 
 <div class="form-group">
-    <label class="control-label col-md-3">Reservation</label>
+    <label class="control-label col-md-3">Reservation Name</label>
 
     <div class="col-md-9">
         <input type="text" name="reservation" class="form-control"
                value="@if( isset( $preferences) ){{$preferences->reservation}}@endif"/>
     </div>
 </div>
+@if( isset( $preferences))
+{{var_dump( $preferences)}}
+@endif
 <div class="form-group col-md-6">
     <label class="control-label col-md-3">Reservation Start Time</label>
 
     <div class="input-group date datetimepicker1">
         <input type="text" name="reservationStartTime" class="form-control"
-               value="@if( isset( $preferences) ){{date('m/d/Y A',$preferences->reservationStartTime/1000) }}@endif"/>
+               value="@if( isset( $preferences) ) @if( $preferences->reservationStartTime != '') {{date('m/d/Y',$preferences->reservationStartTime/1000) }} @endif @endif"/>
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>
@@ -147,7 +150,7 @@
 
     <div class="input-group date datetimepicker2">
         <input type="text" name="reservationEndTime" class="form-control"
-               value="@if( isset( $preferences) ){{date('m/d/Y A',$preferences->reservationEndTime/1000) }}@endif"/>
+               value="@if( isset( $preferences) ){{date('m/d/Y',$preferences->reservationEndTime/1000) }}@endif"/>
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>

@@ -298,7 +298,7 @@
                             <span class="glyphicon glyphicon-sort console-icon"></span>
                         </div>
                         <div class="col-md-12">
-                            <h4>Gateway Profile</h4>
+                            <h4>Gateway Management</h4>
                         </div>
                     </div>
                 </a>
