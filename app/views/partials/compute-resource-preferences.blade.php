@@ -130,9 +130,7 @@
                value="@if( isset( $preferences) ){{$preferences->reservation}}@endif"/>
     </div>
 </div>
-@if( isset( $preferences))
-{{var_dump( $preferences)}}
-@endif
+
 <div class="form-group col-md-6">
     <label class="control-label col-md-3">Reservation Start Time</label>
 
