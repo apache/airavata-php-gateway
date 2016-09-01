@@ -166,7 +166,7 @@
         </tr>
         <tr>
             <td><strong>Outputs</strong></td>
-            <td>{{ ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus->state, false) }}</td>
+            <td>{{ ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus[0]->state, false) }}</td>
         </tr>
         <tr>
             <td><strong>Storage Directory</strong></td>
@@ -193,7 +193,7 @@
         </tr>
         {{--@endif--}}
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
-            @if($experiment->experimentStatus->state == \Airavata\Model\Status\ExperimentState::FAILED
+            @if($experiment->experimentStatus[0]->state == \Airavata\Model\Status\ExperimentState::FAILED
                     || $jobDetail->jobStatus->jobStateName == "FAILED")
             <tr>
                 <th>Job Submission Response</th>

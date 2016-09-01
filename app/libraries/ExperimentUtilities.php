@@ -946,9 +946,9 @@ class ExperimentUtilities
 
 
         if( is_object( $experiment->experimentStatus ) )
-            $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus->state];
+            $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus[0]->state];
         else
-            $experimentStatusString = $experiment->experimentStatus;
+            $experimentStatusString = $experiment->experimentStatus[0];
 
         $expVal["experimentStatusString"] = $experimentStatusString;
         if ( $experimentStatusString == ExperimentState::FAILED)
