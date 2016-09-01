@@ -83,7 +83,7 @@
                         <tr>
                             <td>{{$jobDetail->jobName}}</td>
                             <td>{{ $jobDetail->jobId}}</td>
-                            <td>{{$jobDetail->jobStatus->jobStateName }}</td>
+                            <td>{{$jobDetail->jobStatuses[0]->jobStateName }}</td>
                             <td class="time" unix-time="{{$jobDetail->creationTime}}"></td>
                         </tr>
                     </table>
@@ -100,7 +100,7 @@
         -->
         @if( isset( $experiment->enableEmailNotification))
             <tr>
-                <td>Notifications Enabled for:</td>
+                <td><strong>Notifications Enabled for:</strong></td>
                 <td>
                     @if(isset($experiment->emailAddresses))
                         @foreach( $experiment->emailAddresses as $email)
@@ -194,7 +194,7 @@
         {{--@endif--}}
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
             @if($experiment->experimentStatus[0]->state == \Airavata\Model\Status\ExperimentState::FAILED
-                    || $jobDetail->jobStatus->jobStateName == "FAILED")
+                    || $jobDetail->jobStatuses[0]->jobStateName == "FAILED")
             <tr>
                 <th>Job Submission Response</th>
                 <td>{{$jobDetail->stdOut . $jobDetail->stdErr}}</td>
@@ -291,10 +291,10 @@
                                     <dl class="well dl-horizontal">
                                         <dt>Task Id : </dt> <dd>{{ $task->taskId }}</dd>
                                         <dt>Task Type : </dt> <dd>{{ $expVal["taskTypes"][$task->taskType] }}</dd>
-                                        <dt>Task Status : </dt> <dd>{{ $expVal["taskStates"][$task->taskStatus->state] }}</dd>
-                                    @if( is_object( $task->taskError))
-                                        <dt>Task Error Id : </dt><dd>{{ $task->taskError->errorId }}</dd>
-                                        <dt>Task Error Msg : </dt><dd>{{ $task->taskError->userFriendlyMessage }} <a tabindex="0" class="popover-taskinfo btn btn-sm btn-default" role="button" data-toggle="popover" data-html="true" title="Detailed Task Information" data-content="{{ str_replace( ',', '<br/><br/>', $task->taskError->actualErrorMessage ) }}">More Info</a></dd>
+                                        <dt>Task Status : </dt> <dd>{{ $expVal["taskStates"][$task->taskStatuses[0]->state] }}</dd>
+                                    @if( is_object( $task->taskErrors))
+                                        <dt>Task Error Id : </dt><dd>{{ $task->taskErrors[0]->errorId }}</dd>
+                                        <dt>Task Error Msg : </dt><dd>{{ $task->taskErrors[0]->userFriendlyMessage }} <a tabindex="0" class="popover-taskinfo btn btn-sm btn-default" role="button" data-toggle="popover" data-html="true" title="Detailed Task Information" data-content="{{ str_replace( ',', '<br/><br/>', $task->taskError->actualErrorMessage ) }}">More Info</a></dd>
                                     @endif
                                     @if( count( $task->jobs) > 0 )
                                         <dt>Jobs : </dt><dd>{{ count( $task->jobs)}}</dd>
@@ -313,7 +313,7 @@
                         <li>
                             <span class="alert"><i class="icon-time"></i>
                                 <p>Outputs<hr/>
-                                {{ ExperimentUtilities::list_process_output_files( $process->processOutputs, $process->processStatus->state) }}</p>
+                                {{ ExperimentUtilities::list_process_output_files( $process->processOutputs, $process->processStatuses[0]->state) }}</p>
                             </span>
                         </li>
                     </ul>

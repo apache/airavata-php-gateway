@@ -945,10 +945,11 @@ class ExperimentUtilities
         $expVal["taskTypes"] = TaskTypes::$__names;
 
 
-        if( is_object( $experiment->experimentStatus ) )
+        if( is_array( $experiment->experimentStatus ) )
             $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus[0]->state];
-        else
-            $experimentStatusString = $experiment->experimentStatus[0];
+        else {
+            $experimentStatusString = $experiment->experimentStatus;
+        }
 
         $expVal["experimentStatusString"] = $experimentStatusString;
         if ( $experimentStatusString == ExperimentState::FAILED)

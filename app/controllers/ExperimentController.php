@@ -122,14 +122,14 @@ class ExperimentController extends BaseController
             $project = ProjectUtilities::get_project($experiment->projectId);
             $expVal = ExperimentUtilities::get_experiment_values($experiment);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
-            //var_dump( $jobDetails); exit;
+//            var_dump( $jobDetails); exit;
             foreach( $jobDetails as $index => $jobDetail){
-                if(isset($jobDetail->jobStatus)){
-                      $jobDetails[ $index]->jobStatus->jobStateName = JobState::$__names[$jobDetail->jobStatus->jobState];
+                if(isset($jobDetail->jobStatuses)){
+                      $jobDetails[ $index]->jobStatuses[0]->jobStateName = JobState::$__names[$jobDetail->jobStatuses[0]->jobState];
                 }
                 else{
-                    $jobDetails[ $index]->jobStatus = new stdClass();
-                    $jobDetails[ $index]->jobStatus->jobStateName = null;
+                    $jobDetails[ $index]->jobStatuses = [new stdClass()];
+                    $jobDetails[ $index]->jobStatuses[0]->jobStateName = null;
                 }
             }
             $expVal["jobDetails"] = $jobDetails;
