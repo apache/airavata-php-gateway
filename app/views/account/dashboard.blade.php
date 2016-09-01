@@ -48,7 +48,7 @@
                                         -->
                                     </div>
                                 @elseif( $gateway["approvalStatus"] == "REQUESTED")
-                                    <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gatewayId}}&status=4">
+                                    <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gatewayId}}&cancelRequest=true">
                                         <button type="button" class="btn btn-danger">Cancel Request</button>
                                     </a>
                                 @endif

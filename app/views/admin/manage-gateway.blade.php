@@ -89,23 +89,32 @@
                                 </thead>
                                 <tbody>
                                 @foreach( $gateways as $indexGP => $gp )
+                                    @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "REQUESTED")
                                     <tr>
                                         <td>{{$gp->gatewayName }}</td>
                                         <td>{{ $gp->gatewayAdminFirstName }} {{ $gp->gatewayAdminLastName }} </td>
                                         <td>{{ $gp->gatewayURL }}</td>
                                         <td>{{ $gp->reviewProposalDescription}}</td>
                                         <td>{{ $gp->gatewayPublicAbstract}}</td>
-                                        @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "REQUESTED")
-                                            <td>
+                                        <td>Status: {{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus] }}<br/>
                                                     <input type="button" class="btn btn-primary start-approval" data-gatewayobject="{{htmlentities(json_encode( $gp))}}" value="View"/>
-                                                    <input type="button" class="btn btn-danger deny-approval" data-gatewayid="{{$gp->gatewayId}}" value="Deny"/>
-                                            </td>
-                                        @else
-                                            <td>{{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus]}}
-                                                @if( $gp->declinedReason != "")<br/><br/>Comment: {{$gp->declinedReason}} @endif
-                                            </td>
-                                        @endif
+                                        </td>
                                     </tr>
+                                    @endif
+                                @endforeach
+                                @foreach( $gateways as $indexGP => $gp )
+                                    @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] != "REQUESTED")
+                                    <tr>
+                                        <td>{{$gp->gatewayName }}</td>
+                                        <td>{{ $gp->gatewayAdminFirstName }} {{ $gp->gatewayAdminLastName }} </td>
+                                        <td>{{ $gp->gatewayURL }}</td>
+                                        <td>{{ $gp->reviewProposalDescription}}</td>
+                                        <td>{{ $gp->gatewayPublicAbstract}}</td>
+                                        <td>Status: {{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus] }}<br/>
+                                                    <input type="button" class="btn btn-primary start-approval" data-gatewayobject="{{htmlentities(json_encode( $gp))}}" value="View"/>
+                                        </td>
+                                    </tr>
+                                    @endif
                                 @endforeach
                                 <!-- foreach code ends -->
                                 </tbody>
@@ -128,7 +137,13 @@
 
                     <div class="panel-group super-admin-gateways-view" id="accordion1">
                         @foreach( $gateways as $indexGP => $gp )
-                            @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
+                            @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "APPROVED" ||
+                                $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "ACTIVE" ||
+                                $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "CREATED")
+                                
+                                @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
+                                
+                            @endif
                         @endforeach
                     </div>
                 </div>
@@ -280,11 +295,11 @@
                     </div>
                     <input type="hidden" class="gatewayid-for-approval" name="gateway_id">
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" name="status" class="btn btn-primary notCreatedGateway create-tenant" value="createTenant">Create Tenant</button>
-                    <button type="submit" name="status" class="btn btn-danger notCreatedGateway deny-request" value="deny">Deny Request</button>
-                    <button type="submit" name="status" class="btn btn-primary createdGateway" value="updateGateway">Update Gateway Information</button>
-                    <button type="submit" name="status" class="btn btn-danger createdGateway" value="cancelGateway">Cancel Gateway</button>
+                <div class="modal-footer submit-actions">
+                    <button type="submit" name="status" class="btn btn-primary notCreatedGateway update-gateway" value="createTenant">Create Tenant</button>
+                    <button type="submit" name="status" class="btn btn-danger notCreatedGateway update-gateway" value="denyRequest">Deny Request</button>
+                    <button type="submit" name="status" class="btn btn-primary createdGateway update-gateway" value="updateGateway">Update Gateway Information</button>
+                    <button type="submit" name="status" class="btn btn-danger createdGateway update-gateway" value="deactivateGateway">Deactivate Gateway</button>
                 </div>
             </form>
 
@@ -544,6 +559,9 @@
     }
 
     $(".start-approval").click( function(){
+        $(".fail-alert").remove();
+        $(".success-alert").remove();
+
         var gatewayObject = $(this).data("gatewayobject");
         var gatewayId = gatewayObject.gatewayId;
         var gatewayApprovalStatuses = $.parseJSON( $(".gatewayApprovalStatuses").val() );
@@ -563,6 +581,7 @@
         $(".oauthClientId").val( gatewayObject.oauthClientId);
         $(".oauthClientSecret").val( gatewayObject.oauthClientSecret);
         $(".declinedReason").val( gatewayObject.declinedReason);
+        $(".declinedReason").html( gatewayObject.declinedReason);
         $(".gatewayApprovalStatus").val(gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus]);
         $(".onTenantComplete").addClass("hide");
 
@@ -578,16 +597,41 @@
         $("#approve-gateway").modal("show");
     });
 
-    $(".create-tenant").click( function( ev){
+    $(".update-gateway").click( function( ev){
             ev.preventDefault();
+             $(this).prepend( "<img class='loading-gif' src='<?php echo URL::to('/'); ?>/assets/ajax-loader.gif'/>");
+            $(".fail-alert").remove();
+            $(".success-alert").remove();
+            var updateVal = $(this).val();
             var updateGatewayData = $("#update-gateway-request").serializeArray();
-            updateGatewayData.push({name:'createTenant', value: true});
+                
+            updateGatewayData.push({name: updateVal, value: true});
+
             $.ajax({
                 url: "{{URL::to('/')}}/admin/update-gateway-request",
                 method: "GET",
                 data: updateGatewayData
             }).done( function( data){
-                console.log( data);
+                $(".loading-gif").remove();
+                if( data == -1 ){
+                    if( updateVal == "createTenant"){
+                    $(".submit-actions").after("<div class='alert alert-danger fail-alert'>Tenant creation has failed as Tenant with the same Domain name- airavata." + $(".gatewayAcronym").val() + " already exists in Identity Server. Please change Gateway Acronym and try again.");
+                    }
+                    else{
+                        $(".submit-actions").after("<div class='alert alert-danger fail-alert'>Error updating Gateway. Please try again.");
+                    }
+                }
+                else if( data == 1){
+                    if( updateVal == "createTenant"){
+                        $(".submit-actions").after("<div class='alert alert-success success-alert'>Tenant has been created with domain name- airavata." + $(".gatewayAcronym").val());
+                    }
+                    else{
+                        $(".submit-actions").after("<div class='alert alert-success success-alert'>Gateway has been updated successfully.");
+                    }
+                    $(".createdGateway").removeClass("hide");
+                    $(".notCreatedGateway").addClass("hide");
+
+                }
                 //$(".onTenantComplete").removeClass("hide");
                 //$(".onTenantLoad").addClass("hide");
                 //$(".onTenantComplete").removeClass("hide");

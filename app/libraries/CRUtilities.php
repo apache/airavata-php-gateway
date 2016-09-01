@@ -454,12 +454,7 @@ class CRUtilities
         $allCRArray = array();
         $allSRArray = array();
 
-        if (Session::has("super-admin"))
-
-            $gateways = Airavata::getAllGateways(Session::get('authz-token'));
-        else {
-            $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
-        }
+        $gateways = CRUtilities::getAllGateways();
 
         foreach( $allCRs as $index => $crObject)
         {
@@ -509,8 +504,11 @@ class CRUtilities
 
     public static function getAllGateways()
     {
-        if (Session::has("super-admin"))
+        if (Session::has("super-admin")){
             $gateways = Airavata::getAllGateways(Session::get('authz-token'));
+            //sort with creation time 
+            usort($gateways, CommonUtilities::arrSortObjsByKey('requestCreationTime', 'DESC'));
+        }
         else {
             $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
         }

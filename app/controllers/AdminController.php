@@ -155,8 +155,20 @@ class AdminController extends BaseController {
 
 	public function updateGatewayRequest(){
 
-		//first step of adding tenant and changing gateway request status to Approved.
-		AdminUtilities::update_gateway( Input::get("gateway_id"), Input::all());
+		//first step of adding tenant and changing gateway request status to Approved.	 
+		$returnVal = AdminUtilities::update_gateway( Input::get("gateway_id"), Input::all());
+		if( Request::ajax()){
+			return $returnVal;
+		}
+		else{
+			if( $returnVal == 1)
+				Session::put("message", "Request has been updated");
+			else
+				Session::put("message", "An error has occurred while updating your request. Please try again or contact admin to report the issue.");
+
+			return Redirect::to("admin/dashboard");
+
+		} 
 		//return 1;
 	}
 

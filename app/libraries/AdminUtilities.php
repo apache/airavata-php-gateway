@@ -56,37 +56,42 @@ class AdminUtilities
     public static function update_gateway( $gatewayId, $gatewayData){
 
         $gateway = Airavata::getGateway( Session::get('authz-token'), $gatewayId);
-        $gateway->gatewayName = $gatewayData["gatewayName"];
-        $gateway->gatewayAcronym = $gatewayData["gatewayAcronym"];
-        $gateway->domain = 'airavata.'. $gatewayData["gatewayAcronym"];
-        $gateway->gatewayURL = $gatewayData["gatewayURL"];
-        $gateway->gatewayName = $gatewayData["gatewayName"];
-        $gateway->declinedReason = $gatewayData["declinedReason"];
-
+        if( isset( $gatewayData["cancelRequest"]))
+            $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CANCELLED;
+        else{
+            $gateway->gatewayName = $gatewayData["gatewayName"];
+            $gateway->gatewayAcronym = $gatewayData["gatewayAcronym"];
+            $gateway->domain = 'airavata.'. $gatewayData["gatewayAcronym"];
+            $gateway->gatewayURL = $gatewayData["gatewayURL"];
+            $gateway->gatewayName = $gatewayData["gatewayName"];
+            $gateway->declinedReason = $gatewayData["declinedReason"];
+        }
+            
         if( isset($gatewayData["createTenant"])){
-            if( AdminUtilities::add_tenant( $gateway) ){
+            if( AdminUtilities::add_tenant( $gateway) )
                 $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CREATED;
-                return Airavata::updateGateway( Session::get('authz-token'), $gateway->gatewayId, $gateway);
-            }
-            else{
-                //Need to find a better way for this.
-               // retun echo "Tenant Name is already in use";
-                return -1;
-            }
         }
         elseif( isset( $gatewayData["denyRequest"])){
-
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::DENIED;
-            Airavata::updateGateway( Session::get('authz-token'), $gateway->gatewayId, $gateway);
 
         }
-        elseif( isset( $gatewayData["oauthClientId"])){
-           // var_dump("oc"); exit;
+        elseif( isset( $gatewayData["updateGateway"])){
 
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
             $gateway->oauthClientId = $gatewayData["oauthClientId"];
             $gateway->oauthClientSecret = $gatewayData["oauthClientSecret"];
-            Airavata::updateGateway( Session::get('authz-token'), $gateway->gatewayId, $gateway);
+        }
+        elseif( isset( $gatewayData["deactivateGateway"])){
+            $gateway->gatewayApprovalStatus = GatewayApprovalStatus::DEACTIVATED;
+        }
+
+        if( Airavata::updateGateway( Session::get('authz-token'), $gateway->gatewayId, $gateway) ){
+            return 1;
+        }
+        else{
+            //Need to find a better way for this.
+           // retun echo "Tenant Name is already in use";
+            return -1;
         }
     }
 
