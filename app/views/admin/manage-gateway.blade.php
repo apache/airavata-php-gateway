@@ -600,15 +600,15 @@
     });
 
 
-    /* making datetimepicker work for reservation start and end date */
+    /* making datetimepicker work for reservation start and end date kept in compute-resource-preferences blade*/
 
     $('.datetimepicker1').datetimepicker({
-        pick12HourFormat: false,
-        pickTime: false
+        pick12HourFormat: false
+        //pickTime: false
     });
     $('.datetimepicker2').datetimepicker({
-        pick12HourFormat: false,
-        pickTime: false
+        pick12HourFormat: false
+        //pickTime: false
     });
 
     $(".datetimepicker1 input").focus( function(){

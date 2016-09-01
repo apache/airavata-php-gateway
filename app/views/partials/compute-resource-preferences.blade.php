@@ -130,13 +130,28 @@
                value="@if( isset( $preferences) ){{$preferences->reservation}}@endif"/>
     </div>
 </div>
+<?php
+//to add or remove time according to local hours.
+$timeDifference = Session::get("user_timezone");
+$addOrSubtract = "-";
+if( $timeDifference < 0)
+    $addOrSubtract = "+";
 
+$reservationStartTime = "";
+if( isset( $preferences) && $preferences->reservationStartTime != '')
+    $reservationStartTime = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", $preferences->reservationStartTime/1000);
+
+$reservationEndTime = "";
+if( isset( $preferences) && $preferences->reservationEndTime != '')
+    $reservationEndTime = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", $preferences->reservationEndTime/1000);
+
+?>
 <div class="form-group col-md-6">
     <label class="control-label col-md-3">Reservation Start Time</label>
 
     <div class="input-group date datetimepicker1">
         <input type="text" name="reservationStartTime" class="form-control"
-               value="@if( isset( $preferences) ) @if( $preferences->reservationStartTime != '') {{date('m/d/Y',$preferences->reservationStartTime/1000) }} @endif @endif"/>
+               value="@if( isset( $preferences) )@if( $preferences->reservationStartTime != ''){{date('m/d/Y h:i:s A', intval( $reservationStartTime))}}@endif @endif"/>
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>
@@ -148,7 +163,7 @@
 
     <div class="input-group date datetimepicker2">
         <input type="text" name="reservationEndTime" class="form-control"
-               value="@if( isset( $preferences) ){{date('m/d/Y',$preferences->reservationEndTime/1000) }}@endif"/>
+               value="@if( isset( $preferences) )@if( $preferences->reservationStartTime != ''){{date('m/d/Y h:i:s A', intval($reservationEndTime))}}@endif @endif"/>
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>
