@@ -235,7 +235,7 @@
                     </div>
                     <div class="form-group">
                         <label>Gateway Domain</label>
-                        <input type="text" name="domain" class="form-control domain" value="Domain will become - 'airavata' . [gateway acroym]" disabled="disabled" />
+                        <input type="text" class="form-control domain" value="Domain will become - 'airavata' . [gateway acroym]" readonly="readonly" />
                     </div>
                     <div class="form-group">
                         <label>Gateway Url</label>
@@ -284,7 +284,7 @@
 
                     <div class="form-group">
                         <label>Status</label>
-                        <input type="text" name="gatewayApprovalStatus" class="form-control gatewayApprovalStatus" disabled="disabled" />
+                        <input type="text" name="gatewayApprovalStatus" class="form-control gatewayApprovalStatus" readonly="readonly" />
                         <!--
                         <select name="gatewayApprovalStatus" class="form-control gatewayApprovalStatus">
                             @foreach( $gatewayApprovalStatuses as $val => $status) 
@@ -584,10 +584,17 @@
         $(".declinedReason").html( gatewayObject.declinedReason);
         $(".gatewayApprovalStatus").val(gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus]);
         $(".onTenantComplete").addClass("hide");
+        editableInputs( $("#approve-gateway"), true);
 
         if( gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "REQUESTED"){
             $(".createdGateway").addClass("hide");
             $(".notCreatedGateway").removeClass("hide");
+        }
+        else if( gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "CANCELLED" ||
+            gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "DENIED" ||
+            gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "DEACTIVATED"){
+            
+            editableInputs( $("#approve-gateway"), false);
         }
         else
         {
@@ -673,6 +680,21 @@
     $(".qualityOfService").popover({
         'trigger':'focus'
     });
+
+    function editableInputs( elem, yes){
+        if( yes){
+            elem.find("input").removeAttr("disabled");
+            elem.find("textarea").removeAttr("disabled");
+            elem.find("select").removeAttr("disabled");
+            elem.find("button").removeAttr("disabled");
+        }
+        else{
+            elem.find("input").attr("disabled", "true");
+            elem.find("textarea").prop("disabled", "true");
+            elem.find("select").attr("disabled", "true");
+            elem.find("button").attr("disabled", "true");
+        }
+    }
 
 </script>
 @stop
