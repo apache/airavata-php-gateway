@@ -33,7 +33,7 @@
 
     <table class="table table-bordered">
         <tr>
-            <td><strong>Experiment Id</strong></td>
+            <td><strong>Experiment ID</strong></td>
             <td><?php echo $experiment->experimentId; ?></td>
         </tr>
         <tr>
@@ -59,7 +59,7 @@
                 } ?></td>
         </tr>
         <tr>
-            <td><strong>Compute resource</strong></td>
+            <td><strong>Compute Resource</strong></td>
             <td><?php if (!empty($expVal["computeResource"])) {
                     echo $expVal["computeResource"]->hostName;
                 } ?></td>
@@ -100,7 +100,7 @@
         -->
         @if( isset( $experiment->enableEmailNotification))
             <tr>
-                <td><strong>Notifications Enabled for:</strong></td>
+                <td><strong>Notifications To:</strong></td>
                 <td>
                     @if(isset($experiment->emailAddresses))
                         @foreach( $experiment->emailAddresses as $email)
@@ -133,7 +133,7 @@
         @endif
 
         <tr>
-            <td><strong>Creation time</strong></td>
+            <td><strong>Creation Time</strong></td>
             <td class="time" unix-time="{{ $expVal["experimentCreationTime"] }}"></td>
         </tr>
         <tr>
@@ -145,15 +145,15 @@
             <td><?php echo $experiment->userConfigurationData->airavataAutoSchedule==1?"true":"false"; ?></td>
         </tr>
         <tr>
-            <td><strong>Wall time</strong></td>
+            <td><strong>Wall Time</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->wallTimeLimit }}</td>
         </tr>
         <tr>
-            <td><strong>CPU count</strong></td>
+            <td><strong>CPU Count</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->totalCPUCount }}</td>
         </tr>
         <tr>
-            <td><strong>Node count</strong></td>
+            <td><strong>Node Count</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->nodeCount }}</td>
         </tr>
         <tr>
