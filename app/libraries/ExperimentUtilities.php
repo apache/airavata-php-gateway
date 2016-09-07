@@ -969,7 +969,7 @@ class ExperimentUtilities
             $expVal["experimentCreationTime"] = $experiment->creationTime / 1000; // divide by 1000 since creationTime is in ms
         }
 
-        if (!$forSearch && is_object( $experiment->experimentStatus) ){
+        if (!$forSearch && is_array( $experiment->experimentStatus) ){
             $userConfigData = $experiment->userConfigurationData;
             $scheduling = $userConfigData->computationalResourceScheduling;
 
