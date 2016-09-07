@@ -964,8 +964,8 @@ class ExperimentUtilities
         if ($experiment->experimentStatus != null) {
             $experimentStatus = $experiment->experimentStatus;
 
-            if( is_object( $experiment->experimentStatus ) )
-                $expVal["experimentTimeOfStateChange"] = $experimentStatus->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
+            if( is_array( $experiment->experimentStatus ) )
+                $expVal["experimentTimeOfStateChange"] = $experimentStatus[0]->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
             $expVal["experimentCreationTime"] = $experiment->creationTime / 1000; // divide by 1000 since creationTime is in ms
         }
 
