@@ -209,7 +209,7 @@
             <form action="{{URL::to('/')}}/admin/update-gateway-request" id="update-gateway-request" method="GET">
             
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    <button type="button" class="close update-gateway-request-close-modal" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
                     <h3>Approve Gateway Request</h3>
                 </div>
@@ -584,7 +584,7 @@
         $(".declinedReason").html( gatewayObject.declinedReason);
         $(".gatewayApprovalStatus").val(gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus]);
         $(".onTenantComplete").addClass("hide");
-        editableInputs( $("#approve-gateway"), true);
+        editableInputs( $("#update-gateway-request"), true);
 
         if( gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "REQUESTED"){
             $(".createdGateway").addClass("hide");
@@ -594,7 +594,8 @@
             gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "DENIED" ||
             gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "DEACTIVATED"){
             
-            editableInputs( $("#approve-gateway"), false);
+            editableInputs( $("#update-gateway-request"), false);
+            $(".update-gateway-request-close-modal").removeAttr("disabled");
         }
         else
         {

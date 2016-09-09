@@ -120,11 +120,11 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Project Details</label>
-                            <textarea type="text" name="project-details" id="project-details" class="form-control" required="required"  data-container="body" data-toggle="popover" data-placement="left" data-content="This information will help us to understand and identify your gateway requirements, such as local or remote resources, user management, field of science and communities supported, applications and interfaces, license handling, allocation management, data management, etc... It will help us in serving you and providing you with the best option for you and your research community.">{{Input::old('project-details') }}</textarea>
+                            <textarea type="text" name="project-details" maxlength="250" id="project-details" class="form-control" required="required"  data-container="body" data-toggle="popover" data-placement="left" data-content="This information will help us to understand and identify your gateway requirements, such as local or remote resources, user management, field of science and communities supported, applications and interfaces, license handling, allocation management, data management, etc... It will help us in serving you and providing you with the best option for you and your research community.">{{Input::old('project-details') }}</textarea>
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Public Project Description</label>
-                            <textarea type="text" name="public-project-description" id="public-project-description" class="form-control" required="required"  data-container="body" data-toggle="popover" data-placement="left" data-content="This description will be used to describe the gateway in the Science Gateways List. It help a user decide whether or not this gateway will be useful to them.">{{Input::old('public-project-description') }}</textarea>
+                            <textarea type="text" name="public-project-description" maxlength="250" id="public-project-description" class="form-control" required="required"  data-container="body" data-toggle="popover" data-placement="left" data-content="This description will be used to describe the gateway in the Science Gateways List. It help a user decide whether or not this gateway will be useful to them.">{{Input::old('public-project-description') }}</textarea>
                         </div>
                         <input type="submit" value="Send Request" class="btn btn-primary"/>
                         <input type="reset" value="Reset" class="btn">
@@ -151,8 +151,12 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Gateway Id</td>
+                            <td>Gateway Name</td>
                             <td class="gateway-id"></td>
+                        </tr>
+                        <tr>
+                            <td>Gateway URL</td>
+                            <td class="gateway-url"></td>
                         </tr>
                         <tr>
                             <td>Admin Username</td>
@@ -468,6 +472,7 @@
         $(".admin-username").html( gatewayObject["identityServerUserName"]);
         $(".admin-password").html( gatewayObject["identityServerPasswordToken"]);
         $(".gateway-id").html( gatewayObject["gatewayId"]);
+        $(".gateway-url").html( gatewayObject["gatewayURL"]);
         $(".oauth-client-key").html( gatewayObject["oauthClientId"]);
         $(".oauth-client-secret").html( gatewayObject["oauthClientSecret"]);
         $("#viewCredentials").modal("show");
