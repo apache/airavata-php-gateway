@@ -161,7 +161,12 @@ return array(
          /**
          * Gateway data store resource id
          */
-         'gateway-data-store-resource-id' => ''
+         'gateway-data-store-resource-id' => '',
+
+         /**
+          * Data Sharing enabled
+          */
+          'data-sharing-enabled' = false
     ],
 
     /**

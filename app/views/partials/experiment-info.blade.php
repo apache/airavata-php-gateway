@@ -77,7 +77,7 @@
                         <tr>
                             <td>Name</td>
                             <td>ID</td>
-                            <td>Status</td>
+                            <td>Status</td>SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT)
                             <td>Creation Time</td>
                         </tr>
                         <tr>
@@ -204,10 +204,12 @@
     </table>
 
     <div class="form-group">
-    @if($can_write === true)
-    @include('partials/sharing-display-body', array("form" => true))
-    @else
-    @include('partials/sharing-display-body', array("form" => false))
+    @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+        @if($can_write === true)
+        @include('partials/sharing-display-body', array("form" => true))
+        @else
+        @include('partials/sharing-display-body', array("form" => false))
+        @endif
     @endif
     </div>
 
@@ -245,6 +247,7 @@
                 Clone
             </a>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
+            @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
             @if($can_write === true)
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
                class="btn btn-default"
@@ -253,6 +256,7 @@
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit
             </a>
+            @endif
             @endif
         </div>
     </form>
@@ -340,20 +344,24 @@
 </div>
 @endif
 
-@if($can_write === true)
-@include('partials/sharing-form-modal')
+@if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+    @if($can_write === true)
+    @include('partials/sharing-form-modal')
+    @endif
 @endif
-
 @section('scripts')
 @parent
 {{ HTML::script('js/time-conversion.js')}}
-<script>
-    var users = {{ $users }};
-    var owner = {{ $owner }};
-    $('#project-share').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
-</script>
-{{ HTML::script('js/sharing/sharing_utils.js') }}
-{{ HTML::script('js/sharing/share.js') }}
+@if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+    <script>
+        var users = {{ $users }};
+        var owner = {{ $owner }};
+        $('#project-share').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
+    </script>
+    {{ HTML::script('js/sharing/sharing_utils.js') }}
+    {{ HTML::script('js/sharing/share.js') }}
+@endif
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.bundle.min.js"></script>
 {{ HTML::script('js/simstream.js') }}
 <script>

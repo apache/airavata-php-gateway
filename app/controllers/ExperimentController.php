@@ -73,10 +73,15 @@ class ExperimentController extends BaseController
                 "allowedFileSize" => $allowedFileSize
             );
 
-            $users = SharingUtilities::getProfilesForSharedUsers($_POST['project'], ResourceType::PROJECT);
-            $owner = array();
+            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+                $users = SharingUtilities::getProfilesForSharedUsers($_POST['project'], ResourceType::PROJECT);
+                $owner = array();
 
-            return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users), "owner" => json_encode($owner)));
+                return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users), "owner" => json_encode($owner)));
+            }else{
+                return View::make("experiment/no-sharing-create-complete", array("expInputs" => $experimentInputs));
+            }
+
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
             $expId = ExperimentUtilities::create_experiment();
 
@@ -91,7 +96,6 @@ class ExperimentController extends BaseController
                     <a href=' . URL::to('/') . '"/experiment/summary?expId=' . $expId . '">go directly</a> to experiment summary page.</p>');
 
             }*/
-            $users = SharingUtilities::getProfilesForSharedUsers($expId, ResourceType::EXPERIMENT);
             return Redirect::to('experiment/summary?expId=' . $expId);
         } else
             return Redirect::to("home")->with("message", "Something went wrong here. Please file a bug report using the link in the Help menu.");
@@ -134,13 +138,7 @@ class ExperimentController extends BaseController
             }
             $expVal["jobDetails"] = $jobDetails;
 
-            $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
 
-            $owner = array();
-            if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
-                $owner[$experiment->userName] = $users[$experiment->userName];
-                $users = array_diff_key($users, $owner);
-            }
 
             $data = array(
                 "expId" => Input::get("expId"),
@@ -148,11 +146,21 @@ class ExperimentController extends BaseController
                 "project" => $project,
                 "jobDetails" => $jobDetails,
                 "expVal" => $expVal,
-                "autoRefresh"=> $autoRefresh,
-                "users" => json_encode($users),
-                "owner" => json_encode($owner),
-                "can_write" => SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT)
+                "autoRefresh"=> $autoRefresh
             );
+            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+                $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
+
+                $owner = array();
+                if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
+                    $owner[$experiment->userName] = $users[$experiment->userName];
+                    $users = array_diff_key($users, $owner);
+                }
+                $data['can_write'] = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
+                $data["users"] = json_encode($users);
+                $data["owner"] = json_encode($owner);
+            }
+
             if( Input::has("dashboard"))
             {
                 $detailedExperiment = ExperimentUtilities::get_detailed_experiment( $_GET['expId']);
@@ -208,57 +216,61 @@ class ExperimentController extends BaseController
 
     public function editView()
     {
-        if (SharingUtilities::userCanWrite(Session::get("username"), $_GET['expId'], ResourceType::EXPERIMENT) === true) {
-            $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
-                "nodeCount" => Config::get('pga_config.airavata')["node-count"],
-                "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
-                "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
-            );
+        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
+            "nodeCount" => Config::get('pga_config.airavata')["node-count"],
+            "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
+            "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
+        );
 
-            $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
-            $expVal = ExperimentUtilities::get_experiment_values($experiment);
-            $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
+        $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
+        $expVal = ExperimentUtilities::get_experiment_values($experiment);
+        $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
 
-            $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
+        $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
 
-            $clonedExp = false; $savedExp = false;
-            if( Input::has("clonedExp"))
-                $clonedExp = true;
-            if( Input::has("savedExp"))
-                $savedExp = true;
+        $clonedExp = false; $savedExp = false;
+        if( Input::has("clonedExp"))
+            $clonedExp = true;
+        if( Input::has("savedExp"))
+            $savedExp = true;
 
-            $experimentInputs = array(
-                "clonedExp" => $clonedExp,
-                "savedExp" => $savedExp,
-                "disabled" => ' ',
-                "experimentName" => $experiment->experimentName,
-                "experimentDescription" => $experiment->description,
-                "application" => $experiment->executionId,
-                "autoSchedule" => $experiment->userConfigurationData->airavataAutoSchedule,
-                "userDN" => $experiment->userConfigurationData->userDN,
-                "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
-                'experiment' => $experiment,
-                "queueDefaults" => $queueDefaults,
-                'computeResources' => $computeResources,
-                "resourceHostId" => $expVal['scheduling']->resourceHostId,
-                'project' => $experiment->projectId,
-                'expVal' => $expVal,
-                'cloning' => true,
-                'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
-            );
+        $experimentInputs = array(
+            "clonedExp" => $clonedExp,
+            "savedExp" => $savedExp,
+            "disabled" => ' ',
+            "experimentName" => $experiment->experimentName,
+            "experimentDescription" => $experiment->description,
+            "application" => $experiment->executionId,
+            "autoSchedule" => $experiment->userConfigurationData->airavataAutoSchedule,
+            "userDN" => $experiment->userConfigurationData->userDN,
+            "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
+            'experiment' => $experiment,
+            "queueDefaults" => $queueDefaults,
+            'computeResources' => $computeResources,
+            "resourceHostId" => $expVal['scheduling']->resourceHostId,
+            'project' => $experiment->projectId,
+            'expVal' => $expVal,
+            'cloning' => true,
+            'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
+        );
 
-            $users = SharingUtilities::getProfilesForSharedUsers($_GET['expId'], ResourceType::EXPERIMENT);
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            if (SharingUtilities::userCanWrite(Session::get("username"), $_GET['expId'], ResourceType::EXPERIMENT) === true) {
+                $users = SharingUtilities::getProfilesForSharedUsers($_GET['expId'], ResourceType::EXPERIMENT);
 
-            $owner = array();
-            if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
-                $owner[$experiment->userName] = $users[$experiment->userName];
-                $users = array_diff_key($users, $owner);
+                $owner = array();
+                if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
+                    $owner[$experiment->userName] = $users[$experiment->userName];
+                    $users = array_diff_key($users, $owner);
+                }
+
+                return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users), "owner" => json_encode($owner)));
             }
-
-            return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users), "owner" => json_encode($owner)));
-        }
-        else {
-            Redirect::to("experiment/summary?expId=" . $experiment->experimentId)->with("error", "You do not have permission to edit this experiment");
+            else {
+                Redirect::to("experiment/summary?expId=" . $experiment->experimentId)->with("error", "You do not have permission to edit this experiment");
+            }
+        }else {
+            return View::make("experiment/no-sharing-edit", array("expInputs" => $experimentInputs));
         }
     }
 
@@ -278,10 +290,28 @@ class ExperimentController extends BaseController
 
     public function editSubmit()
     {
-        if (SharingUtilities::userCanWrite(Session::get("username"), Input::get('expId'), ResourceType::EXPERIMENT)) {
+        $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
+        $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
+
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            if (SharingUtilities::userCanWrite(Session::get("username"), Input::get('expId'), ResourceType::EXPERIMENT)) {
+                if (isset($_POST['save']) || isset($_POST['launch'])) {
+
+                    ExperimentUtilities::update_experiment($experiment->experimentId, $updatedExperiment);
+
+                    if (isset($_POST['save'])) {
+                        $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
+                    }
+                    if (isset($_POST['launch'])) {
+                        ExperimentUtilities::launch_experiment($experiment->experimentId);
+                    }
+
+                    return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
+                } else
+                    return View::make("home");
+            }
+        }else{
             if (isset($_POST['save']) || isset($_POST['launch'])) {
-                $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
-                $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
 
                 ExperimentUtilities::update_experiment($experiment->experimentId, $updatedExperiment);
 
@@ -328,19 +358,29 @@ class ExperimentController extends BaseController
             ($pageNo - 1) * $this->limit);
         $experimentStates = ExperimentUtilities::getExpStates();
 
-        $can_write = array();
-        foreach ($expContainer as $experiment) {
-            $can_write[$experiment['experiment']->experimentId] = SharingUtilities::userCanWrite(Session::get("username"), $experiment['experiment']->experimentId, ResourceType::EXPERIMENT);
-        }
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            $can_write = array();
+            foreach ($expContainer as $experiment) {
+                $can_write[$experiment['experiment']->experimentId] = SharingUtilities::userCanWrite(Session::get("username"), $experiment['experiment']->experimentId, ResourceType::EXPERIMENT);
+            }
 
-        return View::make('experiment/browse', array(
-            'input' => Input::all(),
-            'pageNo' => $pageNo,
-            'limit' => $this->limit,
-            'expStates' => $experimentStates,
-            'expContainer' => $expContainer,
-            'can_write' => $can_write
-        ));
+            return View::make('experiment/browse', array(
+                'input' => Input::all(),
+                'pageNo' => $pageNo,
+                'limit' => $this->limit,
+                'expStates' => $experimentStates,
+                'expContainer' => $expContainer,
+                'can_write' => $can_write
+            ));
+        }else{
+            return View::make('experiment/no-sharing-browse', array(
+                'input' => Input::all(),
+                'pageNo' => $pageNo,
+                'limit' => $this->limit,
+                'expStates' => $experimentStates,
+                'expContainer' => $expContainer
+            ));
+        }
     }
 
     /**

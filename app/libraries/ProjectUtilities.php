@@ -105,8 +105,6 @@ class ProjectUtilities
         $project->description = $_POST['project-description'];
         $project->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
 
-        $share = $_POST['share-settings'];
-
         $projectId = null;
 
         try {
@@ -127,7 +125,10 @@ class ProjectUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        ProjectUtilities::share_project($projectId, json_decode($share));
+        if (Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            $share = $_POST['share-settings'];
+            ProjectUtilities::share_project($projectId, json_decode($share));
+        }
 
         return $projectId;
     }
@@ -203,8 +204,6 @@ class ProjectUtilities
         $updatedProject->description = $projectDetails["description"];
         $updatedProject->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
 
-        $share = $_POST['share-settings'];
-
         try {
             Airavata::updateProject(Session::get('authz-token'), $projectId, $updatedProject);
 
@@ -219,7 +218,10 @@ class ProjectUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        ProjectUtilities::share_project($projectId, json_decode($share));
+        if (Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            $share = $_POST['share-settings'];
+            ProjectUtilities::share_project($projectId, json_decode($share));
+        }
     }
 
 

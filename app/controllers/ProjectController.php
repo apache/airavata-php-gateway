@@ -25,8 +25,13 @@ class ProjectController extends BaseController
 
     public function createView()
     {
-        $users = SharingUtilities::getAllUserProfiles();
-        return View::make("project/create", array("users" => json_encode($users), "owner" => json_encode(array())));
+        if (Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            $users = SharingUtilities::getAllUserProfiles();
+            return View::make("project/create", array("users" => json_encode($users), "owner" => json_encode(array())));
+        }else{
+            return View::make("project/no-sharing-create");
+        }
+
     }
 
     public function createSubmit()
@@ -45,35 +50,42 @@ class ProjectController extends BaseController
             Session::put("projId", Input::get("projId"));
 
             $project = ProjectUtilities::get_project(Input::get('projId'));
-
-            $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
-
-            $owner = array();
-            if (strcmp(Session::get("username"), $project->owner) !== 0) {
-                $owner[$project->owner] = $users[$project->owner];
-                $users = array_diff_key($users, $owner);
-            }
-
             $experiments = ProjectUtilities::get_experiments_in_project(Input::get("projId"));
 
-            $experiment_can_write = array();
-            foreach($experiments as $experiment) {
-                if (SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT)) {
-                    $experiment_can_write[$experiment->experimentId] = true;
+            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+                $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
+
+                $owner = array();
+                if (strcmp(Session::get("username"), $project->owner) !== 0) {
+                    $owner[$project->owner] = $users[$project->owner];
+                    $users = array_diff_key($users, $owner);
                 }
-                else {
-                    $experiment_can_write[$experiment->experimentId] = false;
+
+                $experiment_can_write = array();
+                foreach($experiments as $experiment) {
+                    if (SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT)) {
+                        $experiment_can_write[$experiment->experimentId] = true;
+                    }
+                    else {
+                        $experiment_can_write[$experiment->experimentId] = false;
+                    }
                 }
+
+                return View::make("project/summary",
+                    array("projectId" => Input::get("projId"),
+                        "experiments" => $experiments,
+                        "users" => json_encode($users),
+                        "owner" => json_encode($owner),
+                        "project_can_write" => SharingUtxilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT),
+                        "experiment_can_write" => $experiment_can_write
+                    ));
+            }else{
+                return View::make("project/no-sharing-summary",
+                    array("projectId" => Input::get("projId"),
+                        "experiments" => $experiments
+                    ));
             }
 
-            return View::make("project/summary",
-                array("projectId" => Input::get("projId"),
-                      "experiments" => $experiments,
-                      "users" => json_encode($users),
-                      "owner" => json_encode($owner),
-                      "project_can_write" => SharingUtilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT),
-                      "experiment_can_write" => $experiment_can_write
-                  ));
         } else
             return Redirect::to("home");
     }
@@ -81,25 +93,29 @@ class ProjectController extends BaseController
     public function editView()
     {
         if (Input::has("projId")) {
-            if (SharingUtilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT)) {
-                $project = ProjectUtilities::get_project($_GET['projId']);
-                $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
-                $owner = array();
-
-                if (strcmp(Session::get("username"), $project->owner) !== 0) {
-                    $owner[$project->owner] = $users[$project->owner];
-                    $users = array_diff_key($users, $owner);
+            $project = ProjectUtilities::get_project($_GET['projId']);
+            if (Config::get('pga_config.airavata')["data-sharing-enabled"]) {
+                if (SharingUtilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT)) {
+                    $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
+                    $owner = array();
+                    if (strcmp(Session::get("username"), $project->owner) !== 0) {
+                        $owner[$project->owner] = $users[$project->owner];
+                        $users = array_diff_key($users, $owner);
+                    }
+                    return View::make("project/edit",
+                        array("projectId" => Input::get("projId"),
+                            "project" => $project,
+                            "users" => json_encode($users),
+                            "owner" => json_encode($owner)
+                        ));
+                }else {
+                    return Redirect::to('project/summary?projId=' . Input::get("projId"))->with("error", "You do not have permission to edit this project.");
                 }
-
-                return View::make("project/edit",
+            } else {
+                return View::make("project/no-sharing-edit",
                     array("projectId" => Input::get("projId"),
                         "project" => $project,
-                        "users" => json_encode($users),
-                        "owner" => json_encode($owner)
                     ));
-                }
-            else {
-                return Redirect::to('project/summary?projId=' . Input::get("projId"))->with("error", "You do not have permission to edit this project.");
             }
         } else
             return Redirect::to("home");
@@ -107,16 +123,20 @@ class ProjectController extends BaseController
 
     public function editSubmit()
     {
-        if (isset($_POST['save']) && SharingUtilities::userCanWrite(Session::get("username"), Input::get("projectId"), ResourceType::PROJECT)) {
-            $projectDetails = array();
-            $projectDetails["owner"] = Session::get("username");
-            $projectDetails["name"] = Input::get("project-name");
-            $projectDetails["description"] = Input::get("project-description");
+        $projectDetails = array();
+        $projectDetails["owner"] = Session::get("username");
+        $projectDetails["name"] = Input::get("project-name");
+        $projectDetails["description"] = Input::get("project-description");
 
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            if (isset($_POST['save']) && SharingUtilities::userCanWrite(Session::get("username"), Input::get("projectId"), ResourceType::PROJECT)) {
+
+                ProjectUtilities::update_project(Input::get("projectId"), $projectDetails);
+            }
+        }else{
             ProjectUtilities::update_project(Input::get("projectId"), $projectDetails);
-
-            return Redirect::to("project/summary?projId=" . Input::get("projectId"))->with("project_edited", true);
         }
+        return Redirect::to("project/summary?projId=" . Input::get("projectId"))->with("project_edited", true);
     }
 
     public function browseView()
@@ -142,23 +162,32 @@ class ProjectController extends BaseController
             $projects = ProjectUtilities::get_all_user_accessible_projects_with_pagination($this->limit, ($pageNo - 1) * $this->limit);
         }
 
-        $can_write = array();
-        $user = Session::get("username");
-        foreach($projects as $project) {
-            if (SharingUtilities::userCanWrite($user, $project->projectID, ResourceType::PROJECT)) {
-                $can_write[$project->projectID] = true;
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            $can_write = array();
+            $user = Session::get("username");
+            foreach($projects as $project) {
+                if (SharingUtilities::userCanWrite($user, $project->projectID, ResourceType::PROJECT)) {
+                    $can_write[$project->projectID] = true;
+                }
+                else {
+                    $can_write[$project->projectID] = false;
+                }
             }
-            else {
-                $can_write[$project->projectID] = false;
-            }
+
+            return View::make('project/browse', array(
+                'pageNo' => $pageNo,
+                'limit' => $this->limit,
+                'projects' => $projects,
+                'can_write' => $can_write
+            ));
+        }else{
+            return View::make('project/no-sharing-browse', array(
+                'pageNo' => $pageNo,
+                'limit' => $this->limit,
+                'projects' => $projects
+            ));
         }
 
-        return View::make('project/browse', array(
-            'pageNo' => $pageNo,
-            'limit' => $this->limit,
-            'projects' => $projects,
-            'can_write' => $can_write
-        ));
     }
 
     /**

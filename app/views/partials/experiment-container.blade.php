@@ -28,8 +28,10 @@
                         <a href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}" target="_blank">
                         {{ $experiment['experiment']->name }}
                         </a>
-                        @if( $experiment['expValue']['editable'] and $can_write[$experiment['experiment']->experimentId] === true)
-                            <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment['experiment']->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                        @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+                            @if( $experiment['expValue']['editable'] and $can_write[$experiment['experiment']->experimentId] === true)
+                                <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment['experiment']->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                            @endif
                         @endif
                     </td>
                     <td>{{$experiment['experiment']->userName}}</td>

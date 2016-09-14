@@ -550,7 +550,6 @@ class ExperimentUtilities
      */
     public static function update_experiment($expId, $updatedExperiment)
     {
-        $share = $_POST['share-settings'];
         try {
             Airavata::updateExperiment(Session::get('authz-token'), $expId, $updatedExperiment);
         } catch (InvalidRequestException $ire) {
@@ -571,7 +570,10 @@ class ExperimentUtilities
                 '<p>AiravataSystemException: ' . $ase->getMessage() . '</p>');
         }
 
-        ExperimentUtilities::share_experiment($expId, json_decode($share));
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            $share = $_POST['share-settings'];
+            ExperimentUtilities::share_experiment($expId, json_decode($share));
+        }
     }
 
 
@@ -1128,7 +1130,16 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId, ResourceType::EXPERIMENT)) {
+            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+                if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId, ResourceType::EXPERIMENT)) {
+                    $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
+                    $expContainer[$expNum]['experiment'] = $experiment;
+                    if ($expValue["experimentStatusString"] == "FAILED")
+                        $expValue["editable"] = false;
+                    $expContainer[$expNum]['expValue'] = $expValue;
+                    $expNum++;
+                }
+            }else{
                 $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
                 $expContainer[$expNum]['experiment'] = $experiment;
                 if ($expValue["experimentStatusString"] == "FAILED")
