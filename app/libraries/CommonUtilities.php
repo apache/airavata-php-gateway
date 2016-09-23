@@ -101,8 +101,10 @@ class CommonUtilities
     public static function create_nav_bar()
     {
         $menus = array();
-        if ( Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
-                || Session::has('admin-read-only'))) {
+        if  ( Session::has('loggedin') && 
+            ( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only')) &&
+              !Session::has("gateway-provider")
+            ) {
             $menus = array
             (
                 'Project' => array

@@ -80,6 +80,7 @@
                                 <thead>
                                     <tr>
                                         <th>Gateway Name</th>
+                                        <th>Creation Time</th>
                                         <th>Admin Name</th>
                                         <th>Gateway URL</th>
                                         <th>Project Details</th>
@@ -100,9 +101,18 @@
                                 </thead>
                                 <tbody>
                                 @foreach( $gateways as $indexGP => $gp )
-                                    @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "REQUESTED")
                                     <tr class="gatewayRow gatewayStatus-{{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus]}}">
                                         <td>{{$gp->gatewayName }}</td>
+                                        <?php 
+
+                                            $timeDifference = Session::get("user_timezone");
+                                            $addOrSubtract = "-";
+                                            if( $timeDifference < 0)
+                                                $addOrSubtract = "+";
+
+                                            $creationTime = date('m/d/Y h:i:s A', intval( strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", $gp->requestCreationTime/1000) ) );
+                                        ?>
+                                        <td>{{ $creationTime}}</td>
                                         <td>{{ $gp->gatewayAdminFirstName }} {{ $gp->gatewayAdminLastName }} </td>
                                         <td>{{ $gp->gatewayURL }}</td>
                                         <td>{{ $gp->reviewProposalDescription}}</td>
@@ -112,22 +122,6 @@
                                             <input type="button" class="btn btn-primary btn-xs start-approval" data-gatewayobject="{{htmlentities(json_encode( $gp))}}" value="View"/>
                                         </td>
                                     </tr>
-                                    @endif
-                                @endforeach
-                                @foreach( $gateways as $indexGP => $gp )
-                                    @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] != "REQUESTED")
-                                    <tr class="gatewayRow gatewayStatus-{{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus]}}">
-                                        <td>{{$gp->gatewayName }}</td>
-                                        <td>{{ $gp->gatewayAdminFirstName }} {{ $gp->gatewayAdminLastName }} </td>
-                                        <td>{{ $gp->gatewayURL }}</td>
-                                        <td>{{ $gp->reviewProposalDescription}}</td>
-                                        <td>{{ $gp->gatewayPublicAbstract}}</td>
-                                        <td>{{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus] }}</td>
-                                        <td>
-                                            <input type="button" class="btn btn-primary btn-xs start-approval" data-gatewayobject="{{htmlentities(json_encode( $gp))}}" value="View"/>
-                                        </td>
-                                    </tr>
-                                    @endif
                                 @endforeach
                                 <!-- foreach code ends -->
                                 </tbody>

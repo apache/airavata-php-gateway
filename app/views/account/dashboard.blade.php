@@ -27,6 +27,7 @@
                     <thead>
                         <tr class="text-center">
                             <th>Gateway Name</th>
+                            <th>Creation Time</th>
                             <th>Gateway Request Status</th>
                             <th>Actions</th>
                             <th>Comments</th>
@@ -36,6 +37,16 @@
                     @foreach( $requestedGateways as $gatewayId => $gateway)
                         <tr>
                             <td>{{ $gateway["gatewayInfo"]->gatewayName }}</td>
+                            <?php 
+                                $timeDifference = Session::get("user_timezone");
+                                $addOrSubtract = "-";
+                                if( $timeDifference < 0)
+                                    $addOrSubtract = "+";
+
+                                $creationTime = date('m/d/Y h:i:s A', 
+                                                    intval( strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", $gateway["gatewayInfo"]->requestCreationTime/1000) ) );
+                            ?>
+                            <td>{{ $creationTime}}</td>
                             <td>{{ $gateway["approvalStatus"] }}</td>
                             <td>
                                 @if( $gateway["approvalStatus"] == "APPROVED")
