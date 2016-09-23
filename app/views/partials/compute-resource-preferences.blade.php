@@ -151,7 +151,7 @@ if( isset( $preferences) && $preferences->reservationEndTime != '')
 
     <div class="input-group date datetimepicker1">
         <input type="text" name="reservationStartTime" class="form-control"
-               value="@if( isset( $preferences) )@if( $preferences->reservationStartTime != ''){{date('m/d/Y h:i:s A', intval( $reservationStartTime))}}@endif @endif"/>
+               value="@if( isset( $preferences) )@if( trim($preferences->reservationStartTime) != '' || $preferences->reservationStartTime != null){{date('m/d/Y h:i:s A', intval( $reservationStartTime))}}@endif @endif"/>
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>
@@ -163,7 +163,7 @@ if( isset( $preferences) && $preferences->reservationEndTime != '')
 
     <div class="input-group date datetimepicker2">
         <input type="text" name="reservationEndTime" class="form-control"
-               value="@if( isset( $preferences) )@if( $preferences->reservationStartTime != ''){{date('m/d/Y h:i:s A', intval($reservationEndTime))}}@endif @endif"/>
+               value="@if( isset( $preferences) )@if( trim($preferences->reservationEndTime) != ''|| $preferences->reservationStartTime != null){{date('m/d/Y h:i:s A', intval($reservationEndTime))}}@endif @endif"/>
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
         </span>
