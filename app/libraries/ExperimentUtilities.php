@@ -825,7 +825,9 @@ class ExperimentUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        ExperimentUtilities::share_experiment($expId, json_decode($share));
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            ExperimentUtilities::share_experiment($expId, json_decode($share));
+        }
 
         return $expId;
     }
