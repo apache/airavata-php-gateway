@@ -76,7 +76,7 @@ class ProjectController extends BaseController
                         "experiments" => $experiments,
                         "users" => json_encode($users),
                         "owner" => json_encode($owner),
-                        "project_can_write" => SharingUtxilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT),
+                        "project_can_write" => SharingUtilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT),
                         "experiment_can_write" => $experiment_can_write
                     ));
             }else{
