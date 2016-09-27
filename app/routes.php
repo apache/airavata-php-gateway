@@ -136,7 +136,7 @@ Route::get("download", function(){
 
         //TODO check permission
         $path = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
-        $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path;
+        $downloadLink = URL::to('/') . Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path;
         return Response::download( $downloadLink);
     }
 });
