@@ -51,13 +51,17 @@
                             <select onchange="location = this.options[this.selectedIndex].value;">
                                 <option value="{{URL::to('/')}}/admin/dashboard/users">All</option>
                                 @foreach( (array)$roles as $role)
-                                <option value="{{URL::to('/')}}/admin/dashboard/users?role={{$role}}"
-                                <?php
-                                    if(isset(Input::all()["role"]) && Input::all()["role"] == $role){
-                                        echo "selected";
-                                    }
-                                ?>
-                                >{{$role}}</option>
+                                    @if( strpos( $role, 'Internal/') === false && 
+                                        strpos( $role, 'Application/') === false
+                                    )
+                                    <option value="{{URL::to('/')}}/admin/dashboard/users?role={{$role}}"
+                                    <?php
+                                        if(isset(Input::all()["role"]) && Input::all()["role"] == $role){
+                                            echo "selected";
+                                        }
+                                    ?>
+                                    >{{$role}}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </th>
@@ -102,7 +106,7 @@
                         <select multiple name="new-role" class="new-roles-select" class="form-control">
 <!--                            <option>Select a role</option>-->
                             @foreach( (array)$roles as $role)
-                                @if( strpos( $role, 'Internal/') === false || 
+                                @if( strpos( $role, 'Internal/') === false && 
                                     strpos( $role, 'Application/') === false
                                 )
                                 <option value="{{$role}}">{{$role}}</option>
@@ -151,7 +155,7 @@
 
     function update_users_existing_roles(that){
         userName = $(that).data("username");
-        repopulatePopup( username);
+        repopulatePopup( userName);
 
         $(document).on("click",".existing-role-button",function(e) {
             e.preventDefault();
@@ -166,7 +170,7 @@
                     }
                 }).complete(function (data) {
                     //getting user's existing roles
-                    repopulatePopup( username);
+                    repopulatePopup( userName);
                     $(".success-message").html("<span class='alert alert-success col-md-12'>Role has been removed</span>");
                 });
             }
@@ -222,7 +226,7 @@
         $(".roles-list").addClass("hide");
         $(".add-roles-submit").data("username", userName);
         $(document).find(".alert-success").remove();
-        
+
         $.ajax({
             type: "POST",
             url: $(".base-url").val() + "/admin/check-roles",
@@ -237,17 +241,21 @@
             });
             for (var i = 0; i < roles.length; i++) {
                 //disable roles which user already has.
-                $(".new-roles-select option").each(function () {
-                    if ($(this).val().trim() == roles[i].trim()){
-                        $(this).attr("disabled", "disabled");
-                    }
-                });
-                $(".role-block").find(".role-name").html(roles[i]);
-                $(".role-block").find(".existing-role-button").attr("roleName", roles[i]);
-                var newRoleBlock = $(".role-block").html();
-                roleBlocks += newRoleBlock;
-                $(".roles-list").html(roleBlocks);
-                $(".add-roles-block").removeClass("hide");
+                var roleName = roles[i].trim();
+                if( roleName.indexOf( "Internal/") == -1 &&
+                    roleName.indexOf( "Application/") == -1 ){
+                    $(".new-roles-select option").each(function () {
+                        if ($(this).val().trim() == roleName){
+                            $(this).attr("disabled", "disabled");
+                        }
+                    });
+                    $(".role-block").find(".role-name").html(roles[i]);
+                    $(".role-block").find(".existing-role-button").attr("roleName", roles[i]);
+                    var newRoleBlock = $(".role-block").html();
+                    roleBlocks += newRoleBlock;
+                    $(".roles-list").html(roleBlocks);
+                    $(".add-roles-block").removeClass("hide");
+                }
             }
             $(".roles-load").addClass("hide");
             $(".roles-list").removeClass("hide");
