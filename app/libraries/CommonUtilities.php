@@ -186,8 +186,10 @@ class CommonUtilities
             echo '<li class="brand-logo"></li>';
 
         $active = "";
-        if(Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
-                || Session::has('admin-read-only'))){
+        if(Session::has('loggedin') && 
+            (Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only')) &&
+            !Session::has("gateway-provider")
+        ){
             if( Session::get("nav-active") == "storage")
                 $active = "active";
             echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/files/browse"><span class="glyphicon glyphicon-folder-close"></span> Storage</a></li>';

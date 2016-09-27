@@ -102,7 +102,11 @@
                         <select multiple name="new-role" class="new-roles-select" class="form-control">
 <!--                            <option>Select a role</option>-->
                             @foreach( (array)$roles as $role)
-                            <option value="{{$role}}">{{$role}}</option>
+                                @if( strpos( $role, 'Internal/') === false || 
+                                    strpos( $role, 'Application/') === false
+                                )
+                                <option value="{{$role}}">{{$role}}</option>
+                                @endif
                             @endforeach
                         </select>
                         <button type="button" class="btn btn-primary add-roles-submit" data-username="">Add Roles
@@ -147,43 +151,7 @@
 
     function update_users_existing_roles(that){
         userName = $(that).data("username");
-        $("#check-role-block").modal("show");
-        $(".roles-of-user").html("User : " + userName);
-        $(".roles-load").removeClass("hide");
-        $(".roles-list").addClass("hide");
-        $(".add-roles-submit").data("username", userName);
-        $(that).find(".alert-success").remove();
-
-        //getting user's existing roles
-        $.ajax({
-            type: "POST",
-            url: $(".base-url").val() + "/admin/check-roles",
-            data: {
-                username: userName
-            }
-        }).complete(function (data) {
-            roles = JSON.parse(data.responseText);
-            roleBlocks = "";
-            $(".new-roles-select option").each(function () {
-                $(this).removeAttr("disabled");
-            });
-            for (var i = 0; i < roles.length; i++) {
-                //disable roles which user already has.
-                $(".new-roles-select option").each(function () {
-                    if ($(this).val().trim() == roles[i].trim()){
-                        $(this).attr("disabled", "disabled");
-                    }
-                });
-                $(".role-block").find(".role-name").html(roles[i]);
-                $(".role-block").find(".existing-role-button").attr("roleName", roles[i]);
-                var newRoleBlock = $(".role-block").html();
-                roleBlocks += newRoleBlock;
-                $(".roles-list").html(roleBlocks);
-                $(".add-roles-block").removeClass("hide");
-            }
-            $(".roles-load").addClass("hide");
-            $(".roles-list").removeClass("hide");
-        });
+        repopulatePopup( username);
 
         $(document).on("click",".existing-role-button",function(e) {
             e.preventDefault();
@@ -197,43 +165,8 @@
                         roleName:$(this).attr("roleName")
                     }
                 }).complete(function (data) {
-                    $("#check-role-block").modal("show");
-                    $(".roles-of-user").html("User : " + userName);
-                    $(".roles-load").removeClass("hide");
-                    $(".roles-list").addClass("hide");
-                    $(".add-roles-submit").data("username", userName);
-                    $(document).find(".alert-success").remove();
-
                     //getting user's existing roles
-                    $.ajax({
-                        type: "POST",
-                        url: $(".base-url").val() + "/admin/check-roles",
-                        data: {
-                            username: userName
-                        }
-                    }).complete(function (data) {
-                        roles = JSON.parse(data.responseText);
-                        roleBlocks = "";
-                        $(".new-roles-select option").each(function () {
-                            $(this).removeAttr("disabled");
-                        });
-                        for (var i = 0; i < roles.length; i++) {
-                            //disable roles which user already has.
-                            $(".new-roles-select option").each(function () {
-                                if ($(this).val().trim() == roles[i].trim()){
-                                    $(this).attr("disabled", "disabled");
-                                }
-                            });
-                            $(".role-block").find(".role-name").html(roles[i]);
-                            $(".role-block").find(".existing-role-button").attr("roleName", roles[i]);
-                            var newRoleBlock = $(".role-block").html();
-                            roleBlocks += newRoleBlock;
-                            $(".roles-list").html(roleBlocks);
-                            $(".add-roles-block").removeClass("hide");
-                        }
-                        $(".roles-load").addClass("hide");
-                        $(".roles-list").removeClass("hide");
-                    });
+                    repopulatePopup( username);
                     $(".success-message").html("<span class='alert alert-success col-md-12'>Role has been removed</span>");
                 });
             }
@@ -280,5 +213,45 @@
         $(".add-roles-submit").html("Add Roles");
         $(this).removeAttr("disabled");
     });
+
+    function repopulatePopup( username){
+
+        $("#check-role-block").modal("show");
+        $(".roles-of-user").html("User : " + userName);
+        $(".roles-load").removeClass("hide");
+        $(".roles-list").addClass("hide");
+        $(".add-roles-submit").data("username", userName);
+        $(document).find(".alert-success").remove();
+        
+        $.ajax({
+            type: "POST",
+            url: $(".base-url").val() + "/admin/check-roles",
+            data: {
+                username: userName
+            }
+        }).complete(function (data) {
+            roles = JSON.parse(data.responseText);
+            roleBlocks = "";
+            $(".new-roles-select option").each(function () {
+                $(this).removeAttr("disabled");
+            });
+            for (var i = 0; i < roles.length; i++) {
+                //disable roles which user already has.
+                $(".new-roles-select option").each(function () {
+                    if ($(this).val().trim() == roles[i].trim()){
+                        $(this).attr("disabled", "disabled");
+                    }
+                });
+                $(".role-block").find(".role-name").html(roles[i]);
+                $(".role-block").find(".existing-role-button").attr("roleName", roles[i]);
+                var newRoleBlock = $(".role-block").html();
+                roleBlocks += newRoleBlock;
+                $(".roles-list").html(roleBlocks);
+                $(".add-roles-block").removeClass("hide");
+            }
+            $(".roles-load").addClass("hide");
+            $(".roles-list").removeClass("hide");
+        });
+    }
 </script>
 @stop
