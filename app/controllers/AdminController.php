@@ -213,12 +213,20 @@ class AdminController extends BaseController {
 
         $username = Input::all()["username"];
         WSIS::updateUserRoles($username, $roles);
-		$roles = WSIS::getUserRoles(Input::get("username"));
-		if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $roles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $roles)
-			|| in_array(Config::get("pga_config.wsis")["user-role-name"], $roles)){
-			$userProfile = WSIS::getUserProfile(Input::get("username"));
-			$recipients = array($userProfile["email"]);
-			$this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
+        $newCurrentRoles = WSIS::getUserRoles(Input::get("username"));
+        if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $newCurrentRoles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $newCurrentRoles)
+                || in_array(Config::get("pga_config.wsis")["user-role-name"], $newCurrentRoles)){
+            $userProfile = WSIS::getUserProfile(Input::get("username"));
+            $recipients = array($userProfile["email"]);
+            $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
+
+            // remove the pending role when access is granted, unless
+            // the admin is trying to add the user to the pending role
+            if(in_array("user-pending", $newCurrentRoles) && !in_array("user-pending", $roles["new"])) {
+                $userRoles["new"] = array();
+                $userRoles["deleted"] = "user-pending";
+                WSIS::updateUserRoles( $username, $userRoles);
+            }
 		}
         return Redirect::to("admin/dashboard/roles")->with( "message", "Roles has been added.");
     }
