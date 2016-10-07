@@ -3,6 +3,11 @@
 class AccountController extends BaseController
 {
 
+    public function __construct()
+    {
+        Session::put("nav-active", "user-dashboard");
+    }
+
     public function createAccountView()
     {
         return View::make('account/create');

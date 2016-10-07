@@ -203,7 +203,7 @@ class CommonUtilities
         if (Session::has('loggedin')) {
             $active = "";
             if (Session::has("nav-active")) {
-                if ("user-console" == Session::get("nav-active"))
+                if ("user-console" == Session::get("nav-active") || "user-dashboard" == Session::get("nav-active"))
                     $active = " active ";
             }
 
@@ -216,7 +216,9 @@ class CommonUtilities
 
 
             if (Session::has("admin") || Session::has("admin-read-only"))
-                echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
+                echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span> Admin Dashboard</a></li>';
+            else
+                echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/account/dashboard"><span class="glyphicon glyphicon-user"></span> Dashboard</a></li>';
 //            else
 //                echo '<li><a href="' . URL::to("/") . '/user/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>';
 
