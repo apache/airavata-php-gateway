@@ -383,6 +383,45 @@
                         </div>
                     </div>
                 </a>
+                @else
+
+            <div class="row well">
+
+                <h3>Manage Personal Computing and Storage Resources</h3>
+
+                <a href="{{URL::to('/')}}/account/computeResources">
+                    <div class=" col-md-4 well">
+                        <div class="col-md-12">
+                            <span class="glyphicon glyphicon-briefcase  console-icon"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <h4>Compute Resources</h4>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{{URL::to('/')}}/account/storageResources">
+                    <div class=" col-md-4 well">
+                        <div class="col-md-12">
+                            <span class="glyphicon glyphicon-folder-open console-icon"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <h4>Storage Resources</h4>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{{URL::to('/')}}/account/credential-store">
+                    <div class=" col-md-4 well">
+                        <div class="col-md-12">
+                            <span class="glyphicon glyphicon-lock console-icon"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <h4>Credential Store</h4>
+                        </div>
+                    </div>
+                </a>
+
                 @endif
 
                 

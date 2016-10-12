@@ -467,4 +467,27 @@ class AccountController extends BaseController
         Session::put("notice-seen", true);
     }
 
+    public function getCredentialStore() {
+
+        $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
+        $publicKey = AdminUtilities::get_pubkey_from_token($userResourceProfile->credentialStoreToken);
+
+        return View::make("account/credential-store", array(
+            "token" => $userResourceProfile->credentialStoreToken,
+            "publicKey" => $publicKey
+        ));
+    }
+
+    public function getComputeResources(){
+        $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
+        return View::make("account/compute-resources", array(
+            "userResourceProfile" => $userResourceProfile
+        ));
+    }
+
+    // TODO: Only used for testing, remove
+    public function deleteUserResourceProfile(){
+        URPUtilities::delete_user_resource_profile();
+        return Redirect::to("account/dashboard");
+    }
 }

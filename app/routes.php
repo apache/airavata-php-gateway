@@ -48,6 +48,11 @@ Route::get("allocation-request", "AccountController@allocationRequestView");
 
 Route::post("allocation-request", "AccountController@allocationRequestSubmit");
 
+Route::get("account/credential-store", "AccountController@getCredentialStore");
+Route::get("account/computeResources", "AccountController@getComputeResources");
+// TODO: just for testing
+Route::get("account/deleteURP", "AccountController@deleteUserResourceProfile");
+
 /*
  * The following routes will not work without logging in.
  *
