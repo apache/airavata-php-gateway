@@ -537,8 +537,17 @@ class AccountController extends BaseController
 
     public function getComputeResources(){
         $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
-        return View::make("account/compute-resources", array(
-            "userResourceProfile" => $userResourceProfile
+        $allCRs = CRUtilities::getAllCRObjects();
+        // TODO: actually get all of the user's credential store tokens, including description
+        $tokens = array(
+            $userResourceProfile->credentialStoreToken => "Default SSH Key"
+        );
+        return View::make("account/user-compute-resources", array(
+            "userResourceProfile" => $userResourceProfile,
+            "computeResources" => $allCRs,
+            // TODO: only show compute resources that user hasn't already configured with an account
+            "unselectedCRs" => $allCRs,
+            "tokens" => $tokens
         ));
     }
 }
