@@ -66,10 +66,10 @@ class AdminUtilities
             $gateway->gatewayName = $gatewayData["gatewayName"];
             $gateway->declinedReason = $gatewayData["declinedReason"];
         }
-            
+        
         if( isset($gatewayData["createTenant"])){
             if( AdminUtilities::add_tenant( $gateway) )
-                $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CREATED;
+                $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
         }
         elseif( isset( $gatewayData["denyRequest"])){
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::DENIED;
@@ -77,7 +77,7 @@ class AdminUtilities
         }
         elseif( isset( $gatewayData["updateGateway"])){
 
-            $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
+            //$gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
             $gateway->oauthClientId = $gatewayData["oauthClientId"];
             $gateway->oauthClientSecret = $gatewayData["oauthClientSecret"];
         }
