@@ -508,7 +508,7 @@ class CRUtilities
         if (Session::has("super-admin")){
             $gateways = Airavata::getAllGateways(Session::get('authz-token'));
             //sort with creation time 
-            usort($gateways, CommonUtilities::arrSortObjsByKey('requestCreationTime', 'DESC'));
+            usort($gateways, CommonUtilities::arrSortObjsByKey('requestCreationTime', 'ASC'));
         }
         else {
             $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));

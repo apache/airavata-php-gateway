@@ -28,8 +28,11 @@
                         <tr class="text-center">
                             <th>Gateway Name</th>
                             <th>Creation Time</th>
+                            <th>Gateway URL</th>
+                            <th>Project Details</th>
+                            <th>Project Abstract</th>
                             <th>Gateway Request Status</th>
-                            <th>Actions</th>
+                            <th>Actions</th>                            
                             <th>Comments</th>
                         </tr>
                     </thead>
@@ -47,6 +50,9 @@
                                                     intval( strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", $gateway["gatewayInfo"]->requestCreationTime/1000) ) );
                             ?>
                             <td>{{ $creationTime}}</td>
+                            <td>{{ $gateway["gatewayInfo"]->gatewayURL }}</td>
+                            <td style="max-width: 400px; word-wrap: break-word;">{{ $gateway["gatewayInfo"]->reviewProposalDescription }}</td>
+                            <td>{{ $gateway["gatewayInfo"]->gatewayPublicAbstract }}</td>
                             <td>{{ $gateway["approvalStatus"] }}</td>
                             <td>
                                 @if( $gateway["approvalStatus"] == "APPROVED")

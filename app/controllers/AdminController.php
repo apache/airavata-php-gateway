@@ -13,6 +13,8 @@ class AdminController extends BaseController {
         $data = array();
         $userProfile = Session::get("user-profile");
         Session::forget("new-gateway-provider");
+
+        //check for gateway provider users
         if( in_array( "gateway-provider", $userProfile["roles"]) ) {
             $gatewayOfUser = "";
             Session::put("super-admin", true);
@@ -52,7 +54,7 @@ class AdminController extends BaseController {
                 Session::put("new-gateway-provider", true);
             }
         }
-        //var_dump( $userInfo); exit;
+
 		return View::make("account/dashboard", $data);
 	}
 
