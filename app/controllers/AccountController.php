@@ -539,6 +539,14 @@ class AccountController extends BaseController
     public function getComputeResources(){
         $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
         $allCRs = CRUtilities::getAllCRObjects();
+        foreach( $allCRs as $index => $crObject)
+        {
+            $allCRsById[$crObject->computeResourceId] = $crObject;
+        }
+        // Add crDetails to each UserComputeResourcePreference
+        foreach ($userResourceProfile->userComputeResourcePreferences as $index => $userCompResPref) {
+            $userCompResPref->crDetails = $allCRsById[$userCompResPref->computeResourceId];
+        }
         // TODO: actually get all of the user's credential store tokens, including description
         $tokens = array(
             $userResourceProfile->credentialStoreToken => "Default SSH Key"
@@ -552,11 +560,20 @@ class AccountController extends BaseController
         ));
     }
 
-    public function modifyUserCRP() {
+    public function addUserComputeResourcePreference() {
 
+        // TODO: flash message isn't setup in the view
         if( URPUtilities::add_or_update_user_CRP( Input::all()) )
         {
             return Redirect::to("account/user-compute-resources")->with("message","Compute Resource Account Settings have been saved.");
+        }
+    }
+
+    public function updateUserComputeResourcePreference() {
+
+        if( URPUtilities::add_or_update_user_CRP( Input::all(), true ) )
+        {
+            return Redirect::to("account/user-compute-resources")->with("message","Compute Resource Account Settings have been updated.");
         }
     }
 }

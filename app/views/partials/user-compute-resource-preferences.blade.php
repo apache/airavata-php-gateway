@@ -1,3 +1,8 @@
+<!-- partial template variables:
+    computeResource - (required, ComputeResourceDescription) the compute resource object
+    preferences - (optional, UserComputeResourcePreference) the saved preference data
+    show - (optional, boolean)
+-->
 <!-- String replace is done as Jquery creates problems when using period(.) in id or class. -->
 <div id="cr-{{ str_replace( '.', "_", $computeResource->computeResourceId) }}" class="@if(isset( $show) ) @if( !$show) hide @endif @else hide @endif">
 <h3 class="text-center">Set Preferences</h3>

@@ -70,7 +70,7 @@ class URPUtilities
         return $credentialSummaryMap;
     }
 
-    public static function add_or_update_user_CRP($inputs)
+    public static function add_or_update_user_CRP($inputs, $update = false)
     {
         $timeDifference = Session::get("user_timezone");
         $addOrSubtract = "-";
@@ -84,8 +84,13 @@ class URPUtilities
 
         $userComputeResourcePreference = new UserComputeResourcePreference($inputs);
         $userId = Session::get('username');
-
-        return Airavata::addUserComputeResourcePreference(Session::get('authz-token'), $userId, $inputs["gatewayId"], $inputs["computeResourceId"], $userComputeResourcePreference);
+        if ($update)
+        {
+            return Airavata::updateUserComputeResourcePreference(Session::get('authz-token'), $userId, $inputs["gatewayId"], $inputs["computeResourceId"], $userComputeResourcePreference);
+        } else
+        {
+            return Airavata::addUserComputeResourcePreference(Session::get('authz-token'), $userId, $inputs["gatewayId"], $inputs["computeResourceId"], $userComputeResourcePreference);
+        }
     }
 
     // Only used for testing

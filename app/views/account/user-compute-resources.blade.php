@@ -18,6 +18,52 @@
             </button>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel-group" id="accordion">
+                @foreach( (array)$userResourceProfile->userComputeResourcePreferences as $indexUserCRP => $user_crp )
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle collapsed"
+                               data-toggle="collapse" data-parent="#accordion"
+                               href="#collapse-user-crp-{{$indexUserCRP}}">
+                                HOSTNAME TODO: {{$user_crp->computeResourceId}}
+                            </a>
+                            <div class="pull-right col-md-2 fade">
+                                <span class="glyphicon glyphicon-remove remove-compute-resource"
+                                      style="cursor:pointer;" data-toggle="modal"
+                                      data-target="#remove-compute-resource-block"
+                                      data-cr-name="TODO"
+                                      data-cr-id="{{$user_crp->computeResourceId}}"
+                                      data-gp-id="{{ $userResourceProfile->gatewayID }}"></span>
+                            </div>
+                        </h4>
+                    </div>
+                    <div id="collapse-user-crp-{{$indexUserCRP}}"
+                         class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <form class="set-cr-preference" action="{{URL::to('/')}}/account/update-user-crp"
+                                  method="POST">
+                                <input type="hidden" name="gatewayId" id="gatewayId"
+                                       value="{{$userResourceProfile->gatewayID}}">
+                                <input type="hidden" name="computeResourceId"
+                                       id="gatewayId"
+                                       value="{{$user_crp->computeResourceId}}">
+
+                                <div class="form-horizontal">
+                                    @include('partials/user-compute-resource-preferences',
+                                    array('computeResource' => $user_crp->crDetails,
+                                    'preferences'=>$user_crp, 'show'=>true))
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
 </div>
 <div class="add-user-compute-resource-block hide">
     <div class="well">
