@@ -467,6 +467,7 @@ class AccountController extends BaseController
         Session::put("notice-seen", true);
     }
 
+    // TODO: maybe move the UserResourceProfile stuff to its own controller?
     public function getCredentialStore() {
 
         $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
@@ -549,5 +550,13 @@ class AccountController extends BaseController
             "unselectedCRs" => $allCRs,
             "tokens" => $tokens
         ));
+    }
+
+    public function modifyUserCRP() {
+
+        if( URPUtilities::add_or_update_user_CRP( Input::all()) )
+        {
+            return Redirect::to("account/user-compute-resources")->with("message","Compute Resource Account Settings have been saved.");
+        }
     }
 }

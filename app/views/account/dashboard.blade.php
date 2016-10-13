@@ -391,7 +391,7 @@
                 <p>Use these settings if you have your own compute and/or
                 storage resource accounts that you would like to use.</p>
 
-                <a href="{{URL::to('/')}}/account/computeResources">
+                <a href="{{URL::to('/')}}/account/user-compute-resources">
                     <div class=" col-md-4 well">
                         <div class="col-md-12">
                             <span class="glyphicon glyphicon-briefcase  console-icon"></span>

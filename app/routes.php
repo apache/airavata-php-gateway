@@ -53,7 +53,8 @@ Route::post("account/set-default-credential", "AccountController@setDefaultCrede
 Route::post("account/add-credential", "AccountController@addCredential");
 Route::post("account/delete-credential", "AccountController@deleteCredential");
 
-Route::get("account/computeResources", "AccountController@getComputeResources");
+Route::get("account/user-compute-resources", "AccountController@getComputeResources");
+Route::post("account/add-user-crp", "AccountController@modifyUserCRP");
 
 /*
  * The following routes will not work without logging in.
