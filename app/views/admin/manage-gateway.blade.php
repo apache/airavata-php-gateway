@@ -594,8 +594,12 @@
         editableInputs( $("#update-gateway-request"), true);
 
         if( gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "REQUESTED"){
-            //$(".createdGateway").addClass("hide");
-            //$(".notCreatedGateway").removeClass("hide");
+            $(".createdGateway").each( function( i, thisButton){
+                if( $(thisButton).val() == "deactivateGateway"){
+                    $(thisButton).addClass("hide");
+                }
+            });
+            $(".notCreatedGateway").removeClass("hide");
         }
         else if( gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "CANCELLED" ||
             gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "DENIED" ||
