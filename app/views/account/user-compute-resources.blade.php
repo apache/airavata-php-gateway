@@ -2,6 +2,12 @@
 
 @section('page-header')
 @parent
+<style>
+button.add-user-cr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+</style>
 @stop
 
 @section('content')

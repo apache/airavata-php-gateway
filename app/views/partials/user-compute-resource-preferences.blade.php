@@ -5,7 +5,6 @@
 -->
 <!-- String replace is done as Jquery creates problems when using period(.) in id or class. -->
 <div id="cr-{{ str_replace( '.', "_", $computeResource->computeResourceId) }}" class="@if(isset( $show) ) @if( !$show) hide @endif @else hide @endif">
-<h3 class="text-center">Set Preferences</h3>
 <div class="form-group">
     <label class="control-label col-md-3">Login Username</label>
 
@@ -121,7 +120,7 @@ if( isset( $preferences) && $preferences->reservationEndTime != '')
     </div>
 </div>
 
-<div class="form-group text-center">
+<div class="form-group col-md-12 text-center">
     <input type="submit" class="btn btn-primary submit-user-crp-form" value="Save"/>
 </div>
 </div>
