@@ -74,7 +74,7 @@
                         </form>
                     </div>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-12 table-responsive">
                             <h3>Gateway Requests</h3>
                             <table class="table table-striped table-bordered">
                                 <thead>
@@ -115,7 +115,7 @@
                                         <td>{{ $creationTime}}</td>
                                         <td>{{ $gp->gatewayAdminFirstName }} {{ $gp->gatewayAdminLastName }} </td>
                                         <td>{{ $gp->gatewayURL }}</td>
-                                        <td>{{ $gp->reviewProposalDescription}}</td>
+                                        <td style="max-width: 400px; word-wrap: break-word;">{{ $gp->reviewProposalDescription}}</td>
                                         <td>{{ $gp->gatewayPublicAbstract}}</td>
                                         <td>{{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus] }}</td>
                                         <td>
