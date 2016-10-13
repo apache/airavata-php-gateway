@@ -153,6 +153,7 @@ class CRUtilities
             //$rm = $airavataclient->updateResourceJobManager($rmId, $resourceManager);
             //print_r( $rm); exit;
             $localJobSubmission = new LOCALSubmission(array(
+                    "securityProtocol" => SecurityProtocol::LOCAL,
                     "resourceJobManager" => $resourceManager
                 )
             );

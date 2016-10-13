@@ -57,11 +57,11 @@
                     @endforeach
                 </table>
                 @if(Session::has("admin"))
-                <div class="col-md-12">
-                    <button type="button" class="btn btn-default toggle-add-role"><span
-                            class="glyphicon glyphicon-plus"></span>Add a new Role
-                    </button>
-                </div>
+                {{--<div class="col-md-12">--}}
+                    {{--<button type="button" class="btn btn-default toggle-add-role"><span--}}
+                            {{--class="glyphicon glyphicon-plus"></span>Add a new Role--}}
+                    {{--</button>--}}
+                {{--</div>--}}
                 <div class="add-role col-md-6">
                     <form role="form" action="{{URL::to('/')}}/admin/add-role" method="POST" class="add-role-form">
                         <div class="form-group">
