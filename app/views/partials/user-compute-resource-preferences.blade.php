@@ -2,6 +2,7 @@
     computeResource - (required, ComputeResourceDescription) the compute resource object
     preferences - (optional, UserComputeResourcePreference) the saved preference data
     show - (optional, boolean)
+    allowDelete - (optional, boolean)
 -->
 <!-- String replace is done as Jquery creates problems when using period(.) in id or class. -->
 <div id="cr-{{ str_replace( '.', "_", $computeResource->computeResourceId) }}" class="@if(isset( $show) ) @if( !$show) hide @endif @else hide @endif">
@@ -96,37 +97,44 @@ if( isset( $preferences) && $preferences->reservationEndTime != '')
     $reservationEndTime = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", $preferences->reservationEndTime/1000);
 
 ?>
-<div class="form-group col-md-6">
-    <label class="control-label col-md-3">Reservation Start Time</label>
 
-    <div class="input-group date datetimepicker1">
-        <input type="text" name="reservationStartTime" class="form-control"
-               value="@if( isset( $preferences) )@if( trim($preferences->reservationStartTime) != '' || $preferences->reservationStartTime != null){{date('m/d/Y h:i:s A', intval( $reservationStartTime))}}@endif @endif"/>
-        <span class="input-group-addon">
-            <span class="glyphicon glyphicon-calendar"></span>
-        </span>
+<div class="row">
+    <div class="form-group col-md-6">
+        <label class="control-label col-md-3">Reservation Start Time</label>
+
+        <div class="input-group date datetimepicker1">
+            <input type="text" name="reservationStartTime" class="form-control"
+                   value="@if( isset( $preferences) )@if( trim($preferences->reservationStartTime) != '' || $preferences->reservationStartTime != null){{date('m/d/Y h:i:s A', intval( $reservationStartTime))}}@endif @endif"/>
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="form-group col-md-6">
+        <label class="control-label col-md-3">Reservation End Time</label>
+
+        <div class="input-group date datetimepicker2">
+            <input type="text" name="reservationEndTime" class="form-control"
+                   value="@if( isset( $preferences) )@if( trim($preferences->reservationEndTime) != ''|| $preferences->reservationStartTime != null){{date('m/d/Y h:i:s A', intval($reservationEndTime))}}@endif @endif"/>
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
     </div>
 </div>
 
-<div class="form-group col-md-6">
-    <label class="control-label col-md-3">Reservation End Time</label>
-
-    <div class="input-group date datetimepicker2">
-        <input type="text" name="reservationEndTime" class="form-control"
-               value="@if( isset( $preferences) )@if( trim($preferences->reservationEndTime) != ''|| $preferences->reservationStartTime != null){{date('m/d/Y h:i:s A', intval($reservationEndTime))}}@endif @endif"/>
-        <span class="input-group-addon">
-            <span class="glyphicon glyphicon-calendar"></span>
-        </span>
+<div class="row">
+    <div class="form-group col-md-12 text-center">
+        <input type="submit" class="btn btn-primary" value="Save"/>
+        <button type="button" class="btn btn-danger remove-user-compute-resource @if(isset( $allowDelete ) ) @if( !$allowDelete) hide @endif @else hide @endif"
+            data-toggle="modal"
+            data-target="#remove-user-compute-resource-block"
+            data-cr-name="{{$computeResource->hostName}}"
+            data-cr-id="{{$computeResource->computeResourceId}}">
+            Remove
+        </button>
     </div>
 </div>
 
-<div class="form-group col-md-12 text-center">
-    <input type="submit" class="btn btn-primary submit-user-crp-form" value="Save"/>
 </div>
-</div>
-
-<div class="loading-gif text-center hide">
-    <img  src='{{URL::to('/')}}/assets/ajax-loader.gif'/>
-</div>
-<div class="col-md-offset-2 col-md-8 alert alert-success hide">Compute Resource Preferences have been updated.</div>
-<div class="col-md-offset-2 col-md-8 alert alert-danger hide">An error has occurred.</div>

@@ -562,7 +562,6 @@ class AccountController extends BaseController
 
     public function addUserComputeResourcePreference() {
 
-        // TODO: flash message isn't setup in the view
         if( URPUtilities::add_or_update_user_CRP( Input::all()) )
         {
             return Redirect::to("account/user-compute-resources")->with("message","Compute Resource Account Settings have been saved.");
@@ -574,6 +573,15 @@ class AccountController extends BaseController
         if( URPUtilities::add_or_update_user_CRP( Input::all(), true ) )
         {
             return Redirect::to("account/user-compute-resources")->with("message","Compute Resource Account Settings have been updated.");
+        }
+    }
+
+    public function deleteUserComputeResourcePreference() {
+        $computeResourceId = Input::get("rem-user-crId");
+        $result = URPUtilities::delete_user_CRP( $computeResourceId );
+        if( $result )
+        {
+            return Redirect::to("account/user-compute-resources")->with("message","Compute Resource Account Settings have been deleted.");
         }
     }
 }

@@ -93,6 +93,14 @@ class URPUtilities
         }
     }
 
+    public static function delete_user_CRP($computeResourceId)
+    {
+        $userId = Session::get('username');
+        $gatewayId = Session::get('gateway_id');
+        $result = Airavata::deleteUserComputeResourcePreference(Session::get('authz-token'), $userId, $gatewayId, $computeResourceId);
+        return $result;
+    }
+
     // Only used for testing
     public static function delete_user_resource_profile()
     {

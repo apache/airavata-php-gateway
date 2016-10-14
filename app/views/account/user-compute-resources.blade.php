@@ -7,6 +7,9 @@ button.add-user-cr {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+#user-cr-select-input-group {
+    margin-bottom: 10px;
+}
 </style>
 @stop
 
@@ -36,16 +39,8 @@ button.add-user-cr {
                     <a class="accordion-toggle collapsed"
                        data-toggle="collapse" data-parent="#accordion"
                        href="#collapse-user-crp-{{$indexUserCRP}}">
-                        HOSTNAME TODO: {{$user_crp->computeResourceId}}
+                        {{$user_crp->crDetails->hostName}}
                     </a>
-                    <div class="pull-right col-md-2 fade">
-                        <span class="glyphicon glyphicon-remove remove-compute-resource"
-                              style="cursor:pointer;" data-toggle="modal"
-                              data-target="#remove-compute-resource-block"
-                              data-cr-name="TODO"
-                              data-cr-id="{{$user_crp->computeResourceId}}"
-                              data-gp-id="{{ $userResourceProfile->gatewayID }}"></span>
-                    </div>
                 </h4>
             </div>
             <div id="collapse-user-crp-{{$indexUserCRP}}"
@@ -62,7 +57,8 @@ button.add-user-cr {
                         <div class="form-horizontal">
                             @include('partials/user-compute-resource-preferences',
                             array('computeResource' => $user_crp->crDetails,
-                            'preferences'=>$user_crp, 'show'=>true))
+                            'preferences'=>$user_crp, 'show'=>true,
+                            'allowDelete'=>true))
                         </div>
                     </form>
                 </div>
@@ -73,12 +69,11 @@ button.add-user-cr {
 </div>
 <div class="add-user-compute-resource-block hide">
     <div class="well">
-        <!-- TODO: need to implement /add-user-crp -->
         <form action="{{URL::to('/')}}/account/add-user-crp" method="POST">
             <input type="hidden" name="gatewayId" id="gatewayId" value="{{$userResourceProfile->gatewayID}}">
 
-            <div class="input-group">
-                <select name="computeResourceId" class="cr-select form-control">
+            <div id="user-cr-select-input-group" class="input-group">
+                <select id="user-cr-select" name="computeResourceId" class="form-control">
                     <option value="">Select a Compute Resource and configure your account</option>
                     @foreach( (array)$unselectedCRs as $index => $cr)
                     <option value="{{ $cr->computeResourceId}}">{{ $cr->hostName }}</option>
@@ -91,6 +86,33 @@ button.add-user-cr {
         </form>
     </div>
 </div>
+
+<div class="modal fade" id="remove-user-compute-resource-block" tabindex="-1" role="dialog" aria-labelledby="add-modal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+
+        <form action="{{URL::to('/')}}/account/delete-user-crp" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-center">Remove Compute Resource Account Confirmation</h3>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" class="form-control remove-user-crId" name="rem-user-crId"/>
+
+                    Do you really want to remove your Compute Resource Account settings for <span class="remove-user-cr-name"> </span>?
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-danger" value="Remove"/>
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
 <pre>
     {{var_dump($userResourceProfile)}}
 </pre>
@@ -104,7 +126,11 @@ $('.add-user-cr').on('click', function(){
 
     $(this).after( $(".add-user-compute-resource-block").html() );
 });
-$("body").on("change", ".cr-select", function(){
+$(".remove-user-compute-resource").click( function(){
+	$(".remove-user-cr-name").html( $(this).data("cr-name") );
+	$(".remove-user-crId").val( $(this).data("cr-id") );
+});
+$("body").on("change", "#user-cr-select", function(){
     crId = $(this).val();
     //This is done as Jquery creates problems when using period(.) in id or class.
     crId = crId.replace(/\./g,"_");
