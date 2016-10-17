@@ -210,7 +210,12 @@ class ExperimentController extends BaseController
         } elseif (isset($_POST['cancel'])) {
             ExperimentUtilities::cancel_experiment($experiment->experimentId);
             return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
-
+        } elseif (isset($_POST['update-sharing'])) {
+            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+                $share = $_POST['share-settings'];
+                ExperimentUtilities::update_experiment_sharing($experiment->experimentId, json_decode($share));
+            }
+            return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
         }
     }
 

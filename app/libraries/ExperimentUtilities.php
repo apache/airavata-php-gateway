@@ -1335,6 +1335,10 @@ class ExperimentUtilities
         echo '</select>';
     }
 
+    public static function update_experiment_sharing($expId, $users) {
+        ExperimentUtilities::share_experiment($expId, $users);
+    }
+
     /**
      * Set sharing privileges for a given experiment.
      * @param $expId

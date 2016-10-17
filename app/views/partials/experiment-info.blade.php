@@ -77,7 +77,7 @@
                         <tr>
                             <td>Name</td>
                             <td>ID</td>
-                            <td>Status</td>SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT)
+                            <td>Status</td>
                             <td>Creation Time</td>
                         </tr>
                         <tr>
@@ -203,22 +203,24 @@
         @endforeach
     </table>
 
-    <div class="form-group">
-    @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
-        @if($can_write === true)
-        @include('partials/sharing-display-body', array("form" => true))
-        @else
-        @include('partials/sharing-display-body', array("form" => false))
-        @endif
-    @endif
-    </div>
-
     @if(strcmp($expVal["applicationInterface"]->applicationName, "OpenMM_Stampede") === 0)
     @include('partials/streaming-data')
     @endif
 
     @if( !isset( $dashboard))
+
     <form action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
+
+        <div class="form-group">
+        @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+            @if($can_write === true)
+            <!-- Only allow editing sharing here if the experiment isn't editable -->
+            @include('partials/sharing-display-body', array("form" => !$expVal["editable"]))
+            @else
+            @include('partials/sharing-display-body', array("form" => false))
+            @endif
+        @endif
+        </div>
         <div class="btn-toolbar">
             <input name="launch"
                    type="submit"
@@ -257,6 +259,17 @@
                 Edit
             </a>
             @endif
+            @endif
+            <!-- Only owner can update sharing -->
+            @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && Session::get('username') === $experiment->userName && !$expVal["editable"])
+            <button name="update-sharing"
+                   type="submit"
+                   class="btn btn-primary"
+                   value="Update Sharing"
+                   title="Update sharing settings">
+                <span class="glyphicon glyphicon-share"></span>
+                Update Sharing
+            </button>
             @endif
         </div>
     </form>
