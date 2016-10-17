@@ -1,14 +1,20 @@
 #share-box {
 	position: fixed;
 	top: 100%;
+	bottom: 0px;
 	z-index: 1000;
 	left: 25%;
 	font-size: large;
 }
 
+#share-box .modal-dialog {
+	/* .modal-dialog has top/bottom margin of 30px */
+	height: calc(100% - 2 * 30px);
+}
+
 .modal-content {
 	background-color: #ecf0f1;
-	max-height: 90%;
+	max-height: 100%;
 	overflow: scroll;
 }
 
