@@ -107,6 +107,11 @@
                 <tr>
                     <td>
                         {{$project->name}}
+                        @if($can_write[$project->projectID])
+                        <a href="{{URL::to('/')}}/project/edit?projId={{$project->projectID}}" title="Edit">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                        @endif
                     </td>
                     <td>
                         {{$project->owner}}
