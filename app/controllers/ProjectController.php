@@ -102,11 +102,13 @@ class ProjectController extends BaseController
                         $owner[$project->owner] = $users[$project->owner];
                         $users = array_diff_key($users, $owner);
                     }
+                    $canEditSharing = strcmp(Session::get("username"), $project->owner) === 0;
                     return View::make("project/edit",
                         array("projectId" => Input::get("projId"),
                             "project" => $project,
                             "users" => json_encode($users),
-                            "owner" => json_encode($owner)
+                            "owner" => json_encode($owner),
+                            "canEditSharing" => $canEditSharing
                         ));
                 }else {
                     return Redirect::to('project/summary?projId=' . Input::get("projId"))->with("error", "You do not have permission to edit this project.");
