@@ -218,7 +218,7 @@ class ProjectUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        if (Config::get('pga_config.airavata')["data-sharing-enabled"]){
+        if (Config::get('pga_config.airavata')["data-sharing-enabled"] && array_key_exists('share-settings', $_POST)){
             $share = $_POST['share-settings'];
             ProjectUtilities::share_project($projectId, json_decode($share));
         }
