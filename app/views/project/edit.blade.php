@@ -36,6 +36,7 @@
                       name="project-description"
                       id="project-description" maxlength="200">{{ $project->description }}</textarea>
             <input type="hidden" name="projectId" value="{{ Input::get('projId') }}"/>
+            <input type="hidden" name="projectOwner" value="{{ $project->owner}}"/>
         </div>
 
         <div class="form-group">
