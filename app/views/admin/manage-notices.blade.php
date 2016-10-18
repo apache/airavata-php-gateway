@@ -168,7 +168,7 @@
         <label class="control-label col-md-3">Notice Message</label>
 
         <div class="col-md-6">
-            <textarea type="text" class="form-control notice-notificationMessage" required name="notificationMessage"></textarea>
+            <textarea type="text" class="form-control notice-notificationMessage" required name="notificationMessage" maxlength="4096"></textarea>
         </div>
     </div>
     <div class='form-group required'>
