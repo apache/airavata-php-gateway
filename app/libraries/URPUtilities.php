@@ -72,15 +72,11 @@ class URPUtilities
 
     public static function add_or_update_user_CRP($inputs, $update = false)
     {
-        $timeDifference = Session::get("user_timezone");
-        $addOrSubtract = "-";
-        if( $timeDifference > 0)
-            $addOrSubtract = "+";
         $inputs = Input::all();
         if( $inputs["reservationStartTime"] != "")
-            $inputs["reservationStartTime"] = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", strtotime( $inputs["reservationStartTime"]) ) * 1000;
+            $inputs["reservationStartTime"] = CommonUtilities::convertLocalToUTC($inputs["reservationStartTime"]) * 1000;
         if( $inputs["reservationEndTime"] != "")
-            $inputs["reservationEndTime"] = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", strtotime($inputs["reservationEndTime"]) ) * 1000;
+            $inputs["reservationEndTime"] = CommonUtilities::convertLocalToUTC($inputs["reservationEndTime"]) * 1000;
 
         $userComputeResourcePreference = new UserComputeResourcePreference($inputs);
         $userId = Session::get('username');

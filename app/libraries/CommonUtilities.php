@@ -373,5 +373,31 @@ class CommonUtilities
             }
         };
     }
+
+    /**
+     * Convert from UTC time to local time. Units are seconds since Unix Epoch.
+     */
+    public static function convertUTCToLocal($utcTime) {
+
+        $timeDifference = Session::get("user_timezone");
+        $addOrSubtract = "-";
+        if( $timeDifference < 0)
+            $addOrSubtract = "+";
+
+        return strtotime( $addOrSubtract . " " . abs($timeDifference) . " hours", $utcTime);
+    }
+
+    /**
+     * Convert from local time to UTC time. Units are seconds since Unix Epoch.
+     */
+    public static function convertLocalToUTC($localTime) {
+
+        $timeDifference = Session::get("user_timezone");
+        $addOrSubtract = "-";
+        if( $timeDifference > 0)
+            $addOrSubtract = "+";
+
+        return strtotime( $addOrSubtract . " " . abs($timeDifference) . " hours", $localTime);
+    }
 }
 

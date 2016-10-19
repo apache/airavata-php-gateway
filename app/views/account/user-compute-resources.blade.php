@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/datetimepicker.css')}}
 <style>
 button.add-user-cr {
     margin-top: 10px;
@@ -120,6 +121,8 @@ button.add-user-cr {
 
 @section('scripts')
 @parent
+{{ HTML::script('js/moment.js')}}
+{{ HTML::script('js/datetimepicker.js')}}
 <script>
 
 $('.add-user-cr').on('click', function(){
@@ -135,6 +138,32 @@ $("body").on("change", "#user-cr-select", function(){
     //This is done as Jquery creates problems when using period(.) in id or class.
     crId = crId.replace(/\./g,"_");
     $(".user-cr-pref-space").html($("#cr-" + crId).html());
+});
+
+/* making datetimepicker work for reservation start and end date kept in user-compute-resource-preferences blade*/
+$('.datetimepicker1').datetimepicker({
+    pick12HourFormat: false
+    //pickTime: false
+});
+$('.datetimepicker2').datetimepicker({
+    pick12HourFormat: false
+    //pickTime: false
+});
+
+$(".datetimepicker1 input").focus( function(){
+    $(this).parent().find(".glyphicon-calendar").click();
+});
+$(".datetimepicker2 input").focus( function(){
+    $(this).parent().find(".glyphicon-calendar").click();
+});
+
+$(".datetimepicker1").on("dp.change", function (e) {
+    $('.datetimepicker2').data("DateTimePicker").setMinDate(e.date);
+    $(this).find(".glyphicon-calendar").click();
+});
+$(".datetimepicker2").on("dp.change", function (e) {
+    $('.datetimepicker1').data("DateTimePicker").setMaxDate(e.date);
+    $(this).find(".glyphicon-calendar").click();
 });
 </script>
 @stop
