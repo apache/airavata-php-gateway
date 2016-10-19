@@ -537,7 +537,9 @@ class AccountController extends BaseController
     }
 
     public function getComputeResources(){
+
         $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
+
         $allCRs = CRUtilities::getAllCRObjects();
         foreach( $allCRs as $index => $crObject)
         {
@@ -546,16 +548,20 @@ class AccountController extends BaseController
         // Add crDetails to each UserComputeResourcePreference
         foreach ($userResourceProfile->userComputeResourcePreferences as $index => $userCompResPref) {
             $userCompResPref->crDetails = $allCRsById[$userCompResPref->computeResourceId];
+            // To figure out the unselectedCRs, remove this compute resource from allCRsById
+            unset($allCRsById[$userCompResPref->computeResourceId]);
         }
+        $unselectedCRs = array_values($allCRsById);
+
         // TODO: actually get all of the user's credential store tokens, including description
         $tokens = array(
             $userResourceProfile->credentialStoreToken => "Default SSH Key"
         );
+
         return View::make("account/user-compute-resources", array(
             "userResourceProfile" => $userResourceProfile,
             "computeResources" => $allCRs,
-            // TODO: only show compute resources that user hasn't already configured with an account
-            "unselectedCRs" => $allCRs,
+            "unselectedCRs" => $unselectedCRs,
             "tokens" => $tokens
         ));
     }
