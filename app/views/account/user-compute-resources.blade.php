@@ -31,6 +31,8 @@ button.add-user-cr {
     <button class="btn btn-default add-user-cr">
         <span class="glyphicon glyphicon-plus"></span> Add a Compute Resource Account
     </button>
+    <div id="add-user-compute-resource-block-container">
+    </div>
     <div class="panel-group" id="accordion">
         @foreach( (array)$userResourceProfile->userComputeResourcePreferences as $indexUserCRP => $user_crp )
         <div class="panel panel-default">
@@ -79,8 +81,7 @@ button.add-user-cr {
                     <option value="{{ $cr->computeResourceId}}">{{ $cr->hostName }}</option>
                     @endforeach
                 </select>
-                <!-- TODO: implement the remove behavior -->
-                <span class="input-group-addon remove-cr" style="cursor:pointer;">x</span>
+                <span class="input-group-addon remove-user-cr" style="cursor:pointer;">x</span>
             </div>
             <div class="user-cr-pref-space form-horizontal"></div>
         </form>
@@ -126,17 +127,20 @@ button.add-user-cr {
 
 $('.add-user-cr').on('click', function(){
 
-    $(this).after( $(".add-user-compute-resource-block").html() );
+    $('#add-user-compute-resource-block-container').append( $(".add-user-compute-resource-block").html() );
 });
 $(".remove-user-compute-resource").click( function(){
 	$(".remove-user-cr-name").html( $(this).data("cr-name") );
 	$(".remove-user-crId").val( $(this).data("cr-id") );
 });
-$("body").on("change", "#user-cr-select", function(){
+$("#add-user-compute-resource-block-container").on("change", "#user-cr-select", function(){
     crId = $(this).val();
     //This is done as Jquery creates problems when using period(.) in id or class.
     crId = crId.replace(/\./g,"_");
-    $(".user-cr-pref-space").html($("#cr-" + crId).html());
+    $("#add-user-compute-resource-block-container .user-cr-pref-space").html($("#cr-" + crId).html());
+});
+$("#add-user-compute-resource-block-container").on("click", ".remove-user-cr", function(){
+    $("#add-user-compute-resource-block-container").empty();
 });
 
 /* making datetimepicker work for reservation start and end date kept in user-compute-resource-preferences blade*/
