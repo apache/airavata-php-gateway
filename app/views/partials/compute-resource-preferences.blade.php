@@ -134,11 +134,11 @@
 //to add or remove time according to local hours.
 $reservationStartTime = "";
 if( isset( $preferences) && $preferences->reservationStartTime != '')
-    $reservationStartTime = CommonUtilities::convertUTCToLocal($preferences->reservationStartTime/1000)
+    $reservationStartTime = CommonUtilities::convertUTCToLocal($preferences->reservationStartTime/1000);
 
 $reservationEndTime = "";
 if( isset( $preferences) && $preferences->reservationEndTime != '')
-    $reservationEndTime = CommonUtilities::convertUTCToLocal($preferences->reservationEndTime/1000)
+    $reservationEndTime = CommonUtilities::convertUTCToLocal($preferences->reservationEndTime/1000);
 
 ?>
 <div class="form-group col-md-6">
