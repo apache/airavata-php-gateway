@@ -121,7 +121,7 @@
 @section('scripts')
 @parent
 {{ HTML::script('js/moment.js')}}
-{{ HTML::script('js/datetimepicker.js')}}
+{{ HTML::script('js/datetimepicker-3.1.3.js')}}
 
 <script type="text/javascript">
 

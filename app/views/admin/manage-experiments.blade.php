@@ -312,7 +312,7 @@
 @parent
 {{ HTML::script('js/gateway.js') }}
 {{ HTML::script('js/moment.js')}}
-{{ HTML::script('js/datetimepicker.js')}}
+{{ HTML::script('js/datetimepicker-3.1.3.js')}}
 
 <!-- Morris Charts JavaScript -->
 <!--

@@ -84,12 +84,16 @@
 <?php
 //to add or remove time according to local hours.
 $reservationStartTime = "";
-if( isset( $preferences) && $preferences->reservationStartTime != '')
-    $reservationStartTime = CommonUtilities::convertUTCToLocal($preferences->reservationStartTime/1000);
+if( isset( $preferences) && trim($preferences->reservationStartTime) != '') {
+    $reservationStartTimeLocal = CommonUtilities::convertUTCToLocal($preferences->reservationStartTime/1000);
+    $reservationStartTime = date('m/d/Y h:i:s A', $reservationStartTimeLocal);
+}
 
 $reservationEndTime = "";
-if( isset( $preferences) && $preferences->reservationEndTime != '')
-    $reservationEndTime = CommonUtilities::convertUTCToLocal($preferences->reservationEndTime/1000);
+if( isset( $preferences) && $preferences->reservationEndTime != '') {
+    $reservationEndTimeLocal = CommonUtilities::convertUTCToLocal($preferences->reservationEndTime/1000);
+    $reservationEndTime = date('m/d/Y h:i:s A', $reservationEndTimeLocal);
+}
 
 ?>
 
@@ -99,7 +103,7 @@ if( isset( $preferences) && $preferences->reservationEndTime != '')
 
         <div class="input-group date datetimepicker1">
             <input type="text" name="reservationStartTime" class="form-control"
-                   value="@if( isset( $preferences) )@if( trim($preferences->reservationStartTime) != '' || $preferences->reservationStartTime != null){{date('m/d/Y h:i:s A', intval( $reservationStartTime))}}@endif @endif"/>
+                   value="{{$reservationStartTime}}"/>
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>
@@ -111,7 +115,7 @@ if( isset( $preferences) && $preferences->reservationEndTime != '')
 
         <div class="input-group date datetimepicker2">
             <input type="text" name="reservationEndTime" class="form-control"
-                   value="@if( isset( $preferences) )@if( trim($preferences->reservationEndTime) != ''|| $preferences->reservationStartTime != null){{date('m/d/Y h:i:s A', intval($reservationEndTime))}}@endif @endif"/>
+                   value="{{$reservationEndTime}}"/>
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>

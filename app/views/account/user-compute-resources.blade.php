@@ -15,7 +15,6 @@ button.add-user-cr {
 @stop
 
 @section('content')
-<!-- TODO: datepicker for reservation date doesn't work yet -->
 @foreach( (array)$computeResources as $index => $cr)
 @include('partials/user-compute-resource-preferences', array('computeResource' => $cr))
 @endforeach
@@ -122,7 +121,7 @@ button.add-user-cr {
 @section('scripts')
 @parent
 {{ HTML::script('js/moment.js')}}
-{{ HTML::script('js/datetimepicker.js')}}
+{{ HTML::script('js/datetimepicker-3.1.3.js')}}
 <script>
 
 $('.add-user-cr').on('click', function(){
@@ -155,15 +154,6 @@ $(".datetimepicker1 input").focus( function(){
 });
 $(".datetimepicker2 input").focus( function(){
     $(this).parent().find(".glyphicon-calendar").click();
-});
-
-$(".datetimepicker1").on("dp.change", function (e) {
-    $('.datetimepicker2').data("DateTimePicker").setMinDate(e.date);
-    $(this).find(".glyphicon-calendar").click();
-});
-$(".datetimepicker2").on("dp.change", function (e) {
-    $('.datetimepicker1').data("DateTimePicker").setMaxDate(e.date);
-    $(this).find(".glyphicon-calendar").click();
 });
 </script>
 @stop
