@@ -74,9 +74,9 @@ class URPUtilities
     {
         $inputs = Input::all();
         if( $inputs["reservationStartTime"] != "")
-            $inputs["reservationStartTime"] = CommonUtilities::convertLocalToUTC($inputs["reservationStartTime"]) * 1000;
+            $inputs["reservationStartTime"] = CommonUtilities::convertLocalToUTC(strtotime($inputs["reservationStartTime"])) * 1000;
         if( $inputs["reservationEndTime"] != "")
-            $inputs["reservationEndTime"] = CommonUtilities::convertLocalToUTC($inputs["reservationEndTime"]) * 1000;
+            $inputs["reservationEndTime"] = CommonUtilities::convertLocalToUTC(strtotime($inputs["reservationEndTime"])) * 1000;
 
         $userComputeResourcePreference = new UserComputeResourcePreference($inputs);
         $userId = Session::get('username');
