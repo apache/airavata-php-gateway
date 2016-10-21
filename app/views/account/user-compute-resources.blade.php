@@ -113,10 +113,6 @@ button.add-user-cr {
         </form>
     </div>
 </div>
-
-<pre>
-    {{var_dump($userResourceProfile)}}
-</pre>
 @stop
 
 @section('scripts')
