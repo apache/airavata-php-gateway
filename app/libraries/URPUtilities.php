@@ -3,6 +3,7 @@
 use Airavata\API\Error\AiravataSystemException;
 use Airavata\Model\AppCatalog\UserResourceProfile\UserResourceProfile;
 use Airavata\Model\AppCatalog\UserResourceProfile\UserComputeResourcePreference;
+use Airavata\Model\AppCatalog\UserResourceProfile\UserStoragePreference;
 
 class URPUtilities
 {
@@ -79,6 +80,7 @@ class URPUtilities
             $inputs["reservationEndTime"] = CommonUtilities::convertLocalToUTC(strtotime($inputs["reservationEndTime"])) * 1000;
 
         $userComputeResourcePreference = new UserComputeResourcePreference($inputs);
+        // Log::debug("add_or_update_user_CRP: ", array($userComputeResourcePreference));
         $userId = Session::get('username');
         if ($update)
         {
@@ -94,6 +96,35 @@ class URPUtilities
         $userId = Session::get('username');
         $gatewayId = Session::get('gateway_id');
         $result = Airavata::deleteUserComputeResourcePreference(Session::get('authz-token'), $userId, $gatewayId, $computeResourceId);
+        // Log::debug("deleteUserComputeResourcePreference($userId, $gatewayId, $computeResourceId) => $result");
+        return $result;
+    }
+
+    public static function add_or_update_user_SRP($inputs, $update = false)
+    {
+        $inputs = Input::all();
+
+        $userStoragePreference = new UserStoragePreference($inputs);
+        $userId = Session::get('username');
+        $gatewayId = Session::get('gateway_id');
+        $storageResourceId = $inputs["storageResourceId"];
+        if ($update)
+        {
+            return Airavata::updateUserStoragePreference(Session::get('authz-token'), $userId, $inputs["gatewayId"], $inputs["storageResourceId"], $userStoragePreference);
+        } else
+        {
+            // Log::debug("addUserStoragePreference($userId, $gatewayId, $storageResourceId)", array($userStoragePreference));
+            $result = Airavata::addUserStoragePreference(Session::get('authz-token'), $userId, $gatewayId, $storageResourceId, $userStoragePreference);
+            return $result;
+        }
+    }
+
+    public static function delete_user_SRP($storageResourceId)
+    {
+        $userId = Session::get('username');
+        $gatewayId = Session::get('gateway_id');
+        $result = Airavata::deleteUserStoragePreference(Session::get('authz-token'), $userId, $gatewayId, $storageResourceId);
+        // Log::debug("deleteUserStoragePreference($userId, $gatewayId, $storageResourceId) => $result");
         return $result;
     }
 

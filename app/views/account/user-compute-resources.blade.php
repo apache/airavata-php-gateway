@@ -53,7 +53,7 @@ button.add-user-cr {
                         <input type="hidden" name="gatewayId" id="gatewayId"
                                value="{{$userResourceProfile->gatewayID}}">
                         <input type="hidden" name="computeResourceId"
-                               id="gatewayId"
+                               id="computeResourceId"
                                value="{{$user_crp->computeResourceId}}">
 
                         <div class="form-horizontal">

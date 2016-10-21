@@ -554,6 +554,7 @@ class AccountController extends BaseController
         $unselectedCRs = array_values($allCRsById);
 
         // TODO: actually get all of the user's credential store tokens, including description
+        URPUtilities::get_all_ssh_pub_keys_summary_for_user();
         $tokens = array(
             $userResourceProfile->credentialStoreToken => "Default SSH Key"
         );
@@ -588,6 +589,62 @@ class AccountController extends BaseController
         if( $result )
         {
             return Redirect::to("account/user-compute-resources")->with("message","Compute Resource Account Settings have been deleted.");
+        }
+    }
+
+    public function getStorageResources(){
+
+        $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
+
+        $allSRs = SRUtilities::getAllSRObjects();
+        foreach( $allSRs as $index => $srObject )
+        {
+            $allSRsById[$srObject->storageResourceId] = $srObject;
+        }
+        // Add srDetails to each UserStoragePreference
+        foreach ($userResourceProfile->userStoragePreferences as $index => $userStoragePreference) {
+            $userStoragePreference->srDetails = $allSRsById[$userStoragePreference->storageResourceId];
+            // To figure out the unselectedSRs, remove this storage resource from allSRsById
+            unset($allSRsById[$userStoragePreference->storageResourceId]);
+        }
+        $unselectedSRs = array_values($allSRsById);
+
+        // TODO: actually get all of the user's credential store tokens, including description
+        URPUtilities::get_all_ssh_pub_keys_summary_for_user();
+        $tokens = array(
+            $userResourceProfile->credentialStoreToken => "Default SSH Key"
+        );
+
+        return View::make("account/user-storage-resources", array(
+            "userResourceProfile" => $userResourceProfile,
+            "storageResources" => $allSRs,
+            "unselectedSRs" => $unselectedSRs,
+            "tokens" => $tokens
+        ));
+    }
+
+    public function addUserStorageResourcePreference() {
+
+        if( URPUtilities::add_or_update_user_SRP( Input::all()) )
+        {
+            return Redirect::to("account/user-storage-resources")->with("message","Storage Resource Account Settings have been saved.");
+        }
+    }
+
+    public function updateUserStorageResourcePreference() {
+
+        if( URPUtilities::add_or_update_user_SRP( Input::all(), true ) )
+        {
+            return Redirect::to("account/user-storage-resources")->with("message","Storage Resource Account Settings have been updated.");
+        }
+    }
+
+    public function deleteUserStorageResourcePreference() {
+        $storageResourceId = Input::get("rem-user-srId");
+        $result = URPUtilities::delete_user_SRP( $storageResourceId );
+        if( $result )
+        {
+            return Redirect::to("account/user-storage-resources")->with("message","Storage Resource Account Settings have been deleted.");
         }
     }
 }

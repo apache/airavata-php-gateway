@@ -402,7 +402,7 @@
                     </div>
                 </a>
 
-                <a href="{{URL::to('/')}}/account/storageResources">
+                <a href="{{URL::to('/')}}/account/user-storage-resources">
                     <div class=" col-md-4 well">
                         <div class="col-md-12">
                             <span class="glyphicon glyphicon-folder-open console-icon"></span>
