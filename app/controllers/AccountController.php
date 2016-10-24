@@ -470,12 +470,37 @@ class AccountController extends BaseController
     public function getCredentialStore() {
 
         $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
-        $publicKey = AdminUtilities::get_pubkey_from_token($userResourceProfile->credentialStoreToken);
+        $userCredentialSummaries = URPUtilities::get_all_ssh_pub_keys_summary_for_user();
+        $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
+        $defaultCredentialSummary = $credentialSummaryMap[$userResourceProfile->credentialStoreToken];
 
         return View::make("account/credential-store", array(
-            "token" => $userResourceProfile->credentialStoreToken,
-            "publicKey" => $publicKey
+            "userResourceProfile" => $userResourceProfile,
+            "credentialSummaries" => $userCredentialSummaries,
+            "defaultCredentialSummary" => $defaultCredentialSummary
         ));
+    }
+
+    public function setDefaultCredential() {
+
+        $defaultToken = Input::get("defaultToken");
+        $userResourceProfile = URPUtilities::get_user_resource_profile();
+        $userResourceProfile->credentialStoreToken = $defaultToken;
+        URPUtilities::update_user_resource_profile($userResourceProfile);
+
+        $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
+        $description = $credentialSummaryMap["$defaultToken"]["description"];
+
+        return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' is now the default");
+    }
+
+    private function create_credential_summary_map($credentialSummaries) {
+
+        $credentialSummaryMap = array();
+        foreach ($credentialSummaries as $csIndex => $credentialSummary) {
+            $credentialSummaryMap[$credentialSummary["credentialStoreToken"]] = $credentialSummary;
+        }
+        return $credentialSummaryMap;
     }
 
     public function getComputeResources(){
