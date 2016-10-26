@@ -8,14 +8,13 @@ class URPUtilities
 
     public static function get_or_create_user_resource_profile()
     {
-        try {
-            return URPUtilities::get_user_resource_profile();
-        } catch (AiravataSystemException $ase) {
-            // TODO: replace try/catch with null check once backend is updated, see AIRAVATA-2117
-            // Assume that exception was thrown because there is no UserResourceProfile
-
-            return URPUtilities::create_user_resource_profile();
+        $userResourceProfile = URPUtilities::get_user_resource_profile();
+        // Check if user has UserResourceProfile by checking isNull flag
+        if ($userResourceProfile->isNull)
+        {
+            $userResourceProfile = URPUtilities::create_user_resource_profile();
         }
+        return $userResourceProfile;
     }
 
     public static function get_user_resource_profile()
