@@ -191,11 +191,11 @@ class AdminUtilities
     }
 
     public static function remove_ssh_token( $token){
-        return Airavata::deletePWDCredential( Session::get('authz-token'), $token, Session::get("gateway_id"));
+        return Airavata::deleteSSHPubKey( Session::get('authz-token'), $token, Session::get("gateway_id"));
     }
 
     public static function remove_pwd_token( $token){
-        return Airavata::deleteSSHPubKey( Session::get('authz-token'), $token, Session::get("gateway_id"));
+        return Airavata::deletePWDCredential( Session::get('authz-token'), $token, Session::get("gateway_id"));
     }
 
     public static function add_or_update_notice( $notifData, $update = false){
