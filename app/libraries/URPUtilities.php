@@ -56,29 +56,7 @@ class URPUtilities
         $userId = Session::get('username');
         $gatewayId = Session::get('gateway_id');
 
-        // TODO use the real method once it has the credentialStoreToken in it
-        // $credSummaries = Airavata::getAllSSHPubKeysSummaryForUserInGateway(Session::get('authz-token'), $gatewayId, $userId);
-        $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
-        $publicKey = AdminUtilities::get_pubkey_from_token($userResourceProfile->credentialStoreToken);
-        $credSummaries = array(
-            array(
-                "publicKey" => $publicKey,
-                "description" => "Default SSH Public Key",
-                "credentialStoreToken" => $userResourceProfile->credentialStoreToken
-            ),
-            array(
-                "publicKey" => "dummy public key",
-                "description" => "Public Key #2",
-                "credentialStoreToken" => "abc123"
-            ),
-            array(
-                "publicKey" => "dummy public key",
-                "description" => "Public Key #3",
-                "credentialStoreToken" => "def456"
-            )
-        );
-
-        return $credSummaries;
+        return Airavata::getAllSSHPubKeysSummaryForUserInGateway(Session::get('authz-token'), $gatewayId, $userId);
     }
 
     // Only used for testing

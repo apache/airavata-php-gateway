@@ -489,7 +489,7 @@ class AccountController extends BaseController
         URPUtilities::update_user_resource_profile($userResourceProfile);
 
         $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
-        $description = $credentialSummaryMap[$defaultToken]["description"];
+        $description = $credentialSummaryMap[$defaultToken]->description;
 
         return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' is now the default");
     }
@@ -498,18 +498,19 @@ class AccountController extends BaseController
 
         $credentialStoreToken = Input::get("credentialStoreToken");
         $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
-        $description = $credentialSummaryMap[$credentialStoreToken]["description"];
+        $description = $credentialSummaryMap[$credentialStoreToken]->description;
 
         if (AdminUtilities::remove_ssh_token($credentialStoreToken)) {
             return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' is was deleted");
         }
     }
 
+    // TODO: move to URPUtilities?
     private function create_credential_summary_map($credentialSummaries) {
 
         $credentialSummaryMap = array();
         foreach ($credentialSummaries as $csIndex => $credentialSummary) {
-            $credentialSummaryMap[$credentialSummary["credentialStoreToken"]] = $credentialSummary;
+            $credentialSummaryMap[$credentialSummary->token] = $credentialSummary;
         }
         return $credentialSummaryMap;
     }

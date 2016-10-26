@@ -22,10 +22,10 @@
             <select class="form-control" id="defaultToken" name="defaultToken">
                 @foreach ($credentialSummaries as $credentialSummary)
                 <option
-                @if ($credentialSummary["credentialStoreToken"] == $defaultCredentialSummary["credentialStoreToken"])
+                @if ($credentialSummary->token == $defaultCredentialSummary->token)
                 selected
                 @endif
-                value="{{ $credentialSummary["credentialStoreToken"] }}">{{ $credentialSummary["description"] }}</option>
+                value="{{ $credentialSummary->token }}">{{ $credentialSummary->description }}</option>
                 @endforeach
             </select>
         </div>
@@ -45,14 +45,14 @@
             @foreach ($credentialSummaries as $credentialSummary)
             <tr>
                 <td>
-                    {{ $credentialSummary["description"] }}
+                    {{ $credentialSummary->description }}
                 </td>
                 <td>
-                    {{ $credentialSummary["publicKey"] }}
+                    {{ $credentialSummary->publicKey }}
                 </td>
                 <td>
-                    <span data-token="{{$credentialSummary["credentialStoreToken"]}}"
-                        data-description="{{$credentialSummary["description"]}}"
+                    <span data-token="{{$credentialSummary->token}}"
+                        data-description="{{$credentialSummary->description}}"
                         class="glyphicon glyphicon-trash delete-credential"></span>
                 </td>
             </tr>
