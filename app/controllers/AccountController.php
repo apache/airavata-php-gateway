@@ -148,7 +148,7 @@ class AccountController extends BaseController
             CommonUtilities::store_id_in_session($username);
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
-            if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user")){            
+            if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user")){
                 return $this->initializeWithAiravata($username);
             }
 
@@ -489,9 +489,20 @@ class AccountController extends BaseController
         URPUtilities::update_user_resource_profile($userResourceProfile);
 
         $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
-        $description = $credentialSummaryMap["$defaultToken"]["description"];
+        $description = $credentialSummaryMap[$defaultToken]["description"];
 
         return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' is now the default");
+    }
+
+    public function deleteCredential() {
+
+        $credentialStoreToken = Input::get("credentialStoreToken");
+        $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
+        $description = $credentialSummaryMap[$credentialStoreToken]["description"];
+
+        if (AdminUtilities::remove_ssh_token($credentialStoreToken)) {
+            return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' is was deleted");
+        }
     }
 
     private function create_credential_summary_map($credentialSummaries) {

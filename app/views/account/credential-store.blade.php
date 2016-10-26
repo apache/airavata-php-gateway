@@ -38,6 +38,7 @@
             <tr>
                 <th>Description</th>
                 <th>Public Key</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -49,15 +50,55 @@
                 <td>
                     {{ $credentialSummary["publicKey"] }}
                 </td>
+                <td>
+                    <span data-token="{{$credentialSummary["credentialStoreToken"]}}"
+                        data-description="{{$credentialSummary["description"]}}"
+                        class="glyphicon glyphicon-trash delete-credential"></span>
+                </td>
             </tr>
             @endforeach
         </tbody>
     </table>
 </div>
 
+<div class="modal fade" id="delete-credential-modal" tabindex="-1" role="dialog" aria-labelledby="delete-credential-modal-title"
+     aria-hidden="true">
+    <div class="modal-dialog">
+
+        <form action="{{URL::to('/')}}/account/delete-credential" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-center" id="delete-credential-modal-title">Delete SSH Public Key</h3>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" class="form-control" name="credentialStoreToken"/>
+
+                    Do you really want to delete the <span class="credential-description"></span> SSH public key?
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-danger" value="Delete"/>
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
 @stop
 
 @section('scripts')
 @parent
-<script></script>
+<script>
+$('.delete-credential').on('click', function(){
+
+    var credentialStoreToken = $(this).data('token');
+    var credentialDescription = $(this).data('description');
+
+    $("#delete-credential-modal input[name=credentialStoreToken]").val(credentialStoreToken);
+    $("#delete-credential-modal .credential-description").text(credentialDescription);
+    $("#delete-credential-modal").modal("show");
+});
+</script>
 @stop
