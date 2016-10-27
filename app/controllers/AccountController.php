@@ -473,6 +473,9 @@ class AccountController extends BaseController
         $userCredentialSummaries = URPUtilities::get_all_ssh_pub_keys_summary_for_user();
         $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
         $defaultCredentialSummary = $credentialSummaryMap[$userResourceProfile->credentialStoreToken];
+        foreach ($userCredentialSummaries as $credentialSummary) {
+            $credentialSummary->canDelete = ($credentialSummary->token != $defaultCredentialSummary->token);
+        }
 
         return View::make("account/credential-store", array(
             "userResourceProfile" => $userResourceProfile,
@@ -519,7 +522,12 @@ class AccountController extends BaseController
 
     public function deleteCredential() {
 
+        $userResourceProfile = URPUtilities::get_user_resource_profile();
         $credentialStoreToken = Input::get("credentialStoreToken");
+        if ($credentialStoreToken == $userResourceProfile->credentialStoreToken) {
+            return Redirect::to("account/credential-store")->with("error-message", "You are not allowed to delete the default SSH key.");
+        }
+
         $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
         $description = $credentialSummaryMap[$credentialStoreToken]->description;
 

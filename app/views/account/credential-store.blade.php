@@ -14,6 +14,16 @@
     </div>
     {{ Session::forget("message") }}
     @endif
+
+    @if( Session::has("error-message"))
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                class="sr-only">Close</span></button>
+        {{{ Session::get("error-message") }}}
+    </div>
+    {{ Session::forget("error-message") }}
+    @endif
+
     <h1>SSH Keys</h1>
     <h3>Default SSH Key</h3>
     <form class="form-inline" action="{{ URL::to('/') }}/account/set-default-credential" method="post">
@@ -66,9 +76,11 @@
                     {{ $credentialSummary->publicKey }}
                 </td>
                 <td>
+                    @if ($credentialSummary->canDelete)
                     <span data-token="{{$credentialSummary->token}}"
                         data-description="{{$credentialSummary->description}}"
                         class="glyphicon glyphicon-trash delete-credential"></span>
+                    @endif
                 </td>
             </tr>
             @endforeach
@@ -117,12 +129,16 @@ $('.delete-credential').on('click', function(){
 });
 
 $('#credential-description').on('invalid', function(event){
+    this.setCustomValidity("Please provide a description");
     $('#credential-description-form-group').addClass('has-error');
 });
 $('#credential-description').on('keyup input change', function(event){
     if (this.checkValidity) {
+        // Reset custom error message. If it isn't empty string it is considered invalid.
+        this.setCustomValidity("");
+        // checkValidity will cause invalid event to be dispatched. See invalid
+        // event handler above which will set the custom error message.
         var valid = this.checkValidity();
-        this.setCustomValidity("Please provide a description");
         $('#credential-description-form-group').toggleClass('has-error', !valid);
     }
 });
