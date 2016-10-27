@@ -35,10 +35,6 @@
             @endforeach
             <option value="">DO-NO-SET</option>
         </select>
-        <!--
-        <input type="text" name="resourceSpecificCredentialStoreToken" class="form-control"
-               value="@if( isset( $preferences) ){{$preferences->resourceSpecificCredentialStoreToken}}@endif"/>
-        -->
     </div>
 </div>
 
@@ -48,8 +44,8 @@
         <button type="button" class="btn btn-danger remove-user-storage-resource @if(isset( $allowDelete ) ) @if( !$allowDelete) hide @endif @else hide @endif"
             data-toggle="modal"
             data-target="#remove-user-storage-resource-block"
-            data-cr-name="{{$storageResource->hostName}}"
-            data-cr-id="{{$storageResource->storageResourceId}}">
+            data-sr-name="{{$storageResource->hostName}}"
+            data-sr-id="{{$storageResource->storageResourceId}}">
             Remove
         </button>
     </div>
