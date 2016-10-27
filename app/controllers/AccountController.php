@@ -496,6 +496,20 @@ class AccountController extends BaseController
 
     public function addCredential() {
 
+        $rules = array(
+            "credential-description" => "required",
+        );
+
+        $messages = array(
+            "credential-description.required" => "A description is required for a new SSH key",
+        );
+
+        $validator = Validator::make(Input::all(), $rules, $messages);
+        if ($validator->fails()) {
+            return Redirect::to("account/credential-store")
+                ->withErrors($validator);
+        }
+
         $description = Input::get("credential-description");
 
         if (AdminUtilities::create_ssh_token_with_description($description)) {

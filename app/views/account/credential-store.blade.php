@@ -33,6 +33,11 @@
     </form>
 
     <h3>Add SSH Key</h3>
+    @if ($errors->has())
+    @foreach ($errors->all() as $error)
+    {{ CommonUtilities::print_error_message($error) }}
+    @endforeach
+    @endif
     <form class="form-inline" action="{{ URL::to('/') }}/account/add-credential" method="post">
         <div class="form-group">
             <label for="defaultToken" class="sr-only">Description for new SSH key</label>
