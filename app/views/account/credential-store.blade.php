@@ -2,6 +2,20 @@
 
 @section('page-header')
 @parent
+<style>
+.credential-item {
+    padding-right: 220px;
+    position: relative;
+}
+.credential-item .credential-buttons {
+    height: 34px;
+    width: 220px;
+    position: absolute;
+    top: 50%;
+    margin-top: -17px;
+    right: 0px;
+}
+</style>
 @stop
 
 @section('content')
@@ -25,67 +39,71 @@
     @endif
 
     <h1>SSH Keys</h1>
-    <h3>Default SSH Key</h3>
-    <form class="form-inline" action="{{ URL::to('/') }}/account/set-default-credential" method="post">
-        <div class="form-group">
-            <label for="defaultToken" class="sr-only">Select default SSH key</label>
-            <select class="form-control" id="defaultToken" name="defaultToken">
-                @foreach ($credentialSummaries as $credentialSummary)
-                <option
-                @if ($credentialSummary->token == $defaultCredentialSummary->token)
-                selected
-                @endif
-                value="{{ $credentialSummary->token }}">{{ $credentialSummary->description }}</option>
-                @endforeach
-            </select>
-        </div>
-        <button type="submit" class="btn btn-default">Update default</button>
-    </form>
 
-    <h3>Add SSH Key</h3>
-    @if ($errors->has())
-    @foreach ($errors->all() as $error)
-    {{ CommonUtilities::print_error_message($error) }}
-    @endforeach
-    @endif
-    <form id="add-credential" class="form-inline" action="{{ URL::to('/') }}/account/add-credential" method="post">
-        <div id="credential-description-form-group" class="form-group">
-            <label for="credential-description" class="sr-only">Description for new SSH key</label>
-            <input type="text" id="credential-description" name="credential-description"
-                class="form-control" placeholder="Description" required/>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Default SSH Key</h3>
         </div>
-        <button type="submit" class="btn btn-default">Add</button>
-    </form>
+        <div class="panel-body">
+            <form class="form-inline" action="{{ URL::to('/') }}/account/set-default-credential" method="post">
+                <div class="form-group">
+                    <label for="defaultToken" class="sr-only">Select default SSH key</label>
+                    <select class="form-control" id="defaultToken" name="defaultToken">
+                        @foreach ($credentialSummaries as $credentialSummary)
+                        <option
+                        @if ($credentialSummary->token == $defaultCredentialSummary->token)
+                        selected
+                        @endif
+                        value="{{ $credentialSummary->token }}">{{ $credentialSummary->description }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-default">Update default</button>
+            </form>
+        </div>
+    </div>
 
-    <h3>SSH Key Info</h3>
-    <table class="table table-bordered table-condensed" style="word-wrap: break-word; table-layout: fixed; width: 100%;">
-        <thead>
-            <tr>
-                <th>Description</th>
-                <th>Public Key</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($credentialSummaries as $credentialSummary)
-            <tr>
-                <td>
-                    {{ $credentialSummary->description }}
-                </td>
-                <td>
-                    {{ $credentialSummary->publicKey }}
-                </td>
-                <td>
-                    @if ($credentialSummary->canDelete)
-                    <span data-token="{{$credentialSummary->token}}"
-                        data-description="{{$credentialSummary->description}}"
-                        class="glyphicon glyphicon-trash delete-credential"></span>
-                    @endif
-                </td>
-            </tr>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Add SSH Key</h3>
+        </div>
+        <div class="panel-body">
+            @if ($errors->has())
+            @foreach ($errors->all() as $error)
+            {{ CommonUtilities::print_error_message($error) }}
             @endforeach
-        </tbody>
-    </table>
+            @endif
+            <form id="add-credential" class="form-inline" action="{{ URL::to('/') }}/account/add-credential" method="post">
+                <div id="credential-description-form-group" class="form-group">
+                    <label for="credential-description" class="sr-only">Description for new SSH key</label>
+                    <input type="text" id="credential-description" name="credential-description"
+                    class="form-control" placeholder="Description" required/>
+                </div>
+                <button type="submit" class="btn btn-default">Add</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">SSH Keys</div>
+      <ul class="list-group">
+        @foreach ($credentialSummaries as $credentialSummary)
+        <li class="list-group-item credential-item">
+            {{ $credentialSummary->description }}
+            <div class="credential-buttons">
+                <button type="button" class="btn btn-default copy-credential"
+                    data-clipboard-text="{{$credentialSummary->publicKey}}"
+                    data-toggle="tooltip" data-placement="bottom" data-title="Copied!" data-trigger="manual">Copy to clipboard</button>
+                @if ($credentialSummary->canDelete)
+                <button data-token="{{$credentialSummary->token}}"
+                    data-description="{{$credentialSummary->description}}"
+                    class="btn btn-default delete-credential">Delete</button>
+                @endif
+            </div>
+        </li>
+        @endforeach
+      </ul>
+    </div>
 </div>
 
 <div class="modal fade" id="delete-credential-modal" tabindex="-1" role="dialog" aria-labelledby="delete-credential-modal-title"
@@ -117,6 +135,7 @@
 
 @section('scripts')
 @parent
+{{ HTML::script('js/clipboard.min.js') }}
 <script>
 $('.delete-credential').on('click', function(){
 
@@ -141,6 +160,15 @@ $('#credential-description').on('keyup input change', function(event){
         var valid = this.checkValidity();
         $('#credential-description-form-group').toggleClass('has-error', !valid);
     }
+});
+
+var clipboard = new Clipboard('.copy-credential');
+clipboard.on('success', function(e){
+    // Show 'Copied!' tooltip for 2 seconds on successful copy
+    $(e.trigger).tooltip('show');
+    setTimeout(function(){
+        $(e.trigger).tooltip('hide');
+    }, 2000);
 });
 </script>
 @stop
