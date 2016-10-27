@@ -38,11 +38,11 @@
     {{ CommonUtilities::print_error_message($error) }}
     @endforeach
     @endif
-    <form class="form-inline" action="{{ URL::to('/') }}/account/add-credential" method="post">
-        <div class="form-group">
-            <label for="defaultToken" class="sr-only">Description for new SSH key</label>
+    <form id="add-credential" class="form-inline" action="{{ URL::to('/') }}/account/add-credential" method="post">
+        <div id="credential-description-form-group" class="form-group">
+            <label for="credential-description" class="sr-only">Description for new SSH key</label>
             <input type="text" id="credential-description" name="credential-description"
-                class="form-control" placeholder="Description" />
+                class="form-control" placeholder="Description" required/>
         </div>
         <button type="submit" class="btn btn-default">Add</button>
     </form>
@@ -114,6 +114,17 @@ $('.delete-credential').on('click', function(){
     $("#delete-credential-modal input[name=credentialStoreToken]").val(credentialStoreToken);
     $("#delete-credential-modal .credential-description").text(credentialDescription);
     $("#delete-credential-modal").modal("show");
+});
+
+$('#credential-description').on('invalid', function(event){
+    $('#credential-description-form-group').addClass('has-error');
+});
+$('#credential-description').on('keyup input change', function(event){
+    if (this.checkValidity) {
+        var valid = this.checkValidity();
+        this.setCustomValidity("Please provide a description");
+        $('#credential-description-form-group').toggleClass('has-error', !valid);
+    }
 });
 </script>
 @stop
