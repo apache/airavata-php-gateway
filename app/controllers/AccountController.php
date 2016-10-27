@@ -471,8 +471,7 @@ class AccountController extends BaseController
 
         $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
         $userCredentialSummaries = URPUtilities::get_all_ssh_pub_keys_summary_for_user();
-        $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
-        $defaultCredentialSummary = $credentialSummaryMap[$userResourceProfile->credentialStoreToken];
+        $defaultCredentialSummary = $userCredentialSummaries[$userResourceProfile->credentialStoreToken];
         foreach ($userCredentialSummaries as $credentialSummary) {
             $credentialSummary->canDelete = ($credentialSummary->token != $defaultCredentialSummary->token);
         }
@@ -491,8 +490,8 @@ class AccountController extends BaseController
         $userResourceProfile->credentialStoreToken = $defaultToken;
         URPUtilities::update_user_resource_profile($userResourceProfile);
 
-        $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
-        $description = $credentialSummaryMap[$defaultToken]->description;
+        $credentialSummaries = URPUtilities::get_all_ssh_pub_keys_summary_for_user();
+        $description = $credentialSummaries[$defaultToken]->description;
 
         return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' is now the default");
     }
@@ -528,22 +527,12 @@ class AccountController extends BaseController
             return Redirect::to("account/credential-store")->with("error-message", "You are not allowed to delete the default SSH key.");
         }
 
-        $credentialSummaryMap = $this->create_credential_summary_map(URPUtilities::get_all_ssh_pub_keys_summary_for_user());
-        $description = $credentialSummaryMap[$credentialStoreToken]->description;
+        $credentialSummaries = URPUtilities::get_all_ssh_pub_keys_summary_for_user();
+        $description = $credentialSummaries[$credentialStoreToken]->description;
 
         if (AdminUtilities::remove_ssh_token($credentialStoreToken)) {
             return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' was deleted");
         }
-    }
-
-    // TODO: move to URPUtilities?
-    private function create_credential_summary_map($credentialSummaries) {
-
-        $credentialSummaryMap = array();
-        foreach ($credentialSummaries as $csIndex => $credentialSummary) {
-            $credentialSummaryMap[$credentialSummary->token] = $credentialSummary;
-        }
-        return $credentialSummaryMap;
     }
 
     public function getComputeResources(){

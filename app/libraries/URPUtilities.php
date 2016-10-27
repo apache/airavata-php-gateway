@@ -55,8 +55,20 @@ class URPUtilities
         $userId = Session::get('username');
         $gatewayId = Session::get('gateway_id');
 
-        return Airavata::getAllSSHPubKeysSummaryForUserInGateway(Session::get('authz-token'), $gatewayId, $userId);
+        return URPUtilities::create_credential_summary_map(
+            Airavata::getAllSSHPubKeysSummaryForUserInGateway(Session::get('authz-token'), $gatewayId, $userId));
     }
+
+    // Create array of CredentialSummary objects where the token is the key
+    private static function create_credential_summary_map($credentialSummaries) {
+
+        $credentialSummaryMap = array();
+        foreach ($credentialSummaries as $csIndex => $credentialSummary) {
+            $credentialSummaryMap[$credentialSummary->token] = $credentialSummary;
+        }
+        return $credentialSummaryMap;
+    }
+
 
     // Only used for testing
     public static function delete_user_resource_profile()
