@@ -494,6 +494,15 @@ class AccountController extends BaseController
         return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' is now the default");
     }
 
+    public function addCredential() {
+
+        $description = Input::get("credential-description");
+
+        if (AdminUtilities::create_ssh_token_with_description($description)) {
+            return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' was added");
+        }
+    }
+
     public function deleteCredential() {
 
         $credentialStoreToken = Input::get("credentialStoreToken");
@@ -501,7 +510,7 @@ class AccountController extends BaseController
         $description = $credentialSummaryMap[$credentialStoreToken]->description;
 
         if (AdminUtilities::remove_ssh_token($credentialStoreToken)) {
-            return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' is was deleted");
+            return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' was deleted");
         }
     }
 

@@ -50,6 +50,7 @@ Route::post("allocation-request", "AccountController@allocationRequestSubmit");
 
 Route::get("account/credential-store", "AccountController@getCredentialStore");
 Route::post("account/set-default-credential", "AccountController@setDefaultCredential");
+Route::post("account/add-credential", "AccountController@addCredential");
 Route::post("account/delete-credential", "AccountController@deleteCredential");
 
 Route::get("account/computeResources", "AccountController@getComputeResources");

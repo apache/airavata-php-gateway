@@ -40,7 +40,7 @@ class AdminUtilities
         $gateway->identityServerPasswordToken  = $inputs["admin-password"];
         $gateway->reviewProposalDescription = $inputs["project-details"];
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
-        
+
         $userProfile = Session::get("user-profile");
         $gateway->requesterUsername = $userProfile["username"];
 
@@ -66,7 +66,7 @@ class AdminUtilities
             $gateway->gatewayName = $gatewayData["gatewayName"];
             $gateway->declinedReason = $gatewayData["declinedReason"];
         }
-        
+
         if( isset($gatewayData["createTenant"])){
             if( AdminUtilities::add_tenant( $gateway) )
                 $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
@@ -169,6 +169,11 @@ class AdminUtilities
         return $newToken = Airavata::generateAndRegisterSSHKeys( Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"));
     }
 
+    public static function create_ssh_token_with_description($description){
+        return Airavata::generateAndRegisterSSHKeysWithDescription(
+            Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"), $description);
+    }
+
     public static function create_pwd_token($inputs){
         $username = $inputs['username'];
         $password = $inputs['password'];
@@ -211,17 +216,17 @@ class AdminUtilities
             $notification->notificationId =  $notifData["notificationId"];
             if( Airavata::updateNotification( Session::get("authz-token"), $notification) )
             {
-                return json_encode( Airavata::getNotification(  Session::get('authz-token'), 
-                                                                Session::get("gateway_id"), 
+                return json_encode( Airavata::getNotification(  Session::get('authz-token'),
+                                                                Session::get("gateway_id"),
                                                                 $notifData["notificationId"] ));
             }
             else
                 0;
         }
         else
-            return Airavata::getNotification( 
-                    Session::get('authz-token'), 
-                    Session::get("gateway_id"), 
+            return Airavata::getNotification(
+                    Session::get('authz-token'),
+                    Session::get("gateway_id"),
                     Airavata::createNotification( Session::get("authz-token"), $notification) );
     }
 

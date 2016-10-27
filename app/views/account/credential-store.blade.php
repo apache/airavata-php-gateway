@@ -32,6 +32,16 @@
         <button type="submit" class="btn btn-default">Update default</button>
     </form>
 
+    <h3>Add SSH Key</h3>
+    <form class="form-inline" action="{{ URL::to('/') }}/account/add-credential" method="post">
+        <div class="form-group">
+            <label for="defaultToken" class="sr-only">Description for new SSH key</label>
+            <input type="text" id="credential-description" name="credential-description"
+                class="form-control" placeholder="Description" />
+        </div>
+        <button type="submit" class="btn btn-default">Add</button>
+    </form>
+
     <h3>SSH Key Info</h3>
     <table class="table table-bordered table-condensed" style="word-wrap: break-word; table-layout: fixed; width: 100%;">
         <thead>
