@@ -2,20 +2,6 @@
 
 @section('page-header')
 @parent
-<style>
-.credential-item {
-    padding-right: 220px;
-    position: relative;
-}
-.credential-item .credential-buttons {
-    height: 34px;
-    width: 220px;
-    position: absolute;
-    top: 50%;
-    margin-top: -17px;
-    right: 0px;
-}
-</style>
 @stop
 
 @section('content')
@@ -40,28 +26,49 @@
 
     <h1>SSH Keys</h1>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Default SSH Key</h3>
-        </div>
-        <div class="panel-body">
-            <form class="form-inline" action="{{ URL::to('/') }}/account/set-default-credential" method="post">
-                <div class="form-group">
-                    <label for="defaultToken" class="sr-only">Select default SSH key</label>
-                    <select class="form-control" id="defaultToken" name="defaultToken">
-                        @foreach ($credentialSummaries as $credentialSummary)
-                        <option
-                        @if ($credentialSummary->token == $defaultCredentialSummary->token)
-                        selected
-                        @endif
-                        value="{{ $credentialSummary->token }}">{{ $credentialSummary->description }}</option>
-                        @endforeach
-                    </select>
+    <ul class="list-group">
+        @foreach ($credentialSummaries as $credentialSummary)
+        <li class="list-group-item credential-item">
+            <div class="row">
+                <div class="col-md-12">
+                    <p><strong>{{{ $credentialSummary->description }}}</strong></p>
                 </div>
-                <button type="submit" class="btn btn-default">Update default</button>
-            </form>
-        </div>
-    </div>
+            </div><!-- .row -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" readonly
+                            id="credential-publickey-{{$credentialSummary->token}}"
+                            value="{{$credentialSummary->publicKey}}">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default copy-credential"
+                                data-clipboard-target="#credential-publickey-{{$credentialSummary->token}}"
+                                data-toggle="tooltip" data-placement="bottom"
+                                data-title="Copied!" data-trigger="manual">
+                                Copy
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    @if ($credentialSummary->token != $defaultCredentialSummary->token)
+                    <form style="display: inline" action="{{ URL::to('/') }}/account/set-default-credential" method="post">
+                        <input type="hidden" name="defaultToken" value="{{$credentialSummary->token}}"/>
+                        <button type="submit" class="btn btn-default">Make Default</button>
+                    </form>
+                    @else
+                    <small>This is the default SSH public key that the gateway will use to authenticate to your compute and storage accounts.</small>
+                    @endif
+                    @if ($credentialSummary->canDelete)
+                    <button data-token="{{$credentialSummary->token}}"
+                        data-description="{{$credentialSummary->description}}"
+                        class="btn btn-danger delete-credential">Delete</button>
+                    @endif
+                </div>
+            </div><!-- .row -->
+        </li>
+        @endforeach
+    </ul>
 
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -82,27 +89,6 @@
                 <button type="submit" class="btn btn-default">Add</button>
             </form>
         </div>
-    </div>
-
-    <div class="panel panel-default">
-      <div class="panel-heading">SSH Keys</div>
-      <ul class="list-group">
-        @foreach ($credentialSummaries as $credentialSummary)
-        <li class="list-group-item credential-item">
-            {{ $credentialSummary->description }}
-            <div class="credential-buttons">
-                <button type="button" class="btn btn-default copy-credential"
-                    data-clipboard-text="{{$credentialSummary->publicKey}}"
-                    data-toggle="tooltip" data-placement="bottom" data-title="Copied!" data-trigger="manual">Copy to clipboard</button>
-                @if ($credentialSummary->canDelete)
-                <button data-token="{{$credentialSummary->token}}"
-                    data-description="{{$credentialSummary->description}}"
-                    class="btn btn-default delete-credential">Delete</button>
-                @endif
-            </div>
-        </li>
-        @endforeach
-      </ul>
     </div>
 </div>
 
@@ -137,7 +123,7 @@
 @parent
 {{ HTML::script('js/clipboard.min.js') }}
 <script>
-$('.delete-credential').on('click', function(){
+$('.delete-credential').on('click', function(e){
 
     var credentialStoreToken = $(this).data('token');
     var credentialDescription = $(this).data('description');

@@ -388,6 +388,8 @@
             <div class="row well">
 
                 <h3>Manage Personal Computing and Storage Resources</h3>
+                <p>Use these settings if you have your own compute and/or
+                storage resource accounts that you would like to use.</p>
 
                 <a href="{{URL::to('/')}}/account/computeResources">
                     <div class=" col-md-4 well">
