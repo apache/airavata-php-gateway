@@ -347,8 +347,8 @@ class ExperimentUtilities
                 ($applicationInput->type == DataType::INTEGER) ||
                 ($applicationInput->type == DataType::FLOAT)
             ) {
-                if (isset($_POST[$applicationInput->name]) && (trim($_POST[$applicationInput->name]) != '')) {
-                    $experimentInput->value = $_POST[$applicationInput->name];
+                if (isset($_POST[$applicationInput->sanitizedFormName]) && (trim($_POST[$applicationInput->sanitizedFormName]) != '')) {
+                    $experimentInput->value = $_POST[$applicationInput->sanitizedFormName];
                     $experimentInput->type = $applicationInput->type;
 
                 } else // use previous value
@@ -366,8 +366,8 @@ class ExperimentUtilities
                     }
                 }
             } elseif ($applicationInput->type == DataType::URI) {
-                if ($_FILES[$applicationInput->name]['name']) {
-                    $file = $_FILES[$applicationInput->name];
+                if ($_FILES[$applicationInput->sanitizedFormName]['name']) {
+                    $file = $_FILES[$applicationInput->sanitizedFormName];
 
                     //
                     // move file to experiment data directory
@@ -731,24 +731,24 @@ class ExperimentUtilities
                 case DataType::STRING:
                     echo '<div class="form-group">
                     <label for="experiment-input">' . $input->name . '</label>
-                    <input value="' . $input->value . '" type="text" class="form-control" name="' . $input->name .
-                        '" id="' . $input->name .
+                    <input value="' . $input->value . '" type="text" class="form-control" name="' . $input->sanitizedFormName .
+                        '" id="' . $input->sanitizedFormName .
                         '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
                     </div>';
                     break;
                 case DataType::INTEGER:
                     echo '<div class="form-group">
                     <label for="experiment-input">' . $input->name . '</label>
-                    <input value="' . $input->value . '" type="number" class="form-control" name="' . $input->name .
-                        '" id="' . $input->name .
+                    <input value="' . $input->value . '" type="number" class="form-control" name="' . $input->sanitizedFormName .
+                        '" id="' . $input->sanitizedFormName .
                         '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
                     </div>';
                     break;
                 case DataType::FLOAT:
                     echo '<div class="form-group">
                     <label for="experiment-input">' . $input->name . '</label>
-                    <input value="' . $input->value . '" type="number" step="0.01" class="form-control" name="' . $input->name .
-                        '" id="' . $input->name .
+                    <input value="' . $input->value . '" type="number" step="0.01" class="form-control" name="' . $input->sanitizedFormName .
+                        '" id="' . $input->sanitizedFormName .
                         '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
                     </div>';
                     break;
@@ -757,18 +757,18 @@ class ExperimentUtilities
 
                         echo '<div class="form-group">
                             <label for="experiment-input">' . $input->name . '</label>
-                            <input class="form-control" type="text" name="' . $input->name .
-                                    '" id="' . $input->name . '" ' . $required . '>
+                            <input class="form-control" type="text" name="' . $input->sanitizedFormName .
+                                    '" id="' . $input->sanitizedFormName . '" ' . $required . '>
                             <p class="help-block">' . $input->userFriendlyDescription . '</p>
                             </div>';
                         break;
                     }else{
                         echo '<div class="form-group">
                             <label for="experiment-input">' . $input->name . '</label>
-                            <div data-file-id="' . $input->name . '" class="readBytesButtons btn btn-default btn-xs"
+                            <div data-file-id="' . $input->sanitizedFormName . '" class="readBytesButtons btn btn-default btn-xs"
                              data-toggle="modal" style="float: right">view file</div>
-                            <input class="file-input" type="file" name="' . $input->name .
-                                    '" id="' . $input->name . '" ' . $required . '>
+                            <input class="file-input" type="file" name="' . $input->sanitizedFormName .
+                                    '" id="' . $input->sanitizedFormName . '" ' . $required . '>
                             <p class="help-block">' . $input->userFriendlyDescription . '</p>
                             </div>';
                         break;

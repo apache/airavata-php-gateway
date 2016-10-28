@@ -357,7 +357,7 @@
 </div>
 @endif
 
-@if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+@if(Config::get('pga_config.airavata')["data-sharing-enabled"] and isset($can_write))
     @if($can_write === true)
     @include('partials/sharing-form-modal')
     @endif
@@ -365,7 +365,7 @@
 @section('scripts')
 @parent
 {{ HTML::script('js/time-conversion.js')}}
-@if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+@if(Config::get('pga_config.airavata')["data-sharing-enabled"] and isset($users) and isset($owner))
     <script>
         var users = {{ $users }};
         var owner = {{ $owner }};

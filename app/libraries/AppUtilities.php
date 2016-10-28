@@ -371,6 +371,7 @@ class AppUtilities
 
         try {
             $inputs = Airavata::getApplicationInputs(Session::get('authz-token'), $id);
+            $inputs = AppUtilities::sanitize_application_input_names($inputs);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting application inputs.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -388,6 +389,22 @@ class AppUtilities
         return $inputs;
     }
 
+    /**
+     * Add a field called `sanitizedFormName` to each application input, which
+     * is a sanitized ('.' and ' ' converted to underscores) version of the
+     * `name` field. The reason for this is that PHP will automatically convert '.'
+     * and spaces to underscores when the form is POSTed so we need a safe form
+     * name to use both when generating the form and when consuming it.
+     * @param $inputs - the output of `get_application_inputs()`
+     * @return the application inputs with `sanitizedFormName` field added
+     */
+    private static function sanitize_application_input_names($inputs)
+    {
+        foreach ($inputs as $index => $input) {
+            $input->sanitizedFormName = str_replace(array(".", " "), "_", $input->name);
+        }
+        return $inputs;
+    }
 
     /**
      * Get a list of the outputs for the application with the given ID
