@@ -541,10 +541,4 @@ class AccountController extends BaseController
             "userResourceProfile" => $userResourceProfile
         ));
     }
-
-    // TODO: Only used for testing, remove
-    public function deleteUserResourceProfile(){
-        URPUtilities::delete_user_resource_profile();
-        return Redirect::to("account/dashboard");
-    }
 }

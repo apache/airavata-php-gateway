@@ -54,8 +54,6 @@ Route::post("account/add-credential", "AccountController@addCredential");
 Route::post("account/delete-credential", "AccountController@deleteCredential");
 
 Route::get("account/computeResources", "AccountController@getComputeResources");
-// TODO: just for testing
-Route::get("account/deleteURP", "AccountController@deleteUserResourceProfile");
 
 /*
  * The following routes will not work without logging in.
