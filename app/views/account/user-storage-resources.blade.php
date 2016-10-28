@@ -15,7 +15,9 @@ button.add-user-sr {
 
 @section('content')
 @foreach( (array)$storageResources as $index => $sr)
-@include('partials/user-storage-resource-preferences', array('storageResource' => $sr))
+@include('partials/user-storage-resource-preferences',
+    array('storageResource' => $sr, 'credentialSummaries' => $credentialSummaries,
+        'defaultCredentialSummary' => $defaultCredentialSummary))
 @endforeach
 <div class="container">
     @if( Session::has("message"))
@@ -59,7 +61,8 @@ button.add-user-sr {
                             @include('partials/user-storage-resource-preferences',
                             array('storageResource' => $user_srp->srDetails,
                             'preferences'=>$user_srp, 'show'=>true,
-                            'allowDelete'=>true))
+                            'allowDelete'=>true, 'credentialSummaries' => $credentialSummaries,
+                            'defaultCredentialSummary' => $defaultCredentialSummary))
                         </div>
                     </form>
                 </div>

@@ -1,5 +1,7 @@
 <!-- partial template variables:
     storageResource - (required, StorageResourceDescription) the storage resource object
+    credentialSummaries - (required, list of CredentialSummary) user's credentials
+    defaultCredentialSummary - (required, CredentialSummary) user's default credential
     preferences - (optional, UserStoragePreference) the saved preference data
     show - (optional, boolean)
     allowDelete - (optional, boolean)
@@ -25,15 +27,20 @@
 </div>
 
 <div class="form-group">
-    <label class="control-label col-md-3">Resource Specific Credential Store Token</label>
+    <label class="control-label col-md-3">Resource Specific SSH Key</label>
 
     <div class="col-md-9">
-        <select class="form-control gateway-credential-store-token" name="resourceSpecificCredentialStoreToken" >
-            <option value="">Select a Credential Token from Store</option>
-            @foreach( $tokens as $token => $description )
-                <option value="{{$token}}" @if( isset( $preferences) ) @if( $token == $preferences->resourceSpecificCredentialStoreToken) selected @endif @endif>{{$description}}</option>
+        <select class="form-control" name="resourceSpecificCredentialStoreToken" >
+            <option value="" @if( isset( $preferences) && $preferences->resourceSpecificCredentialStoreToken == null) selected @endif>
+                No resource specific SSH key, just use the default one ({{{$defaultCredentialSummary->description}}})
+            </option>
+            @foreach( $credentialSummaries as $token => $credentialSummary )
+            @if( $token != $defaultCredentialSummary->token)
+            <option value="{{$token}}" @if( isset( $preferences) && $token == $preferences->resourceSpecificCredentialStoreToken) selected @endif>
+                Use {{{$credentialSummary->description}}}
+            </option>
+            @endif
             @endforeach
-            <option value="">DO-NO-SET</option>
         </select>
     </div>
 </div>

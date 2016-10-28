@@ -553,17 +553,15 @@ class AccountController extends BaseController
         }
         $unselectedCRs = array_values($allCRsById);
 
-        // TODO: actually get all of the user's credential store tokens, including description
-        URPUtilities::get_all_ssh_pub_keys_summary_for_user();
-        $tokens = array(
-            $userResourceProfile->credentialStoreToken => "Default SSH Key"
-        );
+        $credentialSummaries = URPUtilities::get_all_ssh_pub_keys_summary_for_user();
+        $defaultCredentialSummary = $credentialSummaries[$userResourceProfile->credentialStoreToken];
 
         return View::make("account/user-compute-resources", array(
             "userResourceProfile" => $userResourceProfile,
             "computeResources" => $allCRs,
             "unselectedCRs" => $unselectedCRs,
-            "tokens" => $tokens
+            "credentialSummaries" => $credentialSummaries,
+            "defaultCredentialSummary" => $defaultCredentialSummary
         ));
     }
 
@@ -609,17 +607,15 @@ class AccountController extends BaseController
         }
         $unselectedSRs = array_values($allSRsById);
 
-        // TODO: actually get all of the user's credential store tokens, including description
-        URPUtilities::get_all_ssh_pub_keys_summary_for_user();
-        $tokens = array(
-            $userResourceProfile->credentialStoreToken => "Default SSH Key"
-        );
+        $credentialSummaries = URPUtilities::get_all_ssh_pub_keys_summary_for_user();
+        $defaultCredentialSummary = $credentialSummaries[$userResourceProfile->credentialStoreToken];
 
         return View::make("account/user-storage-resources", array(
             "userResourceProfile" => $userResourceProfile,
             "storageResources" => $allSRs,
             "unselectedSRs" => $unselectedSRs,
-            "tokens" => $tokens
+            "credentialSummaries" => $credentialSummaries,
+            "defaultCredentialSummary" => $defaultCredentialSummary
         ));
     }
 

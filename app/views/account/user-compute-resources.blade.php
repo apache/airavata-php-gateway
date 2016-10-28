@@ -16,7 +16,9 @@ button.add-user-cr {
 
 @section('content')
 @foreach( (array)$computeResources as $index => $cr)
-@include('partials/user-compute-resource-preferences', array('computeResource' => $cr))
+@include('partials/user-compute-resource-preferences',
+    array('computeResource' => $cr, 'credentialSummaries' => $credentialSummaries,
+        'defaultCredentialSummary' => $defaultCredentialSummary))
 @endforeach
 <div class="container">
     @if( Session::has("message"))
@@ -60,7 +62,8 @@ button.add-user-cr {
                             @include('partials/user-compute-resource-preferences',
                             array('computeResource' => $user_crp->crDetails,
                             'preferences'=>$user_crp, 'show'=>true,
-                            'allowDelete'=>true))
+                            'allowDelete'=>true, 'credentialSummaries' => $credentialSummaries,
+                            'defaultCredentialSummary' => $defaultCredentialSummary))
                         </div>
                     </form>
                 </div>
