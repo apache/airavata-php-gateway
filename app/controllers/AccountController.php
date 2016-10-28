@@ -467,7 +467,6 @@ class AccountController extends BaseController
         Session::put("notice-seen", true);
     }
 
-    // TODO: maybe move the UserResourceProfile stuff to its own controller?
     public function getCredentialStore() {
 
         $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
