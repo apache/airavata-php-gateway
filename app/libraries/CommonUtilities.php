@@ -101,8 +101,10 @@ class CommonUtilities
     public static function create_nav_bar()
     {
         $menus = array();
-        if ( Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
-                || Session::has('admin-read-only'))) {
+        if  ( Session::has('loggedin') && 
+            ( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only')) &&
+              !Session::has("gateway-provider")
+            ) {
             $menus = array
             (
                 'Project' => array
@@ -184,8 +186,10 @@ class CommonUtilities
             echo '<li class="brand-logo"></li>';
 
         $active = "";
-        if(Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
-                || Session::has('admin-read-only'))){
+        if(Session::has('loggedin') && 
+            (Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only')) &&
+            !Session::has("gateway-provider")
+        ){
             if( Session::get("nav-active") == "storage")
                 $active = "active";
             echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/files/browse"><span class="glyphicon glyphicon-folder-close"></span> Storage</a></li>';
@@ -220,6 +224,15 @@ class CommonUtilities
 
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">' . Session::get("username") . ' <span class="caret"></span></a>';
             echo '<ul class="dropdown-menu" role="menu">';
+
+            if ( Session::has("existing-gateway-provider")) {
+                $requestedGateways = Session::get("requestedGateways");
+                foreach( $requestedGateways as $gatewayId => $gateway){
+                    if( $gateway["approvalStatus"] == "Approved"){
+                        echo '<li><a href="' . URL::to('/') . '/admin/dashboard?gatewayId=' . $gateway["gatewayInfo"]->gatewayId . '">Manage ' . $gateway["gatewayInfo"]->gatewayName . '</a></li>';
+                    }
+                }
+            }
 
             echo '<li><a href="' . URL::to('/') . '/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>';
             echo '</ul></li></ul>';
@@ -342,6 +355,21 @@ class CommonUtilities
 
     public static function get_notice_priorities(){
         return NotificationPriority::$__names;
+    }
+
+    public static function arrSortObjsByKey($key, $order = 'DESC') {
+        return function($a, $b) use ($key, $order) {
+            // Swap order if necessary
+            if ($order == 'DESC') {
+                list($a, $b) = array($b, $a);
+            } 
+            // Check data type
+            if (is_numeric($a->$key)) {
+                return $a->$key - $b->$key; // compare numeric
+            } else {
+                return strnatcasecmp($a->$key, $b->$key); // compare string
+            }
+        };
     }
 }
 

@@ -212,8 +212,22 @@ class Wsis {
      */
     public function getUserProfileFromOAuthToken($token){
         $userProfile = $this->oauthManger->getUserProfile($token);
-        return array('username'=>$userProfile->sub, 'email'=>$userProfile->email, 'firstname'=>$userProfile->given_name,
-            'lastname'=>$userProfile->family_name, 'roles'=>explode(",",$userProfile->roles));
+
+        //FIXME hacky fix for the CILogon -> OpenID issue in WSO2 IS
+        $sub = $userProfile->sub;
+        if(0 === strpos($sub, 'http:/')){
+            $mod_sub = substr ($sub ,6);
+        }else{
+            $mod_sub = $sub;
+        }
+        $userProfile = $this->getUserProfile($mod_sub);
+        $lastname = $userProfile['lastname'];
+        $firstname = $userProfile['firstname'];
+        $email = $userProfile['email'];
+        $roles = $this->getUserRoles($mod_sub);
+        if(!is_array($roles))
+            $roles = explode(",", $roles);
+        return array('username'=>$sub, 'firstname'=>$firstname, 'lastname'=>$lastname, 'email'=>$email, 'roles'=>$roles);
     }
 
     /**
@@ -412,6 +426,14 @@ class Wsis {
         }
     }
 
+    public function getTenants(){
+        try {
+            return $this->tenantManager->retrieveTenants();
+        } catch (Exception $ex) {
+            throw new Exception("Unable to get Tenants.", 0, $ex);
+        }
+    }
+
     /**
      * Function to update the user profile
      * @param $username
@@ -455,6 +477,11 @@ class Wsis {
      * @param $username
      */
     public function getUserProfile($username){
+        //FIXME hacky fix for the CILogon -> OpenID issue in WSO2 IS
+        if(0 === strpos($username, 'http:/')){
+            $username = substr ($username ,6);
+        }
+        $username = str_replace("@".Config::get('pga_config.wsis')['tenant-domain'], "", $username);
         return $this->userProfileManager->getUserProfile($username);
     }
 

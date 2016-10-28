@@ -2,6 +2,7 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/sharing.css') }}
 @stop
 
 @section('content')
@@ -35,10 +36,15 @@
                       name="project-description"
                       id="project-description" maxlength="200">{{ $project->description }}</textarea>
             <input type="hidden" name="projectId" value="{{ Input::get('projId') }}"/>
+            <input type="hidden" name="projectOwner" value="{{ $project->owner}}"/>
+        </div>
+
+        <div class="form-group">
+            @include('partials/sharing-display-body', array('form' => $canEditSharing))
         </div>
 
         <div class="btn-toolbar">
-            <input name="save" type="submit" class="btn" value="Save">
+            <input name="save" type="submit" class="btn btn-primary" value="Save">
         </div>
 
 
@@ -46,5 +52,21 @@
 
 
 </div>
+
+{{ HTML::image("assets/Profile_avatar_placeholder_large.png", 'placeholder image', array('class' => 'baseimage')) }}
+
+@include('partials/sharing-form-modal')
+
+@stop
+
+@section('scripts')
+@parent
+<script>
+    var users = {{ $users }};
+    var owner = {{ $owner }};
+    $('#project-share').data({url: "{{ URL::to('/') }}/project/unshared-users", resourceId: "{{ Input::get('projId') }}"})
+</script>
+{{ HTML::script('js/sharing/sharing_utils.js') }}
+{{ HTML::script('js/sharing/share.js') }}
 
 @stop

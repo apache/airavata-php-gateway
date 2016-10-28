@@ -49,6 +49,16 @@ return array(
         'oauth-client-secret' => 'KNTf_LPLuGBDbRVZwkrP_fF5z2Ea',
 
         /**
+         * OAuth Grant Type (password or authorization_code)
+         */
+        'oauth-grant-type' => 'authorization_code',
+
+        /**
+         * OAuth call back url (only if the grant type is authorization_code)
+         */
+        'oauth-callback-url' => 'https://dev.seagrid.org/callback-url',
+
+        /**
          * Identity server domain
          */
         'server' => 'idp.scigap.org',
@@ -151,7 +161,12 @@ return array(
          /**
          * Gateway data store resource id
          */
-         'gateway-data-store-resource-id' => ''
+         'gateway-data-store-resource-id' => '',
+
+         /**
+          * Data Sharing enabled
+          */
+          'data-sharing-enabled' => false
     ],
 
     /**

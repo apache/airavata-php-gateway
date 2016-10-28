@@ -10,37 +10,52 @@ class AdminController extends BaseController {
 
 	public function dashboard(){
         $userInfo = array();
-        
+        $data = array();
         $userProfile = Session::get("user-profile");
         Session::forget("new-gateway-provider");
+
+        //check for gateway provider users
         if( in_array( "gateway-provider", $userProfile["roles"]) ) {
             $gatewayOfUser = "";
+            Session::put("super-admin", true);
             $gatewaysInfo = CRUtilities::getAllGateways();
             //var_dump( $gatewaysInfo); exit;
+            $requestedGateways = array();
+            $gatewayApprovalStatuses = AdminUtilities::get_gateway_approval_statuses();
+
             foreach ($gatewaysInfo as $index => $gateway) {
-                if ($gateway->identityServerUserName == $userProfile["username"]) {
-                    Session::set("gateway_id", $gateway->gatewayId);
+                if ($gateway->requesterUsername == $userProfile["username"]) {
                     $gatewayOfUser = $gateway->gatewayId;
                     Session::forget("super-admin");
+                    Session::put("new-gateway-provider", true);
                     Session::put("existing-gateway-provider", true);
-                    if( $gateway->gatewayApprovalStatus == 0){
-                    	Session::put("approvalStatus", "Requested");
-                    }
-                    elseif( $gateway->gatewayApprovalStatus == 3){
-                    	Session::put("approvalStatus", "Denied");
-                    }
-                    break;
+
+                    $requestedGateways[ $gateway->gatewayId]["gatewayInfo"] = $gateway;
+                    $requestedGateways[ $gateway->gatewayId]["approvalStatus"] = $gatewayApprovalStatuses[ $gateway->gatewayApprovalStatus];
+                    //seeing if admin wants to start managing one of the gateways
+		            if( Input::has("gatewayId")){
+		            	if( Input::get("gatewayId") == $gateway->gatewayId)
+		            	{
+		            		Session::put("gateway_id", $gateway->gatewayId);
+		            	}
+		            }
                 }
             }
+            $data["requestedGateways"] = $requestedGateways;
+            $data["gatewayApprovalStatuses"] = $gatewayApprovalStatuses;
+            //to make it accessible to navbar
+            Session::put("requestedGateways", $requestedGateways);
 
             if ($gatewayOfUser == "") {
                 $userInfo["username"] = $userProfile["username"];
                 $userInfo["email"] = $userProfile["email"];
+    			$data["userInfo"] = $userInfo;
+    			$data["gatewaysInfo"] = $gatewaysInfo;
                 Session::put("new-gateway-provider", true);
             }
         }
-        //var_dump( $userInfo); exit;
-		return View::make("account/dashboard", array("userInfo"=> $userInfo));
+
+		return View::make("account/dashboard", $data);
 	}
 
 	public function addAdminSubmit(){
@@ -87,7 +102,7 @@ class AdminController extends BaseController {
     public function gatewayView(){
     	//only for super admin
 		//Session::put("super-admin", true);
-		$crData = CRUtilities::getEditCRData();
+		
 		$gatewaysInfo = CRUtilities::getAllGatewayProfilesData();
 		$gateways = $gatewaysInfo["gateways"];
 		$tokens = AdminUtilities::get_all_ssh_tokens();
@@ -118,7 +133,8 @@ class AdminController extends BaseController {
 								"tokens" => $tokens,
 								"pwdTokens" => $pwdTokens,
 								"unselectedCRs" => $unselectedCRs,
-								"unselectedSRs" => $unselectedSRs
+								"unselectedSRs" => $unselectedSRs,
+								"gatewayApprovalStatuses" => AdminUtilities::get_gateway_approval_statuses()
 							);
 		$view = "admin/manage-gateway";
 
@@ -135,14 +151,27 @@ class AdminController extends BaseController {
 		}
 		else
 		{
-			echo ("username doesn't exist only."); exit;
+			echo ("username doesn't exist."); exit;
 		}
 	}
 
 	public function updateGatewayRequest(){
-		AdminUtilities::update_gateway_status( Input::get("gateway_id"), Input::get("status"));
 
-		return Redirect::to("admin/dashboard/gateway");
+		//first step of adding tenant and changing gateway request status to Approved.	 
+		$returnVal = AdminUtilities::update_gateway( Input::get("gateway_id"), Input::all());
+		if( Request::ajax()){
+			return $returnVal;
+		}
+		else{
+			if( $returnVal == 1)
+				Session::put("message", "Request has been updated");
+			else
+				Session::put("message", "An error has occurred while updating your request. Please try again or contact admin to report the issue.");
+
+			return Redirect::to("admin/dashboard");
+
+		} 
+		//return 1;
 	}
 
 	public function rolesView(){
@@ -186,12 +215,20 @@ class AdminController extends BaseController {
 
         $username = Input::all()["username"];
         WSIS::updateUserRoles($username, $roles);
-		$roles = WSIS::getUserRoles(Input::get("username"));
-		if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $roles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $roles)
-			|| in_array(Config::get("pga_config.wsis")["user-role-name"], $roles)){
-			$userProfile = WSIS::getUserProfile(Input::get("username"));
-			$recipients = array($userProfile["email"]);
-			$this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
+        $newCurrentRoles = WSIS::getUserRoles(Input::get("username"));
+        if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $newCurrentRoles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $newCurrentRoles)
+                || in_array(Config::get("pga_config.wsis")["user-role-name"], $newCurrentRoles)){
+            $userProfile = WSIS::getUserProfile(Input::get("username"));
+            $recipients = array($userProfile["email"]);
+            $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
+
+            // remove the pending role when access is granted, unless
+            // the admin is trying to add the user to the pending role
+            if(in_array("user-pending", $newCurrentRoles) && !in_array("user-pending", $roles["new"])) {
+                $userRoles["new"] = array();
+                $userRoles["deleted"] = "user-pending";
+                WSIS::updateUserRoles( $username, $userRoles);
+            }
 		}
         return Redirect::to("admin/dashboard/roles")->with( "message", "Roles has been added.");
     }
@@ -411,8 +448,10 @@ class AdminController extends BaseController {
 
         $validator = Validator::make( $checkValidation, $rules, $messages);
         if ($validator->fails()) {
-            Session::put("message", $validator->messages() );
-            return Redirect::to("admin/dashboard");
+            Session::put("validationMessages", $validator->messages() );
+            return Redirect::to("admin/dashboard")
+            	->withInput(Input::except('password', 'password_confirm'))
+            	->withErrors($validator);
         }
         else{
 	        $gateway = AdminUtilities::request_gateway(Input::all());

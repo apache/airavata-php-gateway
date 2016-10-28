@@ -24,12 +24,14 @@
             @foreach($expContainer as $experiment)
                 <tr>
                     <!-- Experiment Name -->
-                    <td> 
+                    <td>
                         <a href="{{URL::to('/')}}/experiment/summary?expId={{$experiment['experiment']->experimentId}}" target="_blank">
-                        {{ $experiment['experiment']->name }} 
+                        {{ $experiment['experiment']->name }}
                         </a>
-                        @if( $experiment['expValue']['editable'])
-                            <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment['experiment']->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                        @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+                            @if( $experiment['expValue']['editable'] and $can_write[$experiment['experiment']->experimentId] === true)
+                                <a href="{{URL::to('/')}}/experiment/edit?expId={{$experiment['experiment']->experimentId}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                            @endif
                         @endif
                     </td>
                     <td>{{$experiment['experiment']->userName}}</td>
@@ -41,7 +43,7 @@
                     @endif
                     <!-- Resource Name -->
                     <td>
-                        @if( !empty( explode("_", $experiment['experiment']->resourceHostId)[0] ) ) 
+                        @if( !empty( explode("_", $experiment['experiment']->resourceHostId)[0] ) )
                             {{ explode("_", $experiment['experiment']->resourceHostId)[0] }}
                         @endif
                     </td>
@@ -53,17 +55,17 @@
                             {{$experiment['expValue']['experimentStatusString'] }}
                         </a>
                     </td>
-                    @if( isset( $dashboard)) 
+                    @if( isset( $dashboard))
                     <td class="text-center">
                         <a class="get-exp-stats" data-expid="{{$experiment['experiment']->experimentId}}" style="cursor: pointer;">
                         <span class="glyphicon glyphicon-stats"></span>
                         </a>
                     </td>
                     @endif
-                    
+
                 </tr>
             @endforeach
-           
+
         </table>
     </div>
     @endif

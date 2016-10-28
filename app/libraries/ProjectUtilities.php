@@ -5,6 +5,8 @@ use Airavata\API\Error\AiravataSystemException;
 use Airavata\API\Error\InvalidRequestException;
 use Airavata\Facades\Airavata;
 use Airavata\Model\Workspace\Project;
+use Airavata\Model\Group\ResourceType;
+use Airavata\Model\Group\ResourcePermissionType;
 
 class ProjectUtilities
 {
@@ -123,6 +125,11 @@ class ProjectUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
+        if (Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            $share = $_POST['share-settings'];
+            ProjectUtilities::share_project($projectId, json_decode($share));
+        }
+
         return $projectId;
     }
 
@@ -140,6 +147,12 @@ class ProjectUtilities
 
         try {
             $projectId = Airavata::createProject(Session::get('authz-token'), Config::get('pga_config.airavata')['gateway-id'], $project);
+
+            $share = new stdClass();
+            $share->{$username} = new stdClass();
+            $share->{$username}->read = true;
+            $share->{$username}->write = true;
+            ProjectUtilities::share_project($projectId, $share);
 
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
@@ -175,16 +188,23 @@ class ProjectUtilities
             CommonUtilities::print_error_message('TTransportException!<br><br>' . $tte->getMessage());
         }
 
+        for($i = 0; $i < count($experiments); $i++) {
+            if (!SharingUtilities::userCanRead(Session::get("username"), $experiments[$i]->experimentId, ResourceType::EXPERIMENT)) {
+                array_splice($experiments, $i, 1);
+            }
+        }
+
         return $experiments;
     }
 
     public static function update_project($projectId, $projectDetails)
     {
-
         $updatedProject = new Project();
         $updatedProject->owner = $projectDetails["owner"];
         $updatedProject->name = $projectDetails["name"];
         $updatedProject->description = $projectDetails["description"];
+        $updatedProject->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
+
         try {
             Airavata::updateProject(Session::get('authz-token'), $projectId, $updatedProject);
 
@@ -198,17 +218,22 @@ class ProjectUtilities
         } catch (AiravataSystemException $ase) {
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
+
+        if (Config::get('pga_config.airavata')["data-sharing-enabled"] && array_key_exists('share-settings', $_POST)){
+            $share = $_POST['share-settings'];
+            ProjectUtilities::share_project($projectId, json_decode($share));
+        }
     }
 
 
-    public static function get_all_user_projects_with_pagination($limit, $offset)
+    public static function get_all_user_accessible_projects_with_pagination($limit, $offset)
     {
 
         $projects = array();
 
         try {
-            $projects = Airavata::getUserProjects(Session::get('authz-token'), Session::get("gateway_id"),
-                Session::get("username"), $limit, $offset);
+            $projects = $projects = Airavata::searchProjects(Session::get('authz-token'), Session::get("gateway_id"),
+                Session::get("username"), [], $limit, $offset);
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
         } catch (AiravataClientException $ace) {
@@ -230,7 +255,7 @@ class ProjectUtilities
     }
 
 
-    public static function get_projsearch_results_with_pagination($searchKey, $searchValue, $limit, $offset)
+    public static function get_proj_search_results_with_pagination($searchKey, $searchValue, $limit, $offset)
     {
 
         $projects = array();
@@ -266,5 +291,58 @@ class ProjectUtilities
         }
 
         return $projects;
+    }
+
+    /**
+     * Set sharing settings for a given project.
+     * @param projectId
+     * @param $users A map of username => {read_permission, write_permission}
+     */
+    private static function share_project($projectId, $users) {
+        $project = Airavata::getProject(Session::get("authz-token"), $projectId);
+        $users->{$project->owner} = new stdClass();
+        $users->{$project->owner}->read = true;
+        $users->{$project->owner}->write = true;
+
+        $wadd = array();
+        $wrevoke = array();
+        $ewrevoke = array();
+        $radd = array();
+        $rrevoke = array();
+        $errevoke = array();
+
+        foreach ($users as $user => $perms) {
+            if ($perms->write) {
+                $wadd[$user] = ResourcePermissionType::WRITE;
+            }
+            else {
+                $wrevoke[$user] = ResourcePermissionType::WRITE;
+            }
+
+            if ($perms->read) {
+                $radd[$user] = ResourcePermissionType::READ;
+            }
+            else {
+                $rrevoke[$user] = ResourcePermissionType::READ;
+            }
+
+            if (!$perms->read && !$perms->write) {
+                $ewrevoke[$user] = ResourcePermissionType::WRITE;
+                $errevoke[$user] = ResourcePermissionType::READ;
+            }
+        }
+
+        GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $wadd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::PROJECT, $wrevoke);
+
+        GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $radd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::PROJECT, $rrevoke);
+
+        $experiments = ProjectUtilities::get_experiments_in_project($projectId);
+
+        foreach ($experiments as $exp) {
+            GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $ewrevoke);
+            GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $errevoke);
+        }
     }
 }

@@ -113,6 +113,63 @@
 </div>
 @endif
 
+<div class="form-group">
+    <label class="control-label col-md-3">Quality of Service</label>
+
+    <div class="col-md-9">
+        <input type="text" name="qualityOfService" class="qualityOfService form-control"
+               value="@if( isset( $preferences) ){{$preferences->qualityOfService}}@endif" data-toggle="popover" data-placement="bottom" data-content="Format: <queue name1>=<qos1>,<queue name2>=<qos2>"/>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="control-label col-md-3">Reservation Name</label>
+
+    <div class="col-md-9">
+        <input type="text" name="reservation" class="form-control"
+               value="@if( isset( $preferences) ){{$preferences->reservation}}@endif"/>
+    </div>
+</div>
+<?php
+//to add or remove time according to local hours.
+$timeDifference = Session::get("user_timezone");
+$addOrSubtract = "-";
+if( $timeDifference < 0)
+    $addOrSubtract = "+";
+
+$reservationStartTime = "";
+if( isset( $preferences) && $preferences->reservationStartTime != '')
+    $reservationStartTime = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", $preferences->reservationStartTime/1000);
+
+$reservationEndTime = "";
+if( isset( $preferences) && $preferences->reservationEndTime != '')
+    $reservationEndTime = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", $preferences->reservationEndTime/1000);
+
+?>
+<div class="form-group col-md-6">
+    <label class="control-label col-md-3">Reservation Start Time</label>
+
+    <div class="input-group date datetimepicker1">
+        <input type="text" name="reservationStartTime" class="form-control"
+               value="@if( isset( $preferences) )@if( trim($preferences->reservationStartTime) != '' || $preferences->reservationStartTime != null){{date('m/d/Y h:i:s A', intval( $reservationStartTime))}}@endif @endif"/>
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+    </div>
+</div>
+
+<div class="form-group col-md-6">
+    <label class="control-label col-md-3">Reservation End Time</label>
+
+    <div class="input-group date datetimepicker2">
+        <input type="text" name="reservationEndTime" class="form-control"
+               value="@if( isset( $preferences) )@if( trim($preferences->reservationEndTime) != ''|| $preferences->reservationStartTime != null){{date('m/d/Y h:i:s A', intval($reservationEndTime))}}@endif @endif"/>
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+    </div>
+</div>
+
 @if(Session::has("admin"))
 <div class="form-group text-center">
     <input type="submit" class="btn btn-primary submit-crp-form" value="Set preferences"/>

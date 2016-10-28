@@ -23,7 +23,7 @@
         <div class="col-md-6">
             <input type="text" class="form-control experimentId"/>
         </div>
-        <button class="col-md-3 btn btn-primary get-experiment">Get</button>
+        <button class="col-md-3 btn btn-primary get-experiment" disabled="disabled">Get</button>
         <div class="loading-img hide text-center"><img src="{{URL::to('/')}}/assets/ajax-loader.gif"/></div>
 
         </div>
@@ -356,27 +356,42 @@ to be uncommented when actually in use.
         e.stopPropagation();
     });
 
+    $(".experimentId").keyup( function(){
+        if( $.trim( $(this).val()) == "")
+            $(".get-experiment").attr("disabled", "disabled");
+        else
+            $(".get-experiment").removeAttr("disabled");
+    });
+
     $(".get-experiment").click(function () {
         $(".loading-img").removeClass("hide");
 
         var expId = $(".experimentId").val();
-        $.ajax({
-            url: 'experiment/summary?expId=' + expId,
-            type: 'get',
-            success: function (data) {
-                //$(".experiment-info").html(data);
-                $("#myTabs").append('<li role="presentation"><a href="#' + expId + '" aria-controls="' + expId + '" role="tab" data-toggle="tab">' + expId + '</a></li>');
-                $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + expId + '">' + data + '</div>');
-                $('#myTabs a[href="#' + expId + '"]').tab('show') // Select tab by name
-                
-                //$('#myTabs a[href="#expsummary"]').tab('show') // Select tab by name
-                
-                //from time-conversion.js
-                updateTime();
-            }
-        }).complete(function () {
-            $(".loading-img").addClass("hide");
-        });
+        if( $("#" + expId).length <= 0){
+            $.ajax({
+                url: 'experiment/summary?expId=' + expId,
+                type: 'get',
+                success: function (data) {
+                    //$(".experiment-info").html(data);
+                    $("#myTabs").append('<li role="presentation"><a href="#' + expId + '" aria-controls="' + expId + '" role="tab" data-toggle="tab">' + expId + '<button type="button" style="margin-left:10px;" class="close pull-right close-tab" aria-label="Close"><span aria-hidden="true">&times;</span></button></a></li>');
+                    $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + expId + '">' + data + '</div>');
+                    $('#myTabs a[href="#' + expId + '"]').tab('show') // Select tab by name
+                    
+                    //$('#myTabs a[href="#expsummary"]').tab('show') // Select tab by name
+                    
+                    //from time-conversion.js
+                    updateTime();
+                }
+            }).complete(function () {
+                $(".loading-img").addClass("hide");
+            });
+        }
+    });
+
+    $("body").on("click", ".close-tab", function(){
+        var idToRemove = $(this).parent().parent().attr("href");
+        $(this).parent().parent().remove();
+        $("#"+idToRemove).remove();
     });
 
     //Experiment stages are under development.

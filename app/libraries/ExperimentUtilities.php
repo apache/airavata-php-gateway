@@ -21,6 +21,8 @@ use Airavata\Model\Data\Replica\DataReplicaLocationModel;
 use Airavata\Model\Data\Replica\ReplicaLocationCategory;
 use Airavata\Model\Data\Replica\ReplicaPersistentType;
 use Airavata\Model\Application\Io\InputDataObjectType;
+use Airavata\Model\Group\ResourceType;
+use Airavata\Model\Group\ResourcePermissionType;
 
 class ExperimentUtilities
 {
@@ -77,7 +79,7 @@ class ExperimentUtilities
 
         $optFilesHtml = "";
 
-        if( count( $experimentInputs) > 0 ) { 
+        if( count( $experimentInputs) > 0 ) {
             foreach ($experimentInputs as $input) {
                 $matchingAppInput = null;
                 if ($input->type == DataType::URI) {
@@ -200,7 +202,6 @@ class ExperimentUtilities
      */
     public static function get_experiment($expId)
     {
-
         try {
             return Airavata::getExperiment(Session::get('authz-token'), $expId);
         } catch (InvalidRequestException $ire) {
@@ -568,6 +569,11 @@ class ExperimentUtilities
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
                 '<p>AiravataSystemException: ' . $ase->getMessage() . '</p>');
         }
+
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            $share = $_POST['share-settings'];
+            ExperimentUtilities::share_experiment($expId, json_decode($share));
+        }
     }
 
 
@@ -604,6 +610,9 @@ class ExperimentUtilities
                     $parts = explode('/', rtrim($currentInputPath, '/'));
                     $fileName = array_pop($parts);
                     $newInputPath = ExperimentUtilities::$experimentPath . $fileName;
+                    if(parse_url($currentInputPath)){
+                        $currentInputPath = parse_url($currentInputPath, PHP_URL_PATH);
+                    }
                     copy($currentInputPath, $newInputPath);
 
                     $dataProductModel = new DataProductModel();
@@ -627,6 +636,11 @@ class ExperimentUtilities
             }
             $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
+
+            $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
+            $share[Session::get('username')] = ["read" => true, "write" => true];
+            ExperimentUtilities::share_experiment($cloneId, json_decode(json_encode($share)));
+
             return $cloneId;
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem cloning the experiment.
@@ -788,6 +802,8 @@ class ExperimentUtilities
         $experiment = ExperimentUtilities::assemble_experiment();
         $expId = null;
 
+        $share = $_POST['share-settings'];
+
         try {
             if ($experiment) {
                 $expId = Airavata::createExperiment(Session::get('authz-token'), Session::get("gateway_id"), $experiment);
@@ -807,6 +823,10 @@ class ExperimentUtilities
             CommonUtilities::print_error_message('AiravataClientException!<br><br>' . $ace->getMessage());
         } catch (AiravataSystemException $ase) {
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
+        }
+
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            ExperimentUtilities::share_experiment($expId, json_decode($share));
         }
 
         return $expId;
@@ -929,17 +949,18 @@ class ExperimentUtilities
         $expVal["taskTypes"] = TaskTypes::$__names;
 
 
-        if( is_object( $experiment->experimentStatus ) )
-            $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus->state];
-        else
-            $experimentStatusString = $experiment->experimentStatus; 
+        if( is_array( $experiment->experimentStatus ) )
+            $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus[0]->state];
+        else {
+            $experimentStatusString = $experiment->experimentStatus;
+        }
 
         $expVal["experimentStatusString"] = $experimentStatusString;
         if ( $experimentStatusString == ExperimentState::FAILED)
             $expVal["editable"] = false;
 
         $expVal["cancelable"] = false;
-        if ( $experimentStatusString == ExperimentState::LAUNCHED 
+        if ( $experimentStatusString == ExperimentState::LAUNCHED
             || $experimentStatusString == ExperimentState::EXECUTING)
             $expVal["cancelable"] = true;
 
@@ -947,12 +968,12 @@ class ExperimentUtilities
         if ($experiment->experimentStatus != null) {
             $experimentStatus = $experiment->experimentStatus;
 
-            if( is_object( $experiment->experimentStatus ) )
-                $expVal["experimentTimeOfStateChange"] = $experimentStatus->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
+            if( is_array( $experiment->experimentStatus ) )
+                $expVal["experimentTimeOfStateChange"] = $experimentStatus[0]->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
             $expVal["experimentCreationTime"] = $experiment->creationTime / 1000; // divide by 1000 since creationTime is in ms
         }
 
-        if (!$forSearch && is_object( $experiment->experimentStatus) ){
+        if (!$forSearch && is_array( $experiment->experimentStatus) ){
             $userConfigData = $experiment->userConfigurationData;
             $scheduling = $userConfigData->computationalResourceScheduling;
 
@@ -1111,12 +1132,23 @@ class ExperimentUtilities
         $expContainer = array();
         $expNum = 0;
         foreach ($experiments as $experiment) {
-            $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
-            $expContainer[$expNum]['experiment'] = $experiment;
-            if ($expValue["experimentStatusString"] == "FAILED")
-                $expValue["editable"] = false;
-            $expContainer[$expNum]['expValue'] = $expValue;
-            $expNum++;
+            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+                if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId, ResourceType::EXPERIMENT)) {
+                    $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
+                    $expContainer[$expNum]['experiment'] = $experiment;
+                    if ($expValue["experimentStatusString"] == "FAILED")
+                        $expValue["editable"] = false;
+                    $expContainer[$expNum]['expValue'] = $expValue;
+                    $expNum++;
+                }
+            }else{
+                $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
+                $expContainer[$expNum]['experiment'] = $experiment;
+                if ($expValue["experimentStatusString"] == "FAILED")
+                    $expValue["editable"] = false;
+                $expContainer[$expNum]['expValue'] = $expValue;
+                $expNum++;
+            }
         }
 
         return $expContainer;
@@ -1303,5 +1335,65 @@ class ExperimentUtilities
         echo '</select>';
     }
 
+    public static function update_experiment_sharing($expId, $users) {
+        ExperimentUtilities::share_experiment($expId, $users);
+    }
 
+    /**
+     * Set sharing privileges for a given experiment.
+     * @param $expId
+     * @param $users A map of username => {read_permission, write_permission}
+     */
+    private static function share_experiment($expId, $users) {
+        $experiment = ExperimentUtilities::get_experiment($expId);
+        $users->{$experiment->userName} = new stdClass();
+        $users->{$experiment->userName}->read = true;
+        $users->{$experiment->userName}->write = true;
+
+        $wadd = array();
+        $wrevoke = array();
+        $radd = array();
+        $rrevoke = array();
+
+        $projperms = GrouperUtilities::getAllAccessibleUsers($experiment->projectId, ResourceType::PROJECT, ResourcePermissionType::READ);
+        $prrevoke = array();
+        $pwrevoke = array();
+
+        foreach ($users as $user => $perms) {
+            if ($perms->write) {
+                $wadd[$user] = ResourcePermissionType::WRITE;
+            }
+            else {
+                $wrevoke[$user] = ResourcePermissionType::WRITE;
+            }
+
+            if ($perms->read) {
+                $radd[$user] = ResourcePermissionType::READ;
+            }
+            else {
+                $rrevoke[$user] = ResourcePermissionType::READ;
+            }
+
+            if (array_search($user, $projperms) === false) {
+                $prrevoke[$user] = ResourcePermissionType::READ;
+                $pwrevoke[$user] = ResourcePermissionType::WRITE;
+            }
+        }
+
+        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $wadd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $wrevoke);
+
+        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $radd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
+
+        GrouperUtilities::shareResourceWithUsers($experiment->projectId, ResourceType::PROJECT, $radd);
+
+        $experiments = ProjectUtilities::get_experiments_in_project($experiment->projectId);
+        foreach ($experiments as $exp) {
+            if ($exp->experimentId !== $expId) {
+                GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $prrevoke);
+                GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $pwrevoke);
+            }
+        }
+    }
 }

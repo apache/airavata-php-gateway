@@ -153,6 +153,7 @@ class CRUtilities
             //$rm = $airavataclient->updateResourceJobManager($rmId, $resourceManager);
             //print_r( $rm); exit;
             $localJobSubmission = new LOCALSubmission(array(
+                    "securityProtocol" => SecurityProtocol::LOCAL,
                     "resourceJobManager" => $resourceManager
                 )
             );
@@ -447,19 +448,15 @@ class CRUtilities
 
     public static function getAllGatewayProfilesData()
     {
-
-        if (Session::has("super-admin"))
-            $gateways = Airavata::getAllGateways(Session::get('authz-token'));
-        else {
-            $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
-        }
-
         $selectedCRs = array();
         $selectedSRs = array();
         $allCRs = CRUtilities::getAllCRObjects();
         $allSRs = SRUtilities::getAllSRObjects();
         $allCRArray = array();
         $allSRArray = array();
+
+        $gateways = CRUtilities::getAllGateways();
+
         foreach( $allCRs as $index => $crObject)
         {
             $allCRArray[$crObject->computeResourceId] = $crObject;
@@ -500,15 +497,19 @@ class CRUtilities
                                 "selectedCRs" => $selectedCRs, 
                                 "selectedSRs" => $selectedSRs, 
                                 "allCRs" => $allCRs,
-                                "allSRs" => $allSRs
+                                "allSRs" => $allSRs,
+                                "gatewayApprovalStatuses" => AdminUtilities::get_gateway_approval_statuses()
                             );
         return $gatewaysInfo;
     }
 
     public static function getAllGateways()
     {
-        if (Session::has("super-admin"))
+        if (Session::has("super-admin")){
             $gateways = Airavata::getAllGateways(Session::get('authz-token'));
+            //sort with creation time 
+            usort($gateways, CommonUtilities::arrSortObjsByKey('requestCreationTime', 'ASC'));
+        }
         else {
             $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
         }
@@ -523,6 +524,16 @@ class CRUtilities
 
     public static function add_or_update_CRP($inputs)
     {
+        $timeDifference = Session::get("user_timezone");
+        $addOrSubtract = "-";
+        if( $timeDifference > 0)
+            $addOrSubtract = "+";
+        $inputs = Input::all();
+        if( $inputs["reservationStartTime"] != "")
+            $inputs["reservationStartTime"] = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", strtotime( $inputs["reservationStartTime"]) ) * 1000;
+        if( $inputs["reservationEndTime"] != "")
+            $inputs["reservationEndTime"] = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", strtotime($inputs["reservationEndTime"]) ) * 1000;
+
         $computeResourcePreferences = new computeResourcePreference($inputs);
 
         if (Config::get('pga_config.airavata')['enable-app-catalog-cache']) {

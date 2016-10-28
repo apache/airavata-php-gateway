@@ -24,7 +24,7 @@ Route::post("login", "AccountController@loginSubmit");
 
 Route::get("account/dashboard", "AccountController@dashboard");
 
-//Route::get("callback-url", "AccountController@oauthCallback");
+Route::get("callback-url", "AccountController@oauthCallback");
 
 Route::get("logout", "AccountController@logout");
 
@@ -71,6 +71,10 @@ Route::get("project/browse", "ProjectController@browseView");
 
 Route::post("project/browse", "ProjectController@browseView");
 
+Route::get("project/shared-users", "ProjectController@sharedUsers");
+
+Route::get("project/unshared-users", "ProjectController@unsharedUsers");
+
 /*
  * Experiment Routes
 */
@@ -97,6 +101,9 @@ Route::get("experiment/browse", "ExperimentController@browseView");
 
 Route::post("experiment/browse", "ExperimentController@browseView");
 
+Route::get("experiment/shared-users", "ExperimentController@sharedUsers");
+
+Route::get("experiment/unshared-users", "ExperimentController@unsharedUsers");
 
 Route::get("download", function(){
     if(Input::has("path") && (0 == strpos(Input::get("path"), Session::get('username'))
@@ -129,7 +136,7 @@ Route::get("download", function(){
 
         //TODO check permission
         $path = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
-        $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path;
+        $downloadLink = parse_url(URL::to('/') . Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path, PHP_URL_PATH);
         return Response::download( $downloadLink);
     }
 });
@@ -137,6 +144,17 @@ Route::get("download", function(){
 Route::get("files/browse", "FilemanagerController@browse");
 
 Route::get("files/get","FilemanagerController@get");
+
+/*
+ * Group Routes
+ */
+Route::get("group/create", "GroupController@createView");
+
+Route::post("group/create", "GroupController@createSubmit");
+
+Route::get("group/view", "GroupController@viewView");
+
+Route::post("group/edit", "GroupController@editSubmit");
 
 /*
  * Compute Resources Routes

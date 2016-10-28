@@ -106,10 +106,12 @@
                 ?>
                 <tr>
                     <td>
-                        <?php echo $project->name; ?>
-                        <a href="{{URL::to('/')}}/project/edit?projId=<?php echo $project->projectID; ?>" title="Edit">
+                        {{$project->name}}
+                        @if($can_write[$project->projectID])
+                        <a href="{{URL::to('/')}}/project/edit?projId={{rawurlencode($project->projectID)}}" title="Edit">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
+                        @endif
                     </td>
                     <td>
                         {{$project->owner}}

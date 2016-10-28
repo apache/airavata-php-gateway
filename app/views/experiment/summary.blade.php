@@ -6,6 +6,7 @@
 
 @section('content')
 @include('partials/experiment-info')
+{{ HTML::image("assets/Profile_avatar_placeholder_large.png", 'placeholder image', array('class' => 'baseimage')) }}
 @stop
 
 

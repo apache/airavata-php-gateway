@@ -37,29 +37,31 @@
                         @endif
                     </tr>
                     @foreach( $roles as $role)
-                    <tr>
-                        <td class="role-name">{{ $role }}</td>
-                        @if(Session::has("admin"))
-                        <td>
-                            <!-- 
-                            // unable to find functions to edit a role name so commenting for now
-                            <span class="glyphicon glyphicon-pencil edit-role-name"></span>&nbsp;&nbsp;
-                            -->
-                            <a href="{{URL::to('/')}}/admin/dashboard/users?role={{$role}}">
-                                <span class="glyphicon glyphicon-user role-users"></span>&nbsp;&nbsp;
-                            </a>
-                            <span class="glyphicon glyphicon-trash delete-role"></span>&nbsp;&nbsp;
-                        </td>
+                        @if((strpos($role, 'Internal') === false) && (strpos($role, 'Application') === false) )
+                        <tr>
+                            <td class="role-name">{{ $role }}</td>
+                            @if(Session::has("admin"))
+                            <td>
+                                <!-- 
+                                // unable to find functions to edit a role name so commenting for now
+                                <span class="glyphicon glyphicon-pencil edit-role-name"></span>&nbsp;&nbsp;
+                                -->
+                                <a href="{{URL::to('/')}}/admin/dashboard/users?role={{$role}}">
+                                    <span class="glyphicon glyphicon-user role-users"></span>&nbsp;&nbsp;
+                                </a>
+                                <span class="glyphicon glyphicon-trash delete-role"></span>&nbsp;&nbsp;
+                            </td>
+                            @endif
+                        </tr>
                         @endif
-                    </tr>
                     @endforeach
                 </table>
                 @if(Session::has("admin"))
-                <div class="col-md-12">
-                    <button type="button" class="btn btn-default toggle-add-role"><span
-                            class="glyphicon glyphicon-plus"></span>Add a new Role
-                    </button>
-                </div>
+                {{--<div class="col-md-12">--}}
+                    {{--<button type="button" class="btn btn-default toggle-add-role"><span--}}
+                            {{--class="glyphicon glyphicon-plus"></span>Add a new Role--}}
+                    {{--</button>--}}
+                {{--</div>--}}
                 <div class="add-role col-md-6">
                     <form role="form" action="{{URL::to('/')}}/admin/add-role" method="POST" class="add-role-form">
                         <div class="form-group">

@@ -1,3 +1,4 @@
+{{ HTML::style('css/sharing.css') }}
 <div class="container" style="max-width: 750px;">
     <!--
     @if(isset( $invalidExperimentId ) )
@@ -32,7 +33,7 @@
 
     <table class="table table-bordered">
         <tr>
-            <td><strong>Experiment Id</strong></td>
+            <td><strong>Experiment ID</strong></td>
             <td><?php echo $experiment->experimentId; ?></td>
         </tr>
         <tr>
@@ -48,13 +49,17 @@
             <td><?php echo $project->name; ?></td>
         </tr>
         <tr>
+            <td><strong>Owner</strong></td>
+            <td><?php echo $experiment->userName; ?></td>
+        </tr>
+        <tr>
             <td><strong>Application</strong></td>
             <td><?php if (!empty($expVal["applicationInterface"])) {
                     echo $expVal["applicationInterface"]->applicationName;
                 } ?></td>
         </tr>
         <tr>
-            <td><strong>Compute resource</strong></td>
+            <td><strong>Compute Resource</strong></td>
             <td><?php if (!empty($expVal["computeResource"])) {
                     echo $expVal["computeResource"]->hostName;
                 } ?></td>
@@ -78,7 +83,7 @@
                         <tr>
                             <td>{{$jobDetail->jobName}}</td>
                             <td>{{ $jobDetail->jobId}}</td>
-                            <td>{{$jobDetail->jobStatus->jobStateName }}</td>
+                            <td>{{$jobDetail->jobStatuses[0]->jobStateName }}</td>
                             <td class="time" unix-time="{{$jobDetail->creationTime}}"></td>
                         </tr>
                     </table>
@@ -93,6 +98,18 @@
             </tr>
         @endif
         -->
+        @if( isset( $experiment->enableEmailNotification))
+            <tr>
+                <td><strong>Notifications To:</strong></td>
+                <td>
+                    @if(isset($experiment->emailAddresses))
+                        @foreach( $experiment->emailAddresses as $email)
+                            {{ $email}}<br/>
+                        @endforeach
+                    @endif
+                </td>
+            </tr>
+        @endif
 
         @if( isset($dashboard))
         <tr>
@@ -116,7 +133,7 @@
         @endif
 
         <tr>
-            <td><strong>Creation time</strong></td>
+            <td><strong>Creation Time</strong></td>
             <td class="time" unix-time="{{ $expVal["experimentCreationTime"] }}"></td>
         </tr>
         <tr>
@@ -128,15 +145,15 @@
             <td><?php echo $experiment->userConfigurationData->airavataAutoSchedule==1?"true":"false"; ?></td>
         </tr>
         <tr>
-            <td><strong>Wall time</strong></td>
+            <td><strong>Wall Time</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->wallTimeLimit }}</td>
         </tr>
         <tr>
-            <td><strong>CPU count</strong></td>
+            <td><strong>CPU Count</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->totalCPUCount }}</td>
         </tr>
         <tr>
-            <td><strong>Node count</strong></td>
+            <td><strong>Node Count</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->nodeCount }}</td>
         </tr>
         <tr>
@@ -149,7 +166,7 @@
         </tr>
         <tr>
             <td><strong>Outputs</strong></td>
-            <td>{{ ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus->state, false) }}</td>
+            <td>{{ ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus[0]->state, false) }}</td>
         </tr>
         <tr>
             <td><strong>Storage Directory</strong></td>
@@ -176,8 +193,8 @@
         </tr>
         {{--@endif--}}
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
-            @if($experiment->experimentStatus->state == \Airavata\Model\Status\ExperimentState::FAILED
-                    || $jobDetail->jobStatus->jobStateName == "FAILED")
+            @if($experiment->experimentStatus[0]->state == \Airavata\Model\Status\ExperimentState::FAILED
+                    || $jobDetail->jobStatuses[0]->jobStateName == "FAILED")
             <tr>
                 <th>Job Submission Response</th>
                 <td>{{$jobDetail->stdOut . $jobDetail->stdErr}}</td>
@@ -186,8 +203,24 @@
         @endforeach
     </table>
 
+    @if(strcmp($expVal["applicationInterface"]->applicationName, "OpenMM_Stampede") === 0)
+    @include('partials/streaming-data')
+    @endif
+
     @if( !isset( $dashboard))
+
     <form action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
+
+        <div class="form-group">
+        @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+            @if($can_write === true)
+            <!-- Only allow editing sharing here if the experiment isn't editable -->
+            @include('partials/sharing-display-body', array("form" => !$expVal["editable"]))
+            @else
+            @include('partials/sharing-display-body', array("form" => false))
+            @endif
+        @endif
+        </div>
         <div class="btn-toolbar">
             <input name="launch"
                    type="submit"
@@ -216,6 +249,8 @@
                 Clone
             </a>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
+            @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+            @if($can_write === true)
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
                class="btn btn-default"
                role="button"
@@ -223,6 +258,19 @@
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit
             </a>
+            @endif
+            @endif
+            <!-- Only owner can update sharing -->
+            @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && Session::get('username') === $experiment->userName && !$expVal["editable"])
+            <button name="update-sharing"
+                   type="submit"
+                   class="btn btn-primary"
+                   value="Update Sharing"
+                   title="Update sharing settings">
+                <span class="glyphicon glyphicon-share"></span>
+                Update Sharing
+            </button>
+            @endif
         </div>
     </form>
     @endif
@@ -260,10 +308,10 @@
                                     <dl class="well dl-horizontal">
                                         <dt>Task Id : </dt> <dd>{{ $task->taskId }}</dd>
                                         <dt>Task Type : </dt> <dd>{{ $expVal["taskTypes"][$task->taskType] }}</dd>
-                                        <dt>Task Status : </dt> <dd>{{ $expVal["taskStates"][$task->taskStatus->state] }}</dd>
-                                    @if( is_object( $task->taskError))
-                                        <dt>Task Error Id : </dt><dd>{{ $task->taskError->errorId }}</dd>
-                                        <dt>Task Error Msg : </dt><dd>{{ $task->taskError->userFriendlyMessage }} <a tabindex="0" class="popover-taskinfo btn btn-sm btn-default" role="button" data-toggle="popover" data-html="true" title="Detailed Task Information" data-content="{{ str_replace( ',', '<br/><br/>', $task->taskError->actualErrorMessage ) }}">More Info</a></dd>
+                                        <dt>Task Status : </dt> <dd>{{ $expVal["taskStates"][$task->taskStatuses[0]->state] }}</dd>
+                                    @if( is_object( $task->taskErrors))
+                                        <dt>Task Error Id : </dt><dd>{{ $task->taskErrors[0]->errorId }}</dd>
+                                        <dt>Task Error Msg : </dt><dd>{{ $task->taskErrors[0]->userFriendlyMessage }} <a tabindex="0" class="popover-taskinfo btn btn-sm btn-default" role="button" data-toggle="popover" data-html="true" title="Detailed Task Information" data-content="{{ str_replace( ',', '<br/><br/>', $task->taskError->actualErrorMessage ) }}">More Info</a></dd>
                                     @endif
                                     @if( count( $task->jobs) > 0 )
                                         <dt>Jobs : </dt><dd>{{ count( $task->jobs)}}</dd>
@@ -282,7 +330,7 @@
                         <li>
                             <span class="alert"><i class="icon-time"></i>
                                 <p>Outputs<hr/>
-                                {{ ExperimentUtilities::list_process_output_files( $process->processOutputs, $process->processStatus->state) }}</p>
+                                {{ ExperimentUtilities::list_process_output_files( $process->processOutputs, $process->processStatuses[0]->state) }}</p>
                             </span>
                         </li>
                     </ul>
@@ -303,14 +351,34 @@
                 </li>
             </ul>
         </li>
-                
+
 
     </ul>
 </div>
 @endif
 
+@if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+    @if($can_write === true)
+    @include('partials/sharing-form-modal')
+    @endif
+@endif
 @section('scripts')
 @parent
 {{ HTML::script('js/time-conversion.js')}}
+@if(Config::get('pga_config.airavata')["data-sharing-enabled"])
+    <script>
+        var users = {{ $users }};
+        var owner = {{ $owner }};
+        $('#project-share').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
+    </script>
+    {{ HTML::script('js/sharing/sharing_utils.js') }}
+    {{ HTML::script('js/sharing/share.js') }}
+@endif
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.bundle.min.js"></script>
+{{ HTML::script('js/simstream.js') }}
+<script>
+    checkAuth("http://localhost:8888/auth", "ws://localhost:8888/experiment/openmm");
+</script>
 
 @stop
