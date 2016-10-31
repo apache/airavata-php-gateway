@@ -139,7 +139,7 @@ class CommonUtilities
             }
         }
 
-        echo '<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+        $navbar = '<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
@@ -167,7 +167,7 @@ class CommonUtilities
                 if ($options[0]['nav-active'] == Session::get("nav-active"))
                     $active = " active ";
             }
-            echo '<li class="dropdown ' . $active . '">
+            $navbar .= '<li class="dropdown ' . $active . '">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">' . $label . '<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">';
 
@@ -175,15 +175,14 @@ class CommonUtilities
                 foreach ($options as $option) {
                     $id = strtolower(str_replace(' ', '-', $option['label']));
 
-                    echo '<li' . $disabled . '><a href="' . $option['url'] . '" id=' . $id . '>' . $option['label'] . '</a></li>';
+                    $navbar .= '<li' . $disabled . '><a href="' . $option['url'] . '" id=' . $id . '>' . $option['label'] . '</a></li>';
                 }
             }
 
-            echo '</ul>
-        </li>';
+            $navbar .= '</ul></li>';
         }
         if( count( $menus) == 0)
-            echo '<li class="brand-logo"></li>';
+            $navbar .= '<li class="brand-logo"></li>';
 
         $active = "";
         if(Session::has('loggedin') && 
@@ -192,9 +191,9 @@ class CommonUtilities
         ){
             if( Session::get("nav-active") == "storage")
                 $active = "active";
-            echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/files/browse"><span class="glyphicon glyphicon-folder-close"></span> Storage</a></li>';
+            $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/files/browse"><span class="glyphicon glyphicon-folder-close"></span> Storage</a></li>';
         }
-        echo '</ul>
+        $navbar .= '</ul>
 
         <ul class="nav navbar-nav navbar-right">';
 
@@ -211,39 +210,47 @@ class CommonUtilities
                 //notification bell
                 $notices = array();
                 $notices = CommonUtilities::get_all_notices();
-                echo CommonUtilities::get_notices_ui( $notices);
+                $navbar .= CommonUtilities::get_notices_ui( $notices);
             }
 
 
             if (Session::has("admin") || Session::has("admin-read-only"))
-                echo '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
-//            else
-//                echo '<li><a href="' . URL::to("/") . '/user/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>';
+                $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
 
-            echo '<li class="dropdown">
+            $navbar .= '<li class="dropdown">
 
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">' . Session::get("username") . ' <span class="caret"></span></a>';
-            echo '<ul class="dropdown-menu" role="menu">';
+            $navbar .= '<ul class="dropdown-menu" role="menu">';
 
             if ( Session::has("existing-gateway-provider")) {
                 $requestedGateways = Session::get("requestedGateways");
                 foreach( $requestedGateways as $gatewayId => $gateway){
                     if( $gateway["approvalStatus"] == "Approved"){
-                        echo '<li><a href="' . URL::to('/') . '/admin/dashboard?gatewayId=' . $gateway["gatewayInfo"]->gatewayId . '">Manage ' . $gateway["gatewayInfo"]->gatewayName . '</a></li>';
+                        $navbar .= '<li><a href="' . URL::to('/') . '/admin/dashboard?gatewayId=' . $gateway["gatewayInfo"]->gatewayId . '">Manage ' . $gateway["gatewayInfo"]->gatewayName . '</a></li>';
                     }
                 }
             }
 
-            echo '<li><a href="' . URL::to('/') . '/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>';
-            echo '</ul></li></ul>';
+            $navbar .= '<li><a href="' . URL::to('/') . '/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>';
+            $navbar .= '</ul></li>';
         } else {
-            echo '<li><a href="' . URL::to('/') . '/create"><span class="glyphicon glyphicon-user"></span> Create account</a></li>';
-            echo '<li><a href="' . URL::to('/') . '/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>';
-            echo '</ul>';
 
+                    $navbar .= '<li><a href="' . URL::to('/') . '/create"><span class="glyphicon glyphicon-user"></span> Create account</a></li>';
+                    $navbar .= '<li><a href="' . URL::to('/') . '/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>';
         }
 
-        echo '</div></div></nav>';
+        $navbar .= '</ul></div></div></nav>';
+
+        // Check if theme user has created links in their theme to the login and create account page.
+        if( !Session::has('loggedin') &&
+                isset( Config::get('pga_config.portal')['theme-based-login-links-configured']))
+        {
+            if( Config::get('pga_config.portal')['theme-based-login-links-configured'] ){
+                $navbar = "";
+            }
+        }
+
+        echo $navbar;
     }
 
     public static function get_notices_ui( $notices){
