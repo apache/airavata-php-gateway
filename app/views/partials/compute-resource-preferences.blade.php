@@ -132,18 +132,13 @@
 </div>
 <?php
 //to add or remove time according to local hours.
-$timeDifference = Session::get("user_timezone");
-$addOrSubtract = "-";
-if( $timeDifference < 0)
-    $addOrSubtract = "+";
-
 $reservationStartTime = "";
 if( isset( $preferences) && $preferences->reservationStartTime != '')
-    $reservationStartTime = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", $preferences->reservationStartTime/1000);
+    $reservationStartTime = CommonUtilities::convertUTCToLocal($preferences->reservationStartTime/1000);
 
 $reservationEndTime = "";
 if( isset( $preferences) && $preferences->reservationEndTime != '')
-    $reservationEndTime = strtotime( $addOrSubtract . " " . Session::get("user_timezone") . " hours", $preferences->reservationEndTime/1000);
+    $reservationEndTime = CommonUtilities::convertUTCToLocal($preferences->reservationEndTime/1000);
 
 ?>
 <div class="form-group col-md-6">

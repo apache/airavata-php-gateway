@@ -202,7 +202,7 @@ class CommonUtilities
         if (Session::has('loggedin')) {
             $active = "";
             if (Session::has("nav-active")) {
-                if ("user-console" == Session::get("nav-active"))
+                if ("user-console" == Session::get("nav-active") || "user-dashboard" == Session::get("nav-active"))
                     $active = " active ";
             }
 
@@ -216,6 +216,8 @@ class CommonUtilities
 
             if (Session::has("admin") || Session::has("admin-read-only"))
                 $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
+            else
+                $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/account/dashboard"><span class="glyphicon glyphicon-user"></span> Dashboard</a></li>';
 
             $navbar .= '<li class="dropdown">
 
@@ -377,6 +379,32 @@ class CommonUtilities
                 return strnatcasecmp($a->$key, $b->$key); // compare string
             }
         };
+    }
+
+    /**
+     * Convert from UTC time to local time. Units are seconds since Unix Epoch.
+     */
+    public static function convertUTCToLocal($utcTime) {
+
+        $timeDifference = Session::get("user_timezone");
+        $addOrSubtract = "-";
+        if( $timeDifference < 0)
+            $addOrSubtract = "+";
+
+        return strtotime( $addOrSubtract . " " . abs($timeDifference) . " hours", $utcTime);
+    }
+
+    /**
+     * Convert from local time to UTC time. Units are seconds since Unix Epoch.
+     */
+    public static function convertLocalToUTC($localTime) {
+
+        $timeDifference = Session::get("user_timezone");
+        $addOrSubtract = "-";
+        if( $timeDifference > 0)
+            $addOrSubtract = "+";
+
+        return strtotime( $addOrSubtract . " " . abs($timeDifference) . " hours", $localTime);
     }
 }
 

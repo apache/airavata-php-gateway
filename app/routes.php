@@ -48,6 +48,21 @@ Route::get("allocation-request", "AccountController@allocationRequestView");
 
 Route::post("allocation-request", "AccountController@allocationRequestSubmit");
 
+Route::get("account/credential-store", "AccountController@getCredentialStore");
+Route::post("account/set-default-credential", "AccountController@setDefaultCredential");
+Route::post("account/add-credential", "AccountController@addCredential");
+Route::post("account/delete-credential", "AccountController@deleteCredential");
+
+Route::get("account/user-compute-resources", "AccountController@getComputeResources");
+Route::post("account/add-user-crp", "AccountController@addUserComputeResourcePreference");
+Route::post("account/update-user-crp", "AccountController@updateUserComputeResourcePreference");
+Route::post("account/delete-user-crp", "AccountController@deleteUserComputeResourcePreference");
+
+Route::get("account/user-storage-resources", "AccountController@getStorageResources");
+Route::post("account/add-user-srp", "AccountController@addUserStorageResourcePreference");
+Route::post("account/update-user-srp", "AccountController@updateUserStorageResourcePreference");
+Route::post("account/delete-user-srp", "AccountController@deleteUserStorageResourcePreference");
+
 /*
  * The following routes will not work without logging in.
  *
