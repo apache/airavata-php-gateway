@@ -130,6 +130,7 @@ class AccountController extends BaseController
             $authzToken->claimsMap['gatewayID'] = Config::get('pga_config.airavata')['gateway-id'];
             $authzToken->claimsMap['userName'] = $username;
 
+            Session::put('oauth-token', $authzToken->accessToken);
             Session::put('authz-token',$authzToken);
             Session::put('oauth-refresh-code',$refreshToken);
             Session::put('oauth-expiration-time',$expirationTime);
