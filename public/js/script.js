@@ -121,13 +121,14 @@ $(document).ready( function(){
     }
     else if( selectedVal == "cloud")
     {
-      alert("Cloud Protool is not being setup right now. Please choose another option.");
-      /*
+      //alert("Cloud Protool is not being setup right now. Please choose another option.");
+      
       $(this).parent().append(  parentResDiv 
                       + $(".ssh-block").html()
                       + $(".cloud-block").html()
+                      + "<div>"
                       );
-      */
+      
     }
     else{
       alert("Something went wrong. Please try again");
@@ -135,7 +136,7 @@ $(document).ready( function(){
     }
 
     //temporary till all protocols are not setup
-    if( selectedVal == "local" || selectedVal == "ssh_fork" || selectedVal == "ssh" || selectedVal == "unicore" )
+    if( selectedVal == "local" || selectedVal == "ssh_fork" || selectedVal == "ssh" || selectedVal == "unicore" || selectedVal == "cloud")
       $(".jspSubmit").removeClass("hide");
     else
       $(".jspSubmit").addClass("hide");

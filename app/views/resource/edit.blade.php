@@ -285,6 +285,37 @@
                                     <label class="form-label">Unicore End Point URL</label>
                                     <input class='form-control' name='unicoreEndPointURL' value="{{ $JSI->unicoreEndPointURL }}"/>
                                 </div>
+                                @elseif( $selectedJspIndex == $jobSubmissionProtocolsObject::CLOUD)
+                                <div class="form-group required">
+                                    <label class="control-label">Select Security Protocol</label>
+                                    <select name="securityProtocol" required="required">
+                                        @foreach( $securityProtocols as $index => $sp)
+                                        <option value="{{ $index }}"
+                                        @if( $JSI->securityProtocol == $index ) selected @endif>{{ $sp }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Node Id</label>
+                                    <input class="form-control" name="nodeId" placeholder="node Id" value="{{$JSI->nodeId}}"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Executable Type</label>
+                                    <input class="form-control" name="executableType" placeholder="executableType" value="{{$JSI->executableType}}" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Select Provider Name</label>
+                                    <select class="form-control" name="providerName">
+                                        <option>Provider Name</option>
+                                        @foreach( $providerNames as $index => $pn)
+                                            <option value="{{$index}}" @if( $JSI->providerName == $index) selected @endif>{{ $pn}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">User Account Name</label>
+                                    <input class="form-control" name="userAccountName" placeholder="user Account Name" value="{{$JSI->userAccountName}}"/>
+                                </div>
                                 @endif
 
                                 <div class="form-group">
@@ -542,23 +573,24 @@
             <div class="cloud-block hide">
                 <div class="form-group">
                     <label class="control-label">Node Id</label>
-                    <input class="form-control" name="nodeId" placeholder="nodId"/>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">Node Id</label>
-                    <input class="form-control" name="nodeId" placeholder="nodId"/>
+                    <input class="form-control" name="nodeId" placeholder="node Id"/>
                 </div>
                 <div class="form-group">
                     <label class="control-label">Executable Type</label>
-                    <input class="form-control" name="nodeId" placeholder="executableType"/>
+                    <input class="form-control" name="executableType" placeholder="executableType"/>
                 </div>
                 <div class="form-group">
                     <label class="control-label">Select Provider Name</label>
-                    <select class="form-control">
-                        <option name="EC2">EC2</option>
-                        <option name="AWSEC2">AWEC2</option>
-                        <option name="RACKSPACE">RACKSPACE</option>
+                    <select class="form-control" name="providerName">
+                        <option>ProviderName</option>
+                        @foreach( $providerNames as $index => $pn)
+                            <option value="{{$index}}">{{ $pn}}</option>
+                        @endforeach
                     </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">User Account Name</label>
+                    <input class="form-control" name="userAccountName" placeholder="user Account Name"/>
                 </div>
             </div>
 

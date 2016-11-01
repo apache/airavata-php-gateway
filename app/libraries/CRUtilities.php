@@ -21,6 +21,8 @@ use Airavata\Model\Data\Movement\SecurityProtocol;
 use Airavata\Model\AppCatalog\ComputeResource\SSHJobSubmission;
 use Airavata\Model\Data\Movement\UnicoreDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\UnicoreJobSubmission;
+use Airavata\Model\AppCatalog\ComputeResource\CloudJobSubmission;
+use Airavata\Model\AppCatalog\ComputeResource\ProviderName;
 use Airavata\Model\AppCatalog\GatewayProfile\ComputeResourcePreference;
 use Airavata\Model\AppCatalog\GatewayProfile\GatewayResourceProfile;
 use Airavata\Model\AppCatalog\Parallelism\ApplicationParallelismType;
@@ -84,6 +86,7 @@ class CRUtilities
         $jmc = new JobManagerCommand();
         $mm = new MonitorMode();
         $pt = new ApplicationParallelismType();
+        $pn = new ProviderName();
         return array(
             "fileSystemsObject" => $files,
             "fileSystems" => $files::$__names,
@@ -97,7 +100,8 @@ class CRUtilities
             "dataMovementProtocols" => $dmp::$__names,
             "jobManagerCommands" => $jmc::$__names,
             "monitorModes" => $mm::$__names,
-            "parallelismTypes" => $pt::$__names
+            "parallelismTypes" => $pt::$__names,
+            "providerNames" => $pn::$__names
         );
     }
 
@@ -265,7 +269,31 @@ class CRUtilities
                 $unicoreSub = Airavata::addUNICOREJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $unicoreJobSubmission);
             }
             return;
-        } else /* Globus does not work currently */ {
+        } else if ($inputs["jobSubmissionProtocol"] == JobSubmissionProtocol::CLOUD) {
+            $cloudJobSubmission = new CloudJobSubmission(array
+                (
+                    "securityProtocol" => intval($inputs["securityProtocol"]),
+                    "nodeId" => $inputs["nodeId"],
+                    "executableType" => $inputs["executableType"],
+                    "providerName" => intval( $inputs["providerName"]),
+                    "userAccountName" => $inputs["userAccountName"]
+                )
+            );
+            if ($update) {
+                $jsiObject = Airavata::getCloudJobSubmission(Session::get('authz-token'), $jsiId);
+                $jsiObject->securityProtocol = intval($inputs["securityProtocol"]);
+                $jsiObject->nodeId = $inputs["nodeId"];
+                $jsiObject->executableType = $inputs["executableType"];
+                $jsiObject->providerName = intval( $inputs["providerName"]);
+                $jsiObject->userAccountName = $inputs["userAccountName"];
+
+                $cloudSub = Airavata::updateCloudJobSubmissionDetails(Session::get('authz-token'), $jsiId, $jsiObject);
+            } else {
+                $cloudSub = Airavata::addCloudJobSubmissionDetails(Session::get('authz-token'), $computeResource->computeResourceId, 0, $cloudJobSubmission);
+            }
+            return;
+        }
+        else /* Globus does not work currently */ {
             print_r("Whoops! We haven't coded for this Job Submission Protocol yet. Still working on it. Please click <a href='" . URL::to('/') . "/cr/edit'>here</a> to go back to edit page for compute resource.");
         }
     }
@@ -659,7 +687,6 @@ class CRUtilities
         }
         return $dspArray;
     }
-
 }
 
 ?>
