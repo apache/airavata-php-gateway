@@ -254,9 +254,9 @@
                     var newRoleBlock = $(".role-block").html();
                     roleBlocks += newRoleBlock;
                     $(".roles-list").html(roleBlocks);
-                    $(".add-roles-block").removeClass("hide");
                 }
             }
+            $(".add-roles-block").removeClass("hide");
             $(".roles-load").addClass("hide");
             $(".roles-list").removeClass("hide");
         });
