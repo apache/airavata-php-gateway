@@ -19,6 +19,7 @@ class AdminUtilities
         $gateway->domain = $input["domain"];
         $gateway->gatewayName = $input["gatewayName"];
         $gateway->emailAddress = $input["admin-email"];
+        $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
         return Airavata::addGateway(Session::get('authz-token'), $gateway);
     }
 
