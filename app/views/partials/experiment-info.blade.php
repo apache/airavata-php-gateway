@@ -217,7 +217,7 @@
 
         <div class="form-group">
         @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
-            @if($can_write === true)
+            @if($is_owner)
             <!-- Only allow editing sharing here if the experiment isn't editable -->
             @include('partials/sharing-display-body', array("form" => !$expVal["editable"]))
             @else
@@ -235,8 +235,8 @@
                class="btn btn-default" onclick="return confirm('Are you sure you want to cancel this experiment?')"
                role="button"
                title="Cancel experiment" @if (!$expVal["cancelable"]) style="display: none" @endif>
-                <input name="cancel" type="submit" class="btn btn-warning"
-                       value="Cancel" <?php if (!$expVal["cancelable"]) echo 'disabled'; ?> >
+                <span class="glyphicon glyphicon-remove"></span>
+                Cancel
             </a>
 <!--            <input name="clone"-->
 <!--                   type="submit"-->
@@ -253,8 +253,6 @@
                 Clone
             </a>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
-            @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
-            @if($can_write === true)
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
                class="btn btn-default"
                role="button"
@@ -262,10 +260,7 @@
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit
             </a>
-            @endif
-            @endif
-            <!-- Only owner can update sharing -->
-            @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && Session::get('username') === $experiment->userName && !$expVal["editable"])
+            @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && $is_owner && !$expVal["editable"])
             <button name="update-sharing"
                    type="submit"
                    class="btn btn-primary"
@@ -361,8 +356,8 @@
 </div>
 @endif
 
-@if(Config::get('pga_config.airavata')["data-sharing-enabled"] and isset($can_write))
-    @if($can_write === true)
+@if(Config::get('pga_config.airavata')["data-sharing-enabled"] and isset($is_owner))
+    @if($is_owner)
     @include('partials/sharing-form-modal')
     @endif
 @endif

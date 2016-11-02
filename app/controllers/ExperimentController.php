@@ -155,13 +155,17 @@ class ExperimentController extends BaseController
                 $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
 
                 $owner = array();
+                $is_owner = false;
                 if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
                     $owner[$experiment->userName] = $users[$experiment->userName];
                     $users = array_diff_key($users, $owner);
+                } else {
+                    $is_owner = true;
                 }
                 $data['can_write'] = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
                 $data["users"] = json_encode($users);
                 $data["owner"] = json_encode($owner);
+                $data["is_owner"] = $is_owner;
             }
 
             if( Input::has("dashboard"))

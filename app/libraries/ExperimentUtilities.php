@@ -948,6 +948,12 @@ class ExperimentUtilities
         $expVal["taskStates"] = TaskState::$__names;
         $expVal["taskTypes"] = TaskTypes::$__names;
 
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]) {
+            $can_write = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
+        } else {
+            $can_write = true;
+        }
+
 
         if( is_array( $experiment->experimentStatus ) )
             $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus[0]->state];
@@ -956,15 +962,6 @@ class ExperimentUtilities
         }
 
         $expVal["experimentStatusString"] = $experimentStatusString;
-        if ( $experimentStatusString == ExperimentState::FAILED)
-            $expVal["editable"] = false;
-
-        $expVal["cancelable"] = false;
-        if ( $experimentStatusString == ExperimentState::LAUNCHED
-            || $experimentStatusString == ExperimentState::EXECUTING)
-            $expVal["cancelable"] = true;
-
-
         if ($experiment->experimentStatus != null) {
             $experimentStatus = $experiment->experimentStatus;
 
@@ -999,7 +996,7 @@ class ExperimentUtilities
             case 'CREATED':
             case 'VALIDATED':
             case 'SCHEDULED':
-                $expVal["editable"] = true;
+                $expVal["editable"] = true && $can_write;
                 break;
             default:
                 $expVal["editable"] = false;
@@ -1012,7 +1009,7 @@ class ExperimentUtilities
             case 'SCHEDULED':
             case 'LAUNCHED':
             case 'EXECUTING':
-                $expVal["cancelable"] = true;
+                $expVal["cancelable"] = true && $can_write;
                 break;
             default:
                 $expVal["cancelable"] = false;
