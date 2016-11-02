@@ -46,7 +46,11 @@
         </tr>
         <tr>
             <td><strong>Project</strong></td>
-            <td><?php echo $project->name; ?></td>
+            @if (isset($project))
+            <td>{{{ $project->name }}}</td>
+            @else
+            <td><em>You don't have access to this project.</em></td>
+            @endif
         </tr>
         <tr>
             <td><strong>Owner</strong></td>

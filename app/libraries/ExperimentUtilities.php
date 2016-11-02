@@ -1355,10 +1355,6 @@ class ExperimentUtilities
         $radd = array();
         $rrevoke = array();
 
-        $projperms = GrouperUtilities::getAllAccessibleUsers($experiment->projectId, ResourceType::PROJECT, ResourcePermissionType::READ);
-        $prrevoke = array();
-        $pwrevoke = array();
-
         foreach ($users as $user => $perms) {
             if ($perms->write) {
                 $wadd[$user] = ResourcePermissionType::WRITE;
@@ -1373,11 +1369,6 @@ class ExperimentUtilities
             else {
                 $rrevoke[$user] = ResourcePermissionType::READ;
             }
-
-            if (array_search($user, $projperms) === false) {
-                $prrevoke[$user] = ResourcePermissionType::READ;
-                $pwrevoke[$user] = ResourcePermissionType::WRITE;
-            }
         }
 
         GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $wadd);
@@ -1385,15 +1376,5 @@ class ExperimentUtilities
 
         GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $radd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
-
-        GrouperUtilities::shareResourceWithUsers($experiment->projectId, ResourceType::PROJECT, $radd);
-
-        $experiments = ProjectUtilities::get_experiments_in_project($experiment->projectId);
-        foreach ($experiments as $exp) {
-            if ($exp->experimentId !== $expId) {
-                GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $prrevoke);
-                GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $pwrevoke);
-            }
-        }
     }
 }

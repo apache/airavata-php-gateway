@@ -123,7 +123,10 @@ class ExperimentController extends BaseController
                 Session::forget("permissionDenied");
 
 
-            $project = ProjectUtilities::get_project($experiment->projectId);
+            $project = null;
+            if (SharingUtilities::userCanRead(Session::get("username"), $experiment->projectId, ResourceType::PROJECT)) {
+                $project = ProjectUtilities::get_project($experiment->projectId);
+            }
             $expVal = ExperimentUtilities::get_experiment_values($experiment);
             $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
 //            var_dump( $jobDetails); exit;
