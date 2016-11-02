@@ -3,6 +3,7 @@
 use Airavata\Model\Workspace\Gateway;
 use Airavata\Model\Workspace\Notification;
 use Airavata\Model\Workspace\NotificationPriority;
+use Airavata\Model\Workspace\GatewayApprovalStatus;
 
 class AdminUtilities
 {
