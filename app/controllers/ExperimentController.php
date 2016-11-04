@@ -289,10 +289,14 @@ class ExperimentController extends BaseController
 
     public function cloneExperiment()
     {
-        // TODO: catch and handle errors when cloning fails
-        $cloneId = ExperimentUtilities::clone_experiment(Input::get('expId'), Input::get('projectId'));
-
-        return Redirect::to('experiment/edit?expId=' . $cloneId . "&clonedExp=true");
+        try{
+            $cloneId = ExperimentUtilities::clone_experiment(Input::get('expId'), Input::get('projectId'));
+            return Redirect::to('experiment/edit?expId=' . $cloneId . "&clonedExp=true");
+        }catch (Exception $ex){
+            // Redirect to summary page and scroll down to clone panel
+            return Redirect::to("experiment/summary?expId=" . Input::get('expId') . "#clone-panel")
+                ->with("cloning-error", "Failed to clone experiment: " . $ex->getMessage());
+        }
     }
 
     public function editSubmit()

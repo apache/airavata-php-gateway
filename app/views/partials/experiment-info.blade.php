@@ -263,11 +263,19 @@
             @endif
         </div>
     </form>
-    <div class="panel panel-default">
+    <div id="clone-panel" class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Clone Experiment</h3>
         </div>
         <div class="panel-body">
+            @if( Session::has("cloning-error"))
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                {{{ Session::get("cloning-error") }}}
+            </div>
+            {{ Session::forget("cloning-error") }}
+            @endif
             <form class="form-inline" action="{{ URL::to('/') }}/experiment/clone" method="post">
                 <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
                 <div class="form-group">
