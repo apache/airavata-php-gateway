@@ -124,7 +124,11 @@ class ExperimentController extends BaseController
 
 
             $project = null;
-            if (SharingUtilities::userCanRead(Session::get("username"), $experiment->projectId, ResourceType::PROJECT)) {
+            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+                if (SharingUtilities::userCanRead(Session::get("username"), $experiment->projectId, ResourceType::PROJECT)) {
+                    $project = ProjectUtilities::get_project($experiment->projectId);
+                }
+            } else {
                 $project = ProjectUtilities::get_project($experiment->projectId);
             }
             $expVal = ExperimentUtilities::get_experiment_values($experiment);
