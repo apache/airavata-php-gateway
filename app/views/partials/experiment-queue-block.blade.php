@@ -1,3 +1,12 @@
+@if ($userHasComputeResourcePreference)
+<div class="form-group">
+    <label class="control-label" for="use-user-cr-pref">
+        Use My Compute Resource Account
+            <input name="use-user-cr-pref" id="use-user-cr-pref" type="checkbox"
+            @if($useUserCRPref) checked @endif>
+    </label>
+</div>
+@endif
 <input type="hidden" id="queue-array" value="{{ htmlentities( json_encode( $queues ) ) }}"/>
 <div class="form-group required">
     @if( count( $queues) > 0 )
@@ -6,7 +15,15 @@
     "disabled" }} @endif @endif required>
     @foreach( $queues as $queue)
     <option value="{{$queue->queueName}}"
-    @if(isset($expVal) ) @if( $expVal['scheduling']->queueName == $queue->queueName ) selected @endif @endif
+    @if(isset($expVal) )
+        @if( $expVal['scheduling']->queueName == $queue->queueName )
+        selected
+        @endif
+    @else
+        @if( $queueDefaults['queueName'] == $queue->queueName )
+        selected
+        @endif
+    @endif
     >
     {{$queue->queueName}}
     </option>

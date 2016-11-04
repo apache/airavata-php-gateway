@@ -245,6 +245,9 @@ class ExperimentController extends BaseController
 
         $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
 
+        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
+        $userHasComputeResourcePreference = array_key_exists($expVal['scheduling']->resourceHostId, $userComputeResourcePreferences);
+
         $clonedExp = false; $savedExp = false;
         if( Input::has("clonedExp"))
             $clonedExp = true;
@@ -260,6 +263,8 @@ class ExperimentController extends BaseController
             "application" => $experiment->executionId,
             "autoSchedule" => $experiment->userConfigurationData->airavataAutoSchedule,
             "userDN" => $experiment->userConfigurationData->userDN,
+            "userHasComputeResourcePreference" => $userHasComputeResourcePreference,
+            "useUserCRPref" => $experiment->userConfigurationData->useUserCRPref,
             "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
             'experiment' => $experiment,
             "queueDefaults" => $queueDefaults,
@@ -345,13 +350,23 @@ class ExperimentController extends BaseController
 
     public function getQueueView()
     {
-        $queues = ExperimentUtilities::getQueueDatafromResourceId(Input::get("crId"));
+        $computeResourceId = Input::get("crId");
+        $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
         $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
             "nodeCount" => Config::get('pga_config.airavata')["node-count"],
             "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
             "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
         );
-        return View::make("partials/experiment-queue-block", array("queues" => $queues, "queueDefaults" => $queueDefaults));
+
+        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
+        $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
+        if ($userHasComputeResourcePreference)
+        {
+            $queueDefaults["queueName"] = $userComputeResourcePreferences[$computeResourceId]->preferredBatchQueue;
+        }
+        return View::make("partials/experiment-queue-block", array("queues" => $queues, "queueDefaults" => $queueDefaults,
+            "useUserCRPref" => $userHasComputeResourcePreference,
+            "userHasComputeResourcePreference" => $userHasComputeResourcePreference));
     }
 
     public function browseView()

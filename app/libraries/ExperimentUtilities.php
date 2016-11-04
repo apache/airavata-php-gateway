@@ -283,6 +283,7 @@ class ExperimentUtilities
             $userConfigData->generateCert = 1;
             $userConfigData->userDN = $_POST["userDN"];
         }
+        $userConfigData->useUserCRPref = isset($_POST['use-user-cr-pref']) ? true : false;
 
         $applicationInputs = AppUtilities::get_application_inputs($_POST['application']);
         $experimentInputs = ExperimentUtilities::process_inputs($_POST['project'], $_POST['experiment-name'], $applicationInputs, $experimentInputs);
@@ -1253,6 +1254,7 @@ class ExperimentUtilities
             $userConfigDataUpdated->generateCert = 1;
             $userConfigDataUpdated->userDN = $input["userDN"];
         }
+        $userConfigDataUpdated->useUserCRPref = isset($_POST['use-user-cr-pref']) ? true : false;
 
         $experiment->userConfigurationData = $userConfigDataUpdated;
 

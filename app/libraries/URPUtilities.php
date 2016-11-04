@@ -100,6 +100,26 @@ class URPUtilities
         return $result;
     }
 
+    /*
+     * Get all user's compute resource preferences, keyed by compute resource id.
+     */
+    public static function get_all_user_compute_resource_prefs()
+    {
+
+        $userComputeResourcePreferencesById = array();
+        $userResourceProfile = URPUtilities::get_user_resource_profile();
+        if (!$userResourceProfile->isNull)
+        {
+            $userComputeResourcePreferences = $userResourceProfile->userComputeResourcePreferences;
+            // Put $userComputeResourcePreferences in a map keyed by computeResourceId
+            foreach( $userComputeResourcePreferences as $userComputeResourcePreference )
+            {
+                $userComputeResourcePreferencesById[$userComputeResourcePreference->computeResourceId] = $userComputeResourcePreference;
+            }
+        }
+        return $userComputeResourcePreferencesById;
+    }
+
     public static function add_or_update_user_SRP($inputs, $update = false)
     {
         $inputs = Input::all();

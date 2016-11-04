@@ -98,7 +98,9 @@
             <div class="queue-view">
                 @if(isset($expInputs['expVal']) )
                 @include( 'partials/experiment-queue-block', array('queues'=>
-                $expInputs['expVal']['computeResource']->batchQueues, 'expVal' => $expInputs['expVal']) )
+                $expInputs['expVal']['computeResource']->batchQueues, 'expVal' => $expInputs['expVal'],
+                'useUserCRPref' => $expInputs['useUserCRPref'],
+                'userHasComputeResourcePreference' => $expInputs['userHasComputeResourcePreference'] ))
                 @endif
             </div>
         </div>
