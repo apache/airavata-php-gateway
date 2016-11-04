@@ -581,12 +581,12 @@ class ExperimentUtilities
      * Clone the experiment with the given ID
      * @param $expId
      */
-    public static function clone_experiment($expId)
+    public static function clone_experiment($expId, $projectId)
     {
         try {
             //create new experiment to receive the clone
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $expId);
-            $cloneId = Airavata::cloneExperiment(Session::get('authz-token'), $expId, 'Clone of ' . $experiment->experimentName);
+            $cloneId = Airavata::cloneExperiment(Session::get('authz-token'), $expId, 'Clone of ' . $experiment->experimentName, $projectId);
             //updating the experiment inputs and output path
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $cloneId);
             $experimentInputs = $experiment->experimentInputs;

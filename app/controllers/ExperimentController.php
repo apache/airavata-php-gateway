@@ -141,7 +141,7 @@ class ExperimentController extends BaseController
             }
             $expVal["jobDetails"] = $jobDetails;
 
-
+            $writeableProjects = ProjectUtilities::get_all_user_writeable_projects(Session::get("gateway_id"), Session::get("username"));
 
             $data = array(
                 "expId" => Input::get("expId"),
@@ -149,7 +149,8 @@ class ExperimentController extends BaseController
                 "project" => $project,
                 "jobDetails" => $jobDetails,
                 "expVal" => $expVal,
-                "autoRefresh"=> $autoRefresh
+                "autoRefresh"=> $autoRefresh,
+                "writeableProjects" => $writeableProjects
             );
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
                 $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
@@ -288,16 +289,10 @@ class ExperimentController extends BaseController
 
     public function cloneExperiment()
     {
-        if (isset($_GET['expId'])) {
-            $cloneId = ExperimentUtilities::clone_experiment($_GET['expId']);
-            $experiment = ExperimentUtilities::get_experiment($cloneId);
-            $project = ProjectUtilities::get_project($experiment->projectId);
+        // TODO: catch and handle errors when cloning fails
+        $cloneId = ExperimentUtilities::clone_experiment(Input::get('expId'), Input::get('projectId'));
 
-            $expVal = ExperimentUtilities::get_experiment_values($experiment);
-            $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
-
-            return Redirect::to('experiment/edit?expId=' . $cloneId . "&clonedExp=true");
-        }
+        return Redirect::to('experiment/edit?expId=' . $cloneId . "&clonedExp=true");
     }
 
     public function editSubmit()

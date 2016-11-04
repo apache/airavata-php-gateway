@@ -1,4 +1,9 @@
 {{ HTML::style('css/sharing.css') }}
+<style>
+#experiment-form {
+    margin-bottom: 20px;
+}
+</style>
 <div class="container" style="max-width: 750px;">
     <!--
     @if(isset( $invalidExperimentId ) )
@@ -213,7 +218,7 @@
 
     @if( !isset( $dashboard))
 
-    <form action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
+    <form id="experiment-form" action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
 
         <div class="form-group">
         @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
@@ -238,20 +243,6 @@
                 <span class="glyphicon glyphicon-remove"></span>
                 Cancel
             </a>
-<!--            <input name="clone"-->
-<!--                   type="submit"-->
-<!--                   class="btn btn-primary"-->
-<!--                   value="Clone"-->
-<!--                   title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings-->
-<!--                    after it has been launched.">-->
-            <a href="{{URL::to('/') }}/experiment/clone?expId={{ $experiment->experimentId }}"
-               class="btn btn-primary"
-               role="button"
-               title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings
-                    after it has been launched." target="_blank">
-                <span class="glyphicon glyphicon-pencil"></span>
-                Clone
-            </a>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
                class="btn btn-default"
@@ -272,6 +263,36 @@
             @endif
         </div>
     </form>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Clone Experiment</h3>
+        </div>
+        <div class="panel-body">
+            <form class="form-inline" action="{{ URL::to('/') }}/experiment/clone" method="post">
+                <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
+                <div class="form-group">
+                    <label for="projectId">Project</label>
+                    <select class="form-control" name="projectId" required>
+                        @foreach($writeableProjects as $project)
+                        <option value="{{{ $project->projectID }}}"
+                            @if( $project->projectID == $experiment->projectId)
+                            selected
+                            @endif
+                        >{{{ $project->name }}}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <button type="submit"
+                   class="btn btn-primary"
+                   role="button"
+                   title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    Clone
+                </a>
+            </form>
+        </div>
+    </div>
     @endif
     <input type="hidden" id="lastModifiedTime" value="{{ $expVal['experimentTimeOfStateChange'] }}"/>
 

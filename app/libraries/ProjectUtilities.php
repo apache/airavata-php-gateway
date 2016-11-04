@@ -46,6 +46,19 @@ class ProjectUtilities
         return $userProjects;
     }
 
+    public static function get_all_user_writeable_projects($gatewayId, $username)
+    {
+        $writeableProjects = array();
+        $userProjects = ProjectUtilities::get_all_user_projects($gatewayId, $username);
+        foreach($userProjects as $project) {
+            if (SharingUtilities::userCanWrite($username, $project->projectID, ResourceType::PROJECT)) {
+                $writeableProjects[] = $project;
+            }
+        }
+
+        return $writeableProjects;
+    }
+
     /**
      * Get the project with the given ID
      * @param $projectId
@@ -78,6 +91,7 @@ class ProjectUtilities
     public static function create_project_select($projectId = null, $editable = true)
     {
         $editable ? $disabled = '' : $disabled = 'disabled';
+        // TODO: this should only return projects the user can write
         $userProjects = ProjectUtilities::get_all_user_projects(Session::get("gateway_id"), Session::get('username'));
 
         echo '<select class="form-control" name="project" id="project" required ' . $disabled . '>';
@@ -338,6 +352,7 @@ class ProjectUtilities
         GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $radd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::PROJECT, $rrevoke);
 
+        // TODO: get rid of the experiment revocation stuff
         $experiments = ProjectUtilities::get_experiments_in_project($projectId);
 
         foreach ($experiments as $exp) {
