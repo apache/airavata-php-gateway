@@ -73,6 +73,14 @@
                     echo $expVal["computeResource"]->hostName;
                 } ?></td>
         </tr>
+        @if( $experiment->userConfigurationData->useUserCRPref )
+        <tr>
+            <td><strong>Uses My Compute Resource Account</strong></td>
+            <td>
+                Yes
+            </td>
+        </tr>
+        @endif
         <tr>
             <td><strong>Experiment Status</strong></td>
             <td class="exp-status"><?php echo $expVal["experimentStatusString"]; ?></td>
