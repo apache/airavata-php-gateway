@@ -91,8 +91,12 @@ class ProjectUtilities
     public static function create_project_select($projectId = null, $editable = true)
     {
         $editable ? $disabled = '' : $disabled = 'disabled';
-        // TODO: this should only return projects the user can write
-        $userProjects = ProjectUtilities::get_all_user_projects(Session::get("gateway_id"), Session::get('username'));
+        if ($editable) {
+            // this should only return projects the user can write
+            $userProjects = ProjectUtilities::get_all_user_writeable_projects(Session::get("gateway_id"), Session::get('username'));
+        } else {
+            $userProjects = ProjectUtilities::get_all_user_projects(Session::get("gateway_id"), Session::get('username'));
+        }
 
         echo '<select class="form-control" name="project" id="project" required ' . $disabled . '>';
         if (sizeof($userProjects) > 0) {
@@ -320,10 +324,8 @@ class ProjectUtilities
 
         $wadd = array();
         $wrevoke = array();
-        $ewrevoke = array();
         $radd = array();
         $rrevoke = array();
-        $errevoke = array();
 
         foreach ($users as $user => $perms) {
             if ($perms->write) {
@@ -339,11 +341,6 @@ class ProjectUtilities
             else {
                 $rrevoke[$user] = ResourcePermissionType::READ;
             }
-
-            if (!$perms->read && !$perms->write) {
-                $ewrevoke[$user] = ResourcePermissionType::WRITE;
-                $errevoke[$user] = ResourcePermissionType::READ;
-            }
         }
 
         GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $wadd);
@@ -351,13 +348,5 @@ class ProjectUtilities
 
         GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $radd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::PROJECT, $rrevoke);
-
-        // TODO: get rid of the experiment revocation stuff
-        $experiments = ProjectUtilities::get_experiments_in_project($projectId);
-
-        foreach ($experiments as $exp) {
-            GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $ewrevoke);
-            GrouperUtilities::revokeSharingOfResourceFromUsers($exp->experimentId, ResourceType::EXPERIMENT, $errevoke);
-        }
     }
 }
