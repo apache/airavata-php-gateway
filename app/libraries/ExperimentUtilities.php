@@ -636,6 +636,14 @@ class ExperimentUtilities
                 }
             }
             $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
+            $computeResourceId = $experiment->userConfigurationData->computationalResourceScheduling->resourceHostId;
+            if ($experiment->userConfigurationData->useUserCRPref){
+                // Check if this user has a user CR preference for the compute
+                // resource, if not we want to switch this flag to false
+                $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
+                $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
+                $experiment->userConfigurationData->useUserCRPref = $userHasComputeResourcePreference;
+            }
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
             $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
