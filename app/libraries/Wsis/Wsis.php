@@ -75,7 +75,7 @@ class Wsis {
                 'verify_peer' => $verify_peer,
                 "allow_self_signed"=> $allow_selfsigned_cert,
                 'cafile' => $cafile_path,
-                'CN_match' => $server,
+//                'CN_match' => $server,
             )
         ));
 
