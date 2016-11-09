@@ -229,28 +229,24 @@
     <form id="experiment-form" action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
 
         <div class="form-group">
-        @if(Config::get('pga_config.airavata')["data-sharing-enabled"])
-            @if($is_owner)
-            <!-- Only allow editing sharing here if the experiment isn't editable -->
-            @include('partials/sharing-display-body', array("form" => !$expVal["editable"]))
-            @else
-            @include('partials/sharing-display-body', array("form" => false))
-            @endif
+        @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($canEditSharing))
+            @include('partials/sharing-display-body', array("form" => $canEditSharing))
         @endif
         </div>
         <div class="btn-toolbar">
-            <input name="launch"
+            <button name="launch"
+                    type="submit"
+                    class="btn btn-success"
+                    title="Launch the experiment" @if ( !$expVal["editable"]) style="display: none" @endif>
+                    Launch
+            </button>
+            <button name="cancel"
                    type="submit"
-                   class="btn btn-success"
-                   value="Launch"
-                   title="Launch the experiment" @if ( !$expVal["editable"]) style="display: none" @endif>
-            <a id="cancel_exp_link" href="{{URL::to('/') }}/experiment/cancel?expId={{ $experiment->experimentId }}"
-               class="btn btn-default" onclick="return confirm('Are you sure you want to cancel this experiment?')"
-               role="button"
-               title="Cancel experiment" @if (!$expVal["cancelable"]) style="display: none" @endif>
+                   class="btn btn-default" onclick="return confirm('Are you sure you want to cancel this experiment?')"
+                   title="Cancel experiment" @if (!$expVal["cancelable"]) style="display: none" @endif>
                 <span class="glyphicon glyphicon-remove"></span>
                 Cancel
-            </a>
+            </button>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
                class="btn btn-default"
@@ -259,11 +255,10 @@
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit
             </a>
-            @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && $is_owner && !$expVal["editable"])
+            @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($canEditSharing) && $canEditSharing)
             <button name="update-sharing"
                    type="submit"
                    class="btn btn-primary"
-                   value="Update Sharing"
                    title="Update sharing settings">
                 <span class="glyphicon glyphicon-share"></span>
                 Update Sharing
@@ -393,10 +388,8 @@
 </div>
 @endif
 
-@if(Config::get('pga_config.airavata')["data-sharing-enabled"] and isset($is_owner))
-    @if($is_owner)
+@if(Config::get('pga_config.airavata')["data-sharing-enabled"] and isset($canEditSharing) && $canEditSharing)
     @include('partials/sharing-form-modal')
-    @endif
 @endif
 @section('scripts')
 @parent

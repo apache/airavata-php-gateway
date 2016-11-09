@@ -26,7 +26,7 @@
 </div>
 
 <div class="form-group">
-    @include('partials/sharing-display-body', array("form" => true))
+    @include('partials/sharing-display-body', array("form" => $canEditSharing))
 </div>
 
 <div class="panel panel-default">

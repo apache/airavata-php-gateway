@@ -77,7 +77,9 @@ class ExperimentController extends BaseController
                 $users = SharingUtilities::getProfilesForSharedUsers($_POST['project'], ResourceType::PROJECT);
                 $owner = array();
 
-                return View::make("experiment/create-complete", array("expInputs" => $experimentInputs, "users" => json_encode($users), "owner" => json_encode($owner)));
+                return View::make("experiment/create-complete", array("expInputs" => $experimentInputs,
+                    "users" => json_encode($users), "owner" => json_encode($owner),
+                    "canEditSharing" => true));
             }else{
                 return View::make("experiment/no-sharing-create-complete", array("expInputs" => $experimentInputs));
             }
@@ -160,17 +162,18 @@ class ExperimentController extends BaseController
                 $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
 
                 $owner = array();
-                $is_owner = false;
                 if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
                     $owner[$experiment->userName] = $users[$experiment->userName];
                     $users = array_diff_key($users, $owner);
-                } else {
-                    $is_owner = true;
                 }
+                // Only allow editing sharing on the summary page if the owner
+                // and the experiment isn't editable. If the experiment is
+                // editable, the sharing can be edited on the edit page.
+                $canEditSharing = $this->isExperimentOwner($experiment, Session::get("username")) && !$expVal["editable"];
                 $data['can_write'] = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
                 $data["users"] = json_encode($users);
                 $data["owner"] = json_encode($owner);
-                $data["is_owner"] = $is_owner;
+                $data["canEditSharing"] = $canEditSharing;
             }
 
             if( Input::has("dashboard"))
@@ -195,13 +198,6 @@ class ExperimentController extends BaseController
             else
                 return View::make("experiment/summary", array("invalidExperimentId" => 1, "users" => json_encode(array())));
         }
-    }
-
-    public function expCancel()
-    {
-        ExperimentUtilities::cancel_experiment(Input::get("expId"));
-
-        return Redirect::to('experiment/summary?expId=' . Input::get("expId"));
     }
 
     public function expChange()
@@ -285,8 +281,11 @@ class ExperimentController extends BaseController
                     $owner[$experiment->userName] = $users[$experiment->userName];
                     $users = array_diff_key($users, $owner);
                 }
+                $canEditSharing = $this->isExperimentOwner($experiment, Session::get('username'));
 
-                return View::make("experiment/edit", array("expInputs" => $experimentInputs, "users" => json_encode($users), "owner" => json_encode($owner)));
+                return View::make("experiment/edit", array("expInputs" => $experimentInputs,
+                    "users" => json_encode($users), "owner" => json_encode($owner),
+                    "canEditSharing" => $canEditSharing));
             }
             else {
                 Redirect::to("experiment/summary?expId=" . $experiment->experimentId)->with("error", "You do not have permission to edit this experiment");
@@ -438,6 +437,11 @@ class ExperimentController extends BaseController
         else {
             return Response::json(array("error" => "Error: No experiment specified"));
         }
+    }
+
+    private function isExperimentOwner($experiment, $username)
+    {
+        return strcmp($username, $experiment->userName) === 0;
     }
 }
 

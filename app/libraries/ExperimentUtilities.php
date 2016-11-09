@@ -571,7 +571,7 @@ class ExperimentUtilities
                 '<p>AiravataSystemException: ' . $ase->getMessage() . '</p>');
         }
 
-        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($_POST['share-settings'])){
             $share = $_POST['share-settings'];
             ExperimentUtilities::share_experiment($expId, json_decode($share));
         }
