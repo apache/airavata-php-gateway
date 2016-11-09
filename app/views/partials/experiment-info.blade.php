@@ -239,18 +239,19 @@
         @endif
         </div>
         <div class="btn-toolbar">
-            <input name="launch"
+            <button name="launch"
+                    type="submit"
+                    class="btn btn-success"
+                    title="Launch the experiment" @if ( !$expVal["editable"]) style="display: none" @endif>
+                    Launch
+            </button>
+            <button name="cancel"
                    type="submit"
-                   class="btn btn-success"
-                   value="Launch"
-                   title="Launch the experiment" @if ( !$expVal["editable"]) style="display: none" @endif>
-            <a id="cancel_exp_link" href="{{URL::to('/') }}/experiment/cancel?expId={{ $experiment->experimentId }}"
-               class="btn btn-default" onclick="return confirm('Are you sure you want to cancel this experiment?')"
-               role="button"
-               title="Cancel experiment" @if (!$expVal["cancelable"]) style="display: none" @endif>
+                   class="btn btn-default" onclick="return confirm('Are you sure you want to cancel this experiment?')"
+                   title="Cancel experiment" @if (!$expVal["cancelable"]) style="display: none" @endif>
                 <span class="glyphicon glyphicon-remove"></span>
                 Cancel
-            </a>
+            </button>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
                class="btn btn-default"
@@ -263,7 +264,6 @@
             <button name="update-sharing"
                    type="submit"
                    class="btn btn-primary"
-                   value="Update Sharing"
                    title="Update sharing settings">
                 <span class="glyphicon glyphicon-share"></span>
                 Update Sharing

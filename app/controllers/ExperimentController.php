@@ -197,13 +197,6 @@ class ExperimentController extends BaseController
         }
     }
 
-    public function expCancel()
-    {
-        ExperimentUtilities::cancel_experiment(Input::get("expId"));
-
-        return Redirect::to('experiment/summary?expId=' . Input::get("expId"));
-    }
-
     public function expChange()
     {
         //var_dump( Input::all() ); exit;

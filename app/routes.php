@@ -108,8 +108,6 @@ Route::get("experiment/edit", "ExperimentController@editView");
 
 Route::post("experiment/edit", "ExperimentController@editSubmit");
 
-Route::post("experiment/cancel", "ExperimentController@expCancel");
-
 Route::get("experiment/getQueueView", "ExperimentController@getQueueView");
 
 Route::get("experiment/browse", "ExperimentController@browseView");
