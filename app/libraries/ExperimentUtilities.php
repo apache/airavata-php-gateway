@@ -203,7 +203,11 @@ class ExperimentUtilities
     public static function get_experiment($expId)
     {
         try {
-            return Airavata::getExperiment(Session::get('authz-token'), $expId);
+            if (Session::has("admin") || Session::has("admin-read-only")) {
+                return Airavata::getExperimentByAdmin(Session::get('authz-token'), $expId);
+            } else {
+                return Airavata::getExperiment(Session::get('authz-token'), $expId);
+            }
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
         } catch (ExperimentNotFoundException $enf) {
@@ -586,8 +590,16 @@ class ExperimentUtilities
     {
         try {
             //create new experiment to receive the clone
-            $experiment = Airavata::getExperiment(Session::get('authz-token'), $expId);
-            $cloneId = Airavata::cloneExperiment(Session::get('authz-token'), $expId, 'Clone of ' . $experiment->experimentName, $projectId);
+            if (Session::has("admin") || Session::has("admin-read-only")) {
+
+                $experiment = Airavata::getExperimentByAdmin(Session::get('authz-token'), $expId);
+                $cloneId = Airavata::cloneExperimentByAdmin(Session::get('authz-token'), $expId, 'Clone of ' . $experiment->experimentName, $projectId);
+            } else {
+
+                $experiment = Airavata::getExperiment(Session::get('authz-token'), $expId);
+                $cloneId = Airavata::cloneExperiment(Session::get('authz-token'), $expId, 'Clone of ' . $experiment->experimentName, $projectId);
+            }
+
             //updating the experiment inputs and output path
             $experiment = Airavata::getExperiment(Session::get('authz-token'), $cloneId);
             $experimentInputs = $experiment->experimentInputs;
