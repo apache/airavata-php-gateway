@@ -18,7 +18,34 @@
     @else
         var autoRefresh = false;
     @endif
-    setInterval(function () {
+
+    var currentJobStatuses = {};
+    @foreach( $expVal["jobDetails"] as $index => $jobDetail)
+    currentJobStatuses["{{$jobDetail->jobId}}"] = "{{ $jobDetail->jobStatuses[0]->jobStateName}}";
+    @endforeach
+
+    var isStatusChanged = function(experimentTimeOfStateChange, jobStatuses) {
+
+        if ($.trim($("#lastModifiedTime").val()) != experimentTimeOfStateChange) {
+            // console.log("Detected lastModifiedTime changed");
+            return true;
+        }
+        for (var jobId in jobStatuses) {
+            if (jobId in currentJobStatuses) {
+                if (currentJobStatuses[jobId] !== jobStatuses[jobId]){
+                    // console.log("Detected job status changed", jobId, currentJobStatuses[jobId], jobStatuses[jobId]);
+                    return true;
+                }
+            } else {
+                // console.log("Found a new job", jobId, jobStatuses[jobId]);
+                return true; // if job not in currentJobStatuses
+            }
+        }
+        return false;
+    }
+
+    // Check for a status change at most once every 3 seconds
+    var checkForStatusChange = function () {
         if (($.trim($(".exp-status").html()) != "COMPLETED" && $.trim($(".exp-status").html()) != "FAILED"
                 && $.trim($(".exp-status").html()) != "CANCELLED") && autoRefresh) {
             $.ajax({
@@ -27,14 +54,32 @@
                 data: {expId: "{{ Input::get('expId') }}", isAutoRefresh : autoRefresh },
                 success: function (data) {
                     data = $.parseJSON( data);
-                    //if ($.trim($("#expObj").val()) != $.trim(exp)) {
-                    if ($.trim($("#lastModifiedTime").val()) != $.trim( data.expVal["experimentTimeOfStateChange"])) {
-                        $(".refresh-exp").click();
+
+                    // Convert jobDetails to a map of jobStatuses
+                    var jobStatuses = {};
+                    var jobDetails = data["jobDetails"];
+                    for (var jobIndex in jobDetails){
+                        if (jobDetails.hasOwnProperty(jobIndex)) {
+                            var jobDetail = jobDetails[jobIndex];
+                            // Assuming only one job status per job
+                            jobStatuses[jobDetail["jobId"]] = jobDetail["jobStatuses"]["0"]["jobStateName"];
+                        }
                     }
+
+                    if (isStatusChanged(data.expVal["experimentTimeOfStateChange"], jobStatuses)) {
+                        $(".refresh-exp").click();
+                    } else {
+                        setTimeout(checkForStatusChange, 3000);
+                    }
+                },
+                // In case of some spurious error, keep trying to check for status change
+                error: function() {
+                    setTimeout(checkForStatusChange, 3000);
                 }
             });
-       }
-    }, 3000);
+        }
+    };
+    setTimeout(checkForStatusChange, 3000);
 
     $('.btn-toggle').click(function() {
         if(autoRefresh){
