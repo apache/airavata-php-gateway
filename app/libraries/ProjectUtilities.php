@@ -22,6 +22,17 @@ class ProjectUtilities
 
         try {
             $userProjects = Airavata::getUserProjects(Session::get('authz-token'), $gatewayId, $username, -1, 0);
+
+            // Add a optionLabel that disambiguates shared projects
+            foreach ($userProjects as $project) {
+
+                $optionLabel = $project->name;
+                if ($project->owner != Session::get('username')) {
+                    $optionLabel = $optionLabel . ' (owned by ' . $project->owner . ')';
+                }
+                $project->optionLabel = $optionLabel;
+            }
+
             //var_dump( $userProjects); exit;
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting the user\'s projects.
@@ -107,7 +118,7 @@ class ProjectUtilities
                     $selected = '';
                 }
 
-                echo '<option value="' . $project->projectID . '" ' . $selected . '>' . $project->name . '</option>';
+                echo '<option value="' . $project->projectID . '" ' . $selected . '>' . $project->optionLabel . '</option>';
             }
         }
         echo '</select>';

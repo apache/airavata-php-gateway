@@ -289,7 +289,7 @@
                             @if( $project->projectID == $experiment->projectId)
                             selected
                             @endif
-                        >{{{ $project->name }}}</option>
+                        >{{{ $project->optionLabel }}}</option>
                         @endforeach
                     </select>
                 </div>
