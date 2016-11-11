@@ -77,9 +77,19 @@ class ExperimentController extends BaseController
                 $users = SharingUtilities::getProfilesForSharedUsers($_POST['project'], ResourceType::PROJECT);
                 $owner = array();
 
+                $projectOwner = array();
+                $project = ProjectUtilities::get_project($_POST['project']);
+                // TODO: figure out the owner of the project using sharing API
+                if ($project != null && strcmp(Session::get("username"), $project->owner) !== 0) {
+                    $projectOwner[$project->owner] = $users[$project->owner];
+                    $users = array_diff_key($users, $projectOwner);
+                }
+
                 return View::make("experiment/create-complete", array("expInputs" => $experimentInputs,
                     "users" => json_encode($users), "owner" => json_encode($owner),
-                    "canEditSharing" => true, "updateSharingViaAjax" => false));
+                    "canEditSharing" => true,
+                    "projectOwner" => json_encode($projectOwner),
+                    "updateSharingViaAjax" => false));
             }else{
                 return View::make("experiment/no-sharing-create-complete", array("expInputs" => $experimentInputs));
             }
@@ -286,15 +296,26 @@ class ExperimentController extends BaseController
                 $users = SharingUtilities::getProfilesForSharedUsers($_GET['expId'], ResourceType::EXPERIMENT);
 
                 $owner = array();
+                $projectOwner = array();
                 if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
                     $owner[$experiment->userName] = $users[$experiment->userName];
                     $users = array_diff_key($users, $owner);
+                }
+                // TODO: figure out the owner of the project using sharing API
+                $project = null;
+                if (SharingUtilities::userCanRead(Session::get("username"), $experiment->projectId, ResourceType::PROJECT)) {
+                    $project = ProjectUtilities::get_project($experiment->projectId);
+                }
+                if ($project != null && strcmp(Session::get("username"), $project->owner) !== 0) {
+                    $projectOwner[$project->owner] = $users[$project->owner];
+                    $users = array_diff_key($users, $projectOwner);
                 }
                 $canEditSharing = $this->isExperimentOwner($experiment, Session::get('username'));
 
                 return View::make("experiment/edit", array("expInputs" => $experimentInputs,
                     "users" => json_encode($users), "owner" => json_encode($owner),
                     "canEditSharing" => $canEditSharing,
+                    "projectOwner" => json_encode($projectOwner),
                     "updateSharingViaAjax" => false
                 ));
             }

@@ -47,6 +47,7 @@
 <script>
     var users = {{ $users }};
     var owner = {{ $owner }};
+    var projectOwner = {{ $projectOwner }};
     $('#entity-share').data({url: "{{URL::to('/')}}/project/unshared-users", resourceId: "{{$expInputs['project']}}"})
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
