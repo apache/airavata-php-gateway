@@ -68,6 +68,20 @@ $(function() {
             }
         }
 
+        // projectOwner is only present for experiment sharing
+        if (typeof projectOwner !== 'undefined') {
+
+            for (var po in projectOwner) {
+                if (projectOwner.hasOwnProperty(po)) {
+                    var podata = projectOwner[po];
+                    $projectOwner = createThumbnail(po, podata.firstname, podata.lastname, podata.email, access_enum.PROJECT_OWNER, false);
+                    $projectOwner.find(".sharing-thumbnail-unshare").detach();
+                    $projectOwner.addClass("share-box-share-item owner");
+                    $share.prepend($projectOwner);
+                }
+            }
+        }
+
         if ($share.children().length === 0) {
             $share.append($('<p>This has not been shared</p>')).addClass('text-align-center');
         }

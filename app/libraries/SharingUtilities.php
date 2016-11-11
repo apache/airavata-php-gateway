@@ -127,7 +127,7 @@ class SharingUtilities {
         $users = GrouperUtilities::getAllGatewayUsers();
         $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
 
-        $unshared = array_diff_key($users, $read);
+        $unshared = array_diff($users, $read);
 
         return SharingUtilities::getUserProfiles($unshared);
     }

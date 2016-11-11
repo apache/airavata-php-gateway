@@ -2,14 +2,16 @@ var access_enum = {
     NONE: 0,
     READ: 1,
     WRITE: 2,
-    OWNER: 3
+    OWNER: 3,
+    PROJECT_OWNER: 4
 };
 
 var access_text = [
   'Cannot access',
   'Can read',
   'Can write',
-  'Owner'
+  'Owner',
+  'Project Owner'
 ];
 
 var createThumbnail = function(username, firstname, lastname, email, access, share) {

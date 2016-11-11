@@ -422,6 +422,7 @@
     <script>
         var users = {{ $users }};
         var owner = {{ $owner }};
+        var projectOwner = {{ $projectOwner }};
         $('#update-sharing').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
         @if($updateSharingViaAjax)
         $('#share-box-button').data({ajaxUpdateUrl: "{{URL::to('/')}}/experiment/update-sharing?expId={{Input::get('expId')}}", resourceId: "{{Input::get('expId')}}"})

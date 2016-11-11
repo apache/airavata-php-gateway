@@ -162,9 +162,15 @@ class ExperimentController extends BaseController
                 $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
 
                 $owner = array();
+                $projectOwner = array();
                 if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
                     $owner[$experiment->userName] = $users[$experiment->userName];
                     $users = array_diff_key($users, $owner);
+                }
+                // TODO: figure out the owner of the project using sharing API
+                if ($project != null && strcmp(Session::get("username"), $project->owner) !== 0) {
+                    $projectOwner[$project->owner] = $users[$project->owner];
+                    $users = array_diff_key($users, $projectOwner);
                 }
                 // Only allow editing sharing on the summary page if the owner
                 // and the experiment isn't editable. If the experiment is
@@ -173,6 +179,7 @@ class ExperimentController extends BaseController
                 $data['can_write'] = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
                 $data["users"] = json_encode($users);
                 $data["owner"] = json_encode($owner);
+                $data["projectOwner"] = json_encode($projectOwner);
                 $data["canEditSharing"] = $canEditSharing;
                 // The summary page has it's own Update Sharing button
                 $data["updateSharingViaAjax"] = true;
