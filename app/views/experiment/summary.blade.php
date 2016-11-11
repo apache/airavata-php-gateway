@@ -27,25 +27,22 @@
     var isStatusChanged = function(experimentTimeOfStateChange, jobStatuses) {
 
         if ($.trim($("#lastModifiedTime").val()) != experimentTimeOfStateChange) {
-            // console.log("Detected lastModifiedTime changed");
             return true;
         }
         for (var jobId in jobStatuses) {
             if (jobId in currentJobStatuses) {
                 if (currentJobStatuses[jobId] !== jobStatuses[jobId]){
-                    // console.log("Detected job status changed", jobId, currentJobStatuses[jobId], jobStatuses[jobId]);
                     return true;
                 }
             } else {
-                // console.log("Found a new job", jobId, jobStatuses[jobId]);
                 return true; // if job not in currentJobStatuses
             }
         }
         return false;
     }
 
-    // Check for a status change at most once every 3 seconds
-    var checkForStatusChange = function () {
+    // Check for a status change every 3 seconds
+    var statusChangeInterval = setInterval(function () {
         if (($.trim($(".exp-status").html()) != "COMPLETED" && $.trim($(".exp-status").html()) != "FAILED"
                 && $.trim($(".exp-status").html()) != "CANCELLED") && autoRefresh) {
             $.ajax({
@@ -68,18 +65,12 @@
 
                     if (isStatusChanged(data.expVal["experimentTimeOfStateChange"], jobStatuses)) {
                         $(".refresh-exp").click();
-                    } else {
-                        setTimeout(checkForStatusChange, 3000);
+                        clearInterval(statusChangeInterval);
                     }
-                },
-                // In case of some spurious error, keep trying to check for status change
-                error: function() {
-                    setTimeout(checkForStatusChange, 3000);
                 }
             });
         }
-    };
-    setTimeout(checkForStatusChange, 3000);
+    }, 3000);
 
     $('.btn-toggle').click(function() {
         if(autoRefresh){
