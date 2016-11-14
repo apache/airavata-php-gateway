@@ -219,7 +219,7 @@ class CommonUtilities
             else
                 $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/account/dashboard"><span class="glyphicon glyphicon-user"></span> Dashboard</a></li>';
 
-            $navbar .= '<li class="dropdown">
+            $navbar .= '<li class="dropdown' . (Session::get("nav-active") == 'user-menu' ? ' active' : '') . '">
 
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">' . Session::get("username") . ' <span class="caret"></span></a>';
             $navbar .= '<ul class="dropdown-menu" role="menu">';
@@ -233,6 +233,7 @@ class CommonUtilities
                 }
             }
 
+            $navbar .= '<li><a href="' . URL::to('/') . '/account/settings"><span class="glyphicon glyphicon-cog"></span> User settings</a></li>';
             $navbar .= '<li><a href="' . URL::to('/') . '/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>';
             $navbar .= '</ul></li>';
         } else {

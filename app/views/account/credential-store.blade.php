@@ -2,10 +2,15 @@
 
 @section('page-header')
 @parent
+{{ HTML::style('css/user-settings.css')}}
 @stop
 
 @section('content')
 <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{{ URL::to('/') }}/account/settings">User Settings</a></li>
+        <li class="active">Compute Resources</li>
+    </ol>
     @if( Session::has("message"))
     <div class="alert alert-success alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
@@ -23,8 +28,6 @@
     </div>
     {{ Session::forget("error-message") }}
     @endif
-
-    <h1>SSH Keys</h1>
 
     <ul class="list-group">
         @foreach ($credentialSummaries as $credentialSummary)

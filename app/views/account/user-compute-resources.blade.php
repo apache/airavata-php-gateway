@@ -3,6 +3,7 @@
 @section('page-header')
 @parent
 {{ HTML::style('css/datetimepicker.css')}}
+{{ HTML::style('css/user-settings.css')}}
 <style>
 button.add-user-cr {
     margin-top: 10px;
@@ -21,6 +22,10 @@ button.add-user-cr {
         'defaultCredentialSummary' => $defaultCredentialSummary))
 @endforeach
 <div class="container">
+    <ol class="breadcrumb">
+        <li><a href="{{ URL::to('/') }}/account/settings">User Settings</a></li>
+        <li class="active">Compute Resources</li>
+    </ol>
     @if( Session::has("message"))
         <div class="alert alert-success alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span
@@ -29,7 +34,6 @@ button.add-user-cr {
         </div>
     {{ Session::forget("message") }}
     @endif
-    <h1>Compute Resource Accounts</h1>
     <button class="btn btn-default add-user-cr">
         <span class="glyphicon glyphicon-plus"></span> Add a Compute Resource Account
     </button>
