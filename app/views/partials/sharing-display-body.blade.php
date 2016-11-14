@@ -1,6 +1,6 @@
 @if($form)
 <label for="project-share">Sharing Settings</label><br />
-<button class="btn btn-default" name="project-share" id="project-share">Share With Other Users</button><br />
+<button type="button" class="btn btn-default" name="project-share" id="project-share">Share With Other Users</button><br />
 @else
 <h3>Sharing Details</h3>
 @endif
