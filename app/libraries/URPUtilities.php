@@ -57,8 +57,13 @@ class URPUtilities
         $userId = Session::get('username');
         $gatewayId = Session::get('gateway_id');
 
-        return URPUtilities::create_credential_summary_map(
-            Airavata::getAllSSHPubKeysSummaryForUserInGateway(Session::get('authz-token'), $gatewayId, $userId));
+        $all_ssh_pub_key_summaries = Airavata::getAllSSHPubKeysSummaryForUserInGateway(Session::get('authz-token'), $gatewayId, $userId);
+        foreach ($all_ssh_pub_key_summaries as $ssh_pub_key_summary) {
+            # strip whitespace from public key: there can't be trailing
+            # whitespace in a public key entry in the authorized_keys file
+            $ssh_pub_key_summary->publicKey = trim($ssh_pub_key_summary->publicKey);
+        }
+        return URPUtilities::create_credential_summary_map($all_ssh_pub_key_summaries);
     }
 
     // Create array of CredentialSummary objects where the token is the key
