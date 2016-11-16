@@ -109,19 +109,22 @@
 
     //Selecting the first option as the default
     $( document ).ready(function() {
-        var crId = $("#compute-resource").val();
-        $(".loading-img ").removeClass("hide");
-        $.ajax({
-            url: '../experiment/getQueueView',
-            type: 'get',
-            data: {crId: crId},
-            success: function (data) {
-                $(".queue-view").html(data);
-                $(".loading-img ").addClass("hide");
-            },error : function(data){
-                $(".loading-img ").addClass("hide");
-            }
-        });
+        var $cr = $("#compute-resource");
+        var crId = $cr.val();
+        if ($cr.children("option").size() === 1 && crId !== "") {
+            $(".loading-img ").removeClass("hide");
+            $.ajax({
+                url: '../experiment/getQueueView',
+                type: 'get',
+                data: {crId: crId},
+                success: function (data) {
+                    $(".queue-view").html(data);
+                    $(".loading-img ").addClass("hide");
+                },error : function(data){
+                    $(".loading-img ").addClass("hide");
+                }
+            });
+        }
     });
 
     //Setting the file input view JS code
