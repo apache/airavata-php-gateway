@@ -229,8 +229,8 @@
     <form id="experiment-form" action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
 
         <div class="form-group">
-        @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($canEditSharing))
-            @include('partials/sharing-display-body', array("form" => $canEditSharing))
+        @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($updateSharingViaAjax))
+            @include('partials/sharing-display-body', array("form" => !$updateSharingViaAjax))
         @endif
         </div>
         <div class="btn-toolbar">
@@ -256,8 +256,8 @@
                 Edit
             </a>
             @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($canEditSharing) && $canEditSharing)
-            <button name="update-sharing"
-                   type="submit"
+            <button id="update-sharing" name="update-sharing"
+                   type="button"
                    class="btn btn-primary"
                    title="Update sharing settings">
                 <span class="glyphicon glyphicon-share"></span>
@@ -266,6 +266,10 @@
             @endif
         </div>
     </form>
+
+    {{-- This is a placeholder for the sharing modal to write share-settings to. --}}
+    <input id="share-settings" name="share-settings" type="hidden" value="{}" />
+
     <div id="clone-panel" class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Clone Experiment</h3>
@@ -398,7 +402,10 @@
     <script>
         var users = {{ $users }};
         var owner = {{ $owner }};
-        $('#project-share').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
+        $('#update-sharing').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
+        @if($updateSharingViaAjax)
+        $('#share-box-button').data({ajaxUpdateUrl: "{{URL::to('/')}}/experiment/update-sharing?expId={{Input::get('expId')}}", resourceId: "{{Input::get('expId')}}"})
+        @endif
     </script>
     {{ HTML::script('js/sharing/sharing_utils.js') }}
     {{ HTML::script('js/sharing/share.js') }}

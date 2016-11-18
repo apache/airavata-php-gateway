@@ -10,6 +10,8 @@
                 @include('partials/sharing-form-body')
             </div>
             <div class="modal-footer">
+                <div id="share-box-error-message">
+                </div>
                 <button type="button" id="share-box-button" class="btn btn-primary">Update</button>
                 <button type="button" id="share-box-close" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>

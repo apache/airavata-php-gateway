@@ -79,7 +79,7 @@ class ExperimentController extends BaseController
 
                 return View::make("experiment/create-complete", array("expInputs" => $experimentInputs,
                     "users" => json_encode($users), "owner" => json_encode($owner),
-                    "canEditSharing" => true));
+                    "canEditSharing" => true, "updateSharingViaAjax" => false));
             }else{
                 return View::make("experiment/no-sharing-create-complete", array("expInputs" => $experimentInputs));
             }
@@ -174,6 +174,8 @@ class ExperimentController extends BaseController
                 $data["users"] = json_encode($users);
                 $data["owner"] = json_encode($owner);
                 $data["canEditSharing"] = $canEditSharing;
+                // The summary page has it's own Update Sharing button
+                $data["updateSharingViaAjax"] = true;
             }
 
             if( Input::has("dashboard"))
@@ -285,7 +287,9 @@ class ExperimentController extends BaseController
 
                 return View::make("experiment/edit", array("expInputs" => $experimentInputs,
                     "users" => json_encode($users), "owner" => json_encode($owner),
-                    "canEditSharing" => $canEditSharing));
+                    "canEditSharing" => $canEditSharing,
+                    "updateSharingViaAjax" => false
+                ));
             }
             else {
                 Redirect::to("experiment/summary?expId=" . $experiment->experimentId)->with("error", "You do not have permission to edit this experiment");
@@ -436,6 +440,20 @@ class ExperimentController extends BaseController
         }
         else {
             return Response::json(array("error" => "Error: No experiment specified"));
+        }
+    }
+
+    public function updateSharing()
+    {
+        try{
+            // Convert the JSON array to an object
+            $sharing_info = json_decode(json_encode(Input::json()->all()));
+            ExperimentUtilities::update_experiment_sharing(Input::get('expId'), $sharing_info);
+            return Response::json(array("success" => true));
+        }catch (Exception $ex){
+            Log::error("failed to update sharing for experiment", array(Input::all()));
+            Log::error($ex);
+            return Response::json(array("success" => false, "error" => "Error: failed to update sharing: " . $ex->getMessage()));
         }
     }
 
