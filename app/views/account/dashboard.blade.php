@@ -52,7 +52,7 @@
                             <td>{{ $creationTime}}</td>
                             <td>{{ $gateway["gatewayInfo"]->gatewayURL }}</td>
                             <td style="max-width: 400px; word-wrap: break-word;">{{ $gateway["gatewayInfo"]->reviewProposalDescription }}</td>
-                            <td>{{ $gateway["gatewayInfo"]->gatewayPublicAbstract }}</td>
+                            <td style="max-width: 400px; word-wrap: break-word;">{{ $gateway["gatewayInfo"]->gatewayPublicAbstract }}</td>
                             <td>{{ $gateway["approvalStatus"] }}</td>
                             <td>
                                 @if( $gateway["approvalStatus"] == "APPROVED")
