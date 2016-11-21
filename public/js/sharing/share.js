@@ -283,7 +283,7 @@ $(function() {
     };
 
     var ajaxUpdateSharing = function(url, share_settings, callback) {
-        // TODO: add spinner to button and disable and remove when ajax request completes
+        $('#share-box-button').addClass('btn-spinner').attr('disabled', 'disabled');
         $.ajax({
             url: url,
             method: 'post',
@@ -307,6 +307,9 @@ $(function() {
                     +   'Error occurred: ' + status
                     + '</div>'
                 ).appendTo('#share-box-error-message');
+            },
+            complete: function(xhr, status) {
+                $('#share-box-button').removeClass('btn-spinner').removeAttr('disabled');
             }
         });
     };
