@@ -17,6 +17,11 @@
 
     }
     ?>
+    @if (isset($errorMessage))
+        <div class="alert alert-danger">
+            {{{ $errorMessage }}}
+        </div>
+    @endif
 
 
     <h1>Edit Project</h1>
@@ -35,7 +40,7 @@
             <textarea class="form-control"
                       name="project-description"
                       id="project-description" maxlength="200">{{ $project->description }}</textarea>
-            <input type="hidden" name="projectId" value="{{ Input::get('projId') }}"/>
+            <input type="hidden" name="projectId" value="{{ $projectId }}"/>
             <input type="hidden" name="projectOwner" value="{{ $project->owner}}"/>
         </div>
 
@@ -64,7 +69,7 @@
 <script>
     var users = {{ $users }};
     var owner = {{ $owner }};
-    $('#entity-share').data({url: "{{ URL::to('/') }}/project/unshared-users", resourceId: "{{ Input::get('projId') }}"})
+    $('#entity-share').data({url: "{{ URL::to('/') }}/project/unshared-users", resourceId: "{{ $projectId }}"})
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}

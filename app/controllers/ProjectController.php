@@ -92,53 +92,87 @@ class ProjectController extends BaseController
 
     public function editView()
     {
-        if (Input::has("projId")) {
-            $project = ProjectUtilities::get_project($_GET['projId']);
-            if (Config::get('pga_config.airavata')["data-sharing-enabled"]) {
-                if (SharingUtilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT)) {
-                    $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
-                    $owner = array();
-                    if (strcmp(Session::get("username"), $project->owner) !== 0) {
-                        $owner[$project->owner] = $users[$project->owner];
-                        $users = array_diff_key($users, $owner);
-                    }
-                    $canEditSharing = strcmp(Session::get("username"), $project->owner) === 0;
-                    return View::make("project/edit",
-                        array("projectId" => Input::get("projId"),
-                            "project" => $project,
-                            "users" => json_encode($users),
-                            "owner" => json_encode($owner),
-                            "canEditSharing" => $canEditSharing
-                        ));
-                }else {
-                    return Redirect::to('project/summary?projId=' . Input::get("projId"))->with("error", "You do not have permission to edit this project.");
-                }
-            } else {
-                return View::make("project/no-sharing-edit",
-                    array("projectId" => Input::get("projId"),
-                        "project" => $project,
-                    ));
-            }
-        } else
+        if (Input::has("projId") || Input::has("projectId")) {
+            $projectId = Input::get("projId") ? Input::get("projId") : Input::get("projectId");
+            $project = ProjectUtilities::get_project($projectId);
+            return $this->createEditView($projectId, $project, null);
+        } else {
             return Redirect::to("home");
+        }
     }
 
     public function editSubmit()
     {
-        $projectDetails = array();
-        $projectDetails["owner"] = Input::get("projectOwner");
-        $projectDetails["name"] = Input::get("project-name");
-        $projectDetails["description"] = Input::get("project-description");
+        $projectDetails = new stdClass();
+        $projectDetails->owner = Input::get("projectOwner");
+        $projectDetails->name = Input::get("project-name");
+        $projectDetails->description = Input::get("project-description");
 
         if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
             if (isset($_POST['save']) && SharingUtilities::userCanWrite(Session::get("username"), Input::get("projectId"), ResourceType::PROJECT)) {
 
-                ProjectUtilities::update_project(Input::get("projectId"), $projectDetails);
+                try {
+                    ProjectUtilities::update_project(Input::get("projectId"), $projectDetails);
+                } catch (Exception $ex) {
+                    // Decode JSON into assoc. array
+                    $shareSettings = json_decode(Input::get('share-settings'), true);
+                    return $this->createEditView(Input::get("projectId"), $projectDetails, $shareSettings)->with("errorMessage", "Failed to update project: " . $ex->getMessage());
+                }
             }
         }else{
-            ProjectUtilities::update_project(Input::get("projectId"), $projectDetails);
+            try {
+                ProjectUtilities::update_project(Input::get("projectId"), $projectDetails);
+            } catch (Exception $ex) {
+                return $this->createEditView(Input::get("projectId"), $projectDetails, null)->with("errorMessage", "Failed to update project: " . $ex->getMessage());
+            }
         }
         return Redirect::to("project/summary?projId=" . Input::get("projectId"))->with("project_edited", true);
+    }
+
+    /**
+     * Create the edit view either from existing data or user submitted data.
+     * @param $projectId String
+     * @param $projectDetails stdClass instance
+     * @param $shareSettings array
+     */
+    private function createEditView($projectId, $projectDetails, $shareSettings)
+    {
+        if (Config::get('pga_config.airavata')["data-sharing-enabled"]) {
+            if (SharingUtilities::userCanWrite(Session::get("username"), $projectId, ResourceType::PROJECT)) {
+                if ($shareSettings) {
+
+                    $profiles = SharingUtilities::getUserProfiles(array_keys($shareSettings));
+
+                    foreach ($profiles as $username => $profile) {
+                        $profile["access"] = $shareSettings[$username];
+                        $profiles[$username] = $profile;
+                    }
+                    $users = $profiles;
+                } else {
+                    $users = SharingUtilities::getProfilesForSharedUsers($projectId, ResourceType::PROJECT);
+                }
+                $owner = array();
+                if (strcmp(Session::get("username"), $projectDetails->owner) !== 0) {
+                    $owner[$projectDetails->owner] = $users[$projectDetails->owner];
+                    $users = array_diff_key($users, $owner);
+                }
+                $canEditSharing = strcmp(Session::get("username"), $projectDetails->owner) === 0;
+                return View::make("project/edit",
+                    array("projectId" => $projectId,
+                        "project" => $projectDetails,
+                        "users" => json_encode($users),
+                        "owner" => json_encode($owner),
+                        "canEditSharing" => $canEditSharing
+                    ));
+            }else {
+                return Redirect::to('project/summary?projId=' . $projectId)->with("error", "You do not have permission to edit this project.");
+            }
+        } else {
+            return View::make("project/no-sharing-edit",
+                array("projectId" => $projectId,
+                    "project" => $projectDetails,
+                ));
+        }
     }
 
     public function browseView()
