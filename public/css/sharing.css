@@ -110,3 +110,7 @@
 .modal-footer .alert {
 	text-align: left;
 }
+
+#shared-users-updated-message {
+	margin-top: 15px;
+}

@@ -283,7 +283,7 @@ $(function() {
     };
 
     var ajaxUpdateSharing = function(url, share_settings, callback) {
-        $('#share-box-button').addClass('btn-spinner').attr('disabled', 'disabled');
+        $('#share-box .modal-dialog').addClass('modal-spinner');
         $.ajax({
             url: url,
             method: 'post',
@@ -292,8 +292,17 @@ $(function() {
             dataType: "json",
             success: function(data, status, xhr) {
                 if (data.success) {
-                    // TODO: add success message on page
                     callback();
+                    $(    '<div class="alert alert-success fade in">'
+                        +   '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+                        +   'Sharing settings updated successfully'
+                        + '</div>'
+                    ).appendTo('#shared-users-updated-message').alert().each(function(){
+                        var alert = this;
+                        window.setTimeout(function(){
+                            $(alert).alert('close');
+                        }, 5000);
+                    });
                 } else {
                     $(    '<div id="share-box-error-alert" class="alert alert-danger">'
                         +   data.error
@@ -309,7 +318,7 @@ $(function() {
                 ).appendTo('#share-box-error-message');
             },
             complete: function(xhr, status) {
-                $('#share-box-button').removeClass('btn-spinner').removeAttr('disabled');
+                $('#share-box .modal-dialog').removeClass('modal-spinner');
             }
         });
     };

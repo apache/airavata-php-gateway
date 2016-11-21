@@ -128,3 +128,20 @@ body{
 	top: 50%;
 	margin-top: -10px;
 }
+
+.modal-spinner {
+	position: relative;
+}
+.modal-spinner::after {
+	content: '';
+	background-image: url(../assets/ajax-loader.gif);
+	background-repeat: no-repeat;
+	background-position: calc(50% - 17px) calc(50% - 17px);
+	background-color: rgba(0,0,0,0.4);
+	display: block;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	bottom: 0px;
+	right: 0px;
+}
