@@ -83,7 +83,7 @@ $(function() {
     /* Share box event handlers */
 
     // Create, populate, and show the share box
-    $('body').on('click', 'button#project-share, button#update-sharing', function(e) {
+    $('body').on('click', 'button#entity-share, button#update-sharing', function(e) {
         var $share_list, ajax_data;
         e.stopPropagation();
         e.preventDefault();

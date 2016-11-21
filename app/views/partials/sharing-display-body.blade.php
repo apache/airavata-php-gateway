@@ -1,7 +1,6 @@
-<!-- TODO: this is used for other than projects. Need to update name -->
 @if($form)
-<label for="project-share">Sharing Settings</label><br />
-<button type="button" class="btn btn-default" name="project-share" id="project-share">Share With Other Users</button><br />
+<label for="entity-share">Sharing Settings</label><br />
+<button type="button" class="btn btn-default" name="entity-share" id="entity-share">Share With Other Users</button><br />
 @else
 <h3>Sharing Details</h3>
 @endif
