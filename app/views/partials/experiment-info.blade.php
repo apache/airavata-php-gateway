@@ -267,9 +267,6 @@
         </div>
     </form>
 
-    {{-- This is a placeholder for the sharing modal to write share-settings to. --}}
-    <input id="share-settings" name="share-settings" type="hidden" value="{}" />
-
     <div id="clone-panel" class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Clone Experiment</h3>

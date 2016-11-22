@@ -7,7 +7,7 @@
 var createThumbnails;
 
 $(function() {
-    var comparator_map, comparator, $original_shared_list, $revoke_list;
+    var comparator_map, comparator, $original_shared_list, $revoke_list, share_settings;
     comparator_map = {
             "username": usernameComparator,
             "firstlast": firstLastComparator,
@@ -19,7 +19,7 @@ $(function() {
     /* Share box functions */
 
     createThumbnails = function () {
-        var $users, $share, $user, share_settings;
+        var $users, $share, $user;
 
         $users = $('#share-box-users');
         $share = $('#shared-users');
@@ -205,14 +205,13 @@ $(function() {
 
     // Save the sharing permissions of each selected user
     $('body').on('click', '#share-box-button', function(e) {
-        var data, resource_id, $share_list, $update_list, share_settings;
+        var data, resource_id, $share_list, $update_list;
         e.stopPropagation();
         e.preventDefault();
         $('#share-box-error-message').empty();
         data = $("#share-box").data();
         $share_list = $("#share-box-share").children();
         $update_list = $('.sharing-to-update');
-        share_settings = JSON.parse($('#share-settings').val());
         // TODO: is this used any longer?  I don't see where resource_id gets
         // set and updateUserPrivileges doesn't seem to be defined
         if (data.hasOwnProperty('resource_id')) {
