@@ -78,7 +78,7 @@
                     </tbody>
                 </table>
                 <div class="well">
-                <h4 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:contact@scigap.org">contact@scigap.org</a></h4>
+                <h4 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h4>
                 </div>
             @endif
             </div>
