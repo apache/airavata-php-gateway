@@ -205,13 +205,15 @@ $(function() {
 
     // Save the sharing permissions of each selected user
     $('body').on('click', '#share-box-button', function(e) {
-        var data, resource_id, $share_list, $update_list;
+        var data, resource_id, $share_list, $update_list, new_share_settings;
         e.stopPropagation();
         e.preventDefault();
         $('#share-box-error-message').empty();
         data = $("#share-box").data();
         $share_list = $("#share-box-share").children();
         $update_list = $('.sharing-to-update');
+        // Clone current share settings
+        new_share_settings = JSON.parse(JSON.stringify(share_settings));
         // TODO: is this used any longer?  I don't see where resource_id gets
         // set and updateUserPrivileges doesn't seem to be defined
         if (data.hasOwnProperty('resource_id')) {
@@ -228,17 +230,17 @@ $(function() {
                     if (data.hasOwnProperty('currentaccess')) {
                         newaccess = data.currentaccess;
                     }
-                    share_settings[data.username] = newaccess;
+                    new_share_settings[data.username] = newaccess;
                 });
                 if ($(this).data().hasOwnProperty('ajaxUpdateUrl')) {
-                    ajaxUpdateSharing($(this).data().ajaxUpdateUrl, share_settings, function(){
-                        updateSharingAndCloseModal(share_settings);
+                    ajaxUpdateSharing($(this).data().ajaxUpdateUrl, new_share_settings, function(){
+                        updateSharingAndCloseModal(new_share_settings);
                     });
                 } else {
-                    updateSharingAndCloseModal(share_settings);
+                    updateSharingAndCloseModal(new_share_settings);
                 }
             } else {
-                updateSharingAndCloseModal(share_settings);
+                updateSharingAndCloseModal(new_share_settings);
             }
         }
         return false;
@@ -260,6 +262,7 @@ $(function() {
                 data.access = new_share_settings[data.username];
             });
             $('#share-settings').val(JSON.stringify(new_share_settings));
+            share_settings = new_share_settings;
             $('#shared-users').removeClass('text-align-center');
         }
         if ($share_list.length === 0) {
