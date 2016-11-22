@@ -285,7 +285,7 @@
                         <input type="text" name="oauthClientSecret" class="form-control oauthClientSecret"/>
                     </div>
                     <div class="form-group">
-                        <label>Comments</label>
+                        <label>SciGaP Admin Comments</label>
                         <textarea style="width:100%; height:80px" width="100%" name="declinedReason" class="declinedReason"></textarea>
                     </div>
 
@@ -328,7 +328,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Comments</label>
+                        <label>SciGaP Admin Comments</label>
                         <textarea style="width:100%; height:80px" width="100%" name="comments"></textarea>
                     </div>
                 </div>
