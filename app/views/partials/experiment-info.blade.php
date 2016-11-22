@@ -17,6 +17,13 @@
         {{Session::forget("permissionDenied") }}
     </div>
     @else
+    @if( Session::has("cloning-error"))
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                class="sr-only">Close</span></button>
+        {{{ Session::get("cloning-error") }}}
+    </div>
+    @endif
     <h1>
         Experiment Summary
         @if( !isset($dashboard))
@@ -255,6 +262,17 @@
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit
             </a>
+            @if( count($writeableProjects) > 0 )
+            <button type="button"
+               id="clone-button"
+               name="clone"
+               class="btn btn-primary"
+               role="button"
+               title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
+                <span class="glyphicon glyphicon-pencil"></span>
+                Clone
+            </button>
+            @endif
             @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($canEditSharing) && $canEditSharing)
             <button id="update-sharing" name="update-sharing"
                    type="button"
@@ -267,44 +285,6 @@
         </div>
     </form>
 
-    <div id="clone-panel" class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Clone Experiment</h3>
-        </div>
-        <div class="panel-body">
-            @if( Session::has("cloning-error"))
-            <div class="alert alert-danger alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                {{{ Session::get("cloning-error") }}}
-            </div>
-            {{ Session::forget("cloning-error") }}
-            @endif
-            <form class="form-inline" action="{{ URL::to('/') }}/experiment/clone" method="post">
-                <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
-                <div class="form-group">
-                    <label for="projectId">Project</label>
-                    <select class="form-control" name="projectId" required>
-                        @foreach($writeableProjects as $project)
-                        <option value="{{{ $project->projectID }}}"
-                            @if( $project->projectID == $experiment->projectId)
-                            selected
-                            @endif
-                        >{{{ $project->optionLabel }}}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <button type="submit"
-                   class="btn btn-primary"
-                   role="button"
-                   title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                    Clone
-                </a>
-            </form>
-        </div>
-    </div>
     @endif
     <input type="hidden" id="lastModifiedTime" value="{{ $expVal['experimentTimeOfStateChange'] }}"/>
 
@@ -313,6 +293,48 @@
 
     @endif
 </div>
+
+<div class="modal fade" id="clone-experiment-modal" tabindex="-1" role="dialog" aria-labelledby="clone-experiment-modal-title"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-center" id="clone-experiment-modal-title">Clone experiment</h3>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline" action="{{ URL::to('/') }}/experiment/clone" method="post">
+                    <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
+                    <div class="form-group">
+                        <label for="projectId">Project</label>
+                        <select class="form-control" name="projectId" required>
+                            @foreach($writeableProjects as $project)
+                                <option value="{{{ $project->projectID }}}"
+                                    @if( $project->projectID == $experiment->projectId)
+                                        selected
+                                    @endif
+                                    >{{{ $project->optionLabel }}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <button type="submit"
+                        class="btn btn-primary"
+                        role="button"
+                        title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                        Clone
+                    </a>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @if( isset($dashboard))
 <h2 class="text-center">Detailed Experiment Information</h2>
@@ -413,5 +435,25 @@
 <script>
     checkAuth("http://localhost:8888/auth", "ws://localhost:8888/experiment/openmm");
 </script>
+
+<script>
+
+    $('#clone-button').on('click', function(e){
+
+        e.stopPropagation();
+        e.preventDefault();
+
+        // If experiment can be cloned into more than one project, give the user
+        // the chance to pick which one, otherwise just submit the cloning form
+        var projectCount = $('#clone-experiment-modal select[name=projectId] option').size();
+        if (projectCount > 1) {
+            $("#clone-experiment-modal").modal("show");
+        } else {
+            $("#clone-experiment-modal form").submit();
+        }
+        return false;
+    });
+</script>
+
 
 @stop
