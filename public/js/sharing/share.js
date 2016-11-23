@@ -7,7 +7,8 @@
 var createThumbnails;
 
 $(function() {
-    var comparator_map, comparator, $original_shared_list, $revoke_list, share_settings;
+    var comparator_map, comparator, $original_shared_list, $revoke_list, share_settings,
+        showSharingModal, hideSharingModal;
     comparator_map = {
             "username": usernameComparator,
             "firstlast": firstLastComparator,
@@ -76,8 +77,13 @@ $(function() {
         //$('.group-thumbnail').show();
     };
 
-
-
+    // Dispatch hide/show events when modal hides/shows
+    showSharingModal = function() {
+        $('#share-box').animate({top: "1%"}).trigger("show");
+    };
+    hideSharingModal = function() {
+        $('#share-box').animate({top: '100%'}).trigger("hide");
+    };
 
 
     /* Share box event handlers */
@@ -136,7 +142,7 @@ $(function() {
             });
         }
         $original_shared_list = $('#share-box-share').children();
-        $('#share-box').animate({top: "1%"});
+        showSharingModal();
         return false;
     });
 
@@ -279,7 +285,7 @@ $(function() {
             });
             $share_list.detach().appendTo($('#shared-users'));
         }
-        $('#share-box').animate({top: '100%'});
+        hideSharingModal();
         $update_list.removeClass('sharing-to-update');
         $update_list.addClass('updated');
     };
@@ -357,7 +363,7 @@ $(function() {
         $('.sharing-to-update').find('.sharing-thumbnail-access-text').text(access_text[access_enum.NONE]).show();
         $('.sharing-to-update').find('.sharing-thumbnail-unshare').hide();
         $('.sharing-to-update').addClass('share-box-users-item').removeClass('sharing-to-update share-box-share-item');
-        $('#share-box').animate({top: "100%"});
+        hideSharingModal();
         $('.order-results-selector').trigger('change');
         return false;
     });
