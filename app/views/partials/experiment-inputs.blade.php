@@ -110,10 +110,12 @@
     <div class="form-group well">
         <label for=""></label>
         <?php
-            $emails = $expInputs['experiment']->emailAddresses;
             $hasEmails = false;
-            if(!empty($emails) and count($emails) > 0){
-                $hasEmails=true;
+            if(!empty($expInputs['experiment'])){
+                $emails = $expInputs['experiment']->emailAddresses;
+                if(!empty($emails) and count($emails) > 0){
+                    $hasEmails=true;
+                }
             }
         ?>
         <input type="checkbox" id="enableEmail" name="enableEmailNotification" value="1" <?php if($hasEmails) echo 'checked' ?>> Do you want to receive email
