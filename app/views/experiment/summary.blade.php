@@ -18,6 +18,7 @@
     @else
         var autoRefresh = false;
     @endif
+    var isDialogOpen = false;
 
     var currentJobStatuses = {};
     @foreach( $expVal["jobDetails"] as $index => $jobDetail)
@@ -50,6 +51,12 @@
                 url: "{{URL::to('/') }}/experiment/summary",
                 data: {expId: "{{ Input::get('expId') }}", isAutoRefresh : autoRefresh },
                 success: function (data) {
+
+                    // Don't refresh the page if a dialog is open
+                    if (isDialogOpen) {
+                        return;
+                    }
+
                     data = $.parseJSON( data);
 
                     // Convert jobDetails to a map of jobStatuses
@@ -89,6 +96,12 @@
     $('#refresh-experiment').click(function() {
         console.log(autoRefresh);
         window.location.replace("{{URL::to('/') }}/experiment/summary?" + "expId=" + "{{ Input::get('expId') }}"+"&"+ "isAutoRefresh=" + autoRefresh);
+    });
+
+    $('.modal, #share-box').on('show', function (e) {
+        isDialogOpen = true;
+    }).on('hide', function (e) {
+        isDialogOpen = false;
     });
 </script>
 @stop

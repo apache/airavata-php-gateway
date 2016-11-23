@@ -1,6 +1,6 @@
 @if($form)
-<label for="project-share">Sharing Settings</label><br />
-<button type="button" class="btn btn-default" name="project-share" id="project-share">Share With Other Users</button><br />
+<label for="entity-share">Sharing Settings</label><br />
+<button type="button" class="btn btn-default" name="entity-share" id="entity-share">Share With Other Users</button><br />
 @else
 <h3>Sharing Details</h3>
 @endif
@@ -16,6 +16,7 @@
     <option value="lastfirst">Last, First Name</option>
     <option value="email">Email</option>
 </select>
+<div id="shared-users-updated-message"></div>
 <div id="shared-users"></div>
 @if($form)
 <input id="share-settings" name="share-settings" type="hidden" value="{}" />

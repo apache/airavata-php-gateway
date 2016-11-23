@@ -7,7 +7,8 @@
 var createThumbnails;
 
 $(function() {
-    var comparator_map, comparator, $original_shared_list, $revoke_list;
+    var comparator_map, comparator, $original_shared_list, $revoke_list, share_settings,
+        showSharingModal, hideSharingModal;
     comparator_map = {
             "username": usernameComparator,
             "firstlast": firstLastComparator,
@@ -19,7 +20,7 @@ $(function() {
     /* Share box functions */
 
     createThumbnails = function () {
-        var $users, $share, $user, share_settings;
+        var $users, $share, $user;
 
         $users = $('#share-box-users');
         $share = $('#shared-users');
@@ -76,14 +77,19 @@ $(function() {
         //$('.group-thumbnail').show();
     };
 
-
-
+    // Dispatch hide/show events when modal hides/shows
+    showSharingModal = function() {
+        $('#share-box').animate({top: "1%"}).trigger("show");
+    };
+    hideSharingModal = function() {
+        $('#share-box').animate({top: '100%'}).trigger("hide");
+    };
 
 
     /* Share box event handlers */
 
     // Create, populate, and show the share box
-    $('body').on('click', 'button#project-share, button#experiment-share', function(e) {
+    $('body').on('click', 'button#entity-share, button#update-sharing', function(e) {
         var $share_list, ajax_data;
         e.stopPropagation();
         e.preventDefault();
@@ -136,7 +142,7 @@ $(function() {
             });
         }
         $original_shared_list = $('#share-box-share').children();
-        $('#share-box').animate({top: "1%"});
+        showSharingModal();
         return false;
     });
 
@@ -205,59 +211,131 @@ $(function() {
 
     // Save the sharing permissions of each selected user
     $('body').on('click', '#share-box-button', function(e) {
-        var data, resource_id, $share_list, $update_list, share_settings;
+        var data, resource_id, $share_list, $update_list, new_share_settings;
         e.stopPropagation();
         e.preventDefault();
+        $('#share-box-error-message').empty();
         data = $("#share-box").data();
         $share_list = $("#share-box-share").children();
         $update_list = $('.sharing-to-update');
-        share_settings = JSON.parse($('#share-settings').val());
+        // Clone current share settings
+        new_share_settings = JSON.parse(JSON.stringify(share_settings));
+        // TODO: is this used any longer?  I don't see where resource_id gets
+        // set and updateUserPrivileges doesn't seem to be defined
         if (data.hasOwnProperty('resource_id')) {
             resource_id = data.resource_id;
             updateUserPrivileges(resource_id, $share_list);
         }
         else {
-            $('#shared-users').empty();
             if ($update_list.length > 0) {
-                $share_list.sort(comparator_map.username);
                 $update_list.each(function(index, element) {
-                    var $e, data, settings;
+                    var $e, data, newaccess;
                     $e = $(element);
                     data = $e.data();
+                    newaccess = data.access;
                     if (data.hasOwnProperty('currentaccess')) {
-                        data.access = data.currentaccess;
-                        $e.data(data);
+                        newaccess = data.currentaccess;
                     }
-                    share_settings[data.username] = data.access;
+                    new_share_settings[data.username] = newaccess;
                 });
-                $('#share-settings').val(JSON.stringify(share_settings));
-                $('#shared-users').removeClass('text-align-center');
+                if ($(this).data().hasOwnProperty('ajaxUpdateUrl')) {
+                    ajaxUpdateSharing($(this).data().ajaxUpdateUrl, new_share_settings, function(){
+                        updateSharingAndCloseModal(new_share_settings);
+                    });
+                } else {
+                    updateSharingAndCloseModal(new_share_settings);
+                }
+            } else {
+                updateSharingAndCloseModal(new_share_settings);
             }
-            if ($share_list.length === 0) {
-                $('#shared-users').addClass('text-align-center');
-                $('#shared-users').prepend('<p>This has not been shared</p>');
-            }
-            else {
-                $share_list.each(function(index, element) {
-                    var $e, access;
-                    $e = $(element);
-                    access = parseInt($e.find('.sharing-thumbnail-access').prop('disabled', true).hide().val(), 10);
-                    $e.find('.sharing-thumbnail-access-text').text(access_text[access]).show();
-                    $e.find('.sharing-thumbnail-unshare').hide();
-                });
-                $share_list.detach().appendTo($('#shared-users'));
-            }
-            $('#share-box').animate({top: '100%'});
         }
-        $update_list.removeClass('sharing-to-update');
-        $update_list.addClass('updated');
         return false;
     });
+
+    var updateSharingAndCloseModal = function(new_share_settings) {
+
+        var $share_list, $update_list;
+
+        $share_list = $("#share-box-share").children();
+        $update_list = $('.sharing-to-update');
+        $('#shared-users').empty();
+        if ($update_list.length > 0) {
+            $share_list.sort(comparator_map.username);
+            $update_list.each(function(index, element) {
+                var $e, data;
+                $e = $(element);
+                data = $e.data();
+                data.access = new_share_settings[data.username];
+            });
+            $('#share-settings').val(JSON.stringify(new_share_settings));
+            share_settings = new_share_settings;
+            $('#shared-users').removeClass('text-align-center');
+        }
+        if ($share_list.length === 0) {
+            $('#shared-users').addClass('text-align-center');
+            $('#shared-users').prepend('<p>This has not been shared</p>');
+        }
+        else {
+            $share_list.each(function(index, element) {
+                var $e, access;
+                $e = $(element);
+                access = parseInt($e.find('.sharing-thumbnail-access').prop('disabled', true).hide().val(), 10);
+                $e.find('.sharing-thumbnail-access-text').text(access_text[access]).show();
+                $e.find('.sharing-thumbnail-unshare').hide();
+            });
+            $share_list.detach().appendTo($('#shared-users'));
+        }
+        hideSharingModal();
+        $update_list.removeClass('sharing-to-update');
+        $update_list.addClass('updated');
+    };
+
+    var ajaxUpdateSharing = function(url, share_settings, callback) {
+        $('#share-box .modal-dialog').addClass('modal-spinner');
+        $.ajax({
+            url: url,
+            method: 'post',
+            data: JSON.stringify(share_settings),
+            contentType: 'application/json',
+            dataType: "json",
+            success: function(data, status, xhr) {
+                if (data.success) {
+                    callback();
+                    $(    '<div class="alert alert-success fade in">'
+                        +   '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+                        +   'Sharing settings updated successfully'
+                        + '</div>'
+                    ).appendTo('#shared-users-updated-message').alert().each(function(){
+                        var alert = this;
+                        window.setTimeout(function(){
+                            $(alert).alert('close');
+                        }, 5000);
+                    });
+                } else {
+                    $(    '<div id="share-box-error-alert" class="alert alert-danger">'
+                        +   data.error
+                        + '</div>'
+                    ).appendTo('#share-box-error-message');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("Error while saving sharing settings", url, share_settings, status, error);
+                $(    '<div id="share-box-error-alert" class="alert alert-danger">'
+                    +   'Error occurred: ' + status
+                    + '</div>'
+                ).appendTo('#share-box-error-message');
+            },
+            complete: function(xhr, status) {
+                $('#share-box .modal-dialog').removeClass('modal-spinner');
+            }
+        });
+    };
 
     // Close the share box
     $('body').on('click', '#share-box-close, #share-box-x', function(e) {
         e.stopPropagation();
         e.preventDefault();
+        $('#share-box-error-message').empty();
         $('#shared-users').empty();
         if ($original_shared_list.length > 0) {
             $original_shared_list.each(function(index, element) {
@@ -271,6 +349,7 @@ $(function() {
                 $e.find('.sharing-thumbnail-access').val(access).prop('disabled', true).hide();
                 $e.find('.sharing-thumbnail-access-text').text(access_text[access]).show();
                 $e.find('.sharing-thumbnail-unshare').hide();
+                $e.removeClass('sharing-to-update');
             });
             $('#shared-users').removeClass('text-align-center');
             $original_shared_list.detach().appendTo('#shared-users');
@@ -280,8 +359,11 @@ $(function() {
             $('#shared-users').prepend('<p>This has not been shared</p>');
         }
         $('.sharing-to-update').detach().appendTo($('#share-box-users'));
+        $('.sharing-to-update').find('.sharing-thumbnail-access').val(access_enum.NONE).prop('disabled', true).hide();
+        $('.sharing-to-update').find('.sharing-thumbnail-access-text').text(access_text[access_enum.NONE]).show();
+        $('.sharing-to-update').find('.sharing-thumbnail-unshare').hide();
         $('.sharing-to-update').addClass('share-box-users-item').removeClass('sharing-to-update share-box-share-item');
-        $('#share-box').animate({top: "100%"});
+        hideSharingModal();
         $('.order-results-selector').trigger('change');
         return false;
     });

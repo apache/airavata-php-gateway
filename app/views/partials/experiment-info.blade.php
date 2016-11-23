@@ -17,6 +17,13 @@
         {{Session::forget("permissionDenied") }}
     </div>
     @else
+    @if( Session::has("cloning-error"))
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                class="sr-only">Close</span></button>
+        {{{ Session::get("cloning-error") }}}
+    </div>
+    @endif
     <h1>
         Experiment Summary
         @if( !isset($dashboard))
@@ -229,8 +236,8 @@
     <form id="experiment-form" action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
 
         <div class="form-group">
-        @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($canEditSharing))
-            @include('partials/sharing-display-body', array("form" => $canEditSharing))
+        @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($updateSharingViaAjax))
+            @include('partials/sharing-display-body', array("form" => !$updateSharingViaAjax))
         @endif
         </div>
         <div class="btn-toolbar">
@@ -238,27 +245,39 @@
                     type="submit"
                     class="btn btn-success"
                     title="Launch the experiment" @if ( !$expVal["editable"]) style="display: none" @endif>
+                <span class="glyphicon glyphicon-play"></span>
                     Launch
             </button>
             <button name="cancel"
                    type="submit"
-                   class="btn btn-default" onclick="return confirm('Are you sure you want to cancel this experiment?')"
+                   class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this experiment?')"
                    title="Cancel experiment" @if (!$expVal["cancelable"]) style="display: none" @endif>
-                <span class="glyphicon glyphicon-remove"></span>
+                <span class="glyphicon glyphicon-stop"></span>
                 Cancel
             </button>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
-               class="btn btn-default"
+               class="btn btn-primary"
                role="button"
                title="Edit experiment" <?php if (!$expVal["editable"]) echo 'style="display: none"' ?>>
                 <span class="glyphicon glyphicon-pencil"></span>
                 Edit
             </a>
+            @if( count($writeableProjects) > 0 )
+            <button type="button"
+               id="clone-button"
+               name="clone"
+               class="btn btn-info"
+               role="button"
+               title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
+                <span class="glyphicon glyphicon-edit"></span>
+                Clone
+            </button>
+            @endif
             @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($canEditSharing) && $canEditSharing)
-            <button name="update-sharing"
-                   type="submit"
-                   class="btn btn-primary"
+            <button id="update-sharing" name="update-sharing"
+                   type="button"
+                   class="btn btn-warning"
                    title="Update sharing settings">
                 <span class="glyphicon glyphicon-share"></span>
                 Update Sharing
@@ -266,44 +285,7 @@
             @endif
         </div>
     </form>
-    <div id="clone-panel" class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Clone Experiment</h3>
-        </div>
-        <div class="panel-body">
-            @if( Session::has("cloning-error"))
-            <div class="alert alert-danger alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                {{{ Session::get("cloning-error") }}}
-            </div>
-            {{ Session::forget("cloning-error") }}
-            @endif
-            <form class="form-inline" action="{{ URL::to('/') }}/experiment/clone" method="post">
-                <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
-                <div class="form-group">
-                    <label for="projectId">Project</label>
-                    <select class="form-control" name="projectId" required>
-                        @foreach($writeableProjects as $project)
-                        <option value="{{{ $project->projectID }}}"
-                            @if( $project->projectID == $experiment->projectId)
-                            selected
-                            @endif
-                        >{{{ $project->optionLabel }}}</option>
-                        @endforeach
-                    </select>
-                </div>
 
-                <button type="submit"
-                   class="btn btn-primary"
-                   role="button"
-                   title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                    Clone
-                </a>
-            </form>
-        </div>
-    </div>
     @endif
     <input type="hidden" id="lastModifiedTime" value="{{ $expVal['experimentTimeOfStateChange'] }}"/>
 
@@ -312,6 +294,48 @@
 
     @endif
 </div>
+
+<div class="modal fade" id="clone-experiment-modal" tabindex="-1" role="dialog" aria-labelledby="clone-experiment-modal-title"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-center" id="clone-experiment-modal-title">Clone experiment</h3>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline" action="{{ URL::to('/') }}/experiment/clone" method="post">
+                    <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
+                    <div class="form-group">
+                        <label for="projectId">Project</label>
+                        <select class="form-control" name="projectId" required>
+                            @foreach($writeableProjects as $project)
+                                <option value="{{{ $project->projectID }}}"
+                                    @if( $project->projectID == $experiment->projectId)
+                                        selected
+                                    @endif
+                                    >{{{ $project->optionLabel }}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <button type="submit"
+                        class="btn btn-info"
+                        role="button"
+                        title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
+                        <span class="glyphicon glyphicon-edit"></span>
+                        Clone
+                    </a>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @if( isset($dashboard))
 <h2 class="text-center">Detailed Experiment Information</h2>
@@ -389,7 +413,7 @@
 @endif
 
 @if(Config::get('pga_config.airavata')["data-sharing-enabled"] and isset($canEditSharing) && $canEditSharing)
-    @include('partials/sharing-form-modal')
+    @include('partials/sharing-form-modal', array("entityName" => "experiment"))
 @endif
 @section('scripts')
 @parent
@@ -398,7 +422,10 @@
     <script>
         var users = {{ $users }};
         var owner = {{ $owner }};
-        $('#project-share').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
+        $('#update-sharing').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
+        @if($updateSharingViaAjax)
+        $('#share-box-button').data({ajaxUpdateUrl: "{{URL::to('/')}}/experiment/update-sharing?expId={{Input::get('expId')}}", resourceId: "{{Input::get('expId')}}"})
+        @endif
     </script>
     {{ HTML::script('js/sharing/sharing_utils.js') }}
     {{ HTML::script('js/sharing/share.js') }}
@@ -409,5 +436,25 @@
 <script>
     checkAuth("http://localhost:8888/auth", "ws://localhost:8888/experiment/openmm");
 </script>
+
+<script>
+
+    $('#clone-button').on('click', function(e){
+
+        e.stopPropagation();
+        e.preventDefault();
+
+        // If experiment can be cloned into more than one project, give the user
+        // the chance to pick which one, otherwise just submit the cloning form
+        var projectCount = $('#clone-experiment-modal select[name=projectId] option').size();
+        if (projectCount > 1) {
+            $("#clone-experiment-modal").modal("show");
+        } else {
+            $("#clone-experiment-modal form").submit();
+        }
+        return false;
+    });
+</script>
+
 
 @stop

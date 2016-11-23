@@ -55,7 +55,7 @@
 
 {{ HTML::image("assets/Profile_avatar_placeholder_large.png", 'placeholder image', array('class' => 'baseimage')) }}
 
-@include('partials/sharing-form-modal')
+@include('partials/sharing-form-modal', array("entityName" => "project"))
 
 @stop
 
@@ -64,7 +64,7 @@
 <script>
     var users = {{ $users }};
     var owner = {{ $owner }};
-    $('#project-share').data({url: "{{ URL::to('/') }}/project/unshared-users", resourceId: "{{ Input::get('projId') }}"})
+    $('#entity-share').data({url: "{{ URL::to('/') }}/project/unshared-users", resourceId: "{{ Input::get('projId') }}"})
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}

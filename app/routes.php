@@ -118,6 +118,7 @@ Route::post("experiment/browse", "ExperimentController@browseView");
 Route::get("experiment/shared-users", "ExperimentController@sharedUsers");
 
 Route::get("experiment/unshared-users", "ExperimentController@unsharedUsers");
+Route::post("experiment/update-sharing", "ExperimentController@updateSharing");
 
 Route::get("download", function(){
     if(Input::has("path") && (0 == strpos(Input::get("path"), Session::get('username'))
