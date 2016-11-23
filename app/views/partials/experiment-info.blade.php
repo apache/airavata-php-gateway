@@ -245,18 +245,19 @@
                     type="submit"
                     class="btn btn-success"
                     title="Launch the experiment" @if ( !$expVal["editable"]) style="display: none" @endif>
+                <span class="glyphicon glyphicon-play"></span>
                     Launch
             </button>
             <button name="cancel"
                    type="submit"
-                   class="btn btn-default" onclick="return confirm('Are you sure you want to cancel this experiment?')"
+                   class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this experiment?')"
                    title="Cancel experiment" @if (!$expVal["cancelable"]) style="display: none" @endif>
-                <span class="glyphicon glyphicon-remove"></span>
+                <span class="glyphicon glyphicon-stop"></span>
                 Cancel
             </button>
             <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
             <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
-               class="btn btn-default"
+               class="btn btn-primary"
                role="button"
                title="Edit experiment" <?php if (!$expVal["editable"]) echo 'style="display: none"' ?>>
                 <span class="glyphicon glyphicon-pencil"></span>
@@ -266,17 +267,17 @@
             <button type="button"
                id="clone-button"
                name="clone"
-               class="btn btn-primary"
+               class="btn btn-info"
                role="button"
                title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
-                <span class="glyphicon glyphicon-pencil"></span>
+                <span class="glyphicon glyphicon-edit"></span>
                 Clone
             </button>
             @endif
             @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($canEditSharing) && $canEditSharing)
             <button id="update-sharing" name="update-sharing"
                    type="button"
-                   class="btn btn-primary"
+                   class="btn btn-warning"
                    title="Update sharing settings">
                 <span class="glyphicon glyphicon-share"></span>
                 Update Sharing
@@ -318,10 +319,10 @@
                         </div>
 
                         <button type="submit"
-                        class="btn btn-primary"
+                        class="btn btn-info"
                         role="button"
                         title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
-                        <span class="glyphicon glyphicon-pencil"></span>
+                        <span class="glyphicon glyphicon-edit"></span>
                         Clone
                     </a>
                 </form>
