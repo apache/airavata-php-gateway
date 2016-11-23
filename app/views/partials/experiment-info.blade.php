@@ -413,7 +413,7 @@
 @endif
 
 @if(Config::get('pga_config.airavata')["data-sharing-enabled"] and isset($canEditSharing) && $canEditSharing)
-    @include('partials/sharing-form-modal', array("entityType" => "experiment"))
+    @include('partials/sharing-form-modal', array("entityName" => "experiment"))
 @endif
 @section('scripts')
 @parent

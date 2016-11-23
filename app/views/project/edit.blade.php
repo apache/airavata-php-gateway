@@ -55,7 +55,7 @@
 
 {{ HTML::image("assets/Profile_avatar_placeholder_large.png", 'placeholder image', array('class' => 'baseimage')) }}
 
-@include('partials/sharing-form-modal', array("entityType" => "project"))
+@include('partials/sharing-form-modal', array("entityName" => "project"))
 
 @stop
 
