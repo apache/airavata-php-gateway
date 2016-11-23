@@ -109,15 +109,31 @@
 
     <div class="form-group well">
         <label for=""></label>
-        <input type="checkbox" id="enableEmail" name="enableEmailNotification" value="1"> Do you want to receive email
+        <?php
+            $emails = $expInputs['experiment']->emailAddresses;
+            $hasEmails = false;
+            if(!empty($emails) and count($emails) > 0){
+                $hasEmails=true;
+            }
+        ?>
+        <input type="checkbox" id="enableEmail" name="enableEmailNotification" value="1" <?php if($hasEmails) echo 'checked' ?>> Do you want to receive email
         notifications for status changes in the experiment?<br/>
 
-        <div class="emailSection hide">
+        <div class="emailSection <?php if(!$hasEmails) echo "hide"?>">
             <h4>Enter Email Address here.</h4>
 
             <div class="emailAddresses">
-                <input type="email" id="emailAddresses" class="form-control" name="emailAddresses[]"
-                       placeholder="Email"/>
+                <?php
+                    if($hasEmails){
+                        foreach($emails as $email){
+                            echo '<input type="email" id="emailAddresses" class="form-control" name="emailAddresses[]"
+                       placeholder="Email" value="'.$email.'"/>';
+                        }
+                    }else{
+                        echo '<input type="email" id="emailAddresses" class="form-control" name="emailAddresses[]"
+                       placeholder="Email"/>';
+                    }
+                ?>
             </div>
             <button type="button" class="addEmail btn btn-default">Add another Email</button>
         </div>
