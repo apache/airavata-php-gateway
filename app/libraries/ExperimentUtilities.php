@@ -288,14 +288,12 @@ class ExperimentUtilities
             $userConfigData->userDN = $_POST["userDN"];
         }
         $userConfigData->useUserCRPref = isset($_POST['use-user-cr-pref']) ? true : false;
-
-        $applicationInputs = AppUtilities::get_application_inputs($_POST['application']);
-        $experimentInputs = ExperimentUtilities::process_inputs($_POST['project'], $_POST['experiment-name'], $applicationInputs, $experimentInputs);
-
-        if (ExperimentUtilities::$experimentPath == null) {
-            ExperimentUtilities::create_experiment_folder_path($_POST['project'], $_POST['experiment-name']);
-        }
+        ExperimentUtilities::create_experiment_folder_path($_POST['project'], $_POST['experiment-name']);
         $userConfigData->experimentDataDir = ExperimentUtilities::$experimentPath;
+        $applicationInputs = AppUtilities::get_application_inputs($_POST['application']);
+        $experimentInputs = ExperimentUtilities::process_inputs(ExperimentUtilities::$experimentPath, $applicationInputs, $experimentInputs);
+
+
 
         $experiment = new ExperimentModel();
         // required
@@ -330,12 +328,10 @@ class ExperimentUtilities
      * @internal param $environmentPath
      * @return array
      */
-    public static function process_inputs($projectId, $experimentName, $applicationInputs, $experimentInputs)
+    public static function process_inputs($experimentFilePath, $applicationInputs, $experimentInputs)
     {
         $experimentAssemblySuccessful = true;
         $newExperimentInputs = array();
-
-        ExperimentUtilities::create_experiment_folder_path($projectId, $experimentName);
 
         //sending application inputs in the order defined by the admins.
         $order = array();
@@ -378,9 +374,9 @@ class ExperimentUtilities
                     // move file to experiment data directory
                     //
                     if (!empty($applicationInput->value)) {
-                        $filePath = ExperimentUtilities::$experimentPath . $applicationInput->value;
+                        $filePath = $experimentFilePath . $applicationInput->value;
                     } else {
-                        $filePath = ExperimentUtilities::$experimentPath . $file['name'];
+                        $filePath = $experimentFilePath . $file['name'];
                     }
 
                     // check if file already exists
@@ -1281,7 +1277,7 @@ class ExperimentUtilities
         $applicationInputs = AppUtilities::get_application_inputs($experiment->executionId);
 
         $experimentInputs = $experiment->experimentInputs; // get current inputs
-        $experimentInputs = ExperimentUtilities::process_inputs( $experiment->projectId, $input['experiment-name'], $applicationInputs, $experimentInputs); // get new inputs
+        $experimentInputs = ExperimentUtilities::process_inputs( $experiment->userConfigurationData->experimentDataDir, $applicationInputs, $experimentInputs); // get new inputs
 
         if ($experimentInputs) {
             $experiment->experimentInputs = $experimentInputs;
