@@ -229,24 +229,12 @@ class ProjectUtilities
     public static function update_project($projectId, $projectDetails)
     {
         $updatedProject = new Project();
-        $updatedProject->owner = $projectDetails["owner"];
-        $updatedProject->name = $projectDetails["name"];
-        $updatedProject->description = $projectDetails["description"];
+        $updatedProject->owner = $projectDetails->owner;
+        $updatedProject->name = $projectDetails->name;
+        $updatedProject->description = $projectDetails->description;
         $updatedProject->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
 
-        try {
-            Airavata::updateProject(Session::get('authz-token'), $projectId, $updatedProject);
-
-            //Utilities::print_success_message('Project updated! Click <a href="project_summary.php?projId=' . $projectId . '">here</a> to view the project summary.');
-        } catch (InvalidRequestException $ire) {
-            CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());
-        } catch (ProjectNotFoundException $pnfe) {
-            CommonUtilities::print_error_message('ProjectNotFoundException!<br><br>' . $pnfe->getMessage());
-        } catch (AiravataClientException $ace) {
-            CommonUtilities::print_error_message('AiravataClientException!<br><br>' . $ace->getMessage());
-        } catch (AiravataSystemException $ase) {
-            CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
-        }
+        Airavata::updateProject(Session::get('authz-token'), $projectId, $updatedProject);
 
         if (Config::get('pga_config.airavata')["data-sharing-enabled"] && array_key_exists('share-settings', $_POST)){
             $share = $_POST['share-settings'];
