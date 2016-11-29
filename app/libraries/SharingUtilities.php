@@ -175,6 +175,16 @@ class SharingUtilities {
 
         return $users;
     }
+
+    public static function getSharedResourceOwner($resourceId, $dataResourceType) {
+        $owners = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::OWNER);
+        if (count($owners) != 1) {
+            Log::error("Got more than one shared resource owner!", array($resourceId, $dataResourceType, $owners));
+            throw new Exception("Expected exactly 1 owner for $resourceId of type $dataResourceType!");
+        } else {
+            return $owners[0];
+        }
+    }
 }
 
 ?>

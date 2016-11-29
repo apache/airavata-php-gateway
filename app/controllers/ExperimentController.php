@@ -78,10 +78,9 @@ class ExperimentController extends BaseController
                 $owner = array();
 
                 $projectOwner = array();
-                $project = ProjectUtilities::get_project($_POST['project']);
-                // TODO: figure out the owner of the project using sharing API
-                if ($project != null && strcmp(Session::get("username"), $project->owner) !== 0) {
-                    $projectOwner[$project->owner] = $users[$project->owner];
+                $sharedProjectOwner = SharingUtilities::getSharedResourceOwner($_POST['project'], ResourceType::PROJECT);
+                if (strcmp(Session::get("username"), $sharedProjectOwner) !== 0) {
+                    $projectOwner[$sharedProjectOwner] = $users[$sharedProjectOwner];
                     $users = array_diff_key($users, $projectOwner);
                 }
 
@@ -170,18 +169,21 @@ class ExperimentController extends BaseController
             );
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
                 $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
+                $sharedProjectOwner = SharingUtilities::getSharedResourceOwner($experiment->projectId, ResourceType::PROJECT);
 
                 $owner = array();
                 $projectOwner = array();
                 if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
                     $owner[$experiment->userName] = $users[$experiment->userName];
-                    $users = array_diff_key($users, $owner);
                 }
-                // TODO: figure out the owner of the project using sharing API
-                if ($project != null && strcmp(Session::get("username"), $project->owner) !== 0) {
-                    $projectOwner[$project->owner] = $users[$project->owner];
-                    $users = array_diff_key($users, $projectOwner);
+                if (strcmp(Session::get("username"), $sharedProjectOwner) !== 0) {
+                    $projectOwner[$sharedProjectOwner] = $users[$sharedProjectOwner];
                 }
+                // Subtract out the owner and project owner from list of users
+                $users = array_diff_key($users, $owner);
+                $users = array_diff_key($users, $projectOwner);
+                // If project owner is the same as owner, just show the owner, not the project owner
+                $projectOwner = array_diff_key($projectOwner, $owner);
                 // Only allow editing sharing on the summary page if the owner
                 // and the experiment isn't editable. If the experiment is
                 // editable, the sharing can be edited on the edit page.
@@ -294,22 +296,22 @@ class ExperimentController extends BaseController
         if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
             if (SharingUtilities::userCanWrite(Session::get("username"), $_GET['expId'], ResourceType::EXPERIMENT) === true) {
                 $users = SharingUtilities::getProfilesForSharedUsers($_GET['expId'], ResourceType::EXPERIMENT);
+                $sharedProjectOwner = SharingUtilities::getSharedResourceOwner($experiment->projectId, ResourceType::PROJECT);
 
                 $owner = array();
                 $projectOwner = array();
                 if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
                     $owner[$experiment->userName] = $users[$experiment->userName];
-                    $users = array_diff_key($users, $owner);
                 }
-                // TODO: figure out the owner of the project using sharing API
-                $project = null;
-                if (SharingUtilities::userCanRead(Session::get("username"), $experiment->projectId, ResourceType::PROJECT)) {
-                    $project = ProjectUtilities::get_project($experiment->projectId);
+                if (strcmp(Session::get("username"), $sharedProjectOwner) !== 0) {
+                    $projectOwner[$sharedProjectOwner] = $users[$sharedProjectOwner];
                 }
-                if ($project != null && strcmp(Session::get("username"), $project->owner) !== 0) {
-                    $projectOwner[$project->owner] = $users[$project->owner];
-                    $users = array_diff_key($users, $projectOwner);
-                }
+                // Subtract out owner and project owner from list of users
+                $users = array_diff_key($users, $owner);
+                $users = array_diff_key($users, $projectOwner);
+                // If project owner is the same as owner, just show the owner, not the project owner
+                $projectOwner = array_diff_key($projectOwner, $owner);
+
                 $canEditSharing = $this->isExperimentOwner($experiment, Session::get('username'));
 
                 return View::make("experiment/edit", array("expInputs" => $experimentInputs,
