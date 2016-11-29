@@ -31,7 +31,7 @@ class URPUtilities
 
         $userId = Session::get('username');
         $gatewayId = Session::get('gateway_id');
-        $credentialStoreToken = AdminUtilities::create_ssh_token_with_description("Default SSH Key");
+        $credentialStoreToken = AdminUtilities::create_ssh_token_for_user("Default SSH Key");
         $userResourceProfileData = new UserResourceProfile(array(
                 "userId" => $userId,
                 "gatewayID" => $gatewayId,
