@@ -4,6 +4,7 @@ use Airavata\Model\Workspace\Gateway;
 use Airavata\Model\Workspace\GatewayApprovalStatus;
 use Airavata\Model\Workspace\Notification;
 use Airavata\Model\Workspace\NotificationPriority;
+use Airavata\Model\Credential\Store\CredentialOwnerType;
 
 class AdminUtilities
 {
@@ -165,13 +166,14 @@ class AdminUtilities
         return $expContainer;
     }
 
-    public static function create_ssh_token(){
-        return $newToken = Airavata::generateAndRegisterSSHKeys( Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"));
+    public static function create_ssh_token_for_gateway($description) {
+        return Airavata::generateAndRegisterSSHKeys(
+            Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"), $description, CredentialOwnerType::GATEWAY);
     }
 
-    public static function create_ssh_token_with_description($description){
-        return Airavata::generateAndRegisterSSHKeysWithDescription(
-            Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"), $description);
+    public static function create_ssh_token_for_user($description) {
+        return Airavata::generateAndRegisterSSHKeys(
+            Session::get('authz-token'), Session::get("gateway_id"), Session::get("username"), $description, CredentialOwnerType::USER);
     }
 
     public static function create_pwd_token($inputs){

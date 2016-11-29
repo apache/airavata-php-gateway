@@ -58,7 +58,7 @@ class UserSettingsController extends BaseController
 
         $description = Input::get("credential-description");
 
-        if (AdminUtilities::create_ssh_token_with_description($description)) {
+        if (AdminUtilities::create_ssh_token_for_user($description)) {
             return Redirect::to("account/credential-store")->with("message", "SSH Key '$description' was added");
         }
     }
