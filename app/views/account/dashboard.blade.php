@@ -300,7 +300,7 @@
 
             <div class="row well">
 
-                <h3>Manage Computing and Storage Resouces and Preferences for your Gateway</h3>
+                <h3>Manage Computing and Storage Resources and Preferences for your Gateway</h3>
 
                 <a href="{{URL::to('/')}}/cr/browse">
                     <div class=" col-md-3 well">
