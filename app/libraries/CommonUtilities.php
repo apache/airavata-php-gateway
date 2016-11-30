@@ -233,7 +233,9 @@ class CommonUtilities
                 }
             }
 
-            $navbar .= '<li><a href="' . URL::to('/') . '/account/settings"><span class="glyphicon glyphicon-cog"></span> User settings</a></li>';
+            if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only')){
+                $navbar .= '<li><a href="' . URL::to('/') . '/account/settings"><span class="glyphicon glyphicon-cog"></span> User settings</a></li>';
+            }
             $navbar .= '<li><a href="' . URL::to('/') . '/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>';
             $navbar .= '</ul></li>';
         } else {
