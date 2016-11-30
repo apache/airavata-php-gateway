@@ -9,7 +9,7 @@
 <div class="container">
     <ol class="breadcrumb">
         <li><a href="{{ URL::to('/') }}/account/settings">User Settings</a></li>
-        <li class="active">Compute Resources</li>
+        <li class="active">Credential Store</li>
     </ol>
     @if( Session::has("message"))
     <div class="alert alert-success alert-dismissible" role="alert">
