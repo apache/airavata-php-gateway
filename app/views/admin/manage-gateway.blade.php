@@ -624,6 +624,7 @@
     $(".update-gateway").click( function( ev){
         ev.preventDefault();
          $(this).prepend( "<img class='loading-gif' src='<?php echo URL::to('/'); ?>/assets/ajax-loader.gif'/>");
+
         $(".fail-alert").remove();
         $(".success-alert").remove();
         var updateVal = $(this).val();
@@ -631,48 +632,58 @@
             
         updateGatewayData.push({name: updateVal, value: true});
 
-        $.ajax({
-            url: "{{URL::to('/')}}/admin/update-gateway-request",
-            method: "GET",
-            data: updateGatewayData
-        }).done( function( data){
+        dataObj = {}; // object containing all updatable gateway object elements
+
+        for (i=0; i<updateGatewayData.length; i++) {
+          dataObj[updateGatewayData[i].name] = updateGatewayData[i].value;
+        }
+
+        if( updateVal == "createTenant" &&
+            ( $.trim( dataObj['oauthClientId'] ) == "" || $.trim( dataObj['oauthClientSecret'] ) == "") ){
+            $(".submit-actions").before("<div class='alert alert-danger fail-alert'>Tenant creation requires Oauth Client Id and Oauth Client Secret fields to be filled.</div>");
             $(".loading-gif").remove();
-            if( data == -1 ){
-                //errors only with -1
-                if( updateVal == "createTenant"){
-                $(".submit-actions").after("<div class='alert alert-danger fail-alert'>Tenant creation has failed as Tenant with the same Domain name- airavata." + $(".gatewayAcronym").val() + " already exists in Identity Server. Please change Gateway Acronym and try again.");
+
+        }
+        else
+        {
+            $.ajax({
+                url: "{{URL::to('/')}}/admin/update-gateway-request",
+                method: "GET",
+                data: updateGatewayData
+            }).done( function( data){
+                $(".loading-gif").remove();
+                if( data == -1 ){
+                    //errors only with -1
+                    if( updateVal == "createTenant"){
+                    $(".submit-actions").before("<div class='alert alert-danger fail-alert'>Tenant creation has failed as Tenant with the same Domain name- airavata." + $(".gatewayAcronym").val() + " already exists in Identity Server. Please change Gateway Acronym and try again.");
+                    }
+                    else{
+                        $(".submit-actions").before("<div class='alert alert-danger fail-alert'>Error updating Gateway. Please try again.");
+                    }
                 }
                 else{
-                    $(".submit-actions").after("<div class='alert alert-danger fail-alert'>Error updating Gateway. Please try again.");
+                    if( updateVal == "createTenant"){
+                        $(".submit-actions").before("<div class='alert alert-success success-alert'>Tenant has been created with domain name- airavata." + $(".gatewayAcronym").val());
+                        $(".notCreatedGateway").addClass("hide");
+
+                        $(".createdGateway").removeClass("hide");
+
+                    }
+                    else{
+                        $(".submit-actions").before("<div class='alert alert-success success-alert'>Gateway has been updated successfully.");
+                    }
+
+                    //refresh data next time if same popup is opened.
+                    var gatewayIdWithoutSpaces = dataObj['gateway_id'].replace(/\s+/g, '-');
+                    $("#view-" +  gatewayIdWithoutSpaces).data("gatewayobject", data);
+                    $("#view-" + gatewayIdWithoutSpaces ).parent().parent().find(".form-gatewayName").html( dataObj['gatewayName']);
+                    $("#view-" + gatewayIdWithoutSpaces ).parent().parent().find(".form-gatewayURL").html( dataObj['gatewayURL']);
                 }
-            }
-            else{
-                if( updateVal == "createTenant"){
-                    $(".submit-actions").after("<div class='alert alert-success success-alert'>Tenant has been created with domain name- airavata." + $(".gatewayAcronym").val());
-                    $(".notCreatedGateway").addClass("hide");
-
-                    $(".createdGateway").removeClass("hide");
-
-                }
-                else{
-                    $(".submit-actions").after("<div class='alert alert-success success-alert'>Gateway has been updated successfully.");
-                }
-
-                dataObj = {};
-
-                for (i=0; i<updateGatewayData.length; i++) {
-                  dataObj[updateGatewayData[i].name] = updateGatewayData[i].value;
-                }
-
-                var gatewayIdWithoutSpaces = dataObj['gateway_id'].replace(/\s+/g, '-');
-                $("#view-" +  gatewayIdWithoutSpaces).data("gatewayobject", data);
-                $("#view-" + gatewayIdWithoutSpaces ).parent().parent().find(".form-gatewayName").html( dataObj['gatewayName']);
-                $("#view-" + gatewayIdWithoutSpaces ).parent().parent().find(".form-gatewayURL").html( dataObj['gatewayURL']);
-            }
-            //$(".onTenantComplete").removeClass("hide");
-            //$(".onTenantLoad").addClass("hide");
-            //$(".onTenantComplete").removeClass("hide");
-        });
+                //$(".onTenantComplete").removeClass("hide");
+                //$(".onTenantLoad").addClass("hide");
+                //$(".onTenantComplete").removeClass("hide");
+            });
+        }
     });
 
     $(".gaStatuses option[value=REQUESTED]").prop("selected", true);
