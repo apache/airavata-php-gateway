@@ -160,7 +160,10 @@ class AdminController extends BaseController {
 		//first step of adding tenant and changing gateway request status to Approved.	 
 		$returnVal = AdminUtilities::update_gateway( Input::get("gateway_id"), Input::all());
 		if( Request::ajax()){
-			return $returnVal;
+			if( $returnVal == 1)
+				return json_encode( AdminUtilities::get_gateway( Input::get("gateway_id")) );
+			else
+				return $returnVal; // anything other than positive update result
 		}
 		else{
 			if( $returnVal == 1)

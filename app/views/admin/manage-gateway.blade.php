@@ -102,7 +102,7 @@
                                 <tbody>
                                 @foreach( $gateways as $indexGP => $gp )
                                     <tr class="gatewayRow gatewayStatus-{{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus]}}">
-                                        <td>{{$gp->gatewayName }}</td>
+                                        <td class="form-gatewayName">{{$gp->gatewayName }}</td>
                                         <?php 
 
                                             $timeDifference = Session::get("user_timezone");
@@ -114,12 +114,12 @@
                                         ?>
                                         <td>{{ $creationTime}}</td>
                                         <td>{{ $gp->gatewayAdminFirstName }} {{ $gp->gatewayAdminLastName }} </td>
-                                        <td>{{ $gp->gatewayURL }}</td>
+                                        <td class="form-gatewayURL">{{ $gp->gatewayURL }}</td>
                                         <td style="max-width: 400px; word-wrap: break-word;">{{ $gp->reviewProposalDescription}}</td>
-                                        <td>{{ $gp->gatewayPublicAbstract}}</td>
+                                        <td style="max-width: 400px; word-wrap: break-word;">{{ $gp->gatewayPublicAbstract}}</td>
                                         <td>{{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus] }}</td>
                                         <td>
-                                            <input type="button" class="btn btn-primary btn-xs start-approval" data-gatewayobject="{{htmlentities(json_encode( $gp))}}" value="View"/>
+                                            <input type="button" class="btn btn-primary btn-xs start-approval" id="view-{{ preg_replace('/[\s]/', '-',$gp->gatewayId) }}" data-gatewayobject='{{htmlentities(json_encode( $gp))}}' value="View"/>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -571,6 +571,11 @@
 
         var gatewayObject = $(this).data("gatewayobject");
         var gatewayId = gatewayObject.gatewayId;
+        if( gatewayId == undefined){
+            gatewayObject = $.parseJSON( $(this).data("gatewayobject"));
+            gatewayId = gatewayObject.gatewayId;
+        }
+
         var gatewayApprovalStatuses = $.parseJSON( $(".gatewayApprovalStatuses").val() );
 
         $(".onTenantLoad").removeClass("hide");
@@ -633,6 +638,7 @@
         }).done( function( data){
             $(".loading-gif").remove();
             if( data == -1 ){
+                //errors only with -1
                 if( updateVal == "createTenant"){
                 $(".submit-actions").after("<div class='alert alert-danger fail-alert'>Tenant creation has failed as Tenant with the same Domain name- airavata." + $(".gatewayAcronym").val() + " already exists in Identity Server. Please change Gateway Acronym and try again.");
                 }
@@ -640,16 +646,28 @@
                     $(".submit-actions").after("<div class='alert alert-danger fail-alert'>Error updating Gateway. Please try again.");
                 }
             }
-            else if( data == 1){
+            else{
                 if( updateVal == "createTenant"){
                     $(".submit-actions").after("<div class='alert alert-success success-alert'>Tenant has been created with domain name- airavata." + $(".gatewayAcronym").val());
                     $(".notCreatedGateway").addClass("hide");
+
+                    $(".createdGateway").removeClass("hide");
+
                 }
                 else{
                     $(".submit-actions").after("<div class='alert alert-success success-alert'>Gateway has been updated successfully.");
                 }
-                $(".createdGateway").removeClass("hide");
 
+                dataObj = {};
+
+                for (i=0; i<updateGatewayData.length; i++) {
+                  dataObj[updateGatewayData[i].name] = updateGatewayData[i].value;
+                }
+
+                var gatewayIdWithoutSpaces = dataObj['gateway_id'].replace(/\s+/g, '-');
+                $("#view-" +  gatewayIdWithoutSpaces).data("gatewayobject", data);
+                $("#view-" + gatewayIdWithoutSpaces ).parent().parent().find(".form-gatewayName").html( dataObj['gatewayName']);
+                $("#view-" + gatewayIdWithoutSpaces ).parent().parent().find(".form-gatewayURL").html( dataObj['gatewayURL']);
             }
             //$(".onTenantComplete").removeClass("hide");
             //$(".onTenantLoad").addClass("hide");

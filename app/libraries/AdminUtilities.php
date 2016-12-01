@@ -25,6 +25,11 @@ class AdminUtilities
         return Airavata::addGateway(Session::get('authz-token'), $gateway);
     }
 
+    public static function get_gateway( $gateway_id)
+    {
+        return Airavata::getGateway( Session::get("authz-token"), $gateway_id);
+    }
+
     public static function request_gateway( $inputs)
     {
         $gateway = new Gateway( $inputs);
