@@ -473,7 +473,7 @@ to be uncommented when actually in use.
                     if( msg == null){
                         start = new Date(startTime + ' UTC');
                         end  = new Date(endTime + ' UTC');
-                        msg = "Experiment Statistics from " + start.toString() + " to " + end.toString();
+                        msg = "Experiment Statistics from " + start.toLocaleTimeString() + " to " + end.toLocaleTimeString();
                     }
                     $(".experiment-statistics").html( "<h2 class='text-center'>" + msg + "</h2><hr/>" + data);
                 }
