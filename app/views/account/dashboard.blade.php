@@ -94,7 +94,7 @@
             @endif
 
             <div class="well">
-                <h4 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h4>
+                <h6 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h6>
             </div>
             @if ($errors->has())
                 @foreach ($errors->all() as $error)
