@@ -88,8 +88,10 @@
                     </h4>
                 </div>
             @endif
-                <button class="gateway-request-button btn btn-default">Request a New Gateway</button>
-                <br>
+                <div>
+                    <button class="gateway-request-button btn btn-default">Request a New Gateway</button>
+                    <br/>
+                </div>
             <div class="well">
                 <h4 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h4>
             </div>
