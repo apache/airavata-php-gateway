@@ -33,7 +33,7 @@
                             <th>Project Abstract</th>
                             <th>Gateway Request Status</th>
                             <th>Actions</th>                            
-                            <th>Comments</th>
+                            <th>SciGaP Admin Comments</th>
                         </tr>
                     </thead>
                     <tbody>
