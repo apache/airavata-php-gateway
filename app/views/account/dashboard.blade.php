@@ -77,14 +77,18 @@
                     @endforeach
                     </tbody>
                 </table>
-                <div class="well">
-                <h4 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h4>
-                </div>
             @endif
             </div>
             <div class="col-md-12">
             <button class="gateway-request-button btn btn-default">Request a New Gateway</button>
-                
+            @if(empty($requestedGateways))
+                <p>You are in this page to create request for a new Gateway. Please click 'Request a New Gateway' button and proceed.<br>
+                    Once your request is submitted a SciGaP admin will process the request and if needed will contact you through the process.
+                </p>
+            @endif
+            <div class="well">
+                <h4 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h4>
+            </div>
             @if ($errors->has())
                 @foreach ($errors->all() as $error)
                 {{ CommonUtilities::print_error_message($error) }}
