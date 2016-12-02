@@ -471,7 +471,9 @@ to be uncommented when actually in use.
                 type: 'get',
                 success: function (data) {
                     if( msg == null)
-                        msg = "Experiment Statistics from " + startTime + " to " + endTime;
+                        start = new Date(startTime + ' UTC');
+                        end  = new Date(endTime + ' UTC');
+                        msg = "Experiment Statistics from " + start.toString() + " to " + end.toString();
                     $(".experiment-statistics").html( "<h2 class='text-center'>" + msg + "</h2><hr/>" + data);
                 }
             }).complete(function () {
