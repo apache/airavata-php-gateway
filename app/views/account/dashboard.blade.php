@@ -87,8 +87,8 @@
             @if(empty($requestedGateways))
                 <br>
                 <div class="well">
-                    <h4>You are in this page to create request for a new Gateway. Please click 'Request a New Gateway' button and proceed.<br>
-                        Once your request is submitted a SciGaP admin will process the request and if needed will contact you through the process.
+                    <h4>You are in this page to create request for a new Gateway. Please click 'Request a New Gateway' button and proceed. Once
+                        your request is submitted, a SciGaP admin will process the requirement and if needed you will be contacted.
                     </h4>
                 </div>
             @endif
