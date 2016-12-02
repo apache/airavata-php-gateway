@@ -470,10 +470,11 @@ to be uncommented when actually in use.
                 url: 'experimentStatistics?fromTime=' + startTime + '&' + 'toTime=' + endTime,
                 type: 'get',
                 success: function (data) {
-                    if( msg == null)
+                    if( msg == null){
                         start = new Date(startTime + ' UTC');
                         end  = new Date(endTime + ' UTC');
                         msg = "Experiment Statistics from " + start.toString() + " to " + end.toString();
+                    }
                     $(".experiment-statistics").html( "<h2 class='text-center'>" + msg + "</h2><hr/>" + data);
                 }
             }).complete(function () {
