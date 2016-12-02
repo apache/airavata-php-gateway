@@ -153,28 +153,28 @@
 //        }
 //    );
 
+    $(document).on("click",".existing-role-button",function(e) {
+        e.preventDefault();
+        that = this;
+        if($(this).attr("roleName") != "Internal/everyone"){
+            $.ajax({
+                type: "POST",
+                url: $(".base-url").val() + "/admin/remove-role-from-user",
+                data: {
+                    username: userName,
+                    roleName:$(this).attr("roleName")
+                }
+            }).complete(function (data) {
+                //getting user's existing roles
+                repopulatePopup( userName);
+                $(".success-message").html("<span class='alert alert-success col-md-12'>Role has been removed</span>");
+            });
+        }
+    });
+
     function update_users_existing_roles(that){
         userName = $(that).data("username");
         repopulatePopup( userName);
-
-        $(document).on("click",".existing-role-button",function(e) {
-            e.preventDefault();
-            that = this;
-            if($(this).attr("roleName") != "Internal/everyone"){
-                $.ajax({
-                    type: "POST",
-                    url: $(".base-url").val() + "/admin/remove-role-from-user",
-                    data: {
-                        username: userName,
-                        roleName:$(this).attr("roleName")
-                    }
-                }).complete(function (data) {
-                    //getting user's existing roles
-                    repopulatePopup( userName);
-                    $(".success-message").html("<span class='alert alert-success col-md-12'>Role has been removed</span>");
-                });
-            }
-        });
     }
 
     $(".check-roles").click(function () {
@@ -211,11 +211,14 @@
                     $(".roles-list").addClass("hide");
                     $(".success-message").html("<span class='alert alert-success col-md-12'>Roles have been added</span>");
                     update_users_existing_roles(that);
+                },
+                complete: function(data)
+                {
+                    $(".add-roles-submit").html("Add Roles");
+                    $(".add-roles-submit").removeAttr("disabled");
                 }
             });
         }
-        $(".add-roles-submit").html("Add Roles");
-        $(this).removeAttr("disabled");
     });
 
     function repopulatePopup( username){
@@ -239,6 +242,7 @@
             $(".new-roles-select option").each(function () {
                 $(this).removeAttr("disabled");
             });
+            var displayedRolesCount = 0;
             for (var i = 0; i < roles.length; i++) {
                 //disable roles which user already has.
                 var roleName = roles[i].trim();
@@ -254,7 +258,12 @@
                     var newRoleBlock = $(".role-block").html();
                     roleBlocks += newRoleBlock;
                     $(".roles-list").html(roleBlocks);
+                    displayedRolesCount++;
                 }
+            }
+            // If there is only one role displayed, don't allow admin to remove last role
+            if (displayedRolesCount === 1) {
+                $('.roles-list .existing-role-button').remove();
             }
             $(".add-roles-block").removeClass("hide");
             $(".roles-load").addClass("hide");
