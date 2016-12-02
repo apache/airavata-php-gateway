@@ -79,8 +79,7 @@
                 </table>
             @endif
             </div>
-            <div class="col-md-12">
-            <button class="gateway-request-button btn btn-default">Request a New Gateway</button>
+                <div class="col-md-12">
             @if(empty($requestedGateways))
                 <br>
                 <div class="well">
@@ -90,6 +89,7 @@
                 </div>
                 <br>
             @endif
+                <button class="gateway-request-button btn btn-default">Request a New Gateway</button>
             <div class="well">
                 <h4 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h4>
             </div>
