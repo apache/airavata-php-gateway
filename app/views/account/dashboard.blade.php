@@ -26,14 +26,14 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr class="text-center">
-                            <th valign="top">Gateway Name</th>
-                            <th valign="top">Creation Time</th>
-                            <th valign="top">Gateway URL</th>
-                            <th valign="top">Project Details</th>
-                            <th valign="top">Project Abstract</th>
-                            <th valign="top">Gateway Request Status</th>
-                            <th valign="top">Actions</th>
-                            <th valign="top">SciGaP Admin Comments</th>
+                            <th style="vertical-align: top; text-align: center">Gateway Name</th>
+                            <th style="vertical-align: top; text-align: center">Creation Time</th>
+                            <th style="vertical-align: top; text-align: center">Gateway URL</th>
+                            <th style="vertical-align: top; text-align: center">Project Details</th>
+                            <th style="vertical-align: top; text-align: center">Project Abstract</th>
+                            <th style="vertical-align: top; text-align: center">Gateway Request Status</th>
+                            <th style="vertical-align: top; text-align: center">Actions</th>
+                            <th style="vertical-align: top; text-align: center">SciGaP Admin Comments</th>
                         </tr>
                     </thead>
                     <tbody>
