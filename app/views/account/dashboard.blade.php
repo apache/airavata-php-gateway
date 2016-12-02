@@ -92,7 +92,7 @@
                     </h4>
                 </div>
             @endif
-
+            <br/>
             <div class="well">
                 <h6 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h6>
             </div>
