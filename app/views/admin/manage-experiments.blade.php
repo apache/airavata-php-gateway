@@ -364,10 +364,10 @@ to be uncommented when actually in use.
     });
 
     $(".get-experiment").click(function () {
-        $(".loading-img").removeClass("hide");
 
         var expId = $(".experimentId").val();
         if( $("#" + expId).length <= 0){
+            $(".loading-img").removeClass("hide");
             $.ajax({
                 url: 'experiment/summary?expId=' + expId,
                 type: 'get',
@@ -385,13 +385,19 @@ to be uncommented when actually in use.
             }).complete(function () {
                 $(".loading-img").addClass("hide");
             });
+        } else {
+            // Experiment data already loaded so just show it
+            $('#myTabs a[href="#' + expId + '"]').tab('show');
         }
     });
 
     $("body").on("click", ".close-tab", function(){
-        var idToRemove = $(this).parent().parent().attr("href");
-        $(this).parent().parent().remove();
-        $("#"+idToRemove).remove();
+        var tabContentSelector = $(this).closest("a").attr("href");
+        // Remove tab and tab's content
+        $(this).closest("li").remove();
+        $(tabContentSelector).remove();
+        // Show the overview tab
+        $('#myTabs a[href="#overview"]').tab('show');
     });
 
     //Experiment stages are under development.
