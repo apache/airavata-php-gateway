@@ -87,9 +87,9 @@
                         Once your request is submitted a SciGaP admin will process the request and if needed will contact you through the process.
                     </h4>
                 </div>
-                <br>
             @endif
                 <button class="gateway-request-button btn btn-default">Request a New Gateway</button>
+                <br>
             <div class="well">
                 <h4 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h4>
             </div>
