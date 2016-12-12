@@ -125,10 +125,14 @@ class AdminUtilities
      * @param $toTime
      * @return \Airavata\Model\Experiment\ExperimentStatistics
      */
-    public static function get_experiment_execution_statistics($fromTime, $toTime)
+    public static function get_experiment_execution_statistics($fromTime, $toTime, $username)
     {
+        if (trim($username) == '') {
+            $username = null;
+        }
+        Log::debug("get_experiment_execution_statistics", array($fromTime, $toTime, $username));
         return Airavata::getExperimentStatistics(Session::get('authz-token'),
-            Config::get('pga_config.airavata')['gateway-id'], $fromTime, $toTime);
+            Config::get('pga_config.airavata')['gateway-id'], $fromTime, $toTime, $username, null, null);
     }
 
     /**
@@ -140,7 +144,8 @@ class AdminUtilities
     {
         $experimentStatistics = AdminUtilities::get_experiment_execution_statistics(
             strtotime($inputs["from-date"]) * 1000,
-            strtotime($inputs["to-date"]) * 1000
+            strtotime($inputs["to-date"]) * 1000,
+            $inputs['username']
         );
         $experiments = array();
         if ($inputs["status-type"] == "ALL") {

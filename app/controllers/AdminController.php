@@ -324,9 +324,10 @@ class AdminController extends BaseController {
     {
         if (Request::ajax()) {
             $inputs = Input::all();
+            $username = Input::get('username');
             $expStatistics = AdminUtilities::get_experiment_execution_statistics(strtotime($inputs['fromTime']) * 1000
-                , strtotime($inputs['toTime']) * 1000);
-            return View::make("admin/experiment-statistics", array("expStatistics" => $expStatistics));
+                , strtotime($inputs['toTime']) * 1000, $username);
+            return View::make("admin/experiment-statistics", array("expStatistics" => $expStatistics, "username" => $username));
         }
     }
 
