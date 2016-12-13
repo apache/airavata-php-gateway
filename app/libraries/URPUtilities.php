@@ -4,6 +4,7 @@ use Airavata\API\Error\AiravataSystemException;
 use Airavata\Model\AppCatalog\UserResourceProfile\UserResourceProfile;
 use Airavata\Model\AppCatalog\UserResourceProfile\UserComputeResourcePreference;
 use Airavata\Model\AppCatalog\UserResourceProfile\UserStoragePreference;
+use Airavata\Model\Credential\Store\SummaryType;
 
 class URPUtilities
 {
@@ -57,7 +58,7 @@ class URPUtilities
         $userId = Session::get('username');
         $gatewayId = Session::get('gateway_id');
 
-        $all_ssh_pub_key_summaries = Airavata::getAllSSHPubKeysSummaryForUserInGateway(Session::get('authz-token'), $gatewayId, $userId);
+        $all_ssh_pub_key_summaries = Airavata::getAllCredentialSummaryForUsersInGateway(Session::get('authz-token'), SummaryType::SSH, $gatewayId, $userId);
         foreach ($all_ssh_pub_key_summaries as $ssh_pub_key_summary) {
             # strip whitespace from public key: there can't be trailing
             # whitespace in a public key entry in the authorized_keys file
