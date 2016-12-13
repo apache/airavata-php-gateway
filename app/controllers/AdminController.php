@@ -185,7 +185,12 @@ class AdminController extends BaseController {
 
 	public function experimentsView(){
         Session::put("admin-nav", "exp-statistics");
-		return View::make("admin/manage-experiments" );
+
+        $applications = AppUtilities::get_all_applications();
+        uksort($applications, 'strcasecmp');
+        $hostnames = CRUtilities::getAllCRObjects(true);
+        uksort($hostnames, 'strcasecmp');
+        return View::make("admin/manage-experiments", array("applications" => $applications, "hostnames" => $hostnames));
 	}
 
 	public function resourcesView(){

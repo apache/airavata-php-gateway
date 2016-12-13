@@ -121,7 +121,12 @@
                 <div class="col-md-5 hide" id="appname-filter-row">
                     <div class="form-group">
                         <div class='input-group'>
-                            <input type='text' class="form-control" placeholder="Application name" id="appname" name="appname"/>
+                            <select id="appname" name="appname" class="form-control">
+                                <option value="">Select Application</option>
+                                @foreach ($applications as $applicationId => $applicationName)
+                                <option value="{{ $applicationId }}">{{{ $applicationName }}}</option>
+                                @endforeach
+                            </select>
                             <div class="input-group-btn">
                                 <button id="remove-appname-filter" class="btn btn-default" type="button">
                                     <span class="glyphicon glyphicon-remove"></span>
@@ -135,7 +140,12 @@
                 <div class="col-md-5 hide" id="hostname-filter-row">
                     <div class="form-group">
                         <div class='input-group'>
-                            <input type='text' class="form-control" placeholder="Hostname" id="hostname" name="hostname"/>
+                            <select id="hostname" name="hostname" class="form-control">
+                                <option value="">Select Hostname</option>
+                                @foreach ($hostnames as $hostnameId => $hostname)
+                                <option value="{{ $hostnameId }}">{{{ $hostname }}}</option>
+                                @endforeach
+                            </select>
                             <div class="input-group-btn">
                                 <button id="remove-hostname-filter" class="btn btn-default" type="button">
                                     <span class="glyphicon glyphicon-remove"></span>
@@ -542,7 +552,7 @@ to be uncommented when actually in use.
 
     $("#add-appname-filter").click(function() {
         $("#appname-filter-row").removeClass("hide");
-        $("#appname-filter-row input").focus();
+        $("#appname-filter-row select").focus();
         $("#add-filter-dropdown").dropdown('toggle');
         $("#add-appname-filter").addClass("hide");
         return false;
@@ -550,13 +560,13 @@ to be uncommented when actually in use.
 
     $("#remove-appname-filter").click(function() {
         $("#appname-filter-row").addClass("hide");
-        $("#appname-filter-row input").val('');
+        $("#appname-filter-row select").val('');
         $("#add-appname-filter").removeClass("hide");
     });
 
     $("#add-hostname-filter").click(function() {
         $("#hostname-filter-row").removeClass("hide");
-        $("#hostname-filter-row input").focus();
+        $("#hostname-filter-row select").focus();
         $("#add-filter-dropdown").dropdown('toggle');
         $("#add-hostname-filter").addClass("hide");
         return false;
@@ -564,12 +574,12 @@ to be uncommented when actually in use.
 
     $("#remove-hostname-filter").click(function() {
         $("#hostname-filter-row").addClass("hide");
-        $("#hostname-filter-row input").val('');
+        $("#hostname-filter-row select").val('');
         $("#add-hostname-filter").removeClass("hide");
     });
 
-    // submit request if user presses ENTER key
-    $("#username, #appname, #hostname").keydown(function(e) {
+    // get statistics if user presses ENTER key in username filter field
+    $("#username").keydown(function(e) {
         if (e.which === 13) {
             $('#getStatistics').click();
             return false;
