@@ -185,7 +185,12 @@ class AdminController extends BaseController {
 
 	public function experimentsView(){
         Session::put("admin-nav", "exp-statistics");
-		return View::make("admin/manage-experiments" );
+
+        $applications = AppUtilities::get_all_applications();
+        uksort($applications, 'strcasecmp');
+        $hostnames = CRUtilities::getAllCRObjects(true);
+        uksort($hostnames, 'strcasecmp');
+        return View::make("admin/manage-experiments", array("applications" => $applications, "hostnames" => $hostnames));
 	}
 
 	public function resourcesView(){
@@ -329,9 +334,13 @@ class AdminController extends BaseController {
     {
         if (Request::ajax()) {
             $inputs = Input::all();
+            $username = Input::get('username');
+            $appname = Input::get('appname');
+            $hostname = Input::get('hostname');
             $expStatistics = AdminUtilities::get_experiment_execution_statistics(strtotime($inputs['fromTime']) * 1000
-                , strtotime($inputs['toTime']) * 1000);
-            return View::make("admin/experiment-statistics", array("expStatistics" => $expStatistics));
+                , strtotime($inputs['toTime']) * 1000, $username, $appname, $hostname);
+            return View::make("admin/experiment-statistics", array("expStatistics" => $expStatistics,
+                      "username" => $username, "appname" => $appname, "hostname" => $hostname));
         }
     }
 
