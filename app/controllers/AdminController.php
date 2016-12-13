@@ -231,8 +231,13 @@ class AdminController extends BaseController {
                 $userRoles["new"] = array();
                 $userRoles["deleted"] = "user-pending";
                 WSIS::updateUserRoles( $username, $userRoles);
+            } else if(in_array("user-pending", $newCurrentRoles) && in_array("user-pending", $roles["new"])) {
+                // When user-pending role added remove all roles except for user-pending and Internal/everyone
+                $userRoles["new"] = array();
+                $userRoles["deleted"] = array_diff($newCurrentRoles, array("user-pending", "Internal/everyone"));
+                WSIS::updateUserRoles( $username, $userRoles);
             }
-		}
+        }
         return Redirect::to("admin/dashboard/roles")->with( "message", "Roles has been added.");
     }
 
