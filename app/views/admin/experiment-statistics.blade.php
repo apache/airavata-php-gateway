@@ -145,11 +145,9 @@
 <div id="experiment-container" style="margin: 20px" class="experiment-container"></div>
 
 <script>
-    @if ($username)
-    var username = "{{ $username }}";
-    @else
-    var username = null;
-    @endif
+    var username = @if ($username) "{{ $username }}" @else null @endif;
+    var appname = @if ($appname) "{{ $appname }}" @else null @endif;
+    var hostname = @if ($hostname) "{{ $hostname }}" @else null @endif;
 
     $("#getAllExperiments").click(function () {
         getExperimentsOfStatus( 'ALL');
@@ -194,7 +192,9 @@
                     'search-key': 'creation-time',
                     'from-date': $fromTime,
                     'to-date': $toTime,
-                    'username': username
+                    'username': username,
+                    'appname': appname,
+                    'hostname': hostname
                 },
                 async: false,
                 success: function (data) {

@@ -497,7 +497,7 @@ to be uncommented when actually in use.
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last 24 hours";
-        getExperiments( ydayDate, todayDate, null, msg);
+        getExperiments( ydayDate, todayDate, null, null, null, msg);
     });
 
     $(".oneWeekExp").click( function(){
@@ -508,7 +508,7 @@ to be uncommented when actually in use.
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last week";
-        getExperiments( ydayDate, todayDate, null, msg);
+        getExperiments( ydayDate, todayDate, null, null, null, msg);
     })
 
     $("#getStatistics").click(function () {
@@ -517,11 +517,12 @@ to be uncommented when actually in use.
         $toTime = $("#datetimepicker10").find("input").val();
         $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm A');
         var username = $('#username').val().trim();
-        console.log("username", username);
+        var appname = $('#appname').val().trim();
+        var hostname = $('#hostname').val().trim();
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
-            getExperiments( $fromTime, $toTime, username);
+            getExperiments( $fromTime, $toTime, username, appname, hostname);
         }
     });
 
@@ -578,12 +579,15 @@ to be uncommented when actually in use.
     // Load experiments from the last 24 hours on page load.
     $(".oneDayExp").click();
 
-    function getExperiments( startTime, endTime, username, msg){
+    function getExperiments( startTime, endTime, username, appname, hostname, msg){
 
         $(".experiment-statistics").html("");
         $(".loading-img-statistics").removeClass("hide");
             $.ajax({
-                url: 'experimentStatistics?fromTime=' + startTime + '&' + 'toTime=' + endTime + '&username=' + encodeURIComponent(username),
+                url: 'experimentStatistics?fromTime=' + startTime + '&' + 'toTime=' + endTime
+                    + '&username=' + encodeURIComponent(username)
+                    + '&appname=' + encodeURIComponent(appname)
+                    + '&hostname=' + encodeURIComponent(hostname),
                 type: 'get',
                 success: function (data) {
                     if( msg == null){
@@ -591,6 +595,7 @@ to be uncommented when actually in use.
                         end  = new Date(endTime + ' UTC');
                         msg = "Experiment Statistics from " + start.toLocaleTimeString() + " to " + end.toLocaleTimeString();
                     }
+                    // TODO: update message to include username, appname and hostname?
                     $(".experiment-statistics").html( "<h2 class='text-center'>" + msg + "</h2><hr/>" + data);
                 }
             }).complete(function () {
