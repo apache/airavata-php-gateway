@@ -306,7 +306,7 @@ Route::get("admin/dashboard/experimentStatistics", "AdminController@experimentSt
 Route::get("admin/dashboard/resources", "AdminController@resourcesView");
 
 Route::get("admin/dashboard/experiment/summary", function () {
-    return Redirect::to("experiment/summary?expId=" . $_GET["expId"] . "&dashboard=true");
+    return Redirect::to("experiment/summary?expId=" . urlencode($_GET["expId"]) . "&dashboard=true");
 });
 
 Route::get("admin/dashboard/credential-store", "AdminController@credentialStoreView");

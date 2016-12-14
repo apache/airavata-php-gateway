@@ -107,7 +107,7 @@ class ExperimentController extends BaseController
                     <a href=' . URL::to('/') . '"/experiment/summary?expId=' . $expId . '">go directly</a> to experiment summary page.</p>');
 
             }*/
-            return Redirect::to('experiment/summary?expId=' . $expId);
+            return Redirect::to('experiment/summary?expId=' . urlencode($expId));
         } else
             return Redirect::to("home")->with("message", "Something went wrong here. Please file a bug report using the link in the Help menu.");
     }
@@ -235,16 +235,16 @@ class ExperimentController extends BaseController
         }*/
         if (isset($_POST['launch'])) {
             ExperimentUtilities::launch_experiment($experiment->experimentId);
-            return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
+            return Redirect::to('experiment/summary?expId=' . urlencode($experiment->experimentId));
         } elseif (isset($_POST['cancel'])) {
             ExperimentUtilities::cancel_experiment($experiment->experimentId);
-            return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
+            return Redirect::to('experiment/summary?expId=' . urlencode($experiment->experimentId));
         } elseif (isset($_POST['update-sharing'])) {
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
                 $share = $_POST['share-settings'];
                 ExperimentUtilities::update_experiment_sharing($experiment->experimentId, json_decode($share));
             }
-            return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
+            return Redirect::to('experiment/summary?expId=' . urlencode($experiment->experimentId));
         }
     }
 
@@ -322,7 +322,7 @@ class ExperimentController extends BaseController
                 ));
             }
             else {
-                Redirect::to("experiment/summary?expId=" . $experiment->experimentId)->with("error", "You do not have permission to edit this experiment");
+                Redirect::to("experiment/summary?expId=" . urlencode($experiment->experimentId))->with("error", "You do not have permission to edit this experiment");
             }
         }else {
             return View::make("experiment/no-sharing-edit", array("expInputs" => $experimentInputs));
@@ -333,9 +333,9 @@ class ExperimentController extends BaseController
     {
         try{
             $cloneId = ExperimentUtilities::clone_experiment(Input::get('expId'), Input::get('projectId'));
-            return Redirect::to('experiment/edit?expId=' . $cloneId . "&clonedExp=true");
+            return Redirect::to('experiment/edit?expId=' . urlencode($cloneId) . "&clonedExp=true");
         }catch (Exception $ex){
-            return Redirect::to("experiment/summary?expId=" . Input::get('expId'))
+            return Redirect::to("experiment/summary?expId=" . urlencode(Input::get('expId')))
                 ->with("cloning-error", "Failed to clone experiment: " . $ex->getMessage());
         }
     }
@@ -358,7 +358,7 @@ class ExperimentController extends BaseController
                         ExperimentUtilities::launch_experiment($experiment->experimentId);
                     }
 
-                    return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
+                    return Redirect::to('experiment/summary?expId=' . urlencode($experiment->experimentId));
                 } else
                     return View::make("home");
             }
@@ -374,7 +374,7 @@ class ExperimentController extends BaseController
                     ExperimentUtilities::launch_experiment($experiment->experimentId);
                 }
 
-                return Redirect::to('experiment/summary?expId=' . $experiment->experimentId);
+                return Redirect::to('experiment/summary?expId=' . urlencode($experiment->experimentId));
             } else
                 return View::make("home");
         }

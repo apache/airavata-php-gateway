@@ -49,7 +49,7 @@
             $.ajax({
                 type: "GET",
                 url: "{{URL::to('/') }}/experiment/summary",
-                data: {expId: "{{ Input::get('expId') }}", isAutoRefresh : autoRefresh },
+                data: {expId: {{ json_encode(Input::get('expId')) }}, isAutoRefresh : autoRefresh },
                 success: function (data) {
 
                     // Don't refresh the page if a dialog is open
@@ -95,7 +95,7 @@
 
     $('#refresh-experiment').click(function() {
         console.log(autoRefresh);
-        window.location.replace("{{URL::to('/') }}/experiment/summary?" + "expId=" + "{{ Input::get('expId') }}"+"&"+ "isAutoRefresh=" + autoRefresh);
+        window.location.replace("{{URL::to('/') }}/experiment/summary?expId={{ urlencode(Input::get('expId')) }}&isAutoRefresh=" + autoRefresh);
     });
 
     $('.modal, #share-box').on('show', function (e) {

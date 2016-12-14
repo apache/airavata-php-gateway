@@ -12,10 +12,10 @@
 
     <form action="{{URL::to('/')}}/experiment/create" method="POST" role="form" enctype="multipart/form-data">
 
-        <input type="hidden" name="experiment-name" value="{{$expInputs['experimentName']}}">
-        <input type="hidden" name="experiment-description" value="{{$expInputs['experimentDescription']}}">
-        <input type="hidden" name="project" value="{{$expInputs['project']}}">
-        <input type="hidden" name="application" value="{{$expInputs['application']}}">
+        <input type="hidden" name="experiment-name" value="{{{$expInputs['experimentName']}}}">
+        <input type="hidden" name="experiment-description" value="{{{$expInputs['experimentDescription']}}}">
+        <input type="hidden" name="project" value="{{{$expInputs['project']}}}">
+        <input type="hidden" name="application" value="{{{$expInputs['application']}}}">
 
         @include('partials/experiment-inputs', array("expInputs" => $expInputs, "queueDefaults" =>
         $expInputs['queueDefaults']) )

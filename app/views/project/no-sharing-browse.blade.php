@@ -106,8 +106,8 @@
                 ?>
                 <tr>
                     <td>
-                        <?php echo $project->name; ?>
-                        <a href="{{URL::to('/')}}/project/edit?projId=<?php echo $project->projectID; ?>" title="Edit">
+                        {{{ $project->name }}}
+                        <a href="{{URL::to('/')}}/project/edit?projId={{ urlencode($project->projectID) }}" title="Edit">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
                     </td>
@@ -118,10 +118,10 @@
                             <?php echo $project->creationTime / 1000 ?>">
                     </td>
                     <td>
-                        <a href="{{URL::to('/')}}/project/summary?projId=<?php echo $project->projectID; ?>">
+                        <a href="{{URL::to('/')}}/project/summary?projId={{ urlencode($project->projectID) }}">
                             <span class="glyphicon glyphicon-list"></span>
                         </a>
-                        <a href="{{URL::to('/')}}/project/summary?projId=<?php echo $project->projectID; ?>"> View</a>
+                        <a href="{{URL::to('/')}}/project/summary?projId={{ urlencode($project->projectID) }}"> View</a>
                     </td>
                 </tr>
             <?php
