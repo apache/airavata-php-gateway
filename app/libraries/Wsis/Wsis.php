@@ -419,8 +419,27 @@ class Wsis {
     public function createTenant($active, $adminUsername, $adminPassword, $email,
                                   $firstName, $lastName, $tenantDomain){
         try {
-            return $this->tenantManager->addTenant($active, $adminUsername, $adminPassword, $email,
+            $tm = $this->tenantManager->addTenant($active, $adminUsername, $adminPassword, $email,
                 $firstName, $lastName, $tenantDomain);
+            $wsisConfig = Config::get('pga_config.wsis');
+            $context = stream_context_create(array(
+                'ssl' => array(
+                    'verify_peer' => $wsisConfig['verify-peer'],
+                    "allow_self_signed"=> $wsisConfig['allow-self-signed-cert'],
+                    'cafile' => $wsisConfig['cafile-path'],
+                )
+            ));
+            $parameters = array(
+                'login' => $adminUsername,
+                'password' => $adminPassword,
+                'stream_context' => $context,
+                'trace' => 1,
+                'features' => SOAP_WAIT_ONE_WAY_CALLS,
+                'cache_wsdl' => WSDL_CACHE_BOTH
+            );
+            $userProfileManager = new UserProfileManager($wsisConfig['service-url'], $parameters);
+            $userProfileManager->updateUserProfile($adminUsername, $email, $firstName, $lastName);
+            return $tm;
         } catch (Exception $ex) {
             throw new Exception("Unable to create Tenant.", 0, $ex);
         }
