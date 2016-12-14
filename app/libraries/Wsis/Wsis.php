@@ -438,7 +438,7 @@ class Wsis {
                 'cache_wsdl' => WSDL_CACHE_BOTH
             );
             $userProfileManager = new UserProfileManager($wsisConfig['service-url'], $parameters);
-            $userProfileManager->updateUserProfile($adminUsername, $email, $firstName, $lastName);
+            $userProfileManager->updateUserProfile($adminUsername . '@' . $tenantDomain, $email, $firstName, $lastName);
             return $tm;
         } catch (Exception $ex) {
             throw new Exception("Unable to create Tenant.", 0, $ex);
