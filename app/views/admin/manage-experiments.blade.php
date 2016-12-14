@@ -442,18 +442,15 @@ to be uncommented when actually in use.
 
         var expId = $(".experimentId").val();
         var expHTMLId = util.sanitizeHTMLId(expId);
-        console.log("expHTMLId", expHTMLId);
         if( $("#" + expHTMLId).length <= 0){
             $(".loading-img").removeClass("hide");
             $.ajax({
                 url: 'experiment/summary?expId=' + encodeURIComponent(expId),
                 type: 'get',
                 success: function (data) {
-                    //$(".experiment-info").html(data);
                     $("#myTabs").append('<li role="presentation"><a href="#' + expHTMLId + '" aria-controls="' + expHTMLId + '" role="tab" data-toggle="tab"><span class="expid-label"></span><button type="button" style="margin-left:10px;" class="close pull-right close-tab" aria-label="Close"><span aria-hidden="true">&times;</span></button></a></li>');
                     // Set expId with .text() so it gets properly escaped
                     $('#myTabs a[href="#' + expHTMLId + '"] .expid-label').text(expId);
-                    // $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + expHTMLId + '">' + data + '</div>');
                     $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + expHTMLId + '"></div>');
                     $(".tab-content #" + expHTMLId).html(data);
                     $('#myTabs a[href="#' + expHTMLId + '"]').tab('show'); // Select tab by name
