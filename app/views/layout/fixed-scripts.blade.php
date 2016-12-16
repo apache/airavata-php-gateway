@@ -5,42 +5,49 @@
 
 <!-- Jira Issue Collector - Request Feature -->
 @if( isset( Config::get('pga_config.portal')['jira-help']))
-<script type="text/javascript"
-        src="{{ Config::get('pga_config.portal')['jira-help']['report-issue-script'] }}"></script>
+
+    {{-- Only load these scripts if they have been configured (not empty string) --}}
+    @if(Config::get('pga_config.portal')['jira-help']['report-issue-script'])
+    <script type="text/javascript"
+            src="{{ Config::get('pga_config.portal')['jira-help']['report-issue-script'] }}"></script>
+    @endif
+
+    @if(Config::get('pga_config.portal')['jira-help']['request-feature-script'])
+    <script type="text/javascript"
+            src="{{ Config::get('pga_config.portal')['jira-help']['request-feature-script'] }}"></script>
+    @endif
 
 
-<script type="text/javascript"
-        src="{{ Config::get('pga_config.portal')['jira-help']['request-feature-script'] }}"></script>
-
-
-<script type="text/javascript">
-    window.ATL_JQ_PAGE_PROPS = $.extend(window.ATL_JQ_PAGE_PROPS, {
-        "{{ Config::get('pga_config.portal')['jira-help']['report-issue-collector-id'] }}": {
-            "triggerFunction": function (showCollectorDialog) {
-                //Requries that jQuery is available!
-                jQuery("#report-issue").click(function (e) {
-                    e.preventDefault();
-                    showCollectorDialog();
-                });
-            },fieldValues: {
-                email : email !== 'undefined' ? email : "",
-                fullname : fullName !== 'undefined' ? fullName : ""
+    @if(Config::get('pga_config.portal')['jira-help']['report-issue-collector-id'] && Config::get('pga_config.portal')['jira-help']['request-feature-collector-id'])
+    <script type="text/javascript">
+        window.ATL_JQ_PAGE_PROPS = $.extend(window.ATL_JQ_PAGE_PROPS, {
+            "{{ Config::get('pga_config.portal')['jira-help']['report-issue-collector-id'] }}": {
+                "triggerFunction": function (showCollectorDialog) {
+                    //Requries that jQuery is available!
+                    jQuery("#report-issue").click(function (e) {
+                        e.preventDefault();
+                        showCollectorDialog();
+                    });
+                },fieldValues: {
+                    email : email !== 'undefined' ? email : "",
+                    fullname : fullName !== 'undefined' ? fullName : ""
+                }
+            },
+            "{{ Config::get('pga_config.portal')['jira-help']['request-feature-collector-id'] }}": {
+                "triggerFunction": function (showCollectorDialog) {
+                    //Requries that jQuery is available!
+                    jQuery("#request-feature").click(function (e) {
+                        e.preventDefault();
+                        showCollectorDialog();
+                    });
+                },fieldValues: {
+                    email : email !== 'undefined' ? email : "",
+                    fullname : fullName !== 'undefined' ? fullName : ""
+                }
             }
-        },
-        "{{ Config::get('pga_config.portal')['jira-help']['request-feature-collector-id'] }}": {
-            "triggerFunction": function (showCollectorDialog) {
-                //Requries that jQuery is available!
-                jQuery("#request-feature").click(function (e) {
-                    e.preventDefault();
-                    showCollectorDialog();
-                });
-            },fieldValues: {
-                email : email !== 'undefined' ? email : "",
-                fullname : fullName !== 'undefined' ? fullName : ""
-            }
-        }
-    });
-</script>
+        });
+    </script>
+    @endif
 @endif
 <script type="text/javascript">
 
