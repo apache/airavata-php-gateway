@@ -13,95 +13,98 @@
 @section('scripts')
 @parent
 <script>
-    @if( isset( $autoRefresh) )
-        var autoRefresh = true;
-    @else
-        var autoRefresh = false;
-    @endif
-    var isDialogOpen = false;
+    @if(!isset( $invalidExperimentId ) )
 
-    var currentJobStatuses = {};
-    @foreach( $expVal["jobDetails"] as $index => $jobDetail)
-    currentJobStatuses["{{$jobDetail->jobId}}"] = "{{ $jobDetail->jobStatuses[0]->jobStateName}}";
-    @endforeach
+        @if( isset( $autoRefresh) )
+            var autoRefresh = true;
+        @else
+            var autoRefresh = false;
+        @endif
+        var isDialogOpen = false;
 
-    var isStatusChanged = function(experimentTimeOfStateChange, jobStatuses) {
+        var currentJobStatuses = {};
 
-        if ($.trim($("#lastModifiedTime").val()) != experimentTimeOfStateChange) {
-            return true;
-        }
-        for (var jobId in jobStatuses) {
-            if (jobId in currentJobStatuses) {
-                if (currentJobStatuses[jobId] !== jobStatuses[jobId]){
-                    return true;
-                }
-            } else {
-                return true; // if job not in currentJobStatuses
+        @foreach( $expVal["jobDetails"] as $index => $jobDetail)
+        currentJobStatuses["{{$jobDetail->jobId}}"] = "{{ $jobDetail->jobStatuses[0]->jobStateName}}";
+        @endforeach
+
+        var isStatusChanged = function(experimentTimeOfStateChange, jobStatuses) {
+
+            if ($.trim($("#lastModifiedTime").val()) != experimentTimeOfStateChange) {
+                return true;
             }
-        }
-        return false;
-    }
-
-    // Check for a status change every 3 seconds
-    var statusChangeInterval = setInterval(function () {
-        if (($.trim($(".exp-status").html()) != "COMPLETED" && $.trim($(".exp-status").html()) != "FAILED"
-                && $.trim($(".exp-status").html()) != "CANCELLED") && autoRefresh) {
-            $.ajax({
-                type: "GET",
-                url: "{{URL::to('/') }}/experiment/summary",
-                data: {expId: "{{ Input::get('expId') }}", isAutoRefresh : autoRefresh },
-                success: function (data) {
-
-                    // Don't refresh the page if a dialog is open
-                    if (isDialogOpen) {
-                        return;
+            for (var jobId in jobStatuses) {
+                if (jobId in currentJobStatuses) {
+                    if (currentJobStatuses[jobId] !== jobStatuses[jobId]){
+                        return true;
                     }
+                } else {
+                    return true; // if job not in currentJobStatuses
+                }
+            }
+            return false;
+        }
 
-                    data = $.parseJSON( data);
+        // Check for a status change every 3 seconds
+        var statusChangeInterval = setInterval(function () {
+            if (($.trim($(".exp-status").html()) != "COMPLETED" && $.trim($(".exp-status").html()) != "FAILED"
+                    && $.trim($(".exp-status").html()) != "CANCELLED") && autoRefresh) {
+                $.ajax({
+                    type: "GET",
+                    url: "{{URL::to('/') }}/experiment/summary",
+                    data: {expId: "{{ Input::get('expId') }}", isAutoRefresh : autoRefresh },
+                    success: function (data) {
 
-                    // Convert jobDetails to a map of jobStatuses
-                    var jobStatuses = {};
-                    var jobDetails = data["jobDetails"];
-                    for (var jobIndex in jobDetails){
-                        if (jobDetails.hasOwnProperty(jobIndex)) {
-                            var jobDetail = jobDetails[jobIndex];
-                            // Assuming only one job status per job
-                            jobStatuses[jobDetail["jobId"]] = jobDetail["jobStatuses"]["0"]["jobStateName"];
+                        // Don't refresh the page if a dialog is open
+                        if (isDialogOpen) {
+                            return;
+                        }
+
+                        data = $.parseJSON( data);
+
+                        // Convert jobDetails to a map of jobStatuses
+                        var jobStatuses = {};
+                        var jobDetails = data["jobDetails"];
+                        for (var jobIndex in jobDetails){
+                            if (jobDetails.hasOwnProperty(jobIndex)) {
+                                var jobDetail = jobDetails[jobIndex];
+                                // Assuming only one job status per job
+                                jobStatuses[jobDetail["jobId"]] = jobDetail["jobStatuses"]["0"]["jobStateName"];
+                            }
+                        }
+
+                        if (isStatusChanged(data.expVal["experimentTimeOfStateChange"], jobStatuses)) {
+                            $(".refresh-exp").click();
+                            clearInterval(statusChangeInterval);
                         }
                     }
+                });
+            }
+        }, 3000);
 
-                    if (isStatusChanged(data.expVal["experimentTimeOfStateChange"], jobStatuses)) {
-                        $(".refresh-exp").click();
-                        clearInterval(statusChangeInterval);
-                    }
-                }
-            });
-        }
-    }, 3000);
+        $('.btn-toggle').click(function() {
+            if(autoRefresh){
+                autoRefresh = false;
+            }else{
+                autoRefresh = true;
+            }
 
-    $('.btn-toggle').click(function() {
-        if(autoRefresh){
-            autoRefresh = false;
-        }else{
-            autoRefresh = true;
-        }
+            $(this).find('.btn').toggleClass('active');
+            if ($(this).find('.btn-primary').size()>0) {
+                $(this).find('.btn').toggleClass('btn-primary');
+            }
+            $(this).find('.btn').toggleClass('btn-default');
+        });
 
-        $(this).find('.btn').toggleClass('active');
-        if ($(this).find('.btn-primary').size()>0) {
-            $(this).find('.btn').toggleClass('btn-primary');
-        }
-        $(this).find('.btn').toggleClass('btn-default');
-    });
+        $('#refresh-experiment').click(function() {
+            window.location.replace("{{URL::to('/') }}/experiment/summary?" + "expId=" + "{{ Input::get('expId') }}"+"&"+ "isAutoRefresh=" + autoRefresh);
+        });
 
-    $('#refresh-experiment').click(function() {
-        console.log(autoRefresh);
-        window.location.replace("{{URL::to('/') }}/experiment/summary?" + "expId=" + "{{ Input::get('expId') }}"+"&"+ "isAutoRefresh=" + autoRefresh);
-    });
-
-    $('.modal, #share-box').on('show', function (e) {
-        isDialogOpen = true;
-    }).on('hide', function (e) {
-        isDialogOpen = false;
-    });
+        $('.modal, #share-box').on('show', function (e) {
+            isDialogOpen = true;
+        }).on('hide', function (e) {
+            isDialogOpen = false;
+        });
+    @endif //if(!isset( $invalidExperimentId ) )
 </script>
 @stop
