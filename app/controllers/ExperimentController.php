@@ -115,7 +115,7 @@ class ExperimentController extends BaseController
     public function summary()
     {
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
-        if(isset($_GET['isAutoRefresh']) && $_GET['isAutoRefresh'] == 'true'){
+        if(isset($_GET['isAutoRefresh']) && $_GET['isAutoRefresh'] == 'true' && $experiment != null){
             $autoRefresh = true;
         }else{
             $autoRefresh = false;
@@ -215,9 +215,9 @@ class ExperimentController extends BaseController
             }
         } else {
             if (Input::has("dashboard"))
-                return View::make("partials/experiment-info", array("invalidExperimentId" => 1, "users" => json_encode(array())));
+                return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
             else
-                return View::make("experiment/summary", array("invalidExperimentId" => 1, "users" => json_encode(array())));
+                return View::make("experiment/summary", array("invalidExperimentId" => 1));
         }
     }
 

@@ -26,14 +26,14 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr class="text-center">
-                            <th>Gateway Name</th>
-                            <th>Creation Time</th>
-                            <th>Gateway URL</th>
-                            <th>Project Details</th>
-                            <th>Project Abstract</th>
-                            <th>Gateway Request Status</th>
-                            <th>Actions</th>                            
-                            <th>Comments</th>
+                            <th style="vertical-align: top; text-align: center">Gateway Name</th>
+                            <th style="vertical-align: top; text-align: center">Creation Time</th>
+                            <th style="vertical-align: top; text-align: center">Gateway URL</th>
+                            <th style="vertical-align: top; text-align: center">Project Details</th>
+                            <th style="vertical-align: top; text-align: center">Project Abstract</th>
+                            <th style="vertical-align: top; text-align: center">Gateway Request Status</th>
+                            <th style="vertical-align: top; text-align: center">Actions</th>
+                            <th style="vertical-align: top; text-align: center">SciGaP Admin Comments</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,14 +77,25 @@
                     @endforeach
                     </tbody>
                 </table>
-                <div class="well">
-                <h4 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h4>
-                </div>
             @endif
             </div>
-            <div class="col-md-12">
-            <button class="gateway-request-button btn btn-default">Request a New Gateway</button>
-                
+                <div class="col-md-12">
+                    <div>
+                        <button class="gateway-request-button btn btn-default">Request a New Gateway</button>
+                        <br/>
+                    </div>
+            @if(empty($requestedGateways))
+                <br>
+                <div class="well">
+                    <h4>You are in this page to create request for a new Gateway. Please click 'Request a New Gateway' button and proceed. Once
+                        your request is submitted, a SciGaP admin will process the requirement and if needed you will be contacted.
+                    </h4>
+                </div>
+            @endif
+            <br/>
+            <div class="well">
+                <h6 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h6>
+            </div>
             @if ($errors->has())
                 @foreach ($errors->all() as $error)
                 {{ CommonUtilities::print_error_message($error) }}

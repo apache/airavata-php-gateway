@@ -41,45 +41,119 @@
     <div role="tabpanel" class="tab-pane active" id="overview">
     <div class="well col-md-12">
         <div class="col-md-10">
-            <div class='col-md-5'>
-                <div class="form-group">
+            <div class="row">
+                <div class='col-md-5'>
+                    <div class="form-group">
                         <input type='button' class="oneDayExp form-control btn-primary" value="Get Experiments from Last 24 hours"/>
+                    </div>
                 </div>
-            </div>
-            <div class='col-md-5'>
-                <div class="form-group">
+                <div class='col-md-5'>
+                    <div class="form-group">
                         <input type='button' class="oneWeekExp form-control btn-primary" value="Get Experiments from Last Week"/>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-12">
-                <h4>Select dates between which you want to review experiment statistics.</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Select dates between which you want to review experiment statistics.</h4>
+                </div>
             </div>
-            <div class='col-md-5'>
-                <div class="form-group">
-                    <div class='input-group date' id='datetimepicker9'>
-                        <input type='text' class="form-control" placeholder="From Date" name="from-date"/>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
+            <div class="row">
+                <div class='col-md-5'>
+                    <div class="form-group">
+                        <div class='input-group date' id='datetimepicker9'>
+                            <input type='text' class="form-control" placeholder="From Date" name="from-date"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-md-5'>
+                    <div class="form-group">
+                        <div class='input-group date' id='datetimepicker10'>
+                            <input type='text' class="form-control" placeholder="To Date" name="to-date"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button name="getStatistics" id="getStatistics" type="submit" class="btn btn-primary"
+                    value="GetStatistics"><span
+                    class="glyphicon glyphicon-search"></span> Get Statistics
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="btn-group">
+                            <button id="add-filter-dropdown" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                Add Filter <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a id="add-username-filter" href="#">Username</a></li>
+                                <li><a id="add-appname-filter" href="#">Application Name</a></li>
+                                <li><a id="add-hostname-filter" href="#">Hostname</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class='col-md-5'>
-                <div class="form-group">
-                    <div class='input-group date' id='datetimepicker10'>
-                        <input type='text' class="form-control" placeholder="To Date" name="to-date"/>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
+            <div class="row">
+                <div class="col-md-5 hide" id="username-filter-row">
+                    <div class="form-group">
+                        <div class='input-group'>
+                            <input type='text' class="form-control" placeholder="Username" id="username" name="username"/>
+                            <div class="input-group-btn">
+                                <button id="remove-username-filter" class="btn btn-default" type="button">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-2">
-                <button name="getStatistics" id="getStatistics" type="submit" class="btn btn-primary"
-                        value="GetStatistics"><span
-                        class="glyphicon glyphicon-search"></span> Get Statistics
-                </button>
+            <div class="row">
+                <div class="col-md-5 hide" id="appname-filter-row">
+                    <div class="form-group">
+                        <div class='input-group'>
+                            <select id="appname" name="appname" class="form-control">
+                                <option value="">Select Application</option>
+                                @foreach ($applications as $applicationId => $applicationName)
+                                <option value="{{ $applicationId }}">{{{ $applicationName }}}</option>
+                                @endforeach
+                            </select>
+                            <div class="input-group-btn">
+                                <button id="remove-appname-filter" class="btn btn-default" type="button">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5 hide" id="hostname-filter-row">
+                    <div class="form-group">
+                        <div class='input-group'>
+                            <select id="hostname" name="hostname" class="form-control">
+                                <option value="">Select Hostname</option>
+                                @foreach ($hostnames as $hostnameId => $hostname)
+                                <option value="{{ $hostnameId }}">{{{ $hostname }}}</option>
+                                @endforeach
+                            </select>
+                            <div class="input-group-btn">
+                                <button id="remove-hostname-filter" class="btn btn-default" type="button">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -364,10 +438,10 @@ to be uncommented when actually in use.
     });
 
     $(".get-experiment").click(function () {
-        $(".loading-img").removeClass("hide");
 
         var expId = $(".experimentId").val();
         if( $("#" + expId).length <= 0){
+            $(".loading-img").removeClass("hide");
             $.ajax({
                 url: 'experiment/summary?expId=' + expId,
                 type: 'get',
@@ -376,22 +450,28 @@ to be uncommented when actually in use.
                     $("#myTabs").append('<li role="presentation"><a href="#' + expId + '" aria-controls="' + expId + '" role="tab" data-toggle="tab">' + expId + '<button type="button" style="margin-left:10px;" class="close pull-right close-tab" aria-label="Close"><span aria-hidden="true">&times;</span></button></a></li>');
                     $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + expId + '">' + data + '</div>');
                     $('#myTabs a[href="#' + expId + '"]').tab('show') // Select tab by name
-                    
+
                     //$('#myTabs a[href="#expsummary"]').tab('show') // Select tab by name
-                    
+
                     //from time-conversion.js
                     updateTime();
                 }
             }).complete(function () {
                 $(".loading-img").addClass("hide");
             });
+        } else {
+            // Experiment data already loaded so just show it
+            $('#myTabs a[href="#' + expId + '"]').tab('show');
         }
     });
 
     $("body").on("click", ".close-tab", function(){
-        var idToRemove = $(this).parent().parent().attr("href");
-        $(this).parent().parent().remove();
-        $("#"+idToRemove).remove();
+        var tabContentSelector = $(this).closest("a").attr("href");
+        // Remove tab and tab's content
+        $(this).closest("li").remove();
+        $(tabContentSelector).remove();
+        // Show the overview tab
+        $('#myTabs a[href="#overview"]').tab('show');
     });
 
     //Experiment stages are under development.
@@ -427,7 +507,7 @@ to be uncommented when actually in use.
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last 24 hours";
-        getExperiments( ydayDate, todayDate, msg);
+        getExperiments( ydayDate, todayDate, null, null, null, msg);
     });
 
     $(".oneWeekExp").click( function(){
@@ -438,7 +518,7 @@ to be uncommented when actually in use.
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last week";
-        getExperiments( ydayDate, todayDate, msg);
+        getExperiments( ydayDate, todayDate, null, null, null, msg);
     })
 
     $("#getStatistics").click(function () {
@@ -446,26 +526,86 @@ to be uncommented when actually in use.
         $fromTime = moment($fromTime).utc().format('MM/DD/YYYY hh:mm A');
         $toTime = $("#datetimepicker10").find("input").val();
         $toTime = moment($toTime).utc().format('MM/DD/YYYY hh:mm A');
+        var username = $('#username').val().trim();
+        var appname = $('#appname').val().trim();
+        var hostname = $('#hostname').val().trim();
         if ($fromTime == '' || $toTime == '') {
             alert("Please Select Valid Date Inputs!");
         } else {
-            getExperiments( $fromTime, $toTime);
+            getExperiments( $fromTime, $toTime, username, appname, hostname);
+        }
+    });
+
+    $("#add-username-filter").click(function() {
+        $("#username-filter-row").removeClass("hide");
+        $("#username-filter-row input").focus();
+        $("#add-filter-dropdown").dropdown('toggle');
+        $("#add-username-filter").addClass("hide");
+        return false;
+    });
+
+    $("#remove-username-filter").click(function() {
+        $("#username-filter-row").addClass("hide");
+        $("#username-filter-row input").val('');
+        $("#add-username-filter").removeClass("hide");
+    });
+
+    $("#add-appname-filter").click(function() {
+        $("#appname-filter-row").removeClass("hide");
+        $("#appname-filter-row select").focus();
+        $("#add-filter-dropdown").dropdown('toggle');
+        $("#add-appname-filter").addClass("hide");
+        return false;
+    });
+
+    $("#remove-appname-filter").click(function() {
+        $("#appname-filter-row").addClass("hide");
+        $("#appname-filter-row select").val('');
+        $("#add-appname-filter").removeClass("hide");
+    });
+
+    $("#add-hostname-filter").click(function() {
+        $("#hostname-filter-row").removeClass("hide");
+        $("#hostname-filter-row select").focus();
+        $("#add-filter-dropdown").dropdown('toggle');
+        $("#add-hostname-filter").addClass("hide");
+        return false;
+    });
+
+    $("#remove-hostname-filter").click(function() {
+        $("#hostname-filter-row").addClass("hide");
+        $("#hostname-filter-row select").val('');
+        $("#add-hostname-filter").removeClass("hide");
+    });
+
+    // get statistics if user presses ENTER key in username filter field
+    $("#username").keydown(function(e) {
+        if (e.which === 13) {
+            $('#getStatistics').click();
+            return false;
         }
     });
 
     // Load experiments from the last 24 hours on page load.
     $(".oneDayExp").click();
 
-    function getExperiments( startTime, endTime, msg){
+    function getExperiments( startTime, endTime, username, appname, hostname, msg){
 
         $(".experiment-statistics").html("");
         $(".loading-img-statistics").removeClass("hide");
             $.ajax({
-                url: 'experimentStatistics?fromTime=' + startTime + '&' + 'toTime=' + endTime,
+                url: 'experimentStatistics?fromTime=' + startTime + '&' + 'toTime=' + endTime
+                    + '&username=' + encodeURIComponent(username)
+                    + '&appname=' + encodeURIComponent(appname)
+                    + '&hostname=' + encodeURIComponent(hostname),
                 type: 'get',
                 success: function (data) {
-                    if( msg == null)
-                        msg = "Experiment Statistics from " + startTime + " to " + endTime;
+                    if( msg == null){
+                        start = new Date(startTime + ' UTC');
+                        end  = new Date(endTime + ' UTC');
+                        msg = "Experiment Statistics from " + start.toLocaleString() + " to " + end.toLocaleString();
+                    }
+                    // TODO: update message to include username, appname and hostname?
                     $(".experiment-statistics").html( "<h2 class='text-center'>" + msg + "</h2><hr/>" + data);
                 }
             }).complete(function () {
@@ -489,7 +629,7 @@ to be uncommented when actually in use.
                 hours = hours - 12;
         }
         var date = cd.getDate();
-        
+
         var todayDate = month + "/" + date + "/" + cd.getFullYear() + " " + hours + ":" + cd.getUTCMinutes() + " " + timeOfDay;
         return todayDate;
     }

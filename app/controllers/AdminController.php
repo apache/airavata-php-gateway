@@ -185,7 +185,12 @@ class AdminController extends BaseController {
 
 	public function experimentsView(){
         Session::put("admin-nav", "exp-statistics");
-		return View::make("admin/manage-experiments" );
+
+        $applications = AppUtilities::get_all_applications();
+        uksort($applications, 'strcasecmp');
+        $hostnames = CRUtilities::getAllCRObjects(true);
+        uksort($hostnames, 'strcasecmp');
+        return View::make("admin/manage-experiments", array("applications" => $applications, "hostnames" => $hostnames));
 	}
 
 	public function resourcesView(){
@@ -231,8 +236,13 @@ class AdminController extends BaseController {
                 $userRoles["new"] = array();
                 $userRoles["deleted"] = "user-pending";
                 WSIS::updateUserRoles( $username, $userRoles);
+            } else if(in_array("user-pending", $newCurrentRoles) && in_array("user-pending", $roles["new"])) {
+                // When user-pending role added remove all roles except for user-pending and Internal/everyone
+                $userRoles["new"] = array();
+                $userRoles["deleted"] = array_diff($newCurrentRoles, array("user-pending", "Internal/everyone"));
+                WSIS::updateUserRoles( $username, $userRoles);
             }
-		}
+        }
         return Redirect::to("admin/dashboard/roles")->with( "message", "Roles has been added.");
     }
 
@@ -324,9 +334,13 @@ class AdminController extends BaseController {
     {
         if (Request::ajax()) {
             $inputs = Input::all();
+            $username = Input::get('username');
+            $appname = Input::get('appname');
+            $hostname = Input::get('hostname');
             $expStatistics = AdminUtilities::get_experiment_execution_statistics(strtotime($inputs['fromTime']) * 1000
-                , strtotime($inputs['toTime']) * 1000);
-            return View::make("admin/experiment-statistics", array("expStatistics" => $expStatistics));
+                , strtotime($inputs['toTime']) * 1000, $username, $appname, $hostname);
+            return View::make("admin/experiment-statistics", array("expStatistics" => $expStatistics,
+                      "username" => $username, "appname" => $appname, "hostname" => $hostname));
         }
     }
 

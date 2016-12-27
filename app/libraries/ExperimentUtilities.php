@@ -1279,6 +1279,11 @@ class ExperimentUtilities
         $experimentInputs = $experiment->experimentInputs; // get current inputs
         $experimentInputs = ExperimentUtilities::process_inputs( $experiment->userConfigurationData->experimentDataDir, $applicationInputs, $experimentInputs); // get new inputs
 
+        if (isset($_POST["enableEmailNotification"])) {
+            $experiment->enableEmailNotification = intval($_POST["enableEmailNotification"]);
+            $experiment->emailAddresses = array_unique(array_filter($_POST["emailAddresses"], "trim"));
+        }
+
         if ($experimentInputs) {
             $experiment->experimentInputs = $experimentInputs;
             //var_dump($experiment);

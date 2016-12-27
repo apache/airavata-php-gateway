@@ -32,7 +32,7 @@
         <div class="form-group">
             <label for="experiment-description">Experiment Description</label>
             <textarea class="form-control" name="experiment-description" id="experiment-description"
-                      placeholder="Optional: Enter a short description of the experiment" maxlength="200"></textarea>
+                      placeholder="Optional: Enter short description of the experiment" maxlength="200"></textarea>
         </div>
         <div class="form-group required">
             <label for="project" class="control-label">Project</label>

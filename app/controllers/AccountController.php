@@ -349,7 +349,7 @@ class AccountController extends BaseController
 //                            "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
 //                            "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
                     }else{
-                        CommonUtilities::print_error_message("Account confirmation failed!");
+                        CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
                         return View::make("home");
                     }
 //                }else{
@@ -359,7 +359,7 @@ class AccountController extends BaseController
 //                        "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
 //                }
             }catch (Exception $e){
-                CommonUtilities::print_error_message("Account confirmation failed!");
+                CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
                 return View::make("home");
             }
         }
@@ -400,7 +400,7 @@ class AccountController extends BaseController
             $username = $username . "@" . $wsisConfig['tenant-domain'];
 
         $str = "Gateway Portal: " . $_SERVER['SERVER_NAME'] ."<br/>";
-        $str = $str . "Username: " . $username ."<ber/>";
+        $str = $str . "Username: " . $username ."<br/>";
         $str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
         $str = $str . "Email: " . $userProfile["email"];
 
