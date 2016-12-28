@@ -623,7 +623,7 @@
 
     $(".update-gateway").click( function( ev){
         ev.preventDefault();
-         $(this).prepend( "<img class='loading-gif' src='<?php echo URL::to('/'); ?>/assets/ajax-loader.gif'/>");
+         $(this).prepend( "<img class='loading-gif' src='{{{ URL::to('/') }}}/assets/ajax-loader.gif'/>");
 
         $(".fail-alert").remove();
         $(".success-alert").remove();

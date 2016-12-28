@@ -20,7 +20,7 @@
         <h1>Edit Experiment</h1>
 
         <form action="{{URL::to('/')}}/experiment/edit" method="POST" role="form" enctype="multipart/form-data">
-            <input type="hidden" name="expId" value="<?php echo Input::get('expId'); ?>"/>
+            <input type="hidden" name="expId" value="{{{ Input::get('expId') }}}"/>
 
             @include('partials/experiment-inputs', array( "expInputs", $expInputs))
 

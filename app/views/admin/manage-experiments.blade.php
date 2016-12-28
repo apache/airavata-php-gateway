@@ -406,6 +406,7 @@ to be uncommented when actually in use.
 {{ HTML::script('js/flot/flot-data.js')}}
 -->
 {{ HTML::script('js/time-conversion.js')}}
+{{ HTML::script('js/util.js')}}
 <script>
 
     //make first tab of accordion open by default.
@@ -440,16 +441,19 @@ to be uncommented when actually in use.
     $(".get-experiment").click(function () {
 
         var expId = $(".experimentId").val();
-        if( $("#" + expId).length <= 0){
+        var expHTMLId = util.sanitizeHTMLId(expId);
+        if( $("#" + expHTMLId).length <= 0){
             $(".loading-img").removeClass("hide");
             $.ajax({
-                url: 'experiment/summary?expId=' + expId,
+                url: 'experiment/summary?expId=' + encodeURIComponent(expId),
                 type: 'get',
                 success: function (data) {
-                    //$(".experiment-info").html(data);
-                    $("#myTabs").append('<li role="presentation"><a href="#' + expId + '" aria-controls="' + expId + '" role="tab" data-toggle="tab">' + expId + '<button type="button" style="margin-left:10px;" class="close pull-right close-tab" aria-label="Close"><span aria-hidden="true">&times;</span></button></a></li>');
-                    $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + expId + '">' + data + '</div>');
-                    $('#myTabs a[href="#' + expId + '"]').tab('show') // Select tab by name
+                    $("#myTabs").append('<li role="presentation"><a href="#' + expHTMLId + '" aria-controls="' + expHTMLId + '" role="tab" data-toggle="tab"><span class="expid-label"></span><button type="button" style="margin-left:10px;" class="close pull-right close-tab" aria-label="Close"><span aria-hidden="true">&times;</span></button></a></li>');
+                    // Set expId with .text() so it gets properly escaped
+                    $('#myTabs a[href="#' + expHTMLId + '"] .expid-label').text(expId);
+                    $(".tab-content").append('<div role="tabpanel" class="tab-pane" id="' + expHTMLId + '"></div>');
+                    $(".tab-content #" + expHTMLId).html(data);
+                    $('#myTabs a[href="#' + expHTMLId + '"]').tab('show'); // Select tab by name
 
                     //$('#myTabs a[href="#expsummary"]').tab('show') // Select tab by name
 
@@ -461,8 +465,17 @@ to be uncommented when actually in use.
             });
         } else {
             // Experiment data already loaded so just show it
-            $('#myTabs a[href="#' + expId + '"]').tab('show');
+            $('#myTabs a[href="#' + expHTMLId + '"]').tab('show');
         }
+    });
+
+    $(".experiment-statistics").on("click", ".get-exp-stats", function(){
+        var expId = $(this).data("expid");
+        $(".experimentId").val( expId);
+        $(".get-experiment").click();
+        $('html, body').animate({
+            scrollTop: $(".get-experiment").offset().top - 100
+        }, 1000);
     });
 
     $("body").on("click", ".close-tab", function(){

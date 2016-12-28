@@ -46,15 +46,15 @@
     <table class="table table-bordered">
         <tr>
             <td><strong>Experiment ID</strong></td>
-            <td><?php echo $experiment->experimentId; ?></td>
+            <td>{{{ $experiment->experimentId }}}</td>
         </tr>
         <tr>
             <td><strong>Name</strong></td>
-            <td><?php echo $experiment->experimentName; ?></td>
+            <td>{{{ $experiment->experimentName }}}</td>
         </tr>
         <tr>
             <td><strong>Description</strong></td>
-            <td><?php echo $experiment->description; ?></td>
+            <td>{{{ $experiment->description }}}</td>
         </tr>
         <tr>
             <td><strong>Project</strong></td>
@@ -66,7 +66,7 @@
         </tr>
         <tr>
             <td><strong>Owner</strong></td>
-            <td><?php echo $experiment->userName; ?></td>
+            <td>{{{ $experiment->userName }}}</td>
         </tr>
         <tr>
             <td><strong>Application</strong></td>
@@ -90,7 +90,7 @@
         @endif
         <tr>
             <td><strong>Experiment Status</strong></td>
-            <td class="exp-status"><?php echo $expVal["experimentStatusString"]; ?></td>
+            <td class="exp-status">{{{ $expVal["experimentStatusString"] }}}</td>
         </tr>
 
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
@@ -166,7 +166,7 @@
         </tr>
         <tr>
             <td><strong>Enable Auto Schedule</strong></td>
-            <td><?php echo $experiment->userConfigurationData->airavataAutoSchedule==1?"true":"false"; ?></td>
+            <td>{{{ $experiment->userConfigurationData->airavataAutoSchedule==1?"true":"false" }}}</td>
         </tr>
         <tr>
             <td><strong>Wall Time</strong></td>
@@ -255,8 +255,8 @@
                 <span class="glyphicon glyphicon-stop"></span>
                 Cancel
             </button>
-            <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
-            <a href="{{URL::to('/') }}/experiment/edit?expId={{ $experiment->experimentId }}&savedExp=true"
+            <input type="hidden" name="expId" value="{{{ Input::get('expId') }}}"/>
+            <a href="{{URL::to('/') }}/experiment/edit?expId={{ urlencode($experiment->experimentId) }}&savedExp=true"
                class="btn btn-primary"
                role="button"
                title="Edit experiment" <?php if (!$expVal["editable"]) echo 'style="display: none"' ?>>
@@ -298,7 +298,7 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-inline" action="{{ URL::to('/') }}/experiment/clone" method="post">
-                        <input type="hidden" name="expId" value="{{ Input::get('expId') }}"/>
+                        <input type="hidden" name="expId" value="{{{ Input::get('expId') }}}"/>
                         <div class="form-group">
                             <label for="projectId">Project</label>
                             <select class="form-control" name="projectId" required>
@@ -341,7 +341,7 @@
 <div class="tree">
     <ul>
         <li>
-            <span><i class="icon-calendar"></i>{{ $detailedExperiment->experimentName }}</span>
+            <span><i class="icon-calendar"></i>{{{ $detailedExperiment->experimentName }}}</span>
             <ul>
                 @foreach( $detailedExperiment->processes as $index => $process)
                 <li>
@@ -422,9 +422,9 @@
         var users = {{ $users }};
         var owner = {{ $owner }};
         var projectOwner = {{ $projectOwner }};
-        $('#update-sharing').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: "{{Input::get('expId')}}"})
+        $('#update-sharing').data({url: "{{URL::to('/')}}/experiment/unshared-users", resourceId: {{json_encode(Input::get('expId'))}} });
         @if($updateSharingViaAjax)
-        $('#share-box-button').data({ajaxUpdateUrl: "{{URL::to('/')}}/experiment/update-sharing?expId={{Input::get('expId')}}", resourceId: "{{Input::get('expId')}}"})
+        $('#share-box-button').data({ajaxUpdateUrl: "{{URL::to('/')}}/experiment/update-sharing?expId={{urlencode(Input::get('expId'))}}", resourceId: {{json_encode(Input::get('expId'))}} });
         @endif
     </script>
     {{ HTML::script('js/sharing/sharing_utils.js') }}

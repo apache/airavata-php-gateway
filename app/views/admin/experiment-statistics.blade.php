@@ -208,15 +208,6 @@
         }
     }
 
-    $(".experiment-statistics").on("click", ".get-exp-stats", function(){
-        expId = $(this).data("expid");
-        $(".experimentId").val( expId);
-        $(".get-experiment").click();
-        $('html, body').animate({
-            scrollTop: $(".get-experiment").offset().top - 100
-        }, 1000);
-    });
-
     //element coming from experiment-info blade
     $(document).on("click", ".popover-taskinfo", function(){ 
         $(this).popover();
