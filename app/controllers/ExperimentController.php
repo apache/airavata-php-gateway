@@ -79,7 +79,7 @@ class ExperimentController extends BaseController
 
                 $projectOwner = array();
                 $sharedProjectOwner = SharingUtilities::getSharedResourceOwner($_POST['project'], ResourceType::PROJECT);
-                if (strcmp(Session::get("username"), $sharedProjectOwner) !== 0) {
+                if (Session::get("username") !== $sharedProjectOwner) {
                     $projectOwner[$sharedProjectOwner] = $users[$sharedProjectOwner];
                     $users = array_diff_key($users, $projectOwner);
                 }
@@ -115,7 +115,7 @@ class ExperimentController extends BaseController
     public function summary()
     {
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
-        if(isset($_GET['isAutoRefresh']) && $_GET['isAutoRefresh'] == 'true'){
+        if(isset($_GET['isAutoRefresh']) && $_GET['isAutoRefresh'] == 'true' && $experiment != null){
             $autoRefresh = true;
         }else{
             $autoRefresh = false;
@@ -169,14 +169,15 @@ class ExperimentController extends BaseController
             );
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
                 $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
+                $sharedExperimentOwner = SharingUtilities::getSharedResourceOwner($experiment->experimentId, ResourceType::EXPERIMENT);
                 $sharedProjectOwner = SharingUtilities::getSharedResourceOwner($experiment->projectId, ResourceType::PROJECT);
 
                 $owner = array();
                 $projectOwner = array();
-                if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
-                    $owner[$experiment->userName] = $users[$experiment->userName];
+                if (Session::get("username") !== $sharedExperimentOwner) {
+                    $owner[$sharedExperimentOwner] = $users[$sharedExperimentOwner];
                 }
-                if (strcmp(Session::get("username"), $sharedProjectOwner) !== 0) {
+                if (Session::get("username") !== $sharedProjectOwner) {
                     $projectOwner[$sharedProjectOwner] = $users[$sharedProjectOwner];
                 }
                 // Subtract out the owner and project owner from list of users
@@ -187,7 +188,7 @@ class ExperimentController extends BaseController
                 // Only allow editing sharing on the summary page if the owner
                 // and the experiment isn't editable. If the experiment is
                 // editable, the sharing can be edited on the edit page.
-                $canEditSharing = $this->isExperimentOwner($experiment, Session::get("username")) && !$expVal["editable"];
+                $canEditSharing = (Session::get("username") === $sharedExperimentOwner) && !$expVal["editable"];
                 $data['can_write'] = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
                 $data["users"] = json_encode($users);
                 $data["owner"] = json_encode($owner);
@@ -215,9 +216,9 @@ class ExperimentController extends BaseController
             }
         } else {
             if (Input::has("dashboard"))
-                return View::make("partials/experiment-info", array("invalidExperimentId" => 1, "users" => json_encode(array())));
+                return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
             else
-                return View::make("experiment/summary", array("invalidExperimentId" => 1, "users" => json_encode(array())));
+                return View::make("experiment/summary", array("invalidExperimentId" => 1));
         }
     }
 
@@ -296,14 +297,15 @@ class ExperimentController extends BaseController
         if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
             if (SharingUtilities::userCanWrite(Session::get("username"), $_GET['expId'], ResourceType::EXPERIMENT) === true) {
                 $users = SharingUtilities::getProfilesForSharedUsers($_GET['expId'], ResourceType::EXPERIMENT);
+                $sharedExperimentOwner = SharingUtilities::getSharedResourceOwner($experiment->experimentId, ResourceType::EXPERIMENT);
                 $sharedProjectOwner = SharingUtilities::getSharedResourceOwner($experiment->projectId, ResourceType::PROJECT);
 
                 $owner = array();
                 $projectOwner = array();
-                if (strcmp(Session::get("username"), $experiment->userName) !== 0) {
-                    $owner[$experiment->userName] = $users[$experiment->userName];
+                if (Session::get("username") !==  $sharedExperimentOwner) {
+                    $owner[$sharedExperimentOwner] = $users[$sharedExperimentOwner];
                 }
-                if (strcmp(Session::get("username"), $sharedProjectOwner) !== 0) {
+                if (Session::get("username") !== $sharedProjectOwner) {
                     $projectOwner[$sharedProjectOwner] = $users[$sharedProjectOwner];
                 }
                 // Subtract out owner and project owner from list of users
@@ -312,7 +314,7 @@ class ExperimentController extends BaseController
                 // If project owner is the same as owner, just show the owner, not the project owner
                 $projectOwner = array_diff_key($projectOwner, $owner);
 
-                $canEditSharing = $this->isExperimentOwner($experiment, Session::get('username'));
+                $canEditSharing = Session::get("username") === $sharedExperimentOwner;
 
                 return View::make("experiment/edit", array("expInputs" => $experimentInputs,
                     "users" => json_encode($users), "owner" => json_encode($owner),
@@ -484,11 +486,6 @@ class ExperimentController extends BaseController
             Log::error($ex);
             return Response::json(array("success" => false, "error" => "Error: failed to update sharing: " . $ex->getMessage()));
         }
-    }
-
-    private function isExperimentOwner($experiment, $username)
-    {
-        return strcmp($username, $experiment->userName) === 0;
     }
 }
 

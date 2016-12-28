@@ -289,53 +289,52 @@
     @endif
     <input type="hidden" id="lastModifiedTime" value="{{ $expVal['experimentTimeOfStateChange'] }}"/>
 
+    <div class="modal fade" id="clone-experiment-modal" tabindex="-1" role="dialog" aria-labelledby="clone-experiment-modal-title"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-center" id="clone-experiment-modal-title">Clone experiment</h3>
+                </div>
+                <div class="modal-body">
+                    <form class="form-inline" action="{{ URL::to('/') }}/experiment/clone" method="post">
+                        <input type="hidden" name="expId" value="{{{ Input::get('expId') }}}"/>
+                        <div class="form-group">
+                            <label for="projectId">Project</label>
+                            <select class="form-control" name="projectId" required>
+                                @foreach($writeableProjects as $project)
+                                    <option value="{{{ $project->projectID }}}"
+                                        @if( $project->projectID == $experiment->projectId)
+                                            selected
+                                        @endif
+                                        >{{{ $project->optionLabel }}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <button type="submit"
+                            class="btn btn-info"
+                            role="button"
+                            title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
+                            <span class="glyphicon glyphicon-edit"></span>
+                            Clone
+                        </a>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- check of correct experiment Id ends here -->
     @endif
 
     @endif
 </div>
-
-<div class="modal fade" id="clone-experiment-modal" tabindex="-1" role="dialog" aria-labelledby="clone-experiment-modal-title"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="text-center" id="clone-experiment-modal-title">Clone experiment</h3>
-            </div>
-            <div class="modal-body">
-                <form class="form-inline" action="{{ URL::to('/') }}/experiment/clone" method="post">
-                    <input type="hidden" name="expId" value="{{{ Input::get('expId') }}}"/>
-                    <div class="form-group">
-                        <label for="projectId">Project</label>
-                        <select class="form-control" name="projectId" required>
-                            @foreach($writeableProjects as $project)
-                                <option value="{{{ $project->projectID }}}"
-                                    @if( $project->projectID == $experiment->projectId)
-                                        selected
-                                    @endif
-                                    >{{{ $project->optionLabel }}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <button type="submit"
-                        class="btn btn-info"
-                        role="button"
-                        title="Create a clone of the experiment. Cloning is the only way to change an experiment's settings after it has been launched.">
-                        <span class="glyphicon glyphicon-edit"></span>
-                        Clone
-                    </a>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <div class="form-group">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 @if( isset($dashboard))
 <h2 class="text-center">Detailed Experiment Information</h2>
@@ -418,7 +417,7 @@
 @section('scripts')
 @parent
 {{ HTML::script('js/time-conversion.js')}}
-@if(Config::get('pga_config.airavata')["data-sharing-enabled"] and isset($users) and isset($owner))
+@if(Config::get('pga_config.airavata')["data-sharing-enabled"] and !isset($invalidExperimentId))
     <script>
         var users = {{ $users }};
         var owner = {{ $owner }};

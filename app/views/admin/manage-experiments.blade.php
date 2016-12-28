@@ -512,6 +512,9 @@ to be uncommented when actually in use.
 
     });
 
+    // Clear any lingering values in the additional filter fields
+    $('#username, #appname, #hostname').val('');
+
     $(".oneDayExp").click( function(){
         var todayDate = getCurrentDate();
         var ydayDate = getCurrentDate(1);
@@ -520,7 +523,10 @@ to be uncommented when actually in use.
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last 24 hours";
-        getExperiments( ydayDate, todayDate, null, null, null, msg);
+        var username = $('#username').val().trim();
+        var appname = $('#appname').val().trim();
+        var hostname = $('#hostname').val().trim();
+        getExperiments( ydayDate, todayDate, username, appname, hostname, msg);
     });
 
     $(".oneWeekExp").click( function(){
@@ -531,7 +537,10 @@ to be uncommented when actually in use.
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last week";
-        getExperiments( ydayDate, todayDate, null, null, null, msg);
+        var username = $('#username').val().trim();
+        var appname = $('#appname').val().trim();
+        var hostname = $('#hostname').val().trim();
+        getExperiments( ydayDate, todayDate, username, appname, hostname, msg);
     })
 
     $("#getStatistics").click(function () {
@@ -608,15 +617,15 @@ to be uncommented when actually in use.
         $(".loading-img-statistics").removeClass("hide");
             $.ajax({
                 url: 'experimentStatistics?fromTime=' + startTime + '&' + 'toTime=' + endTime
-                    + '&username=' + encodeURIComponent(username)
-                    + '&appname=' + encodeURIComponent(appname)
-                    + '&hostname=' + encodeURIComponent(hostname),
+                    + (username ? '&username=' + encodeURIComponent(username) : '')
+                    + (appname ? '&appname=' + encodeURIComponent(appname) : '')
+                    + (hostname ? '&hostname=' + encodeURIComponent(hostname) : ''),
                 type: 'get',
                 success: function (data) {
                     if( msg == null){
                         start = new Date(startTime + ' UTC');
                         end  = new Date(endTime + ' UTC');
-                        msg = "Experiment Statistics from " + start.toLocaleTimeString() + " to " + end.toLocaleTimeString();
+                        msg = "Experiment Statistics from " + start.toLocaleString() + " to " + end.toLocaleString();
                     }
                     // TODO: update message to include username, appname and hostname?
                     $(".experiment-statistics").html( "<h2 class='text-center'>" + msg + "</h2><hr/>" + data);
