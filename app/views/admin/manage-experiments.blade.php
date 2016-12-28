@@ -595,9 +595,9 @@ to be uncommented when actually in use.
         $(".loading-img-statistics").removeClass("hide");
             $.ajax({
                 url: 'experimentStatistics?fromTime=' + startTime + '&' + 'toTime=' + endTime
-                    + '&username=' + encodeURIComponent(username)
-                    + '&appname=' + encodeURIComponent(appname)
-                    + '&hostname=' + encodeURIComponent(hostname),
+                    + (username ? '&username=' + encodeURIComponent(username) : '')
+                    + (appname ? '&appname=' + encodeURIComponent(appname) : '')
+                    + (hostname ? '&hostname=' + encodeURIComponent(hostname) : ''),
                 type: 'get',
                 success: function (data) {
                     if( msg == null){
