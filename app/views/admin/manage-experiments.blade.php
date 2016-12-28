@@ -499,6 +499,9 @@ to be uncommented when actually in use.
 
     });
 
+    // Clear any lingering values in the additional filter fields
+    $('#username, #appname, #hostname').val('');
+
     $(".oneDayExp").click( function(){
         var todayDate = getCurrentDate();
         var ydayDate = getCurrentDate(1);
@@ -507,7 +510,10 @@ to be uncommented when actually in use.
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last 24 hours";
-        getExperiments( ydayDate, todayDate, null, null, null, msg);
+        var username = $('#username').val().trim();
+        var appname = $('#appname').val().trim();
+        var hostname = $('#hostname').val().trim();
+        getExperiments( ydayDate, todayDate, username, appname, hostname, msg);
     });
 
     $(".oneWeekExp").click( function(){
@@ -518,7 +524,10 @@ to be uncommented when actually in use.
         todayDate = moment(todayDate).utc().format('MM/DD/YYYY hh:mm a');
         ydayDate = moment(ydayDate).utc().format('MM/DD/YYYY hh:mm a');
         var msg = "Experiments statistics from last week";
-        getExperiments( ydayDate, todayDate, null, null, null, msg);
+        var username = $('#username').val().trim();
+        var appname = $('#appname').val().trim();
+        var hostname = $('#hostname').val().trim();
+        getExperiments( ydayDate, todayDate, username, appname, hostname, msg);
     })
 
     $("#getStatistics").click(function () {
