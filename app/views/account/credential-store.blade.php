@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    @if ($credentialSummary->token != $defaultCredentialSummary->token)
+                    @if ($credentialSummary->token != $defaultCredentialToken)
                     <form style="display: inline" action="{{ URL::to('/') }}/account/set-default-credential" method="post">
                         <input type="hidden" name="defaultToken" value="{{$credentialSummary->token}}"/>
                         <button type="submit" class="btn btn-default">Make Default</button>

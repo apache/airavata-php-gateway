@@ -15,15 +15,15 @@ class UserSettingsController extends BaseController
 
         $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
         $userCredentialSummaries = URPUtilities::get_all_ssh_pub_keys_summary_for_user();
-        $defaultCredentialSummary = $userCredentialSummaries[$userResourceProfile->credentialStoreToken];
+        $defaultCredentialToken = $userResourceProfile->credentialStoreToken;
         foreach ($userCredentialSummaries as $credentialSummary) {
-            $credentialSummary->canDelete = ($credentialSummary->token != $defaultCredentialSummary->token);
+            $credentialSummary->canDelete = ($credentialSummary->token != $defaultCredentialToken);
         }
 
         return View::make("account/credential-store", array(
             "userResourceProfile" => $userResourceProfile,
             "credentialSummaries" => $userCredentialSummaries,
-            "defaultCredentialSummary" => $defaultCredentialSummary
+            "defaultCredentialToken" => $defaultCredentialToken
         ));
     }
 
