@@ -199,6 +199,7 @@ class ExperimentUtilities
      * Get the experiment with the given ID
      * @param $expId
      * @return null
+     * @throws ExperimentNotFoundException
      */
     public static function get_experiment($expId)
     {
@@ -211,7 +212,7 @@ class ExperimentUtilities
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
         } catch (ExperimentNotFoundException $enf) {
-            CommonUtilities::print_error_message('<p>ExperimentNotFoundException: ' . $enf->getMessage() . '</p>');
+            throw $enf; // rethrow
         } catch (AiravataClientException $ace) {
             CommonUtilities::print_error_message('AiravataClientException: ' . $ace->getMessage() . '</p>');
         } catch (AiravataSystemException $ase) {

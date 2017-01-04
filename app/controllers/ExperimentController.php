@@ -1,5 +1,6 @@
 <?php
 
+use Airavata\API\Error\ExperimentNotFoundException;
 use Airavata\Model\Status\JobState;
 use Airavata\Model\Group\ResourceType;
 
@@ -114,111 +115,116 @@ class ExperimentController extends BaseController
 
     public function summary()
     {
-        $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
-        if(isset($_GET['isAutoRefresh']) && $_GET['isAutoRefresh'] == 'true' && $experiment != null){
-            $autoRefresh = true;
-        }else{
-            $autoRefresh = false;
-        }
-        if ($experiment != null) {
-            //viewing experiments of other gateways is not allowed if user is not super admin
-            if( $experiment->gatewayId != Session::get("gateway_id") && !Session::has("super-admin")){
-                Session::put("permissionDenied", true);
-                CommonUtilities::print_error_message('It seems that you do not have permissions to view this experiment or it belongs to another gateway.');
-                if (Input::has("dashboard"))
-                    return View::make("partials/experiment-info", array("invalidExperimentId" => 1, "users" => json_encode(array())));
-                else
-                    return View::make("experiment/summary", array("invalidExperimentId" => 1, "users" => json_encode(array())));
-            }
-            else
-                Session::forget("permissionDenied");
+        $experiment = null;
+        try {
+            $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
+        } catch (ExperimentNotFoundException $enf) {
 
-
-            $project = null;
-            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-                if (SharingUtilities::userCanRead(Session::get("username"), $experiment->projectId, ResourceType::PROJECT)) {
-                    $project = ProjectUtilities::get_project($experiment->projectId);
-                }
-            } else {
-                $project = ProjectUtilities::get_project($experiment->projectId);
-            }
-            $expVal = ExperimentUtilities::get_experiment_values($experiment);
-            $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
-//            var_dump( $jobDetails); exit;
-            foreach( $jobDetails as $index => $jobDetail){
-                if(isset($jobDetail->jobStatuses)){
-                      $jobDetails[ $index]->jobStatuses[0]->jobStateName = JobState::$__names[$jobDetail->jobStatuses[0]->jobState];
-                }
-                else{
-                    $jobDetails[ $index]->jobStatuses = [new stdClass()];
-                    $jobDetails[ $index]->jobStatuses[0]->jobStateName = null;
-                }
-            }
-            $expVal["jobDetails"] = $jobDetails;
-
-            $writeableProjects = ProjectUtilities::get_all_user_writeable_projects(Session::get("gateway_id"), Session::get("username"));
-
-            $data = array(
-                "expId" => Input::get("expId"),
-                "experiment" => $experiment,
-                "project" => $project,
-                "jobDetails" => $jobDetails,
-                "expVal" => $expVal,
-                "autoRefresh"=> $autoRefresh,
-                "writeableProjects" => $writeableProjects
-            );
-            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-                $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
-                $sharedExperimentOwner = SharingUtilities::getSharedResourceOwner($experiment->experimentId, ResourceType::EXPERIMENT);
-                $sharedProjectOwner = SharingUtilities::getSharedResourceOwner($experiment->projectId, ResourceType::PROJECT);
-
-                $owner = array();
-                $projectOwner = array();
-                if (Session::get("username") !== $sharedExperimentOwner) {
-                    $owner[$sharedExperimentOwner] = $users[$sharedExperimentOwner];
-                }
-                if (Session::get("username") !== $sharedProjectOwner) {
-                    $projectOwner[$sharedProjectOwner] = $users[$sharedProjectOwner];
-                }
-                // Subtract out the owner and project owner from list of users
-                $users = array_diff_key($users, $owner);
-                $users = array_diff_key($users, $projectOwner);
-                // If project owner is the same as owner, just show the owner, not the project owner
-                $projectOwner = array_diff_key($projectOwner, $owner);
-                // Only allow editing sharing on the summary page if the owner
-                // and the experiment isn't editable. If the experiment is
-                // editable, the sharing can be edited on the edit page.
-                $canEditSharing = (Session::get("username") === $sharedExperimentOwner) && !$expVal["editable"];
-                $data['can_write'] = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
-                $data["users"] = json_encode($users);
-                $data["owner"] = json_encode($owner);
-                $data["projectOwner"] = json_encode($projectOwner);
-                $data["canEditSharing"] = $canEditSharing;
-                // The summary page has it's own Update Sharing button
-                $data["updateSharingViaAjax"] = true;
-            }
-
-            if( Input::has("dashboard"))
-            {
-                $detailedExperiment = ExperimentUtilities::get_detailed_experiment( $_GET['expId']);
-                $data["detailedExperiment"] = $detailedExperiment;
-            }
-
-            if (Request::ajax()) {
-                //admin wants to see an experiment summary
-                if (Input::has("dashboard")) {
-                    $data["dashboard"] = true;
-                    return View::make("partials/experiment-info", $data);
-                } else
-                    return json_encode($data);
-            } else {
-                return View::make("experiment/summary", $data);
-            }
-        } else {
+            Log::error("Experiment wasn't found", array("message" => $enf->getMessage(), "username" => Session::get("username"), "gateway_id" => Session::get("gateway_id")));
             if (Input::has("dashboard"))
                 return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
             else
                 return View::make("experiment/summary", array("invalidExperimentId" => 1));
+        }
+        // Assume that experiment is not null now
+
+        if(isset($_GET['isAutoRefresh']) && $_GET['isAutoRefresh'] == 'true'){
+            $autoRefresh = true;
+        }else{
+            $autoRefresh = false;
+        }
+        //viewing experiments of other gateways is not allowed if user is not super admin
+        if( $experiment->gatewayId != Session::get("gateway_id") && !Session::has("super-admin")){
+            Session::put("permissionDenied", true);
+            CommonUtilities::print_error_message('It seems that you do not have permissions to view this experiment or it belongs to another gateway.');
+            if (Input::has("dashboard"))
+                return View::make("partials/experiment-info", array("invalidExperimentId" => 1, "users" => json_encode(array())));
+            else
+                return View::make("experiment/summary", array("invalidExperimentId" => 1, "users" => json_encode(array())));
+        }
+        else
+            Session::forget("permissionDenied");
+
+
+        $project = null;
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            if (SharingUtilities::userCanRead(Session::get("username"), $experiment->projectId, ResourceType::PROJECT)) {
+                $project = ProjectUtilities::get_project($experiment->projectId);
+            }
+        } else {
+            $project = ProjectUtilities::get_project($experiment->projectId);
+        }
+        $expVal = ExperimentUtilities::get_experiment_values($experiment);
+        $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
+//            var_dump( $jobDetails); exit;
+        foreach( $jobDetails as $index => $jobDetail){
+            if(isset($jobDetail->jobStatuses)){
+                  $jobDetails[ $index]->jobStatuses[0]->jobStateName = JobState::$__names[$jobDetail->jobStatuses[0]->jobState];
+            }
+            else{
+                $jobDetails[ $index]->jobStatuses = [new stdClass()];
+                $jobDetails[ $index]->jobStatuses[0]->jobStateName = null;
+            }
+        }
+        $expVal["jobDetails"] = $jobDetails;
+
+        $writeableProjects = ProjectUtilities::get_all_user_writeable_projects(Session::get("gateway_id"), Session::get("username"));
+
+        $data = array(
+            "expId" => Input::get("expId"),
+            "experiment" => $experiment,
+            "project" => $project,
+            "jobDetails" => $jobDetails,
+            "expVal" => $expVal,
+            "autoRefresh"=> $autoRefresh,
+            "writeableProjects" => $writeableProjects
+        );
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            $users = SharingUtilities::getProfilesForSharedUsers(Input::get("expId"), ResourceType::EXPERIMENT);
+            $sharedExperimentOwner = SharingUtilities::getSharedResourceOwner($experiment->experimentId, ResourceType::EXPERIMENT);
+            $sharedProjectOwner = SharingUtilities::getSharedResourceOwner($experiment->projectId, ResourceType::PROJECT);
+
+            $owner = array();
+            $projectOwner = array();
+            if (Session::get("username") !== $sharedExperimentOwner) {
+                $owner[$sharedExperimentOwner] = $users[$sharedExperimentOwner];
+            }
+            if (Session::get("username") !== $sharedProjectOwner) {
+                $projectOwner[$sharedProjectOwner] = $users[$sharedProjectOwner];
+            }
+            // Subtract out the owner and project owner from list of users
+            $users = array_diff_key($users, $owner);
+            $users = array_diff_key($users, $projectOwner);
+            // If project owner is the same as owner, just show the owner, not the project owner
+            $projectOwner = array_diff_key($projectOwner, $owner);
+            // Only allow editing sharing on the summary page if the owner
+            // and the experiment isn't editable. If the experiment is
+            // editable, the sharing can be edited on the edit page.
+            $canEditSharing = (Session::get("username") === $sharedExperimentOwner) && !$expVal["editable"];
+            $data['can_write'] = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
+            $data["users"] = json_encode($users);
+            $data["owner"] = json_encode($owner);
+            $data["projectOwner"] = json_encode($projectOwner);
+            $data["canEditSharing"] = $canEditSharing;
+            // The summary page has it's own Update Sharing button
+            $data["updateSharingViaAjax"] = true;
+        }
+
+        if( Input::has("dashboard"))
+        {
+            $detailedExperiment = ExperimentUtilities::get_detailed_experiment( $_GET['expId']);
+            $data["detailedExperiment"] = $detailedExperiment;
+        }
+
+        if (Request::ajax()) {
+            //admin wants to see an experiment summary
+            if (Input::has("dashboard")) {
+                $data["dashboard"] = true;
+                return View::make("partials/experiment-info", $data);
+            } else
+                return json_encode($data);
+        } else {
+            return View::make("experiment/summary", $data);
         }
     }
 
