@@ -234,7 +234,19 @@ class ExperimentUtilities
     {
 
         try {
-            return Airavata::getDetailedExperimentTree(Session::get('authz-token'), $expId);
+            $detailed_experiment = Airavata::getDetailedExperimentTree(Session::get('authz-token'), $expId);
+            Log::debug("detailed exp", array($detailed_experiment));
+            foreach ($detailed_experiment->processes as $index => $process) {
+                usort($process->tasks, ExperimentUtilities::sortTasksByTaskDagOrder($process->taskDag));
+                Log::debug("process", array($process, $process->taskDag));
+                Log::debug("task list", array($process, $process->tasks));
+                foreach ($process->tasks as $task) {
+                    Log::debug("task", array("taskId" => $task->taskId,
+                    "creationTime" => $task->creationTime, "lastUpdateTime" => $task->lastUpdateTime, "status" => $task->taskStatuses));
+                    // TODO: sort taskStatuses by time and output them
+                }
+            }
+            return $detailed_experiment;
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('<p>There was a problem getting the experiment.
             Please try again later or submit a bug report using the link in the Help menu.</p>' .
@@ -261,6 +273,18 @@ class ExperimentUtilities
                 '<p>Exception: ' . $e->getMessage() . '</p>');
         }
 
+    }
+
+    private static function sortTasksByTaskDagOrder($taskDag)
+    {
+        $taskDagArray = preg_split("/,/", $taskDag);
+        Log::debug("taskDagArray", array($taskDagArray));
+        return function($task1, $task2) use ($taskDagArray) {
+            $taskOrder1 = array_search($task1->taskId, $taskDagArray);
+            $taskOrder2 = array_search($task2->taskId, $taskDagArray);
+            Log::debug("tasks and order", array($task1->taskId, $taskOrder1, $task2->taskId, $taskOrder2));
+            return $taskOrder1 - $taskOrder2;
+        };
     }
 
     /**
