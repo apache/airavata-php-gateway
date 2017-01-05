@@ -287,7 +287,7 @@
 
                 <h3>Manage Users Access</h3>
                 <a href="{{URL::to('/')}}/admin/dashboard/users">
-                    <div class="col-md-6  well">
+                    <div class="col-md-4 col-md-offset-4 well">
                         <div class="col-md-12">
                             <span class="glyphicon glyphicon-user  console-icon"></span>
                         </div>
@@ -297,16 +297,6 @@
                     </div>
                 </a>
 
-                <a href="{{URL::to('/')}}/admin/dashboard/roles">
-                    <div class=" col-md-6  well">
-                        <div class="col-md-12">
-                            <span class="glyphicon glyphicon-eye-open  console-icon"></span>
-                        </div>
-                        <div class="col-md-12">
-                            <h4>Browse User Roles</h4>
-                        </div>
-                    </div>
-                </a>
             </div>
 
             <div class="row well">
