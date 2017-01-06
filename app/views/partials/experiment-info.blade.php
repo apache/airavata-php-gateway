@@ -361,6 +361,8 @@
                                         <dt>Task Id : </dt> <dd>{{ $task->taskId }}</dd>
                                         <dt>Task Type : </dt> <dd>{{ $expVal["taskTypes"][$task->taskType] }}</dd>
                                         <dt>Task Status : </dt> <dd>{{ $expVal["taskStates"][$task->taskStatuses[0]->state] }}</dd>
+                                        <dt>Task Status Time : </dt> <dd class="time" unix-time="{{{ $task->taskStatuses[0]->timeOfStateChange}}}"></dd>
+                                        <dt>Task Status Reason : </dt> <dd>{{{ $task->taskStatuses[0]->reason }}}</dd>
                                     @if( is_object( $task->taskErrors))
                                         <dt>Task Error Id : </dt><dd>{{ $task->taskErrors[0]->errorId }}</dd>
                                         <dt>Task Error Msg : </dt><dd>{{ $task->taskErrors[0]->userFriendlyMessage }} <a tabindex="0" class="popover-taskinfo btn btn-sm btn-default" role="button" data-toggle="popover" data-html="true" title="Detailed Task Information" data-content="{{ str_replace( ',', '<br/><br/>', $task->taskError->actualErrorMessage ) }}">More Info</a></dd>
@@ -372,7 +374,7 @@
                                         <dl class="well dl-horizontal">
                                             <dt>Job Id. :</dt> <dd>{{ $job->jobId }}</dd>
                                             <dt>Job Name : </dt><dd>{{ $job->jobName }}</dd>
-                                            <dt>Job Description :</dt><dd>{{ $job->jobDescription }}</dd>
+                                            <dt>Job Description :</dt><dd><pre>{{{ $job->jobDescription }}}</pre></dd>
                                         </dl>
                                      @endforeach
                                     </dl>
