@@ -211,7 +211,9 @@ class CommonUtilities
                 if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only')){
                     //notification bell
                     $notices = array();
-                    $notices = CommonUtilities::get_all_notices();
+                    if (CommonUtilities::isAiravataUp()) {
+                        $notices = CommonUtilities::get_all_notices();
+                    }
                     $navbar .= CommonUtilities::get_notices_ui( $notices);
                 }
 
@@ -411,6 +413,27 @@ class CommonUtilities
             $addOrSubtract = "+";
 
         return strtotime( $addOrSubtract . " " . abs($timeDifference) . " hours", $localTime);
+    }
+
+    public static function isAiravataUp() {
+        // Cache whether Airavata is up in the REQUEST scope
+        if (array_key_exists("isAiravataUp", $_REQUEST)) {
+            return $_REQUEST["isAiravataUp"];
+        }
+        $_REQUEST["isAiravataUp"] = CommonUtilities::checkIfAiravataIsUp();
+        return $_REQUEST["isAiravataUp"];
+    }
+
+    private static function checkIfAiravataIsUp() {
+
+        try {
+            $version = Airavata::getAPIVersion(Session::get('authz-token'));
+            Log::debug("Airavata is up!", array("version" => $version));
+            return true;
+        } catch (Exception $e) {
+            Log::error("Airavata is down!", array("exception", $e));
+            return false;
+        }
     }
 }
 

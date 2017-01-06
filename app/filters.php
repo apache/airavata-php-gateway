@@ -137,3 +137,15 @@ Route::filter('verifyeditadmin', function () {
     } else
         return Redirect::to("home")->with("login-alert", true);
 });
+
+Route::filter('checkIfAiravataIsUp', function() {
+    if (Request::path() == "logout") {
+        return;
+    }
+    if (CommonUtilities::id_in_session()) {
+        if (!CommonUtilities::isAiravataUp() && !Session::has("airavata-down")) {
+            // TODO: just use request variable instead of additional flash variable?
+            return Redirect::to("home")->with("airavata-down", true);
+        }
+    }
+});

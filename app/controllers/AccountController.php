@@ -210,24 +210,23 @@ class AccountController extends BaseController
     }
 
     private function initializeWithAiravata($username){
-        //Check Airavata Server is up
-        try{
-            //creating a default project for user
-            $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);
-            if($projects == null || count($projects) == 0){
-                //creating a default project for user
-                ProjectUtilities::create_default_project($username);
-            }
+        // TODO: should we log the user out if Airavata is down and they won't have a default project created?
+        if (!CommonUtilities::isAiravataUp()) {
+            return Redirect::to("home");
+        }
 
-            $dirPath = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . "/" . Session::get('username');
-            if(!file_exists($dirPath)){
-                $old_umask = umask(0);
-                mkdir($dirPath, 0777, true);
-                umask($old_umask);
-            }
-        }catch (Exception $ex){
-            CommonUtilities::print_error_message("Unable to Connect to the Airavata Server Instance!");
-            return View::make('home');
+        //creating a default project for user
+        $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);
+        if($projects == null || count($projects) == 0){
+            //creating a default project for user
+            ProjectUtilities::create_default_project($username);
+        }
+
+        $dirPath = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . "/" . Session::get('username');
+        if(!file_exists($dirPath)){
+            $old_umask = umask(0);
+            mkdir($dirPath, 0777, true);
+            umask($old_umask);
         }
 
         if(Session::has("admin") || Session::has("admin-read-only")){

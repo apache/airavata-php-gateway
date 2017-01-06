@@ -48,6 +48,11 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
     {{ Session::forget("admin-alert") }}
 @endif
 
+@if (Session::has("airavata-down"))
+    {{ CommonUtilities::print_error_message("The Airavata servers are currently down. We apologize for any inconvenience. Please try again after some time.") }}
+    {{ Session::forget("airavata-down") }}
+@endif
+
 <!--  PGA UI lies here. Do not touch. -->
 <style>
 .content-area{
