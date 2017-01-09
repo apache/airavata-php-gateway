@@ -1,5 +1,6 @@
 <?php
 
+use Airavata\API\Error\AuthorizationException;
 use Airavata\API\Error\ExperimentNotFoundException;
 use Airavata\Model\Status\JobState;
 use Airavata\Model\Group\ResourceType;
@@ -121,10 +122,11 @@ class ExperimentController extends BaseController
         } catch (ExperimentNotFoundException $enf) {
 
             Log::error("Experiment wasn't found", array("message" => $enf->getMessage(), "username" => Session::get("username"), "gateway_id" => Session::get("gateway_id")));
-            if (Input::has("dashboard"))
-                return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
-            else
-                return View::make("experiment/summary", array("invalidExperimentId" => 1));
+            return $this->makeInvalidExperimentView();
+        } catch (AuthorizationException $ae) {
+
+            Log::error("User isn't authorized to see experiment", array("message" => $ae->getMessage(), "username" => Session::get("username"), "gateway_id" => Session::get("gateway_id")));
+            return $this->makeInvalidExperimentView();
         }
         // Assume that experiment is not null now
 
@@ -226,6 +228,14 @@ class ExperimentController extends BaseController
         } else {
             return View::make("experiment/summary", $data);
         }
+    }
+
+    private function makeInvalidExperimentView() {
+
+        if (Input::has("dashboard"))
+            return View::make("partials/experiment-info", array("invalidExperimentId" => 1));
+        else
+            return View::make("experiment/summary", array("invalidExperimentId" => 1));
     }
 
     public function expChange()

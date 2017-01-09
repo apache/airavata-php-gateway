@@ -2,6 +2,7 @@
 
 use Airavata\API\Error\AiravataClientException;
 use Airavata\API\Error\AiravataSystemException;
+use Airavata\API\Error\AuthorizationException;
 use Airavata\API\Error\ExperimentNotFoundException;
 use Airavata\API\Error\InvalidRequestException;
 use Airavata\Facades\Airavata;
@@ -213,6 +214,8 @@ class ExperimentUtilities
             CommonUtilities::print_error_message('<p>InvalidRequestException: ' . $ire->getMessage() . '</p>');
         } catch (ExperimentNotFoundException $enf) {
             throw $enf; // rethrow
+        } catch (AuthorizationException $ae) {
+            throw $ae; // rethrow
         } catch (AiravataClientException $ace) {
             CommonUtilities::print_error_message('AiravataClientException: ' . $ace->getMessage() . '</p>');
         } catch (AiravataSystemException $ase) {
