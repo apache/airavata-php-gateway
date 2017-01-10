@@ -113,6 +113,10 @@ $(function() {
 
             $('#share-box-users').addClass('text-align-center').text('Loading user list');
 
+            // Block the whole modal while user list is loading. Reason: if user
+            // tries to remove a shared user, loading of user list currently
+            // overwrites that information.
+            $('#share-box .modal-dialog').addClass('modal-spinner');
             $.ajax({
                 url: ajax_data.url,
                 method: 'get',
@@ -137,6 +141,10 @@ $(function() {
                             $users.append($user);
                         }
                     }
+                },
+                complete: function(){
+
+                    $('#share-box .modal-dialog').removeClass('modal-spinner');
                 }
             });
         }
