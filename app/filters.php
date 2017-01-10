@@ -47,7 +47,7 @@ App::before(function ($request) {
     if ($request->path() == "logout") {
         return;
     }
-    if (CommonUtilities::id_in_session()) {
+    if ( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') ) {
         // Use "airavata-down" flash variable as a way to prevent infinite redirect
         if (!CommonUtilities::isAiravataUp() && !Session::has("airavata-down")) {
             return Redirect::to("home")->with("airavata-down", true);
