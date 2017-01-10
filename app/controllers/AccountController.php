@@ -210,9 +210,13 @@ class AccountController extends BaseController
     }
 
     private function initializeWithAiravata($username){
-        // TODO: should we log the user out if Airavata is down and they won't have a default project created?
+
+        // Log the user out if Airavata is down. If a new user we want to make
+        // sure we create the default project and setup experiment storage
+        // before they do anything else.
         if (!CommonUtilities::isAiravataUp()) {
-            return Redirect::to("home");
+            Session::forget('loggedin');
+            return Redirect::to("home")->with("airavata-down", true);
         }
 
         //creating a default project for user

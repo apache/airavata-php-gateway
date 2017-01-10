@@ -384,14 +384,6 @@ Route::get("airavata/down", function () {
     return View::make("server-down");
 });
 
-// the filter excludes the 'logout' route
-Route::when("*", 'checkIfAiravataIsUp');
-
-Route::get("is-airavata-up", function() {
-
-    return Response::json(array("is-airavata-up" => CommonUtilities::isAiravataUp()));
-});
-
 /*
  * Test Routes.
 */

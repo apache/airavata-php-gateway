@@ -428,10 +428,9 @@ class CommonUtilities
 
         try {
             $version = Airavata::getAPIVersion(Session::get('authz-token'));
-            Log::debug("Airavata is up!", array("version" => $version));
             return true;
         } catch (Exception $e) {
-            Log::error("Airavata is down!", array("exception", $e));
+            Log::error("Airavata is down!", array("exception" => $e));
             return false;
         }
     }

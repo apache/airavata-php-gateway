@@ -40,6 +40,21 @@ App::before(function ($request) {
     }
 });
 
+// Check if Airavata is up
+App::before(function ($request) {
+
+    // Exclude logout from check so that user can logout
+    if ($request->path() == "logout") {
+        return;
+    }
+    if (CommonUtilities::id_in_session()) {
+        // Use "airavata-down" flash variable as a way to prevent infinite redirect
+        if (!CommonUtilities::isAiravataUp() && !Session::has("airavata-down")) {
+            return Redirect::to("home")->with("airavata-down", true);
+        }
+    }
+});
+
 
 App::after(function ($request, $response) {
     //
@@ -136,16 +151,4 @@ Route::filter('verifyeditadmin', function () {
         }
     } else
         return Redirect::to("home")->with("login-alert", true);
-});
-
-Route::filter('checkIfAiravataIsUp', function() {
-    if (Request::path() == "logout") {
-        return;
-    }
-    if (CommonUtilities::id_in_session()) {
-        if (!CommonUtilities::isAiravataUp() && !Session::has("airavata-down")) {
-            // TODO: just use request variable instead of additional flash variable?
-            return Redirect::to("home")->with("airavata-down", true);
-        }
-    }
 });
