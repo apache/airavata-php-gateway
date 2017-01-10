@@ -163,10 +163,6 @@
             <td class="time" unix-time="{{ $expVal["experimentTimeOfStateChange"] }}"></td>
         </tr>
         <tr>
-            <td><strong>Enable Auto Schedule</strong></td>
-            <td>{{{ $experiment->userConfigurationData->airavataAutoSchedule==1?"true":"false" }}}</td>
-        </tr>
-        <tr>
             <td><strong>Wall Time</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->wallTimeLimit }}</td>
         </tr>
