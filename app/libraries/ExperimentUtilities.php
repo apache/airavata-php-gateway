@@ -830,7 +830,7 @@ class ExperimentUtilities
         if($appInterface->hasOptionalFileInputs){
             echo '<div>
                 <label>Optional Input Files</label>
-                <input type="file" id="optInputFiles" name="optInputFiles[]" multiple onchange="javascript:updateList()" >
+                <input type="file" class="file-input" id="optInputFiles" name="optInputFiles[]" multiple onchange="javascript:updateList()" >
                 <div id="optFileList"></div>
             </div>';
         }
@@ -870,7 +870,7 @@ class ExperimentUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"] && $expId){
             ExperimentUtilities::share_experiment($expId, json_decode($share));
         }
 
