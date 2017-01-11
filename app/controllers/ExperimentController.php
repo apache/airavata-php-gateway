@@ -50,13 +50,6 @@ class ExperimentController extends BaseController
             if( Input::has("savedExp"))
                 $savedExp = true;
 
-            // Condition added to deal with php ini default value set for post_max_size issue.
-            $allowedFileSize = Config::get('pga_config.airavata')["server-allowed-file-size"];
-            $serverLimit = intval( ini_get( 'post_max_size') );
-            if( $serverLimit < $allowedFileSize)
-                $allowedFileSize = $serverLimit;
-
-
             $experimentInputs = array(
                 "clonedExp" => $clonedExp,
                 "savedExp" => $savedExp,
@@ -72,7 +65,7 @@ class ExperimentController extends BaseController
                 "computeResources" => $computeResources,
                 "resourceHostId" => null,
                 "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"],
-                "allowedFileSize" => $allowedFileSize
+                "allowedFileSize" => $this->getAllowedFileSize()
             );
 
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
@@ -299,7 +292,7 @@ class ExperimentController extends BaseController
             "userDN" => $experiment->userConfigurationData->userDN,
             "userHasComputeResourcePreference" => $userHasComputeResourcePreference,
             "useUserCRPref" => $experiment->userConfigurationData->useUserCRPref,
-            "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
+            "allowedFileSize" => $this->getAllowedFileSize(),
             'experiment' => $experiment,
             "queueDefaults" => $queueDefaults,
             'computeResources' => $computeResources,
@@ -502,6 +495,21 @@ class ExperimentController extends BaseController
             Log::error($ex);
             return Response::json(array("success" => false, "error" => "Error: failed to update sharing: " . $ex->getMessage()));
         }
+    }
+
+    private function getAllowedFileSize()
+    {
+        // Condition added to deal with php ini default value set for post_max_size issue.
+        // NOTE: the following assumes that upload_max_filesize and
+        // post_max_size are in megabytes (for example, if
+        // upload_max_filesize is 8M then $allowedFileSize is 8, but the 'M'
+        // is assumed and not considered)
+        $allowedFileSize = intval( ini_get( 'upload_max_filesize' ) );
+        $serverLimit = intval( ini_get( 'post_max_size' ) );
+        if( $serverLimit < $allowedFileSize) {
+            $allowedFileSize = $serverLimit;
+        }
+        return $allowedFileSize;
     }
 }
 

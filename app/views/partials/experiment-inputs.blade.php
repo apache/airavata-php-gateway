@@ -41,9 +41,9 @@
                 {{ ExperimentUtilities::list_input_files($expInputs['experiment']->experimentInputs) }}
                 <hr/>
             </div>
-            {{ ExperimentUtilities::create_inputs($expInputs['application'], false) }}
+            {{ ExperimentUtilities::create_inputs($expInputs['application'], false, $expInputs['allowedFileSize']) }}
             @else
-            {{ ExperimentUtilities::create_inputs($expInputs['application'], true) }}
+            {{ ExperimentUtilities::create_inputs($expInputs['application'], true, $expInputs['allowedFileSize']) }}
             @endif
         </div>
         <!-- Modal to view file inputs-->

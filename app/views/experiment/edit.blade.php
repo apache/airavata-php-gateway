@@ -39,6 +39,7 @@
                 This experiment is connected with an Application which is currently not deployed on any Resource. The experiment cannot be launched at the moment.
             </p>
             @endif
+            <input type="hidden" id="allowedFileSize" value="{{ $expInputs['allowedFileSize'] }}"/>
         </form>
     </div>
 

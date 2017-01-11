@@ -114,11 +114,6 @@ return array(
         'gateway-id' => 'default',
 
         /**
-         * Maximum size of a file which is allowed to upload to the server
-         */
-        'server-allowed-file-size' => 64,
-
-        /**
          * absolute path of the data dir
          */
         'experiment-data-absolute-path' => '/var/www/experimentData',

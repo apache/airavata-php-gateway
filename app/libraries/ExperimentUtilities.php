@@ -753,9 +753,10 @@ class ExperimentUtilities
      * Create form inputs to accept the inputs to the given application
      * @param $id
      * @param $isRequired
+     * @param $allowedFileSize maximum file size in megabytes
      * @internal param $required
      */
-    public static function create_inputs($id, $isRequired)
+    public static function create_inputs($id, $isRequired, $allowedFileSize)
     {
         $inputs = AppUtilities::get_application_inputs($id);
 
@@ -812,8 +813,11 @@ class ExperimentUtilities
                             <label for="experiment-input">' . $input->name . '</label>
                             <div data-file-id="' . $input->sanitizedFormName . '" class="readBytesButtons btn btn-default btn-xs"
                              data-toggle="modal" style="float: right">view file</div>
-                            <input class="file-input" type="file" name="' . $input->sanitizedFormName .
-                                    '" id="' . $input->sanitizedFormName . '" ' . $required . '>
+                             <div class="file-upload-container">
+                                <input class="file-input" type="file" name="' . $input->sanitizedFormName .
+                                        '" id="' . $input->sanitizedFormName . '" ' . $required . '>
+                                    <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
+                             </div>
                             <p class="help-block">' . $input->userFriendlyDescription . '</p>
                             </div>';
                         break;
@@ -830,7 +834,10 @@ class ExperimentUtilities
         if($appInterface->hasOptionalFileInputs){
             echo '<div>
                 <label>Optional Input Files</label>
-                <input type="file" class="file-input" id="optInputFiles" name="optInputFiles[]" multiple onchange="javascript:updateList()" >
+                <div class="file-upload-container">
+                    <input type="file" class="file-input" id="optInputFiles" name="optInputFiles[]" multiple onchange="javascript:updateList()" >
+                    <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
+                </div>
                 <div id="optFileList"></div>
             </div>';
         }
