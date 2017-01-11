@@ -215,7 +215,7 @@ class AccountController extends BaseController
         // sure we create the default project and setup experiment storage
         // before they do anything else.
         if (!CommonUtilities::isAiravataUp()) {
-            Session::forget('loggedin');
+            Session::flush();
             return Redirect::to("home")->with("airavata-down", true);
         }
 
