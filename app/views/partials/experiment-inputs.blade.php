@@ -81,8 +81,6 @@
             <div class="loading-img text-center hide">
                 <img src="../assets/ajax-loader.gif"/>
             </div>
-            <input type="hidden" name="selected-queue"
-                   value="@if(isset($expInputs['expVal']) ){{ $expInputs['expVal']['scheduling']->queueName }} @endif"/>
 
             <div class="queue-view">
                 @if(isset($expInputs['expVal']) )

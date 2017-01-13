@@ -1282,7 +1282,7 @@ class ExperimentUtilities
         $schedulingUpdated->totalCPUCount = $input['cpu-count'];
         //$schedulingUpdated->numberOfThreads = $input['threads'];
         $schedulingUpdated->wallTimeLimit = $input['wall-time'];
-        //$schedulingUpdated->totalPhysicalMemory = $input['memory'];
+        $schedulingUpdated->totalPhysicalMemory = $input['total-physical-memory'];
 
         /*
         switch ($_POST['compute-resource'])
