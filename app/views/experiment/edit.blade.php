@@ -17,6 +17,12 @@
 
 <div class="container">
 
+    @if (Session::has("error-message"))
+        <div class="alert alert-danger">
+            {{{ Session::get("error-message") }}}
+        </div>
+    @endif
+
     <div class="col-md-offset-3 col-md-6">
         <h1>Edit Experiment</h1>
 

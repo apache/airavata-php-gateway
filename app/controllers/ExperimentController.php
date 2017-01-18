@@ -89,7 +89,13 @@ class ExperimentController extends BaseController
             }
 
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
-            $expId = ExperimentUtilities::create_experiment();
+            try {
+                $expId = ExperimentUtilities::create_experiment();
+            } catch (Exception $ex) {
+                Log::error("Failed to create experiment!");
+                Log::error($ex);
+                return Redirect::to("experiment/create")->with("error-message", "Failed to create experiment: " . $ex->getMessage());
+            }
 
             if (isset($_POST['launch']) && $expId) {
                 ExperimentUtilities::launch_experiment($expId);
@@ -354,7 +360,14 @@ class ExperimentController extends BaseController
     public function editSubmit()
     {
         $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
-        $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
+        try {
+            $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
+        } catch (Exception $ex) {
+            $errMessage = "Failed to update experiment: " . $ex->getMessage();
+            Log::error($errMessage);
+            Log::error($ex);
+            return Redirect::to("experiment/edit?expId=" . urlencode(Input::get('expId')))->with("error-message", $errMessage);
+        }
 
         if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
             if (SharingUtilities::userCanWrite(Session::get("username"), Input::get('expId'), ResourceType::EXPERIMENT)) {

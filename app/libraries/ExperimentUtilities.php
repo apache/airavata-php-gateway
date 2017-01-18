@@ -396,7 +396,12 @@ class ExperimentUtilities
                 }
             } elseif ($applicationInput->type == DataType::URI) {
                 if ($_FILES[$applicationInput->sanitizedFormName]['name']) {
+
                     $file = $_FILES[$applicationInput->sanitizedFormName];
+                    if ($file['error'] != 0) {
+                        throw new Exception("Failure occurred while uploading file '"
+                            . $file['name'] . "'. File upload error code is " . $file['error'] . ".");
+                    }
 
                     //
                     // move file to experiment data directory
@@ -463,6 +468,13 @@ class ExperimentUtilities
             $uriList = "";
             for($i=0; $i < count($_FILES['optInputFiles']['name']); $i++){
                 if(!empty($_FILES['optInputFiles']['name'][$i])){
+
+                    // Check if there is an error with the upload (like if it exceeded upload_max_filesize)
+                    if ($_FILES['optInputFiles']['error'][$i] != 0) {
+                        throw new Exception("Failure occurred while uploading file '"
+                            . $_FILES['optInputFiles']['name'][$i] . "'. File upload error code is " . $_FILES['optInputFiles']['error'][$i] . ".");
+                    }
+
                     $filePath = ExperimentUtilities::$experimentPath . $_FILES['optInputFiles']['name'][$i];
 
                     // check if file already exists
