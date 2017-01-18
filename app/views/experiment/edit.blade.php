@@ -67,15 +67,18 @@
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}
+{{ HTML::script('js/util.js') }}
 <script>
     $('.file-input').bind('change', function () {
 
-        var inputFileSize = Math.round(this.files[0].size / (1024 * 1024));
-        if (inputFileSize > $("#allowedFileSize").val()) {
-            alert("The input file size is greater than the allowed file size (" + $("#allowedFileSize").val() + " MB) in a form. Please upload another file.");
+        var allowedFileSize = $("#allowedFileSize").val();
+        var tooLargeFilenames = util.validateMaxUploadFileSize(this.files, allowedFileSize);
+
+        if (tooLargeFilenames.length > 0) {
+            var singleOrMultiple = tooLargeFilenames.length === 1 ? " the file [" : " each of the files [";
+            alert("The size of " + singleOrMultiple + tooLargeFilenames.join(", ") + "] is greater than the allowed file size (" + allowedFileSize + " MB) in a form. Please upload another file.");
             $(this).val("");
         }
-
     });
 
     $("#enableEmail").change(function () {
