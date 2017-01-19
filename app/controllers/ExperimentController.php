@@ -44,15 +44,7 @@ class ExperimentController extends BaseController
             );
 
 
-            $clonedExp = false; $savedExp = false;
-            if( Input::has("clonedExp"))
-                $clonedExp = true;
-            if( Input::has("savedExp"))
-                $savedExp = true;
-
             $experimentInputs = array(
-                "clonedExp" => $clonedExp,
-                "savedExp" => $savedExp,
                 "disabled" => ' disabled',
                 "experimentName" => $_POST['experiment-name'],
                 "experimentDescription" => $_POST['experiment-description'] . ' ',
@@ -281,15 +273,7 @@ class ExperimentController extends BaseController
         $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
         $userHasComputeResourcePreference = array_key_exists($expVal['scheduling']->resourceHostId, $userComputeResourcePreferences);
 
-        $clonedExp = false; $savedExp = false;
-        if( Input::has("clonedExp"))
-            $clonedExp = true;
-        if( Input::has("savedExp"))
-            $savedExp = true;
-
         $experimentInputs = array(
-            "clonedExp" => $clonedExp,
-            "savedExp" => $savedExp,
             "disabled" => ' ',
             "experimentName" => $experiment->experimentName,
             "experimentDescription" => $experiment->description,
@@ -350,7 +334,7 @@ class ExperimentController extends BaseController
     {
         try{
             $cloneId = ExperimentUtilities::clone_experiment(Input::get('expId'), Input::get('projectId'));
-            return Redirect::to('experiment/edit?expId=' . urlencode($cloneId) . "&clonedExp=true");
+            return Redirect::to('experiment/edit?expId=' . urlencode($cloneId));
         }catch (Exception $ex){
             return Redirect::to("experiment/summary?expId=" . urlencode(Input::get('expId')))
                 ->with("cloning-error", "Failed to clone experiment: " . $ex->getMessage());

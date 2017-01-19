@@ -14,11 +14,7 @@
 </div>
 <div class="form-group required">
     <label for="project" class="control-label">Project</label>
-    {{-- @if( $expInputs["clonedExp"] || $expInputs["savedExp"]) --}}
         {{ ProjectUtilities::create_project_select($expInputs["project"], false) }}
-    {{-- @else --}}
-        {{-- {{ ProjectUtilities::create_project_select($expInputs["project"], true) }} --}}
-    {{-- @endif --}}
 </div>
 <div class="form-group">
     <label for="application">Application</label>
@@ -35,7 +31,7 @@
         <label>Application Inputs</label>
 
         <div class="well">
-            @if( $expInputs["clonedExp"] || $expInputs["savedExp"])
+            @if( isset( $expInputs['experiment'] ) )
             <div class="form-group">
                 <p><strong>Current Inputs</strong></p>
                 {{ ExperimentUtilities::list_input_files($expInputs['experiment']->experimentInputs) }}
