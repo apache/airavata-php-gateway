@@ -111,5 +111,16 @@
             }
         });
     });
+
+    updateList = function() {
+        var input = document.getElementById('optInputFiles');
+        var output = document.getElementById('optFileList');
+
+        output.innerHTML = '<ul>';
+        for (var i = 0; i < input.files.length; ++i) {
+            output.innerHTML += '<li>' + input.files.item(i).name + '</li>';
+        }
+        output.innerHTML += '</ul>';
+    }
 </script>
 @stop
