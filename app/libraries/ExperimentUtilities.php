@@ -396,7 +396,12 @@ class ExperimentUtilities
                 }
             } elseif ($applicationInput->type == DataType::URI) {
                 if ($_FILES[$applicationInput->sanitizedFormName]['name']) {
+
                     $file = $_FILES[$applicationInput->sanitizedFormName];
+                    if ($file['error'] != 0) {
+                        throw new Exception("Failure occurred while uploading file '"
+                            . $file['name'] . "'. File upload error code is " . $file['error'] . ".");
+                    }
 
                     //
                     // move file to experiment data directory
@@ -463,8 +468,14 @@ class ExperimentUtilities
             $uriList = "";
             for($i=0; $i < count($_FILES['optInputFiles']['name']); $i++){
                 if(!empty($_FILES['optInputFiles']['name'][$i])){
-                    $filePath = ExperimentUtilities::$experimentPath . $_FILES['optInputFiles']['name'][$i];
 
+                    // Check if there is an error with the upload (like if it exceeded upload_max_filesize)
+                    if ($_FILES['optInputFiles']['error'][$i] != 0) {
+                        throw new Exception("Failure occurred while uploading file '"
+                            . $_FILES['optInputFiles']['name'][$i] . "'. File upload error code is " . $_FILES['optInputFiles']['error'][$i] . ".");
+                    }
+
+                    $filePath = $experimentFilePath . $_FILES['optInputFiles']['name'][$i];
                     // check if file already exists
                     if (is_file($filePath)) {
                         unlink($filePath);
@@ -753,9 +764,10 @@ class ExperimentUtilities
      * Create form inputs to accept the inputs to the given application
      * @param $id
      * @param $isRequired
+     * @param $allowedFileSize maximum file size in megabytes
      * @internal param $required
      */
-    public static function create_inputs($id, $isRequired)
+    public static function create_inputs($id, $isRequired, $allowedFileSize)
     {
         $inputs = AppUtilities::get_application_inputs($id);
 
@@ -812,8 +824,11 @@ class ExperimentUtilities
                             <label for="experiment-input">' . $input->name . '</label>
                             <div data-file-id="' . $input->sanitizedFormName . '" class="readBytesButtons btn btn-default btn-xs"
                              data-toggle="modal" style="float: right">view file</div>
-                            <input class="file-input" type="file" name="' . $input->sanitizedFormName .
-                                    '" id="' . $input->sanitizedFormName . '" ' . $required . '>
+                             <div class="file-upload-container">
+                                <input class="file-input" type="file" name="' . $input->sanitizedFormName .
+                                        '" id="' . $input->sanitizedFormName . '" ' . $required . '>
+                                    <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
+                             </div>
                             <p class="help-block">' . $input->userFriendlyDescription . '</p>
                             </div>';
                         break;
@@ -830,7 +845,10 @@ class ExperimentUtilities
         if($appInterface->hasOptionalFileInputs){
             echo '<div>
                 <label>Optional Input Files</label>
-                <input type="file" id="optInputFiles" name="optInputFiles[]" multiple onchange="javascript:updateList()" >
+                <div class="file-upload-container">
+                    <input type="file" class="file-input" id="optInputFiles" name="optInputFiles[]" multiple onchange="javascript:updateList()" >
+                    <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
+                </div>
                 <div id="optFileList"></div>
             </div>';
         }
@@ -870,7 +888,7 @@ class ExperimentUtilities
             CommonUtilities::print_error_message('AiravataSystemException!<br><br>' . $ase->getMessage());
         }
 
-        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+        if(Config::get('pga_config.airavata')["data-sharing-enabled"] && $expId){
             ExperimentUtilities::share_experiment($expId, json_decode($share));
         }
 
@@ -1275,7 +1293,7 @@ class ExperimentUtilities
         $schedulingUpdated->totalCPUCount = $input['cpu-count'];
         //$schedulingUpdated->numberOfThreads = $input['threads'];
         $schedulingUpdated->wallTimeLimit = $input['wall-time'];
-        //$schedulingUpdated->totalPhysicalMemory = $input['memory'];
+        $schedulingUpdated->totalPhysicalMemory = $input['total-physical-memory'];
 
         /*
         switch ($_POST['compute-resource'])

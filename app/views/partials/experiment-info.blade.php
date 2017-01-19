@@ -250,7 +250,7 @@
                 Cancel
             </button>
             <input type="hidden" name="expId" value="{{{ Input::get('expId') }}}"/>
-            <a href="{{URL::to('/') }}/experiment/edit?expId={{ urlencode($experiment->experimentId) }}&savedExp=true"
+            <a href="{{URL::to('/') }}/experiment/edit?expId={{ urlencode($experiment->experimentId) }}"
                class="btn btn-primary"
                role="button"
                title="Edit experiment" <?php if (!$expVal["editable"]) echo 'style="display: none"' ?>>

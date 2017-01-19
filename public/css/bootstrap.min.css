@@ -145,3 +145,21 @@ body{
 	bottom: 0px;
 	right: 0px;
 }
+
+.file-upload-container {
+	position: relative;
+	padding-right: 120px;
+}
+.file-upload-container > input[type="file"] {
+	width: 100%;
+}
+.file-upload-container > .file-upload-max-size {
+	position: absolute;
+	right: 0px;
+	top: 50%;
+	/* negative one half of the height of this element (which is approx. font-size * line-height) */
+	margin-top: calc( -1/2 * (12px * 1.42) );
+	font-size: 12px;
+	font-style: italic;
+	color: #737373;
+}

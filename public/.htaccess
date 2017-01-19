@@ -13,3 +13,8 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Allow uploading files up to 64MB in size.
+# NOTE: if you change one of these values you will need to change the other one likewise.
+php_value upload_max_filesize 64M
+php_value post_max_size 64M

@@ -44,22 +44,7 @@ class ExperimentController extends BaseController
             );
 
 
-            $clonedExp = false; $savedExp = false;
-            if( Input::has("clonedExp"))
-                $clonedExp = true;
-            if( Input::has("savedExp"))
-                $savedExp = true;
-
-            // Condition added to deal with php ini default value set for post_max_size issue.
-            $allowedFileSize = Config::get('pga_config.airavata')["server-allowed-file-size"];
-            $serverLimit = intval( ini_get( 'post_max_size') );
-            if( $serverLimit < $allowedFileSize)
-                $allowedFileSize = $serverLimit;
-
-
             $experimentInputs = array(
-                "clonedExp" => $clonedExp,
-                "savedExp" => $savedExp,
                 "disabled" => ' disabled',
                 "experimentName" => $_POST['experiment-name'],
                 "experimentDescription" => $_POST['experiment-description'] . ' ',
@@ -72,7 +57,7 @@ class ExperimentController extends BaseController
                 "computeResources" => $computeResources,
                 "resourceHostId" => null,
                 "advancedOptions" => Config::get('pga_config.airavata')["advanced-experiment-options"],
-                "allowedFileSize" => $allowedFileSize
+                "allowedFileSize" => $this->getAllowedFileSize()
             );
 
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
@@ -96,7 +81,13 @@ class ExperimentController extends BaseController
             }
 
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
-            $expId = ExperimentUtilities::create_experiment();
+            try {
+                $expId = ExperimentUtilities::create_experiment();
+            } catch (Exception $ex) {
+                Log::error("Failed to create experiment!");
+                Log::error($ex);
+                return Redirect::to("experiment/create")->with("error-message", "Failed to create experiment: " . $ex->getMessage());
+            }
 
             if (isset($_POST['launch']) && $expId) {
                 ExperimentUtilities::launch_experiment($expId);
@@ -282,15 +273,7 @@ class ExperimentController extends BaseController
         $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
         $userHasComputeResourcePreference = array_key_exists($expVal['scheduling']->resourceHostId, $userComputeResourcePreferences);
 
-        $clonedExp = false; $savedExp = false;
-        if( Input::has("clonedExp"))
-            $clonedExp = true;
-        if( Input::has("savedExp"))
-            $savedExp = true;
-
         $experimentInputs = array(
-            "clonedExp" => $clonedExp,
-            "savedExp" => $savedExp,
             "disabled" => ' ',
             "experimentName" => $experiment->experimentName,
             "experimentDescription" => $experiment->description,
@@ -299,7 +282,7 @@ class ExperimentController extends BaseController
             "userDN" => $experiment->userConfigurationData->userDN,
             "userHasComputeResourcePreference" => $userHasComputeResourcePreference,
             "useUserCRPref" => $experiment->userConfigurationData->useUserCRPref,
-            "allowedFileSize" => Config::get('pga_config.airavata')["server-allowed-file-size"],
+            "allowedFileSize" => $this->getAllowedFileSize(),
             'experiment' => $experiment,
             "queueDefaults" => $queueDefaults,
             'computeResources' => $computeResources,
@@ -351,7 +334,7 @@ class ExperimentController extends BaseController
     {
         try{
             $cloneId = ExperimentUtilities::clone_experiment(Input::get('expId'), Input::get('projectId'));
-            return Redirect::to('experiment/edit?expId=' . urlencode($cloneId) . "&clonedExp=true");
+            return Redirect::to('experiment/edit?expId=' . urlencode($cloneId));
         }catch (Exception $ex){
             return Redirect::to("experiment/summary?expId=" . urlencode(Input::get('expId')))
                 ->with("cloning-error", "Failed to clone experiment: " . $ex->getMessage());
@@ -361,7 +344,14 @@ class ExperimentController extends BaseController
     public function editSubmit()
     {
         $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
-        $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
+        try {
+            $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
+        } catch (Exception $ex) {
+            $errMessage = "Failed to update experiment: " . $ex->getMessage();
+            Log::error($errMessage);
+            Log::error($ex);
+            return Redirect::to("experiment/edit?expId=" . urlencode(Input::get('expId')))->with("error-message", $errMessage);
+        }
 
         if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
             if (SharingUtilities::userCanWrite(Session::get("username"), Input::get('expId'), ResourceType::EXPERIMENT)) {
@@ -502,6 +492,21 @@ class ExperimentController extends BaseController
             Log::error($ex);
             return Response::json(array("success" => false, "error" => "Error: failed to update sharing: " . $ex->getMessage()));
         }
+    }
+
+    private function getAllowedFileSize()
+    {
+        // Condition added to deal with php ini default value set for post_max_size issue.
+        // NOTE: the following assumes that upload_max_filesize and
+        // post_max_size are in megabytes (for example, if
+        // upload_max_filesize is 8M then $allowedFileSize is 8, but the 'M'
+        // is assumed and not considered)
+        $allowedFileSize = intval( ini_get( 'upload_max_filesize' ) );
+        $serverLimit = intval( ini_get( 'post_max_size' ) );
+        if( $serverLimit < $allowedFileSize) {
+            $allowedFileSize = $serverLimit;
+        }
+        return $allowedFileSize;
     }
 }
 
