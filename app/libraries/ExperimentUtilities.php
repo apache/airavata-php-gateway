@@ -475,8 +475,7 @@ class ExperimentUtilities
                             . $_FILES['optInputFiles']['name'][$i] . "'. File upload error code is " . $_FILES['optInputFiles']['error'][$i] . ".");
                     }
 
-                    $filePath = ExperimentUtilities::$experimentPath . $_FILES['optInputFiles']['name'][$i];
-
+                    $filePath = $experimentFilePath . $_FILES['optInputFiles']['name'][$i];
                     // check if file already exists
                     if (is_file($filePath)) {
                         unlink($filePath);
