@@ -108,7 +108,7 @@
                     <td>
                         {{$project->name}}
                         @if($can_write[$project->projectID])
-                        <a href="{{URL::to('/')}}/project/edit?projId={{rawurlencode($project->projectID)}}" title="Edit">
+                        <a href="{{URL::to('/')}}/project/edit?projId={{urlencode($project->projectID)}}" title="Edit">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
                         @endif
@@ -123,7 +123,7 @@
                         <a href="{{URL::to('/')}}/project/summary?projId={{ urlencode($project->projectID) }}">
                             <span class="glyphicon glyphicon-list"></span>
                         </a>
-                        <a href="{{URL::to('/')}}/project/summary?projId={{{ $project->projectID }}}"> View</a>
+                        <a href="{{URL::to('/')}}/project/summary?projId={{ urlencode($project->projectID) }}"> View</a>
                     </td>
                 </tr>
             <?php

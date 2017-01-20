@@ -61,10 +61,14 @@ class ProjectUtilities
     {
         $writeableProjects = array();
         $userProjects = ProjectUtilities::get_all_user_projects($gatewayId, $username);
-        foreach($userProjects as $project) {
-            if (SharingUtilities::userCanWrite($username, $project->projectID, ResourceType::PROJECT)) {
-                $writeableProjects[] = $project;
+        if (Config::get('pga_config.airavata')["data-sharing-enabled"]){
+            foreach($userProjects as $project) {
+                if (SharingUtilities::userCanWrite($username, $project->projectID, ResourceType::PROJECT)) {
+                    $writeableProjects[] = $project;
+                }
             }
+        } else {
+            $writeableProjects = $userProjects;
         }
 
         return $writeableProjects;

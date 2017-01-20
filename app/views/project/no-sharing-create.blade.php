@@ -1,6 +1,6 @@
 @extends('layout.basic')
 @section('page-header')
-    @parent
+@parent
 @stop
 
 @section('content')

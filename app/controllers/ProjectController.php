@@ -198,32 +198,22 @@ class ProjectController extends BaseController
             $projects = ProjectUtilities::get_all_user_accessible_projects_with_pagination($this->limit, ($pageNo - 1) * $this->limit);
         }
 
-        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-            $can_write = array();
-            $user = Session::get("username");
-            foreach($projects as $project) {
-                if (SharingUtilities::userCanWrite($user, $project->projectID, ResourceType::PROJECT)) {
-                    $can_write[$project->projectID] = true;
-                }
-                else {
-                    $can_write[$project->projectID] = false;
-                }
+        $can_write = array();
+        $user = Session::get("username");
+        foreach($projects as $project) {
+            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
+                $can_write[$project->projectID] = SharingUtilities::userCanWrite($user, $project->projectID, ResourceType::PROJECT);
+            } else {
+                $can_write[$project->projectID] = true;
             }
-
-            return View::make('project/browse', array(
-                'pageNo' => $pageNo,
-                'limit' => $this->limit,
-                'projects' => $projects,
-                'can_write' => $can_write
-            ));
-        }else{
-            return View::make('project/no-sharing-browse', array(
-                'pageNo' => $pageNo,
-                'limit' => $this->limit,
-                'projects' => $projects
-            ));
         }
 
+        return View::make('project/browse', array(
+            'pageNo' => $pageNo,
+            'limit' => $this->limit,
+            'projects' => $projects,
+            'can_write' => $can_write
+        ));
     }
 
     /**

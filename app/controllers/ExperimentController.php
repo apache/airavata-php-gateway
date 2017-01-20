@@ -428,29 +428,23 @@ class ExperimentController extends BaseController
             ($pageNo - 1) * $this->limit);
         $experimentStates = ExperimentUtilities::getExpStates();
 
-        if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-            $can_write = array();
-            foreach ($expContainer as $experiment) {
+        $can_write = array();
+        foreach ($expContainer as $experiment) {
+            if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
                 $can_write[$experiment['experiment']->experimentId] = SharingUtilities::userCanWrite(Session::get("username"), $experiment['experiment']->experimentId, ResourceType::EXPERIMENT);
+            } else {
+                $can_write[$experiment['experiment']->experimentId] = true;
             }
-
-            return View::make('experiment/browse', array(
-                'input' => Input::all(),
-                'pageNo' => $pageNo,
-                'limit' => $this->limit,
-                'expStates' => $experimentStates,
-                'expContainer' => $expContainer,
-                'can_write' => $can_write
-            ));
-        }else{
-            return View::make('experiment/no-sharing-browse', array(
-                'input' => Input::all(),
-                'pageNo' => $pageNo,
-                'limit' => $this->limit,
-                'expStates' => $experimentStates,
-                'expContainer' => $expContainer
-            ));
         }
+
+        return View::make('experiment/browse', array(
+            'input' => Input::all(),
+            'pageNo' => $pageNo,
+            'limit' => $this->limit,
+            'expStates' => $experimentStates,
+            'expContainer' => $expContainer,
+            'can_write' => $can_write
+        ));
     }
 
     /**

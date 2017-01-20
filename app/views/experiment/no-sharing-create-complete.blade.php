@@ -41,6 +41,7 @@
 
 @section('scripts')
 @parent
+{{ HTML::script('js/util.js') }}
 <script>
     var warn = true;
 
@@ -51,12 +52,14 @@
 
     $('.file-input').bind('change', function () {
 
-        var inputFileSize = Math.round(this.files[0].size / (1024 * 1024));
-        if (inputFileSize > $("#allowedFileSize").val()) {
-            alert("The input file size is greater than the allowed file size (" + $("#allowedFileSize").val() + " MB) in a form. Please upload another file.");
+        var allowedFileSize = $("#allowedFileSize").val();
+        var tooLargeFilenames = util.validateMaxUploadFileSize(this.files, allowedFileSize);
+
+        if (tooLargeFilenames.length > 0) {
+            var singleOrMultiple = tooLargeFilenames.length === 1 ? " the file [" : " each of the files [";
+            alert("The size of " + singleOrMultiple + tooLargeFilenames.join(", ") + "] is greater than the allowed file size (" + allowedFileSize + " MB) in a form. Please upload another file.");
             $(this).val("");
         }
-
     });
 
     $("#enableEmail").change(function () {
@@ -99,19 +102,22 @@
 
     //Selecting the first option as the default
     $( document ).ready(function() {
-        var crId = $("#compute-resource").val();
-        $(".loading-img ").removeClass("hide");
-        $.ajax({
-            url: '../experiment/getQueueView',
-            type: 'get',
-            data: {crId: crId},
-            success: function (data) {
-                $(".queue-view").html(data);
-                $(".loading-img ").addClass("hide");
-            },error : function(data){
-                $(".loading-img ").addClass("hide");
-            }
-        });
+        var $cr = $("#compute-resource");
+        var crId = $cr.val();
+        if ($cr.children("option").size() === 1 && crId !== "") {
+            $(".loading-img ").removeClass("hide");
+            $.ajax({
+                url: '../experiment/getQueueView',
+                type: 'get',
+                data: {crId: crId},
+                success: function (data) {
+                    $(".queue-view").html(data);
+                    $(".loading-img ").addClass("hide");
+                },error : function(data){
+                    $(".loading-img ").addClass("hide");
+                }
+            });
+        }
     });
 
     //Setting the file input view JS code

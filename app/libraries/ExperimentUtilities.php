@@ -865,8 +865,6 @@ class ExperimentUtilities
         $experiment = ExperimentUtilities::assemble_experiment();
         $expId = null;
 
-        $share = $_POST['share-settings'];
-
         try {
             if ($experiment) {
                 $expId = Airavata::createExperiment(Session::get('authz-token'), Session::get("gateway_id"), $experiment);
@@ -889,6 +887,7 @@ class ExperimentUtilities
         }
 
         if(Config::get('pga_config.airavata')["data-sharing-enabled"] && $expId){
+            $share = $_POST['share-settings'];
             ExperimentUtilities::share_experiment($expId, json_decode($share));
         }
 

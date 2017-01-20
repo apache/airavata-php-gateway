@@ -21,9 +21,11 @@
     {{ ExperimentUtilities::create_application_select($expInputs['application'], false) }}
 </div>
 
+@if (Config::get('pga_config.airavata')["data-sharing-enabled"])
 <div class="form-group">
     @include('partials/sharing-display-body', array("form" => $canEditSharing))
 </div>
+@endif
 
 <div class="panel panel-default">
     <div class="panel-heading">Application configuration</div>
