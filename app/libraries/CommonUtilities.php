@@ -157,6 +157,12 @@ class CommonUtilities
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
                     <ul class="nav navbar-nav">';
+            
+            $navbar .= '<li>
+                        <a href="' . URL::to("/") . '">
+                            <span class="brand-logo"></span>
+                        </a>
+                        </li>';
 
 
         foreach ($menus as $label => $options) {
@@ -181,8 +187,6 @@ class CommonUtilities
 
             $navbar .= '</ul></li>';
         }
-        if( count( $menus) == 0)
-            $navbar .= '<li class="brand-logo"></li>';
 
         $active = "";
         if(Session::has('loggedin') && 
