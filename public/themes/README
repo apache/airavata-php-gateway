@@ -99,6 +99,16 @@ Register Link:  {{URL::to('/')}}/register
 
 PGA footer mainly includes scripts needed in PGA.
 
+Although, Theme Users can add their Brand logo on the left of the PGA Navbar. 
+Simply add an image as background of class 'brand-logo'.
+Put the image in assets folder and reference it from your custom styles file.
+
+Example css inside custom style file ( assuming it is in assets/css/style.css and image is at assets/img/mylogo.png):
+
+.brand-logo{
+    background: url("../img/mylogo.png");
+}
+
 PGA BODY:
 ------------
 Theme landing page content should be added to  theme1/partials/template.blade.php.
