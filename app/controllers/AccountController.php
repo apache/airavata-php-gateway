@@ -116,6 +116,13 @@ class AccountController extends BaseController
             $username = $userProfile['username'];
             $userRoles = $userProfile['roles'];
 
+            //FIXME There is a bug in WSO2 IS which doest not return the admin role for the default admin user.
+            //FIXME Hence as a workaround we manually add it here.
+            if ($username == Config::get('pga_config.wsis')['admin-username']
+                || $username == Config::get('pga_config.wsis')['admin-username'] . '@' . Config::get('pga_config.wsis')['tenant-domain']){
+                $userRoles[] = Config::get('pga_config.wsis')['admin-role-name'];
+            }
+
             $authzToken = new Airavata\Model\Security\AuthzToken();
             $authzToken->accessToken = $accessToken;
             $authzToken->claimsMap['gatewayID'] = Config::get('pga_config.airavata')['gateway-id'];
