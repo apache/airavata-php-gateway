@@ -99,12 +99,18 @@ class AdminController extends BaseController {
 
     }
 
+	private function cmp($a, $b)
+	{
+		return strcmp($b->requestCreationTime, $a->requestCreationTime);
+	}
+
     public function gatewayView(){
     	//only for super admin
 		//Session::put("super-admin", true);
 		
 		$gatewaysInfo = CRUtilities::getAllGatewayProfilesData();
 		$gateways = $gatewaysInfo["gateways"];
+		usort($gateways, array($this, "cmp"));
 		$tokens = AdminUtilities::get_all_ssh_tokens();
 		$pwdTokens = AdminUtilities::get_all_pwd_tokens();
 		$srData = SRUtilities::getEditSRData();
