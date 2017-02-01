@@ -245,28 +245,6 @@
 
                 <h3>See what's happening in your projects</h3>
 
-                <a href="{{URL::to('/')}}/project/browse">
-                    <div class="@if( Session::has('admin') || Session::has('admin-read-only')) col-md-4 @else col-md-6 @endif well">
-                        <div class="col-md-12">
-                            <span class="glyphicon glyphicon-off console-icon"></span>
-                        </div>
-                        <div class="col-md-12">
-                            <h4>Browse Projects</h4>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="{{URL::to('/')}}/experiment/browse">
-                    <div class="@if( Session::has('admin') || Session::has('admin-read-only')) col-md-4 @else col-md-6 @endif well">
-                        <div class="col-md-12">
-                            <span class="glyphicon glyphicon-tasks console-icon"></span>
-                        </div>
-                        <div class="col-md-12">
-                            <h4>Browse Experiments</h4>
-                        </div>
-                    </div>
-                </a>
-
                 @if( Session::has('admin') || Session::has('admin-read-only'))
                 <a href="{{URL::to('/')}}/admin/dashboard/experiments">
                     <div class="col-md-4  well">
@@ -278,7 +256,48 @@
                         </div>
                     </div>
                 </a>
+{{-- Added by dREG --}}
+                @else
+                <a href="{{URL::to('/')}}/experiment/create">
+                    <div class="col-md-4  well">
+                        <div class="col-md-12">
+                            <span class="glyphicon glyphicon-plus-sign console-icon"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <h4>Start dREG</h4>
+                        </div>
+                    </div>
+                </a>
+{{-- dREG --}}
                 @endif
+
+                <a href="{{URL::to('/')}}/experiment/browse">
+{{-- Added by dREG
+                    <div class="@if( Session::has('admin') || Session::has('admin-read-only')) col-md-4 @else col-md-6 @endif well">
+--}}
+                    <div class="col-md-4  well">
+                        <div class="col-md-12">
+                            <span class="glyphicon glyphicon-tasks console-icon"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <h4>Browse Experiments</h4>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{{URL::to('/')}}/project/browse">
+{{-- Added by dREG
+                    <div class="@if( Session::has('admin') || Session::has('admin-read-only')) col-md-4 @else col-md-6 @endif well">
+--}}
+                    <div class="col-md-4  well">
+                        <div class="col-md-12">
+                            <span class="glyphicon glyphicon-off console-icon"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <h4>Browse Projects</h4>
+                        </div>
+                    </div>
+                </a>
             </div>
 
             @if( Session::has('admin') || Session::has('admin-read-only') )

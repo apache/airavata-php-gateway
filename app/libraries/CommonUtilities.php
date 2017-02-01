@@ -111,11 +111,13 @@ class CommonUtilities
                 (
                     array('label' => 'Create', 'url' => URL::to('/') . '/project/create', "nav-active" => "project"),
                     array('label' => 'Browse', 'url' => URL::to('/') . '/project/browse', "nav-active" => "project")
-                ),
-                'Experiment' => array
-                (
-                    array('label' => 'Create', 'url' => URL::to('/') . '/experiment/create', "nav-active" => "experiment"),
-                    array('label' => 'Browse', 'url' => URL::to('/') . '/experiment/browse', "nav-active" => "experiment")
+                // ->> REMOVE in dREG
+                //),
+                //'Experiment' => array
+                //(
+                //    array('label' => 'Create', 'url' => URL::to('/') . '/experiment/create', "nav-active" => "experiment"),
+                //    array('label' => 'Browse', 'url' => URL::to('/') . '/experiment/browse', "nav-active" => "experiment")
+                // <<- dREG
                 )
             );
 
@@ -187,6 +189,27 @@ class CommonUtilities
 
             $navbar .= '</ul></li>';
         }
+
+        // ->> Adding in dREG
+        if( count( $menus) == 0)
+            $navbar .= '<li class="brand-logo"></li>';
+
+        $active = "";
+        if(Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
+                || Session::has('admin-read-only'))){
+            if( Session::get("nav-active") == "experiment" && $_SERVER['REQUEST_URI']== "/xperiment/create")
+                $active = "active";
+            $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/experiment/create"><span class="glyphicon glyphicon-plus-sign"></span> Start dREG</a></li>';
+        }
+
+        $active = "";
+        if(Session::has('loggedin') && (Session::has('authorized-user') || Session::has('admin')
+                || Session::has('admin-read-only'))){
+            if( Session::get("nav-active") == "experiment" && $_SERVER['REQUEST_URI']== "/experiment/browse")
+                $active = "active";
+            $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/experiment/browse"><span class="glyphicon glyphicon-list"></span> Saved dREG runs</a></li>';
+        }
+        // <<- dREG
 
         $active = "";
         if(Session::has('loggedin') && 

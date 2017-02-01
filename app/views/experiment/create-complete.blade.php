@@ -7,8 +7,10 @@
 
 @section('content')
 <div class="col-md-offset-3 col-md-6">
-
+{{-- Commented by dREG
     <h1>Create a new experiment</h1>
+--}}
+    <h1>Create a new dREG experiment</h1>
 
     <form action="{{URL::to('/')}}/experiment/create" method="POST" role="form" enctype="multipart/form-data">
 

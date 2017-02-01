@@ -21,11 +21,13 @@
     {{ ExperimentUtilities::create_application_select($expInputs['application'], false) }}
 </div>
 
+{{-- Commented by dREG
 @if (Config::get('pga_config.airavata')["data-sharing-enabled"])
 <div class="form-group">
     @include('partials/sharing-display-body', array("form" => $canEditSharing))
 </div>
 @endif
+--}}
 
 <div class="panel panel-default">
     <div class="panel-heading">Application configuration</div>
@@ -75,6 +77,7 @@
             <h4>Application deployed Computational resources are currently unavailable</h4>
             @endif
         </div>
+{{-- Commented by dREG 
         <div class="queue-block">
             <div class="loading-img text-center hide">
                 <img src="../assets/ajax-loader.gif"/>
@@ -89,6 +92,17 @@
                 @endif
             </div>
         </div>
+--}}
+
+{{-- set default value by dREG --}}
+<input name="queue-name" value="GPU" type="hidden">
+<input name="node-count" value="1" type="hidden">
+<input name="cpu-count" id="cpu-count" value="16" type="hidden">
+<input name="wall-time" id="wall-time" value="30" hidden="hidden">
+<input name="total-physical-memory" id="memory-count" value="" type="hidden">
+<input name="share-settings" id="share-settings" value="{}" type="hidden">
+{{-- dREG --}}
+
     </div>
     <h3>Notifications</h3>
 
@@ -126,6 +140,7 @@
         </div>
     </div>
 
+{{-- Commented by dREG
     @if( $expInputs["advancedOptions"])
     <h3>Advanced Options</h3>
 
@@ -137,4 +152,5 @@
         </div>
     </div>
     @endif
+--}}
 </div>

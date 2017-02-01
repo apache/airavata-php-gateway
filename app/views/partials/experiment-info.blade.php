@@ -158,6 +158,7 @@
             <td><strong>Creation Time</strong></td>
             <td class="time" unix-time="{{ $expVal["experimentCreationTime"] }}"></td>
         </tr>
+{{-- Commented by dREG 
         <tr>
             <td><strong>Last Modified Time</strong></td>
             <td class="time" unix-time="{{ $expVal["experimentTimeOfStateChange"] }}"></td>
@@ -178,14 +179,52 @@
             <td><strong>Queue</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->queueName }}</td>
         </tr>
+--}}
         <tr>
             <td><strong>Inputs</strong></td>
             <td>{{ ExperimentUtilities::list_input_files($experiment->experimentInputs) }}</td>
         </tr>
         <tr>
             <td><strong>Outputs</strong></td>
+{{-- Commented by dREG
             <td>{{ ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus[0]->state, false) }}</td>
         </tr>
+--}}
+
+{{-- Added by dREG --}}
+            <td>
+            <?php
+                if(0 === strpos($experiment->userConfigurationData->experimentDataDir, Config::get("pga_config.airavata")['experiment-data-absolute-path'])){
+                    $expDataDir = str_replace(Config::get("pga_config.airavata")['experiment-data-absolute-path'], "", $experiment->userConfigurationData->experimentDataDir);
+                }else{
+                    $expDataDir = $experiment->userConfigurationData->experimentDataDir;
+                }
+            ?>
+
+<script type="text/javascript">
+function download(d) {
+        if (d == 'Download one result') return;
+        window.open('https://{{$_SERVER['HTTP_HOST']}}/download?path={{$expDataDir}}/ARCHIVE/' + d);
+}
+</script>
+ 
+<select name="download" onChange="download(this.value)">
+<option>Download one result</option>
+<option value="out.dREG.HD.stringent.bed">Stringent Bed regions</option>
+<option value="out.dREG.HD.relaxed.bed">Relaxed Bed regions</option> 
+<option value="out.dREG.HD.imputedDnase.bw">Imputed DNase-I</option>
+<option value="out.dREG.peak.gz">dREG regions</option>         
+<option value="out.dREG.pred.gz">dREG scores</option>  
+</select>
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="/download?path={{$expDataDir}}/ARCHIVE/out.dREG.tar.gz" target="_blank"><span class="glyphicon glyphicon-save"  style="width:20px"></span>Download All Results</a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="http://epigenomegateway.wustl.edu/browser/?genome=hg19&datahub=https://{{$_SERVER['HTTP_HOST']}}/gbrowser?expId={{$_GET['expId']}}" target="_blank"><span class="glyphicon glyphicon-new-window"  style="width:20px"></span>Genome Browser</a>
+        </td>
+        </tr>
+{{-- dREG --}}
         <tr>
             <td><strong>Storage Directory</strong></td>
             <?php
@@ -229,11 +268,13 @@
 
     <form id="experiment-form" action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
 
+{{-- Commented by dREG 
         <div class="form-group">
         @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($updateSharingViaAjax))
             @include('partials/sharing-display-body', array("form" => !$updateSharingViaAjax))
         @endif
         </div>
+--}}
         <div class="btn-toolbar">
             <button name="launch"
                     type="submit"
