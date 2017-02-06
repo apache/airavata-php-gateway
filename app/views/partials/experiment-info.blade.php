@@ -204,7 +204,7 @@
 <script type="text/javascript">
 function download(d) {
         if (d == 'Download one result') return;
-        window.open('https://{{$_SERVER['HTTP_HOST']}}/download?path={{$expDataDir}}/ARCHIVE/' + d);
+        window.open('/download?path={{$expDataDir}}/ARCHIVE/' + d);
 }
 </script>
  
@@ -218,10 +218,44 @@ function download(d) {
 </select>
 &nbsp;&nbsp;&nbsp;&nbsp;
 
-<a href="/download?path={{$expDataDir}}/ARCHIVE/out.dREG.tar.gz" target="_blank"><span class="glyphicon glyphicon-save"  style="width:20px"></span>Download All Results</a>
+<a href="/download?path={{$expDataDir}}/ARCHIVE/out.dREG.tar.gz" target="_blank">Download All Results&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></a>
 &nbsp;&nbsp;&nbsp;&nbsp;
 
-<a href="http://epigenomegateway.wustl.edu/browser/?genome=hg19&datahub=https://{{$_SERVER['HTTP_HOST']}}/gbrowser?expId={{$_GET['expId']}}" target="_blank"><span class="glyphicon glyphicon-new-window"  style="width:20px"></span>Genome Browser</a>
+<?php
+	$filelist="";
+        $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+
+        if( count( $experiment->experimentInputs) > 0 ) 
+            foreach( $experiment->experimentInputs as $input)
+                if ($input->type == Airavata\Model\Application\Io\DataType::URI) {
+		
+                    $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
+                    $currentOutputPath = "";
+                    foreach ($dataProductModel->replicaLocations as $rp) 
+                      if($rp->replicaLocationCategory == Airavata\Model\Data\Replica\ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                        $currentOutputPath = $rp->filePath;
+                      break;
+                    }
+                   
+                    $path = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
+                    $filelist = $filelist . $input->name . "\n". $path. "\n";
+                }
+
+    $protocol = 'http';
+    if ( isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') 
+        $protocol = 'https';
+
+    if(0 === strpos($experiment->userConfigurationData->experimentDataDir, Config::get("pga_config.airavata")['experiment-data-absolute-path'])){
+        $expDataDir = str_replace(Config::get("pga_config.airavata")['experiment-data-absolute-path'], "", $experiment->userConfigurationData->experimentDataDir);
+    }else{
+        $expDataDir = $experiment->userConfigurationData->experimentDataDir;
+    }
+    
+    $filelist=$expDataDir ."\n". $filelist;
+?>
+
+<a href="http://epigenomegateway.wustl.edu/browser/?genome=hg19&datahub={{$protocol}}://{{$_SERVER['HTTP_HOST']}}/gbrowser?filelist={{urlencode($filelist)}}" target="_blank">
+Genome Browser&nbsp;<span class="glyphicon glyphicon-new-window" style="width:20px"></span></a>
         </td>
         </tr>
 {{-- dREG --}}

@@ -100,7 +100,7 @@ class ExperimentUtilities
                     }
 
                     echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?id='
-                        . $input->value . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        . $input->value . '">' . $fileName . ' <span class="glyphicon glyphicon-save"></span></a></p>';
 
                 }else if($input->type == DataType::URI_COLLECTION) {
                     $uriList = $input->value;
@@ -122,7 +122,7 @@ class ExperimentUtilities
                         }
 
                         $optFilesHtml = $optFilesHtml . '<a target="_blank" href="' . URL::to("/") . '/download/?id='
-                            . $uri . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a>&nbsp;';
+                            . $uri . '">' . $fileName . ' <span class="glyphicon glyphicon-save"></span></a>&nbsp;';
 
                     }
 
