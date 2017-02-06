@@ -169,7 +169,7 @@ Route::get("gbrowser", function(){
     $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
     $filelist = explode("\n", urldecode( Input::get('filelist') ) );
     $folder_path=$filelist[0]. "ARCHIVE" ;
-    $content = "";
+    $content = "[ \n";
     
     for($i=1; $i<3; $i++){    
          $content = $content . ' {
