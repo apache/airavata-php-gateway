@@ -161,20 +161,20 @@ Route::get("files/browse", "FilemanagerController@browse");
 Route::get("files/get","FilemanagerController@get");
 
 // Added by dREG 
-Route::get("gbrowser", function(){
+Route::get("gbrowser/{filelist}", function($filelist){
     $protocol = 'http';
     if ( isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') 
         $protocol = 'https';
 
     $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-    $filelist = explode("\n", urldecode( Input::get('filelist') ) );
+    $filelist = explode("\n", base64_decode( $filelist ) );
     $folder_path=$filelist[0]. "ARCHIVE" ;
     $content = "[ \n";
     
     for($i=1; $i<3; $i++){    
          $content = $content . ' {
          type:"bigwig",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/download?path='. $filelist[$i*2] . '",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode($filelist[$i*2]). '",
          name: "'. $filelist[$i*2-1] .'",
          fixedscale:{min:0,max:20},
          colorpositive:"rgb(197,0,11)",
@@ -185,7 +185,7 @@ Route::get("gbrowser", function(){
 
     $content = $content . '{
        type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/download?path='. $folder_path . '/out.dREG.pred.gz",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode($folder_path . '/out.dREG.pred.gz').'",
          name: "dREG informative pos.:",
          mode: "show",
          colorpositive:"#0000e5/#B30086",
@@ -196,7 +196,7 @@ Route::get("gbrowser", function(){
 
     $content = $content . '{
        type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/download?path='. $folder_path . '/out.dREG.peak.gz",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.peak.gz').'",
          name: "dREG Peak Calling:",
          mode: "show",
          colorpositive:"#0000e5/#B30086",
@@ -207,7 +207,7 @@ Route::get("gbrowser", function(){
 
     $content = $content . '{
        type:"bigwig",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/download?path='. $folder_path . '/out.dREG.HD.imputedDnase.bw",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
          name: "imputed DNase-I signal:",
          fixedscale:{min:0,max:20},
          colorpositive:"rgb(197,0,11)",
@@ -217,7 +217,7 @@ Route::get("gbrowser", function(){
 
     $content = $content . '{
        type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/download?path='. $folder_path . '/out.dREG.HD.relaxed.bed",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.HD.relaxed.bed').'",
          name: "dREG.HD relaxed peaks:",
          mode: "show",
          colorpositive:"#0000e5/#B30086",
@@ -228,7 +228,7 @@ Route::get("gbrowser", function(){
 
     $content = $content . '{
        type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/download?path='. $folder_path . '/out.dREG.HD.stringent.bed",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.HD.stringent.bed').'",
          name: "dREG.HD stringent peaks:",
          mode: "show",
          colorpositive:"#0000e5/#B30086",
@@ -242,6 +242,15 @@ Route::get("gbrowser", function(){
 
     return Response::make($content, 200)
                   ->header('Content-Type', 'text/plain');
+});
+
+Route::get("gbfile/{file}", function($file){
+    $file = base64_decode( $file );
+    if(0 === strpos($file, '/')){
+        $file = substr($file, 1);
+    }
+    $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $file;
+    return Response::download( $downloadLink);
 });
 
 // dREG

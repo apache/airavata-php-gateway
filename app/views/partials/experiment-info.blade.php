@@ -254,7 +254,7 @@ function download(d) {
     $filelist=$expDataDir ."\n". $filelist;
 ?>
 
-<a href="http://epigenomegateway.wustl.edu/browser/?genome=hg19&datahub={{$protocol}}://{{$_SERVER['HTTP_HOST']}}/gbrowser?filelist={{urlencode($filelist)}}" target="_blank">
+<a href="http://epigenomegateway.wustl.edu/browser/?genome=hg19&datahub={{ $protocol .'://'. $_SERVER['HTTP_HOST']. '/gbrowser/'. base64_encode( $filelist ) }}" target="_blank">
 Genome Browser&nbsp;<span class="glyphicon glyphicon-new-window" style="width:20px"></span></a>
         </td>
         </tr>
