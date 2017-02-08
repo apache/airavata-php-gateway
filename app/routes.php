@@ -177,8 +177,9 @@ Route::get("gbrowser/{filelist}", function($filelist){
          url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode($filelist[$i*2]). '",
          name: "'. $filelist[$i*2-1] .'",
          fixedscale:{min:0,max:20},
-         colorpositive:"rgb(197,0,11)",
-         height:50,
+         colorpositive:"#B30086",
+         colornegative:"#0000e5",
+         height:100,
          mode: "show",
          },'. "\n" ;
     }
@@ -188,10 +189,11 @@ Route::get("gbrowser/{filelist}", function($filelist){
          url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode($folder_path . '/out.dREG.pred.gz').'",
          name: "dREG informative pos.:",
          mode: "show",
-         colorpositive:"#0000e5/#B30086",
+         colorpositive:"#B30086",
+         colornegative:"#0000e5",
          backgroundcolor:"#ffffe5",
          height:30,
-         fixedscale:{min:0, max:1},
+         #fixedscale:{min:0, max:1},
     },'. "\n";
 
     $content = $content . '{
@@ -199,19 +201,20 @@ Route::get("gbrowser/{filelist}", function($filelist){
          url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.peak.gz').'",
          name: "dREG Peak Calling:",
          mode: "show",
-         colorpositive:"#0000e5/#B30086",
+         colorpositive:"#B30086",
+         colornegative:"#0000e5",
          backgroundcolor:"#ffffe5",
          height:30,
-         fixedscale:{min:0, max:1},
+         #fixedscale:{min:0, max:1},
     },'. "\n";
 
     $content = $content . '{
        type:"bigwig",
          url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
          name: "imputed DNase-I signal:",
-         fixedscale:{min:0,max:20},
-         colorpositive:"rgb(197,0,11)",
-         height:50,
+         #fixedscale:{min:0,max:20},
+         colorpositive:"#00B306",
+         height:100,
          mode: "show",
     },'. "\n";
 
@@ -220,7 +223,8 @@ Route::get("gbrowser/{filelist}", function($filelist){
          url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.HD.relaxed.bed').'",
          name: "dREG.HD relaxed peaks:",
          mode: "show",
-         colorpositive:"#0000e5/#B30086",
+         colorpositive:"#B30086",
+         colornegative:"#0000e5",
          backgroundcolor:"#ffffe5",
          height:30,
          fixedscale:{min:0, max:1},
@@ -231,7 +235,8 @@ Route::get("gbrowser/{filelist}", function($filelist){
          url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.HD.stringent.bed').'",
          name: "dREG.HD stringent peaks:",
          mode: "show",
-         colorpositive:"#0000e5/#B30086",
+         colorpositive:"#B30086",
+         colornegative:"#0000e5",
          backgroundcolor:"#ffffe5",
          height:30,
          fixedscale:{min:0, max:1},
@@ -245,12 +250,25 @@ Route::get("gbrowser/{filelist}", function($filelist){
 });
 
 Route::get("gbfile/{file}", function($file){
-    $file = base64_decode( $file );
+    $filename = pathinfo($file, PATHINFO_FILENAME);
+    $fileext = pathinfo($file, PATHINFO_EXTENSION);
+    if( $fileext != "")
+        $file = base64_decode( $filename ) .".".$fileext;
+    else
+        $file = base64_decode( $filename );
+
     if(0 === strpos($file, '/')){
         $file = substr($file, 1);
     }
+    
     $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $file;
-    return Response::download( $downloadLink);
+    if ( !file_exists($downloadLink) )
+        return Response::make('', 404);
+    else
+    {
+        include 'libraries/PartialDownload.php';
+        return byteserve( $downloadLink);
+    }
 });
 
 // dREG
