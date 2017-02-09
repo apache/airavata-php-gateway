@@ -236,20 +236,42 @@ class AdminController extends BaseController {
             $recipients = array($userProfile["email"]);
             $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
 
-            // remove the pending role when access is granted, unless
-            // the admin is trying to add the user to the pending role
-            if(in_array("user-pending", $newCurrentRoles) && !in_array("user-pending", $roles["new"])) {
-                $userRoles["new"] = array();
-                $userRoles["deleted"] = "user-pending";
-                WSIS::updateUserRoles( $username, $userRoles);
-            } else if(in_array("user-pending", $newCurrentRoles) && in_array("user-pending", $roles["new"])) {
-                // When user-pending role added remove all roles except for user-pending and Internal/everyone
-                $userRoles["new"] = array();
-                $userRoles["deleted"] = array_diff($newCurrentRoles, array("user-pending", "Internal/everyone"));
-                WSIS::updateUserRoles( $username, $userRoles);
+            // remove the initial role when the initial role isn't a privileged
+            // role and the admin has now assigned the user to a privileged
+            // role, unless the admin is trying to add the user back to the
+            // initial role
+            if (!$this->isInitialRoleOneOfPrivilegedRoles()) {
+
+                $initialRoleName = CommonUtilities::getInitialRoleName();
+                if(in_array($initialRoleName, $newCurrentRoles) && !in_array($initialRoleName, $roles["new"])) {
+                    $userRoles["new"] = array();
+                    $userRoles["deleted"] = $initialRoleName;
+                    WSIS::updateUserRoles( $username, $userRoles);
+                } else if(in_array($initialRoleName, $newCurrentRoles) && in_array($initialRoleName, $roles["new"])) {
+                    // When initial role added remove all roles except for initial role and Internal/everyone
+                    $userRoles["new"] = array();
+                    $userRoles["deleted"] = array_diff($newCurrentRoles, array($initialRoleName, "Internal/everyone"));
+                    WSIS::updateUserRoles( $username, $userRoles);
+                }
             }
         }
         return Redirect::to("admin/dashboard/roles")->with( "message", "Roles has been added.");
+    }
+
+    /*
+     * Return true if the initial-role-name is one of the three privileged
+     * roles. This is used to figure out whether the initial-role-name is a
+     * 'user-pending' kind of role (returns false), or whether the initial role
+     * is a privileged role (returns true) and no admin intervention is
+     * necessary.
+     */
+    private function isInitialRoleOneOfPrivilegedRoles() {
+
+        $initialRoleName = CommonUtilities::getInitialRoleName();
+        $adminRoleName = Config::get("pga_config.wsis")["admin-role-name"];
+        $adminReadOnlyRoleName = Config::get("pga_config.wsis")["read-only-admin-role-name"];
+        $userRoleName = Config::get("pga_config.wsis")["user-role-name"];
+        return in_array($initialRoleName, array($adminRoleName, $adminReadOnlyRoleName, $userRoleName));
     }
 
     public function removeRoleFromUser(){

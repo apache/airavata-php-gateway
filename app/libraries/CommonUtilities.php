@@ -438,5 +438,9 @@ class CommonUtilities
             return false;
         }
     }
+
+    public static function getInitialRoleName() {
+        return Config::get('pga_config.wsis.initial-role-name', 'user-pending');
+    }
 }
 
