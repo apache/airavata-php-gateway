@@ -278,21 +278,6 @@ class AdminController extends BaseController {
 		return View::make("admin/manage-credentials", array("tokens" => $tokens , "pwdTokens" => $pwdTokens) );
 	}
 
-	public function updateUserRoles(){
-		if( Input::has("add")){
-			WSIS::updateUserRoles(Input::get("username"), array("new"=> Input::get("roles"), "deleted" => array() ) );
-			$roles = WSIS::getUserRoles(Input::get("username"));
-			if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $roles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $roles)
-				|| in_array(Config::get("pga_config.wsis")["user-role-name"], $roles)){
-				$userProfile = WSIS::getUserProfile(Input::get("username"));
-				$recipients = array($userProfile["email"]);
-				$this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
-			}
-		}
-		else
-			return WSIS::updateUserRoles(Input::get("username"), array("new"=> array(), "deleted" => Input::get("roles") ) );
-	}
-
 	private function sendAccessGrantedEmailToTheUser($username, $recipients){
 
 		$mail = new PHPMailer;
