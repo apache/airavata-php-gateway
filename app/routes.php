@@ -179,8 +179,9 @@ include("base32.php");
          url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode($filelist[$i*2]). '",
          name: "'. $filelist[$i*2-1] .'",
          fixedscale:{min:0,max:20},
-         colorpositive:"rgb(197,0,11)",
-         height:50,
+         colorpositive:"#B30086",
+         colornegative:"#0000e5",
+         height:100,
          mode: "show",
          },'. "\n" ;
     }
@@ -190,10 +191,11 @@ include("base32.php");
         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode($folder_path . '/out.dREG.pred.gz').'",
          name: "dREG informative pos.:",
          mode: "show",
-         colorpositive:"#0000e5/#B30086",
+         colorpositive:"#B30086",
+         colornegative:"#0000e5",
          backgroundcolor:"#ffffe5",
          height:30,
-         fixedscale:{min:0, max:1},
+         #fixedscale:{min:0, max:1},
     },'. "\n";
 
     $content = $content . '{
@@ -201,6 +203,28 @@ include("base32.php");
          url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.peak.gz').'",
          name: "dREG Peak Calling:",
          mode: "show",
+         colorpositive:"#B30086",
+         colornegative:"#0000e5",
+         backgroundcolor:"#ffffe5",
+         height:30,
+         #fixedscale:{min:0, max:1},
+    },'. "\n";
+
+    $content = $content . '{
+       type:"bigwig",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
+         name: "imputed DNase-I signal:",
+         #fixedscale:{min:0,max:20},
+         colorpositive:"#00B306",
+         height:100,
+         mode: "show",
+    },'. "\n";
+
+    $content = $content . '{
+       type:"bedgraph",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.relaxed.bed').'",
+         name: "dREG.HD relaxed peaks:",
+         mode: "show",
          colorpositive:"#0000e5/#B30086",
          backgroundcolor:"#ffffe5",
          height:30,
@@ -208,37 +232,15 @@ include("base32.php");
     },'. "\n";
 
     $content = $content . '{
-       type:"bigwig",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
-         name: "imputed DNase-I signal:",
-         fixedscale:{min:0,max:20},
-         colorpositive:"rgb(197,0,11)",
-         height:50,
+      type:"bedgraph",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.stringent.bed').'",
+         name: "dREG.HD stringent peaks:",
          mode: "show",
+         colorpositive:"#0000e5/#B30086",
+         backgroundcolor:"#ffffe5",
+         height:30,
+         fixedscale:{min:0, max:1},
     },'. "\n";
-
-//    $content = $content . '{
-//       type:"bedgraph",
-//         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.relaxed.bed').'",
-//         name: "dREG.HD relaxed peaks:",
-//         mode: "show",
-//         colorpositive:"#0000e5/#B30086",
-//         backgroundcolor:"#ffffe5",
-//         height:30,
-//         fixedscale:{min:0, max:1},
-//    },'. "\n";
-
-//    $content = $content . '{
-//      type:"bedgraph",
-//         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.stringent.bed').'",
-//         name: "dREG.HD stringent peaks:",
-//         mode: "show",
-//         colorpositive:"#0000e5/#B30086",
-//         backgroundcolor:"#ffffe5",
-//         height:30,
-//         fixedscale:{min:0, max:1},
-//    },'. "\n";
-
 
     $content = $content . ']';
 
@@ -274,7 +276,6 @@ include("base32.php");
            return Response::make("", 200)
                   ->header('Content-Length', filesize($downloadLink));
     }
-
 });
 
 
