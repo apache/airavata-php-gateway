@@ -171,10 +171,12 @@ Route::get("gbrowser/{filelist}", function($filelist){
     $folder_path=$filelist[0]. "ARCHIVE" ;
     $content = "[ \n";
     
+include("base32.php");
+
     for($i=1; $i<3; $i++){    
          $content = $content . ' {
          type:"bigwig",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode($filelist[$i*2]). '",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode($filelist[$i*2]). '",
          name: "'. $filelist[$i*2-1] .'",
          fixedscale:{min:0,max:20},
          colorpositive:"rgb(197,0,11)",
@@ -183,9 +185,9 @@ Route::get("gbrowser/{filelist}", function($filelist){
          },'. "\n" ;
     }
 
-    $content = $content . '{
-       type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode($folder_path . '/out.dREG.pred.gz').'",
+   $content = $content . '{
+      type:"bedgraph",
+        url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode($folder_path . '/out.dREG.pred.gz').'",
          name: "dREG informative pos.:",
          mode: "show",
          colorpositive:"#0000e5/#B30086",
@@ -196,7 +198,7 @@ Route::get("gbrowser/{filelist}", function($filelist){
 
     $content = $content . '{
        type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.peak.gz').'",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.peak.gz').'",
          name: "dREG Peak Calling:",
          mode: "show",
          colorpositive:"#0000e5/#B30086",
@@ -207,7 +209,7 @@ Route::get("gbrowser/{filelist}", function($filelist){
 
     $content = $content . '{
        type:"bigwig",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
          name: "imputed DNase-I signal:",
          fixedscale:{min:0,max:20},
          colorpositive:"rgb(197,0,11)",
@@ -215,27 +217,27 @@ Route::get("gbrowser/{filelist}", function($filelist){
          mode: "show",
     },'. "\n";
 
-    $content = $content . '{
-       type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.HD.relaxed.bed').'",
-         name: "dREG.HD relaxed peaks:",
-         mode: "show",
-         colorpositive:"#0000e5/#B30086",
-         backgroundcolor:"#ffffe5",
-         height:30,
-         fixedscale:{min:0, max:1},
-    },'. "\n";
+//    $content = $content . '{
+//       type:"bedgraph",
+//         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.relaxed.bed').'",
+//         name: "dREG.HD relaxed peaks:",
+//         mode: "show",
+//         colorpositive:"#0000e5/#B30086",
+//         backgroundcolor:"#ffffe5",
+//         height:30,
+//         fixedscale:{min:0, max:1},
+//    },'. "\n";
 
-    $content = $content . '{
-       type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base64_encode( $folder_path . '/out.dREG.HD.stringent.bed').'",
-         name: "dREG.HD stringent peaks:",
-         mode: "show",
-         colorpositive:"#0000e5/#B30086",
-         backgroundcolor:"#ffffe5",
-         height:30,
-         fixedscale:{min:0, max:1},
-    },'. "\n";
+//    $content = $content . '{
+//      type:"bedgraph",
+//         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.stringent.bed').'",
+//         name: "dREG.HD stringent peaks:",
+//         mode: "show",
+//         colorpositive:"#0000e5/#B30086",
+//         backgroundcolor:"#ffffe5",
+//         height:30,
+//         fixedscale:{min:0, max:1},
+//    },'. "\n";
 
 
     $content = $content . ']';
@@ -244,14 +246,37 @@ Route::get("gbrowser/{filelist}", function($filelist){
                   ->header('Content-Type', 'text/plain');
 });
 
+
 Route::get("gbfile/{file}", function($file){
-    $file = base64_decode( $file );
+    $filename = pathinfo($file, PATHINFO_FILENAME);
+    $fileext = pathinfo($file, PATHINFO_EXTENSION);
+include("base32.php");
+    if( $fileext != "")
+        $file = base32::decode( $filename ) .".".$fileext;
+    else
+        $file = base32::decode( $filename );
+
     if(0 === strpos($file, '/')){
         $file = substr($file, 1);
     }
+    
     $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $file;
-    return Response::download( $downloadLink);
+    if ( !file_exists($downloadLink) )
+        return Response::make('', 204);
+    else
+    {
+        if ($_SERVER["REQUEST_METHOD"]=="GET")
+        {
+           include 'libraries/PartialDownload.php';
+           return byteserve( $downloadLink);
+        } 
+        else	
+           return Response::make("", 200)
+                  ->header('Content-Length', filesize($downloadLink));
+    }
+
 });
+
 
 // dREG
 
