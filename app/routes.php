@@ -171,14 +171,14 @@ Route::get("gbrowser/{filelist}", function($filelist){
     $folder_path=$filelist[0]. "ARCHIVE" ;
     $content = "[ \n";
     
-include("base32.php");
-
+    include("libraries/basecode.php");
+ 
     for($i=1; $i<3; $i++){    
          $content = $content . ' {
          type:"bigwig",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode($filelist[$i*2]). '",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode($filelist[$i*2]). '",
          name: "'. $filelist[$i*2-1] .'",
-         fixedscale:{min:0,max:20},
+         #fixedscale:{min:0,max:20},
          colorpositive:"#B30086",
          colornegative:"#0000e5",
          height:100,
@@ -186,9 +186,10 @@ include("base32.php");
          },'. "\n" ;
     }
 
-   $content = $content . '{
+
+  $content = $content . '{
       type:"bedgraph",
-        url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode($folder_path . '/out.dREG.pred.gz').'",
+        url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode($folder_path . '/out.dREG.pred.gz').'",
          name: "dREG informative pos.:",
          mode: "show",
          colorpositive:"#B30086",
@@ -198,9 +199,9 @@ include("base32.php");
          #fixedscale:{min:0, max:1},
     },'. "\n";
 
-    $content = $content . '{
+   $content = $content . '{
        type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.peak.gz').'",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode( $folder_path . '/out.dREG.peak.gz').'",
          name: "dREG Peak Calling:",
          mode: "show",
          colorpositive:"#B30086",
@@ -210,9 +211,9 @@ include("base32.php");
          #fixedscale:{min:0, max:1},
     },'. "\n";
 
-    $content = $content . '{
+   $content = $content . '{
        type:"bigwig",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
          name: "imputed DNase-I signal:",
          #fixedscale:{min:0,max:20},
          colorpositive:"#00B306",
@@ -222,7 +223,7 @@ include("base32.php");
 
     $content = $content . '{
        type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.relaxed.bed').'",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode( $folder_path . '/out.dREG.HD.relaxed.bed.gz').'",
          name: "dREG.HD relaxed peaks:",
          mode: "show",
          colorpositive:"#0000e5/#B30086",
@@ -233,7 +234,7 @@ include("base32.php");
 
     $content = $content . '{
       type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.base32::encode( $folder_path . '/out.dREG.HD.stringent.bed').'",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode( $folder_path . '/out.dREG.HD.stringent.bed.gz').'",
          name: "dREG.HD stringent peaks:",
          mode: "show",
          colorpositive:"#0000e5/#B30086",
@@ -252,26 +253,25 @@ include("base32.php");
 Route::get("gbfile/{file}", function($file){
     $filename = pathinfo($file, PATHINFO_FILENAME);
     $fileext = pathinfo($file, PATHINFO_EXTENSION);
-include("base32.php");
+
+    include("libraries/basecode.php");
     if( $fileext != "")
-        $file = base32::decode( $filename ) .".".$fileext;
+        $file = rbase64_decode( $filename ) .".".$fileext;
     else
-        $file = base32::decode( $filename );
+        $file = rbase64_decode( $filename );
 
     if(0 === strpos($file, '/')){
         $file = substr($file, 1);
     }
     
     $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $file;
+
     if ( !file_exists($downloadLink) )
-        return Response::make('', 204);
+        return Response::make("", 204);
     else
     {
         if ($_SERVER["REQUEST_METHOD"]=="GET")
-        {
-           include 'libraries/PartialDownload.php';
-           return byteserve( $downloadLink);
-        } 
+              return Response::download($downloadLink);
         else	
            return Response::make("", 200)
                   ->header('Content-Length', filesize($downloadLink));
