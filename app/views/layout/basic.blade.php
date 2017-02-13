@@ -14,6 +14,9 @@ $title = Session::get("portal-title");
     position: relative;
     z-index:101;
 }
+.content-area{
+    margin: 20px 0;
+}
 </style>
 <div class="theme-header">
 <!-- Header from theme -->
@@ -92,12 +95,13 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
     //put sidebar below all headers in admin dashboards
     if( $(".side-nav").length > 0){
         var headerHeight = $(".pga-header").height() + $(".theme-header").height();
-        $(".side-nav").css("padding-top", headerHeight);
-
+        $(".side-nav").css("top", headerHeight);
+        $(".side-nav").affix();
         var selectedDashboardHeight = $(window).height() - headerHeight;
+        
         if( selectedDashboardHeight < $(".side-nav").height())
         {
-            $(".side-nav").height( selectedDashboardHeight).css("overflow-y", "scroll").css("overflow-x", "none");
+            $(".side-nav").height( selectedDashboardHeight);
         }
     }
 
