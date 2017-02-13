@@ -144,7 +144,11 @@ class ExperimentController extends BaseController
             if (SharingUtilities::userCanRead(Session::get("username"), $experiment->projectId, ResourceType::PROJECT)) {
                 $project = ProjectUtilities::get_project($experiment->projectId);
             }
-        } else {
+        } elseif ($experiment->userName == Session::get("username")){
+            // When sharing is disabled the backend checks the auth token claims map
+            // to make sure the authenticating user is the same as the project
+            // owner. So the project can only be loaded when the user is the
+            // project owner, which can be inferred from the experiment's owner.
             $project = ProjectUtilities::get_project($experiment->projectId);
         }
         $expVal = ExperimentUtilities::get_experiment_values($experiment);
