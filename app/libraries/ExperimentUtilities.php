@@ -784,11 +784,15 @@ class ExperimentUtilities
 
         //var_dump( $inputs); exit;
         foreach ($inputs as $input) {
+            $disabled = "";
+            if($input->isReadOnly)
+                $disabled = "disabled";
+
             switch ($input->type) {
                 case DataType::STRING:
                     echo '<div class="form-group">
                     <label for="experiment-input">' . $input->name . '</label>
-                    <input value="' . $input->value . '" type="text" class="form-control" name="' . $input->sanitizedFormName .
+                    <input '.$disabled . ' value="' . $input->value . '" type="text" class="form-control" name="' . $input->sanitizedFormName .
                         '" id="' . $input->sanitizedFormName .
                         '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
                     </div>';
@@ -796,7 +800,7 @@ class ExperimentUtilities
                 case DataType::INTEGER:
                     echo '<div class="form-group">
                     <label for="experiment-input">' . $input->name . '</label>
-                    <input value="' . $input->value . '" type="number" class="form-control" name="' . $input->sanitizedFormName .
+                    <input '.$disabled . ' value="' . $input->value . '" type="number" class="form-control" name="' . $input->sanitizedFormName .
                         '" id="' . $input->sanitizedFormName .
                         '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
                     </div>';
@@ -804,7 +808,7 @@ class ExperimentUtilities
                 case DataType::FLOAT:
                     echo '<div class="form-group">
                     <label for="experiment-input">' . $input->name . '</label>
-                    <input value="' . $input->value . '" type="number" step="0.01" class="form-control" name="' . $input->sanitizedFormName .
+                    <input '.$disabled . ' value="' . $input->value . '" type="number" step="0.01" class="form-control" name="' . $input->sanitizedFormName .
                         '" id="' . $input->sanitizedFormName .
                         '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
                     </div>';
