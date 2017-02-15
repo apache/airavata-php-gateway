@@ -26,9 +26,11 @@
         <div class="col-md-9">
             <select class="form-control" name="outputType[]" readonly>
                 @foreach( $dataTypes as $index => $dataType)
-                <option value="{{ $index }}"
-                @if( isset( $appOutputs) ) @if( $index == $appOutputs->type ) selected @endif @endif>{{ $dataType
-                }}</option>
+                    @if( $dataType != 'URI_COLLECTION')
+                        <option value="{{ $index }}"
+                        @if( isset( $appOutputs) ) @if( $index == $appOutputs->type ) selected @endif @endif>{{ $dataType
+                        }}</option>
+                    @endif
                 @endforeach
             </select>
         </div>
