@@ -115,6 +115,7 @@ class AccountController extends BaseController
             $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
             $username = $userProfile['username'];
             $userRoles = $userProfile['roles'];
+            $userEmail = $userProfile["email"];
 
             //FIXME There is a bug in WSO2 IS which doest not return the admin role for the default admin user.
             //FIXME Hence as a workaround we manually add it here.
@@ -131,6 +132,7 @@ class AccountController extends BaseController
             Session::put('authz-token',$authzToken);
             Session::put('oauth-refresh-code',$refreshToken);
             Session::put('oauth-expiration-time',$expirationTime);
+            // TODO: get rid of user-profile session variable, or at least get rid of having it coming from Identity Server
             Session::put("user-profile", $userProfile);
 
             Session::put("roles", $userRoles);
@@ -156,7 +158,7 @@ class AccountController extends BaseController
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
             if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user")){
-                return $this->initializeWithAiravata($username);
+                return $this->initializeWithAiravata($username, $userEmail);
             }
 
             if(Session::has("admin") || Session::has("admin-read-only")){
@@ -189,6 +191,7 @@ class AccountController extends BaseController
         $username = $userProfile['username'];
 
         $userRoles = $userProfile['roles'];
+        $userEmail = $userProfile["email"];
 
         //FIXME There is a bug in WSO2 IS which doest not return the admin role for the default admin user.
         //FIXME Hence as a workaround we manually add it here.
@@ -203,6 +206,7 @@ class AccountController extends BaseController
         Session::put('authz-token',$authzToken);
         Session::put('oauth-refresh-code',$refreshToken);
         Session::put('oauth-expiration-time',$expirationTime);
+        // TODO: likewise get rid or replace this Identity Server user-profile
         Session::put("user-profile", $userProfile);
 
         if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
@@ -219,12 +223,12 @@ class AccountController extends BaseController
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
         if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
-            return $this->initializeWithAiravata($username);
+            return $this->initializeWithAiravata($username, $userEmail);
         }
         return Redirect::to("home");
     }
 
-    private function initializeWithAiravata($username){
+    private function initializeWithAiravata($username, $userEmail){
 
         // Log the user out if Airavata is down. If a new user we want to make
         // sure we create the default project and setup experiment storage
@@ -246,6 +250,19 @@ class AccountController extends BaseController
             $old_umask = umask(0);
             mkdir($dirPath, 0777, true);
             umask($old_umask);
+        }
+
+        // Create basic user profile if it doesn't exist
+        if (!UserProfileUtilities::does_user_profile_exist()) {
+            $gatewayId = Session::get("gateway_id");
+            $userProfileData = array();
+            $userProfileData["airavataInternalUserId"] = $username . '@' . $gatewayId;
+            $userProfileData["userId"] = $username;
+            $userProfileData["gatewayId"] = $gatewayId;
+            $userProfileData["emails"] = array($userEmail);
+
+            Log::info("creating user profile for user", array($userProfileData));
+            UserProfileUtilities::add_user_profile($userProfileData);
         }
 
         if(Session::has("admin") || Session::has("admin-read-only")){
