@@ -92,8 +92,7 @@ class AppUtilities
                     "location" => $appInterfaceValues["location"][$index],
                     "isRequired" => $appInterfaceValues["isRequiredOutput"][$index],
                     "requiredToAddedToCommandLine" => $appInterfaceValues["requiredToAddedToCommandLineOutput"][$index],
-                    "searchQuery" => $appInterfaceValues["searchQuery"][$index],
-                    "isReadOnly" => $appInterfaceValues["isReadOnly"][$index]
+                    "searchQuery" => $appInterfaceValues["searchQuery"][$index]
                 ));
                 $appInterface->applicationOutputs[] = $outputDataObjectType;
             }
