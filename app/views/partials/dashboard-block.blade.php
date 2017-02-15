@@ -1,7 +1,5 @@
-<div class="collapse navbar-collapse navbar-ex1-collapse">
-    <ul class="nav navbar-nav side-nav">
-
-
+<div class="collapse navbar-collapse navbar-ex1-collapse" >
+    <ul class="nav navbar-nav side-nav" data-spy="affix" >
         <li
             @if( Session::has("admin-nav") && Session::get("admin-nav") == "exp-statistics") class="active" @endif>
             <a class="dashboard-link"  href="{{ URL::to('/')}}/admin/dashboard/experiments">

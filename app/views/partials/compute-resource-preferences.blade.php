@@ -106,7 +106,7 @@
     <label class="control-label col-md-3">Gateway Id for Usage Reporting</label>
 
     <div class="col-md-9">
-        <input type="text" name="allocationProjectNumber" class="form-control"
+        <input type="text" name="usageReportingGatewayId" class="form-control"
                value="@if( isset( $preferences) ) {{$preferences->usageReportingGatewayId }}@endif"/>
         <small>Enter Id of the Gateway using this resource if it requires reporting its usage back to the resource.</small>
     </div>

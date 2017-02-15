@@ -187,6 +187,10 @@
                             <td class="gateway-url"></td>
                         </tr>
                         <tr>
+                            <td>Gateway Domain</td>
+                            <td class="gateway-domain"></td>
+                        </tr>
+                        <tr>
                             <td>Admin Username</td>
                             <td class="admin-username"></td>
                         </tr>
@@ -510,6 +514,7 @@
         $(".admin-password").html( gatewayObject["identityServerPasswordToken"]);
         $(".gateway-id").html( gatewayObject["gatewayId"]);
         $(".gateway-url").html( gatewayObject["gatewayURL"]);
+        $(".gateway-domain").html( gatewayObject["domain"]);
         $(".oauth-client-key").html( gatewayObject["oauthClientId"]);
         $(".oauth-client-secret").html( gatewayObject["oauthClientSecret"]);
         $("#viewCredentials").modal("show");

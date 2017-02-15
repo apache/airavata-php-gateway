@@ -116,12 +116,15 @@ ul.alert-dropdown {
     width: 200px;
 }
 
+.affix{
+    top:0;
+}
+
 /* Side Navigation */
 
 @media(min-width:768px) {
     .side-nav {
-        position: fixed;
-        top:0;
+        position:fixed;
         z-index: 100;
         left: 225px;
         width: 225px;
@@ -129,6 +132,9 @@ ul.alert-dropdown {
         border: none;
         border-radius: 0;
         background-color: #222;
+
+        overflow-y: auto;
+        overflow-x: none;
     }
 
     .side-nav>li>a {
