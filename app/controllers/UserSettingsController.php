@@ -186,4 +186,12 @@ class UserSettingsController extends BaseController
             return Redirect::to("account/user-storage-resources")->with("message","Storage Resource Account Settings have been deleted.");
         }
     }
+
+    public function getUserProfile() {
+
+        $emailAddress = "foo@example.com";
+        return View::make("account/user-profile", array(
+            "emailAddress" => $emailAddress
+        ));
+    }
 }
