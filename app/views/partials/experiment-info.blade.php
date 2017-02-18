@@ -216,10 +216,6 @@ function download(d) {
 <option value="out.dREG.peak.gz">dREG regions</option>         
 <option value="out.dREG.pred.gz">dREG scores</option>  
 </select>
-&nbsp;&nbsp;&nbsp;&nbsp;
-
-<a href="/download?path={{$expDataDir}}/ARCHIVE/out.dREG.tar.gz" target="_blank">Download All Results&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></a>
-&nbsp;&nbsp;&nbsp;&nbsp;
 
 <?php
 	$filelist="";
@@ -251,10 +247,18 @@ function download(d) {
         $expDataDir = $experiment->userConfigurationData->experimentDataDir;
     }
     
-    $filelist=$expDataDir ."\n". $filelist;
+    $filelist = $expDataDir ."\n". $filelist;
+    $fileAllPath = $dataRoot . '/' . $expDataDir. '/ARCHIVE/out.dREG.tar.gz';
 ?>
 
-<a href="http://epigenomegateway.wustl.edu/browser/?genome=hg19&datahub={{ $protocol .'://'. $_SERVER['HTTP_HOST']. '/gbrowser/'. base64_encode( $filelist ) }}" target="_blank">
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+@if(file_exists($fileAllPath) )
+	<a href="/download?path={{$expDataDir}}/ARCHIVE/out.dREG.tar.gz" target="_blank">Download All Results&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+@endif
+
+<a href="http://epigenomegateway.wustl.edu/browser/?genome=hg19&datahub={{ $protocol .'://'. $_SERVER['HTTP_HOST']. '/gbrowser/'. RBase64::encode( $filelist ) }}" target="_blank">
 Genome Browser&nbsp;<span class="glyphicon glyphicon-new-window" style="width:20px"></span></a>
         </td>
         </tr>
