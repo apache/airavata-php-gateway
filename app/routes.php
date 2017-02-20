@@ -166,17 +166,17 @@ Route::get("gbrowser/{filelist}", function($filelist){
     if ( isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') 
         $protocol = 'https';
 
+    include("libraries/basecode.php");
+
     $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-    $filelist = explode("\n", base64_decode( $filelist ) );
+    $filelist = explode("\n", RBase64::decode( $filelist ) );
     $folder_path=$filelist[0]. "ARCHIVE" ;
     $content = "[ \n";
-    
-    include("libraries/basecode.php");
- 
+
     for($i=1; $i<3; $i++){    
          $content = $content . ' {
          type:"bigwig",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode($filelist[$i*2]). '",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($filelist[$i*2]). '",
          name: "'. $filelist[$i*2-1] .'",
          #fixedscale:{min:0,max:20},
          colorpositive:"#B30086",
@@ -189,7 +189,7 @@ Route::get("gbrowser/{filelist}", function($filelist){
 
   $content = $content . '{
       type:"bedgraph",
-        url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode($folder_path . '/out.dREG.pred.gz').'",
+        url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($folder_path . '/out.dREG.pred.gz').'",
          name: "dREG informative pos.:",
          mode: "show",
          colorpositive:"#B30086",
@@ -201,7 +201,7 @@ Route::get("gbrowser/{filelist}", function($filelist){
 
    $content = $content . '{
        type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode( $folder_path . '/out.dREG.peak.gz').'",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.peak.gz').'",
          name: "dREG Peak Calling:",
          mode: "show",
          colorpositive:"#B30086",
@@ -213,7 +213,7 @@ Route::get("gbrowser/{filelist}", function($filelist){
 
    $content = $content . '{
        type:"bigwig",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
          name: "imputed DNase-I signal:",
          #fixedscale:{min:0,max:20},
          colorpositive:"#00B306",
@@ -223,7 +223,7 @@ Route::get("gbrowser/{filelist}", function($filelist){
 
     $content = $content . '{
        type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode( $folder_path . '/out.dREG.HD.relaxed.bed.gz').'",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.HD.relaxed.bed.gz').'",
          name: "dREG.HD relaxed peaks:",
          mode: "show",
          colorpositive:"#0000e5/#B30086",
@@ -234,7 +234,7 @@ Route::get("gbrowser/{filelist}", function($filelist){
 
     $content = $content . '{
       type:"bedgraph",
-         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.rbase64_encode( $folder_path . '/out.dREG.HD.stringent.bed.gz').'",
+         url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.HD.stringent.bed.gz').'",
          name: "dREG.HD stringent peaks:",
          mode: "show",
          colorpositive:"#0000e5/#B30086",
@@ -256,9 +256,9 @@ Route::get("gbfile/{file}", function($file){
 
     include("libraries/basecode.php");
     if( $fileext != "")
-        $file = rbase64_decode( $filename ) .".".$fileext;
+        $file = RBase64::decode( $filename ) .".".$fileext;
     else
-        $file = rbase64_decode( $filename );
+        $file = RBase64::decode( $filename );
 
     if(0 === strpos($file, '/')){
         $file = substr($file, 1);
