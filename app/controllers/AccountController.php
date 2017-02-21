@@ -253,7 +253,8 @@ class AccountController extends BaseController
         }
 
         // Create basic user profile if it doesn't exist
-        if (!UserProfileUtilities::does_user_profile_exist()) {
+        // TODO: Move this to UserProfileUtilities
+        if (!UserProfileUtilities::does_user_profile_exist($username)) {
             $gatewayId = Session::get("gateway_id");
             $userProfileData = array();
             $userProfileData["airavataInternalUserId"] = $username . '@' . $gatewayId;

@@ -189,9 +189,16 @@ class UserSettingsController extends BaseController
 
     public function getUserProfile() {
 
-        $emailAddress = "foo@example.com";
+        $userProfile = UserProfileUtilities::get_user_profile(Session::get("username"));
         return View::make("account/user-profile", array(
-            "emailAddress" => $emailAddress
+            "userProfile" => $userProfile
         ));
+    }
+
+    public function updateUserProfile() {
+
+        // TODO: handle errors by redispaying input page
+        UserProfileUtilities::update_user_profile(Input::all());
+        return Redirect::to("account/user-profile");
     }
 }
