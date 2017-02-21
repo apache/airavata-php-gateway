@@ -56,14 +56,15 @@ class AccountController extends BaseController
             WSIS::registerUserAccount($username, $password, $email, $first_name, $last_name, $organization, $address, $country, $telephone, $mobile, $im, $url,
                 Config::get('pga_config.wsis')['tenant-domain']);
 
-            /*add user to role - user-pending */
+            /*add user to the initial role */
 
+            $initialRoleName = CommonUtilities::getInitialRoleName();
             $allRoles = WSIS::getAllRoles();
-            if(! in_array( "user-pending", $allRoles)){
-                WSIS::addRole( "user-pending");
+            if(! in_array( $initialRoleName, $allRoles)){
+                WSIS::addRole( $initialRoleName);
             }
 
-            $userRoles["new"] = "user-pending";
+            $userRoles["new"] = $initialRoleName;
 
             if(  Config::get('pga_config.portal')['super-admin-portal'] == true ){
 
