@@ -36,14 +36,14 @@ Select the menu 'Start dREG' below the dREG logo to create an data analysis for 
 
           <p class="description" style="padding:16px">
          4)&nbsp;&nbsp;<b>Select bigWig files</b><br>
-Select bigWig files representing PRO-seq, GRO-seq, or ChRO-seq signal on the plus and minus strand.  
+Select bigWig files representing PRO-seq, GRO-seq, or ChRO-seq signal on the plus and minus strand. Please notice that two GPU resources are available now, currently it is easier to get the computation resources on <A href="http://comet.sdsc.xsede.org/">Comet.sdsc.xsede.org</A> than <A href="https://www.psc.edu/index.php/bridges">Bridges.psc.edu</A>. 
           </p>
 
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment create" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.create.exp2.png" ></img></div>
 
           <p class="description" style="padding:16px">
          5)&nbsp;&nbsp;<b>Submit the job</b><br>
-Click the 'save and launch' button.  BigWig file are transferred to the XSEDE server and a GPU queue is scheduled to run dREG. After submitting, the user can check the status in the next web page, as shown below. Depend on the queue status, the job maybe wait for a long time to start prediction.  Once started, it will only take 1-4 hours to complete.</p>
+Click the 'save and launch' button.  BigWig file are transferred to the XSEDE server and a GPU queue is scheduled to run dREG. After submitting, the user can check the status in the next web page, as shown below. Depend on the queue status, the job maybe wait for a long time to start prediction. Once started, it will only take 1-4 hours to complete.</p>
 
 
           <p class="description" style="padding:16px">
@@ -54,13 +54,19 @@ The user can check the status of their 'experiment' by clicking the menu 'Saved 
 
           <p class="description" style="padding:16px">
          7)&nbsp;&nbsp;<b>Check the results</b><br>
-Once a job is completed, the user can click <B>'Download Results'</B> link in the experiment summary page to download a compressed file described in the <a href="#output" role="tab" data-toggle="tab">'output'</A> sheet in this page. Or the user can check the results in the Genome Browser by clicking <b>'Switch to Genome Browser'</B> link.
+Once a job is completed, the user can click <B>'Download All Results'</B> link in the experiment summary page to download a compressed file described in the <a href="#output" role="tab" data-toggle="tab">'output'</A> sheet in this page, or the user can download any single file from the drop-down list. 
           
 </p>
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment summary" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.exp.summary.png"></img></div>
 
          <p class="description" style="padding:16px">
-         8)&nbsp;&nbsp;<b>Check the storage</b><br>
+         8)&nbsp;&nbsp;<b>Switch to Genome Browser</b><br>
+The convenient tool ptovided by the gateway is the user can check the results in the Genome Browser by clicking <b>'Genome Browser'</B> link. </p>
+
+<div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment summary" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.gbview.png"></img></div>
+
+          <p class="description" style="padding:16px">
+         9)&nbsp;&nbsp;<b>Check the storage</b><br>
 the user can click <b>'Open Folder'</b> link in the experiment summary page to check the storage for the current job or click the menu 'Storage' under the dREG logo to check the folders and files for all jobs(experiments). The following figure shows the data files in the job's folder, including two bigWig files, one result in bedgraph format, two outputs of job scheduler on GPU nodes.</p>
 
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment summary" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.exp.folder.png"></img></div>
