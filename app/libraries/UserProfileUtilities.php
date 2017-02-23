@@ -27,16 +27,8 @@ class UserProfileUtilities
         return Airavata::getUserProfileById(Session::get('authz-token'), $userId, $gatewayId);
     }
 
-    public static function update_user_profile($userProfileData) {
+    public static function update_user_profile($userProfile) {
 
-        Log::debug("userProfileData", array($userProfileData));
-        $username = Session::get('username');
-        $userProfile = UserProfileUtilities::get_user_profile($username);
-
-        // Copy data from form to $userProfile object and update
-        $userProfile->userName = $userProfileData["userName"];
-        $userProfile->homeOrganization = $userProfileData["homeOrganization"];
-        $userProfile->country = $userProfileData["country"];
         return Airavata::updateUserProfile(Session::get('authz-token'), $userProfile);
     }
 }

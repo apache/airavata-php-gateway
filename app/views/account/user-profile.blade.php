@@ -47,16 +47,37 @@
                         value="{{{ $userProfile->country }}}"/>
             </div>
         </div>
-
-        {{-- TODO: add phone numbers --}}
+        {{-- TODO: need to add delete as well --}}
+        <div class="form-group">
+            <label class="control-label">Phone Numbers</label>
+            @foreach ($userProfile->phones as $phone)
+            <input class="form-control" name="phones[]"
+                    placeholder="Phone number" type="text"
+                    value="{{{ $phone }}}"/>
+            @endforeach
+            <button id="add-phone-button" class="btn btn-default" type="button">Add Phone</button>
+        </div>
 
         <input name="update" type="submit" class="btn btn-primary btn-block" value="Update">
     </form>
 
 </div>
 
+<div id="new-phone-template" class="hidden">
+    <input class="form-control" name="phones[]"
+            placeholder="Phone number" type="text" />
+</div>
+
 @stop
 
 @section('scripts')
 @parent
+<script>
+
+    $('#add-phone-button').click(function(e){
+        $(this).before($('#new-phone-template').html());
+        e.preventDefault();
+        return false;
+    });
+</script>
 @stop
