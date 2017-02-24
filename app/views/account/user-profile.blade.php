@@ -47,13 +47,10 @@
                         value="{{{ $userProfile->country }}}"/>
             </div>
         </div>
-        {{-- TODO: need to add delete as well --}}
         <div class="form-group">
             <label class="control-label">Phone Numbers</label>
             @foreach ($userProfile->phones as $phone)
-            <input class="form-control" name="phones[]"
-                    placeholder="Phone number" type="text"
-                    value="{{{ $phone }}}"/>
+                @include('partials/user-profile-phone-template', array('phone' => $phone))
             @endforeach
             <button id="add-phone-button" class="btn btn-default" type="button">Add Phone</button>
         </div>
@@ -64,8 +61,7 @@
 </div>
 
 <div id="new-phone-template" class="hidden">
-    <input class="form-control" name="phones[]"
-            placeholder="Phone number" type="text" />
+    @include('partials/user-profile-phone-template', array('phone' => ''))
 </div>
 
 @stop
@@ -76,8 +72,9 @@
 
     $('#add-phone-button').click(function(e){
         $(this).before($('#new-phone-template').html());
-        e.preventDefault();
-        return false;
+    });
+    $(document).on('click', '.delete-phone-button', function(e){
+        $(this).closest('.input-group').remove();
     });
 </script>
 @stop
