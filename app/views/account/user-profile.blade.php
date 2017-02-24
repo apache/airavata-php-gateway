@@ -13,6 +13,20 @@
         <li class="active">Your Profile</li>
     </ol>
 
+    @if( Session::has("message") )
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span
+                    aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            {{{ Session::get("message") }}}
+        </div>
+    @endif
+
+    @if( isset($errorMessage) )
+        <div class="alert alert-danger" role="alert">
+            {{{ $errorMessage }}}
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <h1>Profile for {{ Session::get("username") }}</h1>

@@ -197,7 +197,6 @@ class UserSettingsController extends BaseController
 
     public function updateUserProfile() {
 
-        // TODO: handle errors by redispaying input page
         $username = Session::get('username');
         $userProfile = UserProfileUtilities::get_user_profile($username);
 
@@ -210,8 +209,15 @@ class UserSettingsController extends BaseController
         $userProfile->phones = array_filter($phones, function($phone) {
             return trim($phone) !== "";
         });
-        Log::debug("userProfile", array($userProfile));
-        UserProfileUtilities::update_user_profile($userProfile);
-        return Redirect::to("account/user-profile");
+        try {
+            UserProfileUtilities::update_user_profile($userProfile);
+            return Redirect::to("account/user-profile")->with("message", "Your profile has been updated.");
+        } catch (Exception $e) {
+            return View::make("account/user-profile", array(
+                "userProfile" => $userProfile,
+                "errorMessage" => "An error occurred while trying to update your profile: " . $e->getMessage()
+            ));
+        }
+
     }
 }
