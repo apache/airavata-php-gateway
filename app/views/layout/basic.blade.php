@@ -15,7 +15,7 @@ $title = Session::get("portal-title");
     z-index:101;
 }
 .content-area{
-    margin: 20px 0;
+    margin: 20px 0 !important;
 }
 </style>
 <div class="theme-header">
