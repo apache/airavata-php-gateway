@@ -11,11 +11,13 @@ class AdminController extends BaseController {
 	public function dashboard(){
         $userInfo = array();
         $data = array();
-        $userProfile = Session::get("user-profile");
+        $userRoles = Session::get("roles");
+        $username = Session::get("username");
+        $userEmail = Session::get("user-profile")->emails[0];
         Session::forget("new-gateway-provider");
 
         //check for gateway provider users
-        if( in_array( "gateway-provider", $userProfile["roles"]) ) {
+        if( in_array( "gateway-provider", $userRoles) ) {
             $gatewayOfUser = "";
             Session::put("super-admin", true);
             $gatewaysInfo = CRUtilities::getAllGateways();
@@ -24,7 +26,7 @@ class AdminController extends BaseController {
             $gatewayApprovalStatuses = AdminUtilities::get_gateway_approval_statuses();
 
             foreach ($gatewaysInfo as $index => $gateway) {
-                if ($gateway->requesterUsername == $userProfile["username"]) {
+                if ($gateway->requesterUsername == $username) {
                     $gatewayOfUser = $gateway->gatewayId;
                     Session::forget("super-admin");
                     Session::put("new-gateway-provider", true);
@@ -47,8 +49,8 @@ class AdminController extends BaseController {
             Session::put("requestedGateways", $requestedGateways);
 
             if ($gatewayOfUser == "") {
-                $userInfo["username"] = $userProfile["username"];
-                $userInfo["email"] = $userProfile["email"];
+                $userInfo["username"] = $username;
+                $userInfo["email"] = $userEmail;
     			$data["userInfo"] = $userInfo;
     			$data["gatewaysInfo"] = $gatewaysInfo;
                 Session::put("new-gateway-provider", true);

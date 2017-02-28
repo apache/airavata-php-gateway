@@ -132,8 +132,6 @@ class AccountController extends BaseController
             Session::put('authz-token',$authzToken);
             Session::put('oauth-refresh-code',$refreshToken);
             Session::put('oauth-expiration-time',$expirationTime);
-            // TODO: get rid of user-profile session variable, or at least get rid of having it coming from Identity Server
-            Session::put("user-profile", $userProfile);
 
             Session::put("roles", $userRoles);
             if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
@@ -189,9 +187,8 @@ class AccountController extends BaseController
 
         $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
         $username = $userProfile['username'];
-
         $userRoles = $userProfile['roles'];
-        $userEmail = $userProfile["email"];
+        $userEmail = $userProfile['email'];
 
         //FIXME There is a bug in WSO2 IS which doest not return the admin role for the default admin user.
         //FIXME Hence as a workaround we manually add it here.
@@ -206,8 +203,6 @@ class AccountController extends BaseController
         Session::put('authz-token',$authzToken);
         Session::put('oauth-refresh-code',$refreshToken);
         Session::put('oauth-expiration-time',$expirationTime);
-        // TODO: likewise get rid or replace this Identity Server user-profile
-        Session::put("user-profile", $userProfile);
 
         if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
             Session::put("admin", true);
@@ -265,6 +260,8 @@ class AccountController extends BaseController
             Log::info("creating user profile for user", array($userProfileData));
             UserProfileUtilities::add_user_profile($userProfileData);
         }
+        $userProfile = UserProfileUtilities::get_user_profile($username);
+        Session::put('user-profile', $userProfile);
 
         if(Session::has("admin") || Session::has("admin-read-only")){
             return Redirect::to("admin/dashboard");
@@ -315,14 +312,15 @@ class AccountController extends BaseController
 
     public function dashboard(){
 
-        $userProfile = Session::get("user-profile");
+        $userRoles = Session::get("roles");
+        $userEmail = Session::get("user-profile")->emails[0];
 
-        if( in_array( "gateway-provider", $userProfile["roles"]) ) {
+        if( in_array( "gateway-provider", $userRoles ) ) {
             $gatewayOfUser = "";
 
             $gatewaysInfo = CRUtilities::getAllGateways();
             foreach ($gatewaysInfo as $index => $gateway) {
-                if ($gateway->emailAddress == $userProfile["email"]) {
+                if ($gateway->emailAddress == $userEmail) {
                     Session::set("gateway_id", $gateway->gatewayId);
                     $gatewayOfUser = $gateway->gatewayId;
                     Session::forget("super-admin");
@@ -330,8 +328,6 @@ class AccountController extends BaseController
                 }
             }
             if ($gatewayOfUser == "") {
-                $userInfo["username"] = $userProfile["username"];
-                $userInfo["email"] = $userProfile["email"];
                 Session::put("new-gateway-provider", true);
             }
         }

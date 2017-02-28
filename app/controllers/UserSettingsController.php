@@ -211,6 +211,9 @@ class UserSettingsController extends BaseController
         });
         try {
             UserProfileUtilities::update_user_profile($userProfile);
+            // Now update the UserProfile in the Session
+            $userProfile = UserProfileUtilities::get_user_profile($username);
+            Session::put("user-profile", $userProfile);
             return Redirect::to("account/user-profile")->with("message", "Your profile has been updated.");
         } catch (Exception $e) {
             return View::make("account/user-profile", array(
