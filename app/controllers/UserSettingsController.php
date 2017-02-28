@@ -204,11 +204,13 @@ class UserSettingsController extends BaseController
         $userProfile->userName = Input::get("userName");
         $userProfile->homeOrganization = Input::get("homeOrganization");
         $userProfile->country = Input::get("country");
-        $phones = Input::get("phones");
-        // Filter out empty phone numbers
-        $userProfile->phones = array_filter($phones, function($phone) {
-            return trim($phone) !== "";
-        });
+        if (Input::has("phones")) {
+            $phones = Input::get("phones");
+            // Filter out empty phone numbers
+            $userProfile->phones = array_filter($phones, function($phone) {
+                return trim($phone) !== "";
+            });
+        }
         try {
             UserProfileUtilities::update_user_profile($userProfile);
             // Now update the UserProfile in the Session

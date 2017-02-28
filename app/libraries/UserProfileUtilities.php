@@ -11,6 +11,18 @@ class UserProfileUtilities
         return Airavata::doesUserProfileExist(Session::get('authz-token'), $userId, $gatewayId);
     }
 
+    public static function create_basic_user_profile($username, $userEmail) {
+        $gatewayId = Session::get("gateway_id");
+        $userProfileData = array();
+        $userProfileData["airavataInternalUserId"] = $username . '@' . $gatewayId;
+        $userProfileData["userId"] = $username;
+        $userProfileData["gatewayId"] = $gatewayId;
+        $userProfileData["emails"] = array($userEmail);
+
+        Log::info("creating basic user profile for user", array($userProfileData));
+        return UserProfileUtilities::add_user_profile($userProfileData);
+    }
+
     public static function add_user_profile($userProfileData) {
 
         $userProfile = new UserProfile($userProfileData);
