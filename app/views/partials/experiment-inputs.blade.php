@@ -101,12 +101,12 @@
 
 {{-- set default value by dREG (remove on 2/17/2017)
 <input name="queue-name" value="GPU" type="hidden">
-<input name="node-count" value="1" type="hidden">
-<input name="cpu-count" id="cpu-count" value="16" type="hidden">
 <input name="wall-time" id="wall-time" value="30" hidden="hidden">
 <input name="total-physical-memory" id="memory-count" value="" type="hidden">
 <input name="share-settings" id="share-settings" value="{}" type="hidden">
---}}
+{{-- end--}}
+<input name="cpu-count" id="cpu-count" value="16" type="hidden">
+<input name="node-count" value="1" type="hidden">
 
     </div>
     <h3>Notifications</h3>
