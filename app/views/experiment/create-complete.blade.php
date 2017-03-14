@@ -102,7 +102,7 @@
  
         // Create a new tus upload
         var upload = new tus.Upload(file, {
-             endpoint: '{{URL::to('/')}}/experiment/upload/',
+             endpoint: '{{URL::to('/')}}/experiment/upload',
              retryDelays: [0, 1000, 3000, 5000],
              resume: false, 
 	     progressbar:progressbar,
