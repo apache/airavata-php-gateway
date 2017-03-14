@@ -395,13 +395,23 @@ class ExperimentUtilities
                     }
                 }
             } elseif ($applicationInput->type == DataType::URI) {
-                if ($_FILES[$applicationInput->sanitizedFormName]['name']) {
+//Changed for dREG gateway
+//Here use new file upload method: Resumable uploading method provided by Tus package
+                if (isset($_POST[ $applicationInput->sanitizedFormName ])) {
+//                if ($_FILES[$applicationInput->sanitizedFormName]['name']) {
+//                    $file = $_FILES[$applicationInput->sanitizedFormName];
+//                    if ($file['error'] != 0) {
+//                        throw new Exception("Failure occurred while uploading file '"
+//                            . $file['name'] . "'. File upload error code is " . $file['error'] . ".");
+//                    }
 
-                    $file = $_FILES[$applicationInput->sanitizedFormName];
-                    if ($file['error'] != 0) {
-                        throw new Exception("Failure occurred while uploading file '"
-                            . $file['name'] . "'. File upload error code is " . $file['error'] . ".");
-                    }
+//changed for dREG gateway
+                    $tmp_dir = ini_get('upload_tmp_dir') ? ini_get('upload_tmp_dir') : sys_get_temp_dir();
+// The _POST doesn't contain file data again. the URI value = [filename]:http://website/experiment/upload/[uploadpath]
+                    $fileUpload = $_POST[$applicationInput->sanitizedFormName];
+                    $filePieces = explode(":", $fileUpload);
+                    $filename  = $filePieces[0];
+                    $fileTemp = $tmp_dir . "/" . substr($filePieces[2], strrpos($filePieces[2], '/')+1);
 
                     //
                     // move file to experiment data directory
@@ -409,7 +419,10 @@ class ExperimentUtilities
                     if (!empty($applicationInput->value)) {
                         $filePath = $experimentFilePath . $applicationInput->value;
                     } else {
-                        $filePath = $experimentFilePath . $file['name'];
+//changed for dREG gateway
+//filename isn't in the INPUT[File]
+                        // $filePath = $experimentFilePath . $file['name'];
+                        $filePath = $experimentFilePath . $filename;
                     }
 
                     // check if file already exists
@@ -419,11 +432,19 @@ class ExperimentUtilities
                         CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
                     }
 
-                    $moveFile = move_uploaded_file($file['tmp_name'], $filePath);
+//changed for dREG gateway
+                    //$moveFile = move_uploaded_file($file['tmp_name'], $filePath);
+//Due to failure on moving from /tmp folder, change to rename.
+                    $moveFile = rename($fileTemp, $filePath);
+                    unlink($fileTemp . ".info");
 
                     if (!$moveFile) {
-                        CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file['name'] . '!
-                        Please try again later or report a bug using the link in the Help menu.</p>');
+//changed for dREG gateway
+                        //CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file['name'] . '!
+                        // Please try again later or report a bug using the link in the Help menu.</p>');
+
+                        CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $filename . '!
+                         Please try again later or report a bug using the link in the Help menu.</p>');
                         $experimentAssemblySuccessful = false;
                     }
 
@@ -781,7 +802,7 @@ class ExperimentUtilities
         if($inputs != null){
             array_multisort($order, SORT_ASC, $inputs);
         }
-
+	
         //var_dump( $inputs); exit;
         foreach ($inputs as $input) {
             switch ($input->type) {
@@ -820,17 +841,26 @@ class ExperimentUtilities
                             </div>';
                         break;
                     }else{
+                        $protocol = 'http';
+                        if ( isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') 
+                            $protocol = 'https';
+
+//change file-upload by Tus in the dREG gateway
                         echo '<div class="form-group">
                             <label for="experiment-input">' . $input->name . '</label>
-                            <div data-file-id="' . $input->sanitizedFormName . '" class="readBytesButtons btn btn-default btn-xs"
-                             data-toggle="modal" style="float: right">view file</div>
+                             <div data-file-id="' . $input->sanitizedFormName . '" class="readBytesButtons btn btn-default btn-xs"
+                                    data-toggle="modal" style="float: right">view file</div>
                              <div class="file-upload-container">
-                                <input class="file-input" type="file" name="' . $input->sanitizedFormName .
-                                        '" id="' . $input->sanitizedFormName . '" ' . $required . '>
-                                    <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
+                                <input class="file-input" type="file" name="file-' . $input->sanitizedFormName .'" id="file-' . $input->sanitizedFormName . '" ' . $required . '>
+                                <input type="hidden" class="urlpath" id="' . $input->sanitizedFormName . '" name="' . $input->sanitizedFormName . '" "'. $required .'" value="">
+                                <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
                              </div>
                             <p class="help-block">' . $input->userFriendlyDescription . '</p>
+                            <div class="progress fadeIn animated" style="display:none">
+                               <div id="progressBar" class="progress-bar progress-bar-striped progress-success"  data-file-id="' . $input->sanitizedFormName . '" style="width: 0%;"></div>
+                            </div>
                             </div>';
+//End of change
                         break;
                     }
 
