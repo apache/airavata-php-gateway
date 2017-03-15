@@ -18,7 +18,7 @@ class FileTransfer {
         if ( isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') 
            $protocol = 'https';
 
-        include("libraries/basecode.php");
+        include("basecode.php");
 
         $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
         $filelist = explode("\n", RBase64::decode( $filelist ) );
@@ -103,7 +103,7 @@ class FileTransfer {
         $filename = pathinfo($file, PATHINFO_FILENAME);
         $fileext = pathinfo($file, PATHINFO_EXTENSION);
 
-        include("libraries/basecode.php");
+        include("basecode.php");
         if( $fileext != "")
             $file = RBase64::decode( $filename ) .".".$fileext;
         else
