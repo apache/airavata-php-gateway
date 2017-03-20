@@ -25,30 +25,42 @@ class FileTransfer {
         $folder_path=$filelist[0]. "ARCHIVE" ;
         $content = "[ \n";
 
-        for($i=1; $i<3; $i++){    
-            $content = $content . ' {
+        $content = $content . ' {
             type:"bigwig",
-            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($filelist[$i*2]). '",
-            name: "'. $filelist[$i*2-1] .'",
+            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($filelist[2]). '",
+            name: "'. $filelist[1] .'",
             #fixedscale:{min:0,max:20},
+            summarymethod:"max",
             colorpositive:"#B30086",
             colornegative:"#0000e5",
             height:100,
             mode: "show",
             },'. "\n" ;
-        }
 
-        $content = $content . '{
-            type:"bedgraph",
-            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($folder_path . '/out.dREG.pred.gz').'",
-            name: "dREG informative pos.:",
-            mode: "show",
+
+       $content = $content . ' {
+            type:"bigwig",
+            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($filelist[4]). '",
+            name: "'. $filelist[3] .'",
+            #fixedscale:{min:0,max:20},
+            summarymethod:"min",
             colorpositive:"#B30086",
             colornegative:"#0000e5",
-            backgroundcolor:"#ffffe5",
-            height:30,
-            #fixedscale:{min:0, max:1},
-        },'. "\n";
+            height:100,
+            mode: "show",
+            },'. "\n" ;
+
+        #$content = $content . '{
+        #    type:"bedgraph",
+        #    url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($folder_path . '/out.dREG.pred.gz').'",
+        #    name: "dREG informative pos.:",
+        #    mode: "show",
+        #    colorpositive:"#B30086",
+        #    colornegative:"#0000e5",
+        #    backgroundcolor:"#ffffe5",
+        #    height:40,
+        #    #fixedscale:{min:0, max:1},
+        #},'. "\n";
 
         $content = $content . '{
             type:"bedgraph",
@@ -58,8 +70,8 @@ class FileTransfer {
             colorpositive:"#B30086",
             colornegative:"#0000e5",
             backgroundcolor:"#ffffe5",
-            height:30,
-            #fixedscale:{min:0, max:1},
+            height:40,
+            fixedscale:{min:0, max:0.6},
         },'. "\n";
 
         $content = $content . '{
@@ -67,7 +79,9 @@ class FileTransfer {
             url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
             name: "imputed DNase-I signal:",
             #fixedscale:{min:0,max:20},
+            summarymethod:"max",
             colorpositive:"#00B306",
+            backgroundcolor:"#ffffe5",
             height:100,
             mode: "show",
         },'. "\n";
@@ -79,7 +93,7 @@ class FileTransfer {
             mode: "show",
             colorpositive:"#0000e5/#B30086",
             backgroundcolor:"#ffffe5",
-            height:30,
+            height:40,
             fixedscale:{min:0, max:1},
         },'. "\n";
 
@@ -90,7 +104,7 @@ class FileTransfer {
             mode: "show",
             colorpositive:"#0000e5/#B30086",
             backgroundcolor:"#ffffe5",
-            height:30,
+            height:40,
             fixedscale:{min:0, max:1},
         },'. "\n";
 
