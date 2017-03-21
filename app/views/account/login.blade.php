@@ -10,9 +10,9 @@
 
     <h3>
         Login
-        <small>
+        {{-- <small>
             <small> (Not registered? <a href="create">Create account</a>)</small>
-        </small>
+        </small> --}}
     </h3>
 
 
