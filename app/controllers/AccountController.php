@@ -84,7 +84,7 @@ class AccountController extends BaseController
     public function loginView()
     {
         if(Config::get('pga_config.wsis')['oauth-grant-type'] == "authorization_code"){
-            $url = WSIS::getOAuthRequestCodeUrl();
+            $url = Keycloak::getOAuthRequestCodeUrl();
             return Redirect::away($url);
         }else{
             if(CommonUtilities::id_in_session()){

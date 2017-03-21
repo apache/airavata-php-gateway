@@ -67,6 +67,11 @@ return array(
         'oauth-callback-url' => 'https://dev.seagrid.org/callback-url',
 
         /**
+         * For OIDC servers that support the discovery protocol.
+         */
+        'openid-connect-discovery-url' => 'https://some.identity.provider.org/.well-known/openid-configuration',
+
+        /**
          * Identity server domain
          */
         'server' => 'idp.scigap.org',
