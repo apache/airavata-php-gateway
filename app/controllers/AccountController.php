@@ -177,7 +177,7 @@ class AccountController extends BaseController
         }
 
         $code = $_GET["code"];
-        $response = WSIS::getOAuthToken($code);
+        $response = Keycloak::getOAuthToken($code);
         if(!isset($response->access_token)){
             return Redirect::to('home');
         }
@@ -186,7 +186,7 @@ class AccountController extends BaseController
         $refreshToken = $response->refresh_token;
         $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
 
-        $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
+        $userProfile = Keycloak::getUserProfileFromOAuthToken($accessToken);
         $username = $userProfile['username'];
 
         $userRoles = $userProfile['roles'];

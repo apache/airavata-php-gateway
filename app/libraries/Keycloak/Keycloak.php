@@ -38,13 +38,80 @@ class Keycloak {
         return $url;
     }
 
+    public function getOAuthToken($code){
+
+        $config = $this->getOpenIDConnectDiscoveryConfiguration();
+        $token_endpoint = $config->token_endpoint;
+
+        // Init cUrl.
+        $r = curl_init($token_endpoint);
+        curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
+        // Decode compressed responses.
+        curl_setopt($r, CURLOPT_ENCODING, 1);
+        curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+
+        // Add client ID and client secret to the headers.
+        curl_setopt($r, CURLOPT_HTTPHEADER, array(
+            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
+        ));
+
+        // Assemble POST parameters for the request.
+        $post_fields = "code=" . urlencode($code) . "&grant_type=authorization_code&redirect_uri=" . urlencode($this->callback_url);
+
+        // Obtain and return the access token from the response.
+        curl_setopt($r, CURLOPT_POST, true);
+        curl_setopt($r, CURLOPT_POSTFIELDS, $post_fields);
+
+        $response = curl_exec($r);
+        if ($response == false) {
+            die("curl_exec() failed. Error: " . curl_error($r));
+        }
+
+        //Parse JSON return object.
+        $result = json_decode($response);
+        Log::debug("getOAuthToken response", array($result));
+
+        return $result;
+    }
+
+    public function getUserProfileFromOAuthToken($token){
+
+        $config = $this->getOpenIDConnectDiscoveryConfiguration();
+        $userinfo_endpoint = $config->userinfo_endpoint;
+
+        $r = curl_init($userinfo_endpoint);
+        curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
+        // Decode compressed responses.
+        curl_setopt($r, CURLOPT_ENCODING, 1);
+        curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        curl_setopt($r, CURLOPT_HTTPHEADER, array(
+            "Authorization: Bearer " . $token
+        ));
+
+        $response = curl_exec($r);
+        if ($response == false) {
+            die("curl_exec() failed. Error: " . curl_error($r));
+        }
+
+        //Parse JSON return object.
+        $userinfo = json_decode($response);
+        Log::debug("Keycloak userinfo", array($userinfo));
+        $username = $userinfo->preferred_username;
+        $firstname = $userinfo->given_name;
+        $lastname = $userinfo->family_name;
+        $email = $userinfo->email;
+        // TODO: get roles from Keycloak API
+        return array('username'=>$username, 'firstname'=>$firstname, 'lastname'=>$lastname, 'email'=>$email, 'roles'=>array());
+    }
+
     private function getOpenIDConnectDiscoveryConfiguration() {
 
+        // TODO: cache the result of the request
         $r = curl_init($this->openid_connect_discovery_url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
-        curl_setopt($r, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
 
         $result = curl_exec($r);
 
