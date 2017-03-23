@@ -1,6 +1,7 @@
 <?php
 namespace Keycloak\API;
 
+use Exception;
 use Log;
 
 /**
@@ -55,7 +56,6 @@ class RoleMapper {
         return $result;
     }
 
-    // TODO: change this to an Array of role representations
     public function addRealmRoleMappingsToUser($realm, $user_id, $role_representations) {
 
         // get access token for admin API
@@ -66,27 +66,23 @@ class RoleMapper {
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Bearer " . $access_token
-        ));
 
         curl_setopt($r, CURLOPT_POST, true);
         $data = json_encode($role_representations);
+        // Log::debug("addRealmRoleMappingsToUser data=$data");
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
+            "Authorization: Bearer " . $access_token,
             'Content-Type: application/json',
             'Content-Length: ' . strlen($data))
         );
         curl_setopt($r, CURLOPT_POSTFIELDS, $data);
 
         $response = curl_exec($r);
-        if ($response == false) {
-            Log::error("Failed to add realm role mapping to user");
-            die("curl_exec() failed. Error: " . curl_error($r));
-        }
-        $result = json_decode($response);
         $info = curl_getinfo($r);
-        // Log::debug("addRealmRoleMappingsToUser result", array($result, $info));
-        return $result;
+        if ($info['http_code'] != 200 && $info['http_code'] != 204) {
+            throw new Exception("Failed to add realm role mapping to user");
+        }
+        return;
     }
 
     // TODO: factor this out into base class?
