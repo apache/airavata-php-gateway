@@ -1,15 +1,13 @@
 <?php
 namespace Keycloak\API;
 
-use Log;
-
 /**
- * RoleMapper class
+ * Roles class
  *
  * This class provide an easy to use interface for
- * the Keycloak RoleMapper REST API.
+ * the Keycloak Roles REST API.
  */
-class RoleMapper {
+class Roles {
 
     private $base_endpoint_url;
     private $admin_username;
@@ -24,20 +22,15 @@ class RoleMapper {
     }
 
     /**
-     * Get realm-level role mappings for a user
-     * GET /admin/realms/{realm}/users/{id}/role-mappings/realm
-     *
-     * Returns Array of RoleRepresentations
+     * Get representations of all of a realm's roles
+     * GET /admin/realms/{realm}/roles
+     * Returns Array of RoleRepresentation
      */
-    public function getRealmRoleMappingsForUser($realm, $user_id){
-
-        // curl -H "Authorization: bearer $access_token" https://149.165.156.62:8443/auth/admin/realms/airavata/users/2c9ad2c6-0212-4aef-a5fb-9df862578934/role-mappings/realm
+    public function getRoles($realm){
 
         // get access token for admin API
         $access_token = $this->getAPIAccessToken();
-        $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users/' . rawurlencode($user_id) . '/role-mappings/realm';
-        // Log::debug("getRealmRoleMappingsForUser url", array($url));
-        $r = curl_init($url);
+        $r = curl_init($this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/roles');
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
@@ -47,45 +40,10 @@ class RoleMapper {
 
         $response = curl_exec($r);
         if ($response == false) {
-            Log::error("Failed to retrieve realm role mappings for user");
             die("curl_exec() failed. Error: " . curl_error($r));
         }
         $result = json_decode($response);
         // Log::debug("getRealmRoleMappingsForUser result", array($result));
-        return $result;
-    }
-
-    // TODO: change this to an Array of role representations
-    public function addRealmRoleMappingsToUser($realm, $user_id, $role_representations) {
-
-        // get access token for admin API
-        $access_token = $this->getAPIAccessToken();
-        $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users/' . rawurlencode($user_id) . '/role-mappings/realm';
-        // Log::debug("addRealmRoleMappingsToUser", array($url, $role_representations));
-        $r = curl_init($url);
-        curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($r, CURLOPT_ENCODING, 1);
-        curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Bearer " . $access_token
-        ));
-
-        curl_setopt($r, CURLOPT_POST, true);
-        $data = json_encode($role_representations);
-        curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data))
-        );
-        curl_setopt($r, CURLOPT_POSTFIELDS, $data);
-
-        $response = curl_exec($r);
-        if ($response == false) {
-            Log::error("Failed to add realm role mapping to user");
-            die("curl_exec() failed. Error: " . curl_error($r));
-        }
-        $result = json_decode($response);
-        $info = curl_getinfo($r);
-        // Log::debug("addRealmRoleMappingsToUser result", array($result, $info));
         return $result;
     }
 
@@ -110,7 +68,6 @@ class RoleMapper {
 
         $response = curl_exec($r);
         if ($response == false) {
-            Log::error("Failed to retrieve API Access Token");
             die("curl_exec() failed. Error: " . curl_error($r));
         }
 

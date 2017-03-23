@@ -70,9 +70,9 @@ class AdminController extends BaseController {
 			$users = AdminController::getUsersWithRole( Input::get("role"));
 		}
 		else
-	    	$users =  WSIS::listUsers();
+			$users =  Keycloak::listUsers();
 
-	    $roles = WSIS::getAllRoles();
+	    $roles = Keycloak::getAllRoles();
         Session::put("admin-nav", "manage-users");
 	    return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 	}
@@ -88,12 +88,12 @@ class AdminController extends BaseController {
             $users =  WSIS::searchUsers(Input::get("search_val"));
         }
         else
-            $users = WSIS::listUsers();
+            $users = Keycloak::listUsers();
 
 		if(!isset($users) || empty($users)){
 			$users = array();
 		}
-        $roles = WSIS::getAllRoles();
+        $roles = Keycloak::getAllRoles();
         Session::put("admin-nav", "manage-users");
         return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 
@@ -184,7 +184,7 @@ class AdminController extends BaseController {
 	}
 
 	public function rolesView(){
-		$roles = WSIS::getAllRoles();
+		$roles = Keycloak::getAllRoles();
         Session::put("admin-nav", "manage-roles");
         return View::make("admin/manage-roles", array("roles" => $roles));
 	}
@@ -211,7 +211,7 @@ class AdminController extends BaseController {
 	}
 
     public function addRolesToUser(){
-        $currentRoles = WSIS::getUserRoles(Input::get("username"));
+        $currentRoles = Keycloak::getUserRoles(Input::get("userId"));
 		if(!is_array($currentRoles))
 			$currentRoles = array($currentRoles);
         $roles["new"] = array_diff(Input::all()["roles"], $currentRoles);
@@ -227,12 +227,12 @@ class AdminController extends BaseController {
             unset($roles["deleted"][$index]);
         }
 
-        $username = Input::all()["username"];
-        WSIS::updateUserRoles($username, $roles);
-        $newCurrentRoles = WSIS::getUserRoles(Input::get("username"));
+        $userId = Input::all()["userId"];
+        Keycloak::updateUserRoles($userId, $roles);
+        $newCurrentRoles = Keycloak::getUserRoles($userId);
         if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $newCurrentRoles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $newCurrentRoles)
                 || in_array(Config::get("pga_config.wsis")["user-role-name"], $newCurrentRoles)){
-            $userProfile = WSIS::getUserProfile(Input::get("username"));
+            $userProfile = Keycloak::getUserProfile($userId);
             $recipients = array($userProfile["email"]);
             $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
 
@@ -246,12 +246,12 @@ class AdminController extends BaseController {
                 if(in_array($initialRoleName, $newCurrentRoles) && !in_array($initialRoleName, $roles["new"])) {
                     $userRoles["new"] = array();
                     $userRoles["deleted"] = $initialRoleName;
-                    WSIS::updateUserRoles( $username, $userRoles);
+                    Keycloak::updateUserRoles( $userId, $userRoles);
                 } else if(in_array($initialRoleName, $newCurrentRoles) && in_array($initialRoleName, $roles["new"])) {
                     // When initial role added remove all roles except for initial role and Internal/everyone
                     $userRoles["new"] = array();
                     $userRoles["deleted"] = array_diff($newCurrentRoles, array($initialRoleName, "Internal/everyone"));
-                    WSIS::updateUserRoles( $username, $userRoles);
+                    Keycloak::updateUserRoles( $userId, $userRoles);
                 }
             }
         }
@@ -277,13 +277,13 @@ class AdminController extends BaseController {
     public function removeRoleFromUser(){
         $roles["deleted"] = array(Input::all()["roleName"]);
         $roles["new"] = array();
-        $username = Input::all()["username"];
-        WSIS::updateUserRoles($username, $roles);
+        $userId = Input::all()["userId"];
+        Keycloak::updateUserRoles($userId, $roles);
         return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been deleted.");
     }
 
 	public function getRoles(){
-		return json_encode((array)WSIS::getUserRoles(Input::get("username")));
+		return json_encode((array)Keycloak::getUserRoles(Input::get("userId")));
 	}
 
 	public function deleteRole(){
@@ -300,7 +300,7 @@ class AdminController extends BaseController {
 		return View::make("admin/manage-credentials", array("tokens" => $tokens , "pwdTokens" => $pwdTokens) );
 	}
 
-	private function sendAccessGrantedEmailToTheUser($username, $recipients){
+	private function sendAccessGrantedEmailToTheUser($username, $userId, $recipients){
 
 		$mail = new PHPMailer;
 
@@ -326,7 +326,7 @@ class AdminController extends BaseController {
 		$mail->isHTML(true);
 
 		$mail->Subject = "Your user account (".$username.") privileges changed!";
-		$userProfile = WSIS::getUserProfile($username);
+		$userProfile = WSIS::getUserProfile($userId);
 		$wsisConfig = Config::get('pga_config.wsis');
 		if( $wsisConfig['tenant-domain'] == "")
 			$username = $username;

@@ -3,7 +3,10 @@
 namespace Keycloak;
 
 use Keycloak\API\RoleMapper;
+use Keycloak\API\Roles;
+use Keycloak\API\Users;
 
+use Exception;
 use Log;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Config;
@@ -17,7 +20,10 @@ class Keycloak {
     private $callback_url;
     private $verify_peer;
 
+    // API clients
     private $role_mapper;
+    private $roles;
+    private $users;
 
     /**
      * Constructor
@@ -33,6 +39,8 @@ class Keycloak {
         $this->verify_peer = $verify_peer;
 
         $this->role_mapper = new RoleMapper($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
+        $this->roles = new Roles($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
+        $this->users = new Users($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
     }
 
     public function getOAuthRequestCodeUrl(){
@@ -116,6 +124,89 @@ class Keycloak {
             $roles[] = $role_mapping->name;
         }
         return array('username'=>$username, 'firstname'=>$firstname, 'lastname'=>$lastname, 'email'=>$email, 'roles'=>$roles);
+    }
+
+    /**
+     * Function to list users
+     *
+     * @return Array of username and user id
+     */
+    public function listUsers(){
+        $users = $this->users->getUsers($this->realm);
+        $user_infos = [];
+        foreach ($users as $user) {
+            $user_infos[] = array("username" => $user->username, "id" => $user->id);
+        }
+        return $user_infos;
+    }
+
+    /**
+     * Function to get the list of all existing roles
+     * For Keycloak this is a list of "Realm roles"
+     *
+     * @return roles list
+     */
+    public function getAllRoles(){
+        try {
+            $roles = $this->roles->getRoles($this->realm);
+            $role_names = [];
+            foreach ($roles as $role) {
+                $role_names[] = $role->name;
+            }
+            return $role_names;
+        } catch (Exception $ex) {
+            throw new Exception("Unable to get all roles", 0, $ex);
+        }
+    }
+
+    /**
+     * Function to get roles of a user
+     * For Keycloak this is a list of "Realm roles"
+     *
+     * @return array of role names
+     */
+    public function getUserRoles( $userid ){
+        try {
+            // Get the user's realm roles, then convert to an array of just names
+            $roles = $this->role_mapper->getRealmRoleMappingsForUser($this->realm, $userid);
+            $role_names = [];
+            foreach ($roles as $role) {
+                $role_names[] = $role->name;
+            }
+            return $role_names;
+        } catch (Exception $ex) {
+            throw new Exception("Unable to get User roles.", 0, $ex);
+        }
+    }
+
+    /**
+     * Function to update role list of user
+     *
+     * @param $user_id
+     * @param $roles, an Array with two entries, "deleted" and "new", each of
+     * which has a value of roles to be removed or added respectively
+     * @return void
+     */
+    public function updateUserRoles( $user_id, $roles){
+        Log::debug("updateUserRoles", array($user_id, $roles));
+        try {
+            // Get all of the roles into an array keyed by role name
+            $all_roles = $this->roles->getRoles($this->realm);
+            $roles_by_name = [];
+            foreach ($all_roles as $role) {
+                $roles_by_name[$role->name] = $role;
+            }
+            // Process the role additions
+            if(isset($roles["new"])){
+                if(!is_array($roles["new"]))
+                    $roles["new"] = array($roles["new"]);
+                foreach ($roles["new"] as $role) {
+                    $this->role_mapper->addRealmRoleMappingsToUser($this->realm, $user_id, array($roles_by_name[$role]));
+                }
+            }
+        } catch (Exception $ex) {
+            throw new Exception("Unable to update role of the user.", 0, $ex);
+        }
     }
 
     private function getOpenIDConnectDiscoveryConfiguration() {
