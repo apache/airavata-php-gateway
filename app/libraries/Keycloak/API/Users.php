@@ -37,7 +37,35 @@ class Users {
             $url = $url . '?username=' . rawurlencode($username);
         }
         // Log::debug("getUsers url", array($url));
-        $r = curl_init($this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users');
+        $r = curl_init($url);
+        curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($r, CURLOPT_ENCODING, 1);
+        curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        curl_setopt($r, CURLOPT_HTTPHEADER, array(
+            "Authorization: Bearer " . $access_token
+        ));
+
+        $response = curl_exec($r);
+        if ($response == false) {
+            die("curl_exec() failed. Error: " . curl_error($r));
+        }
+        $result = json_decode($response);
+        // Log::debug("getUsers result", array($result));
+        return $result;
+    }
+
+    /**
+     * Get representation of a user
+     * GET /admin/realms/{realm}/users/{id}
+     * Returns a UserRepresentation
+     */
+    public function getUser($realm, $user_id) {
+
+        // get access token for admin API
+        $access_token = $this->getAPIAccessToken();
+        $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users/' . rawurlencode($user_id);
+        // Log::debug("getUser url", array($url));
+        $r = curl_init($url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);

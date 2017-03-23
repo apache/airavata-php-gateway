@@ -219,6 +219,19 @@ class Keycloak {
         }
     }
 
+    /**
+     * Function to get the user profile of a user
+     * @param $user_id
+     */
+    public function getUserProfile($user_id){
+        $user = $this->users->getUser($this->realm, $user_id);
+        $result = [];
+        $result["email"] = $user->email;
+        $result["firstname"] = $user->firstName;
+        $result["lastname"] = $user->lastName;
+        return $result;
+    }
+
     private function getOpenIDConnectDiscoveryConfiguration() {
 
         // TODO: cache the result of the request

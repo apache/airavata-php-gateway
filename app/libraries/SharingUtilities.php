@@ -92,7 +92,7 @@ class SharingUtilities {
         });
         $profiles = array();
         foreach ($uids as $uid) {
-            $profiles[$uid] = WSIS::getUserProfile($uid);
+            $profiles[$uid] = Keycloak::getUserProfile($uid);
         }
         return $profiles;
     }

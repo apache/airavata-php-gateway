@@ -152,7 +152,8 @@ class AdminController extends BaseController {
 		//check if username exists
 		if(WSIS::usernameExists( Input::get("username")) )
 		{
-            WSIS::updateUserRoles(Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );
+			// FIXME: this requires the user id not the username
+            Keycloak::updateUserRoles(Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );
 			return Redirect::to("admin/dashboard/users?role=" . Config::get('wsis::admin-role-name'))->with("Gateway Admin has been added.");
 		}
 		else
@@ -234,7 +235,7 @@ class AdminController extends BaseController {
                 || in_array(Config::get("pga_config.wsis")["user-role-name"], $newCurrentRoles)){
             $userProfile = Keycloak::getUserProfile($userId);
             $recipients = array($userProfile["email"]);
-            $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
+            $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $userId, $recipients);
 
             // remove the initial role when the initial role isn't a privileged
             // role and the admin has now assigned the user to a privileged
@@ -326,7 +327,7 @@ class AdminController extends BaseController {
 		$mail->isHTML(true);
 
 		$mail->Subject = "Your user account (".$username.") privileges changed!";
-		$userProfile = WSIS::getUserProfile($userId);
+		$userProfile = Keycloak::getUserProfile($userId);
 		$wsisConfig = Config::get('pga_config.wsis');
 		if( $wsisConfig['tenant-domain'] == "")
 			$username = $username;

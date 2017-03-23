@@ -59,7 +59,7 @@ class AccountController extends BaseController
             /*add user to the initial role */
 
             $initialRoleName = CommonUtilities::getInitialRoleName();
-            $allRoles = WSIS::getAllRoles();
+            $allRoles = Keycloak::getAllRoles();
             if(! in_array( $initialRoleName, $allRoles)){
                 WSIS::addRole( $initialRoleName);
             }
@@ -74,7 +74,8 @@ class AccountController extends BaseController
                 $userRoles["new"] = array("gateway-provider", "admin");
             }
             $userRoles["deleted"] = array();
-            WSIS::updateUserRoles( $username, $userRoles);
+            // FIXME: this requires the $user_id, not the $username
+            Keycloak::updateUserRoles( $username, $userRoles);
 
             CommonUtilities::print_success_message('Account confirmation request was sent to your email account');
             return View::make('home');
@@ -113,7 +114,7 @@ class AccountController extends BaseController
             $refreshToken = $response->refresh_token;
             $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
 
-            $userProfile = WSIS::getUserProfileFromOAuthToken($accessToken);
+            $userProfile = Keycloak::getUserProfileFromOAuthToken($accessToken);
             $username = $userProfile['username'];
             $userRoles = $userProfile['roles'];
 
@@ -412,7 +413,7 @@ class AccountController extends BaseController
         $mail->isHTML(true);
 
         $mail->Subject = "New User Account Was Created Successfully";
-        $userProfile = WSIS::getUserProfile($username);
+        $userProfile = Keycloak::getUserProfile($username);
         $wsisConfig = Config::get('pga_config.wsis');
         if( $wsisConfig['tenant-domain'] == "")
             $username = $username;
