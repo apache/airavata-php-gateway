@@ -2,29 +2,37 @@
 
 namespace Keycloak;
 
+use Keycloak\API\RoleMapper;
+
 use Log;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Config;
 
 class Keycloak {
 
+    private $realm;
     private $openid_connect_discovery_url;
     private $client_id;
     private $client_secret;
     private $callback_url;
     private $verify_peer;
 
+    private $role_mapper;
+
     /**
      * Constructor
      *
      */
-    public function __construct($openid_connect_discovery_url, $client_id, $client_secret, $callback_url, $verify_peer) {
+    public function __construct($realm, $openid_connect_discovery_url, $client_id, $client_secret, $callback_url, $verify_peer, $base_endpoint_url, $admin_username, $admin_password) {
 
+        $this->realm = $realm;
         $this->openid_connect_discovery_url = $openid_connect_discovery_url;
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
         $this->callback_url = $callback_url;
         $this->verify_peer = $verify_peer;
+
+        $this->role_mapper = new RoleMapper($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
     }
 
     public function getOAuthRequestCodeUrl(){
@@ -100,8 +108,14 @@ class Keycloak {
         $firstname = $userinfo->given_name;
         $lastname = $userinfo->family_name;
         $email = $userinfo->email;
-        // TODO: get roles from Keycloak API
-        return array('username'=>$username, 'firstname'=>$firstname, 'lastname'=>$lastname, 'email'=>$email, 'roles'=>array());
+
+        // get roles from Keycloak API
+        $role_mappings = $this->role_mapper->getRealmRoleMappingsForUser($this->realm, $userinfo->sub);
+        $roles = [];
+        foreach ($role_mappings as $role_mapping) {
+            $roles[] = $role_mapping->name;
+        }
+        return array('username'=>$username, 'firstname'=>$firstname, 'lastname'=>$lastname, 'email'=>$email, 'roles'=>$roles);
     }
 
     private function getOpenIDConnectDiscoveryConfiguration() {
@@ -114,6 +128,9 @@ class Keycloak {
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
 
         $result = curl_exec($r);
+        if ($result == false) {
+            die("curl_exec() failed. Error: " . curl_error($r));
+        }
 
         $json = json_decode($result);
 
