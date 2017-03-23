@@ -56,6 +56,10 @@ class RoleMapper {
         return $result;
     }
 
+    /**
+     * Add realm-level role mappings for a user
+     * POST /admin/realms/{realm}/users/{user_id}/role-mappings/realm
+     */
     public function addRealmRoleMappingsToUser($realm, $user_id, $role_representations) {
 
         // get access token for admin API
@@ -81,6 +85,40 @@ class RoleMapper {
         $info = curl_getinfo($r);
         if ($info['http_code'] != 200 && $info['http_code'] != 204) {
             throw new Exception("Failed to add realm role mapping to user");
+        }
+        return;
+    }
+
+    /*
+     * Delete realm-level role mappings for a user
+     * DELETE /admin/realms/{realm}/users/{user_id}/role-mappings/realm
+     */
+    public function deleteRealmRoleMappingsToUser($realm, $user_id, $role_representations) {
+
+        // get access token for admin API
+        $access_token = $this->getAPIAccessToken();
+        $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users/' . rawurlencode($user_id) . '/role-mappings/realm';
+        // Log::debug("deleteRealmRoleMappingsToUser", array($url, $role_representations));
+        $r = curl_init($url);
+        curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($r, CURLOPT_ENCODING, 1);
+        curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+
+        curl_setopt($r, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($r, CURLOPT_POST, true);
+        $data = json_encode($role_representations);
+        // Log::debug("deleteRealmRoleMappingsToUser data=$data");
+        curl_setopt($r, CURLOPT_HTTPHEADER, array(
+            "Authorization: Bearer " . $access_token,
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($data))
+        );
+        curl_setopt($r, CURLOPT_POSTFIELDS, $data);
+
+        $response = curl_exec($r);
+        $info = curl_getinfo($r);
+        if ($info['http_code'] != 200 && $info['http_code'] != 204) {
+            throw new Exception("Failed to delete realm role mapping to user");
         }
         return;
     }
