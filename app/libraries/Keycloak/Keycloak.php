@@ -240,7 +240,7 @@ class Keycloak {
     public function usernameExists($user_id){
         try{
             $users = $this->users->getUsers($this->realm, $user_id);
-            return $users != null && len($users) > 0;
+            return $users != null && count($users) > 0;
         }catch (Exception $ex){
             // Username does not exists
             return false;
