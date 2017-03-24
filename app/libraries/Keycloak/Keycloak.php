@@ -224,12 +224,18 @@ class Keycloak {
      * @param $username
      */
     public function getUserProfile($username){
-        $user = $this->users->getUser($this->realm, $username);
-        $result = [];
-        $result["email"] = $user->email;
-        $result["firstname"] = $user->firstName;
-        $result["lastname"] = $user->lastName;
-        return $result;
+        $users = $this->users->getUsers($this->realm, $username);
+        if(count($users) > 0){
+            $user = $users[0];
+            $result = [];
+            $result["email"] = $user->email;
+            $result["firstname"] = $user->firstName;
+            $result["lastname"] = $user->lastName;
+            return $result;
+        }else{
+            return [];
+        }
+
     }
 
     /**
