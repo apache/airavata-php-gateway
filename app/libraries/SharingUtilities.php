@@ -57,13 +57,14 @@ class SharingUtilities {
      *
      * @param $resourceId           Experiment or Project ID
      * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
-     * @return An array [$uid => [read => bool, write => bool]]
+     * @return An array [$uid => [read => bool, write => bool, owner => bool]]
      */
     public static function getAllUserPermissions($resourceId, $dataResourceType) {
         $users = array();
 
         $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
         $write = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::WRITE);
+        $owner = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::OWNER);
 
         foreach($read as $uid) {
             if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
@@ -74,6 +75,12 @@ class SharingUtilities {
         foreach($write as $uid) {
             if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
                 $users[$uid]['write'] = true;
+            }
+        }
+
+        foreach($owner as $uid) {
+            if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
+                $users[$uid]['owner'] = true;
             }
         }
 
@@ -138,7 +145,7 @@ class SharingUtilities {
      *
      * @param $resourceId           Experiment or Project ID
      * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
-     * @return An array [uid => [firstname => string, lastname => string, email => string, access => [read => bool, write => bool]]]
+     * @return An array [uid => [firstname => string, lastname => string, email => string, access => [read => bool, write => bool, owner => bool]]]
      *         with access only defined for users with permissions.
      */
     public static function getAllUserProfiles($resourceId=null, $dataResourceType=null) {
