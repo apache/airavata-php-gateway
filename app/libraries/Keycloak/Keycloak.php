@@ -232,6 +232,21 @@ class Keycloak {
         return $result;
     }
 
+    /**
+     * Function to check whether a user exists with the given userId
+     * @param $user_id
+     * @return bool
+     */
+    public function usernameExists($user_id){
+        try{
+            $user = $this->users->getUser($this->realm, $user_id);
+            return $user != null;
+        }catch (Exception $ex){
+            // Username does not exists
+            return false;
+        }
+    }
+
     private function getOpenIDConnectDiscoveryConfiguration() {
 
         // TODO: cache the result of the request

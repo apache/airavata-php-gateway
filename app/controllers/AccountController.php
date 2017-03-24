@@ -47,7 +47,7 @@ class AccountController extends BaseController
         $im = isset($_POST['im']) ? $_POST['im'] : null;
         $url = isset($_POST['url']) ? $_POST['url'] : null;
 
-        if (WSIS::usernameExists($username)) {
+        if (Keycloak::usernameExists($username)) {
             return Redirect::to("create")
                 ->withInput(Input::except('password', 'password_confirm'))
                 ->with("username_exists", true);

@@ -150,7 +150,7 @@ class AdminController extends BaseController {
 
 	public function addGatewayAdminSubmit(){
 		//check if username exists
-		if(WSIS::usernameExists( Input::get("username")) )
+		if(Keycloak::usernameExists( Input::get("username")) )
 		{
 			// FIXME: this requires the user id not the username
             Keycloak::updateUserRoles(Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );

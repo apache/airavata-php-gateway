@@ -66,13 +66,13 @@ class SharingUtilities {
         $write = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::WRITE);
 
         foreach($read as $uid) {
-            if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
+            if ($uid !== Session::get('username') && Keycloak::usernameExists($uid)) {
                 $users[$uid] = array('read' => true, 'write' => false);
             }
         }
 
         foreach($write as $uid) {
-            if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
+            if ($uid !== Session::get('username') && Keycloak::usernameExists($uid)) {
                 $users[$uid]['write'] = true;
             }
         }
@@ -88,7 +88,7 @@ class SharingUtilities {
      */
     public static function getUserProfiles($uids) {
         $uids = array_filter($uids, function($uid) {
-            return ($uid !== Session::get('username') && WSIS::usernameExists($uid));
+            return ($uid !== Session::get('username') && Keycloak::usernameExists($uid));
         });
         $profiles = array();
         foreach ($uids as $uid) {
