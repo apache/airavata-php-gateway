@@ -188,7 +188,7 @@ class Keycloak {
      * @return void
      */
     public function updateUserRoles( $user_id, $roles){
-        Log::debug("updateUserRoles", array($user_id, $roles));
+        // Log::debug("updateUserRoles", array($user_id, $roles));
         try {
             // Get all of the roles into an array keyed by role name
             $all_roles = $this->roles->getRoles($this->realm);
@@ -196,6 +196,16 @@ class Keycloak {
             foreach ($all_roles as $role) {
                 $roles_by_name[$role->name] = $role;
             }
+
+            // Process the role deletions
+            if(isset($roles["deleted"])){
+                if(!is_array($roles["deleted"]))
+                    $roles["deleted"] = array($roles["deleted"]);
+                foreach ($roles["deleted"] as $role) {
+                    $this->role_mapper->deleteRealmRoleMappingsToUser($this->realm, $user_id, array($roles_by_name[$role]));
+                }
+            }
+
             // Process the role additions
             if(isset($roles["new"])){
                 if(!is_array($roles["new"]))
@@ -207,6 +217,19 @@ class Keycloak {
         } catch (Exception $ex) {
             throw new Exception("Unable to update role of the user.", 0, $ex);
         }
+    }
+
+    /**
+     * Function to get the user profile of a user
+     * @param $user_id
+     */
+    public function getUserProfile($user_id){
+        $user = $this->users->getUser($this->realm, $user_id);
+        $result = [];
+        $result["email"] = $user->email;
+        $result["firstname"] = $user->firstName;
+        $result["lastname"] = $user->lastName;
+        return $result;
     }
 
     private function getOpenIDConnectDiscoveryConfiguration() {
