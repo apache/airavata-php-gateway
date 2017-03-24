@@ -221,10 +221,10 @@ class Keycloak {
 
     /**
      * Function to get the user profile of a user
-     * @param $user_id
+     * @param $username
      */
-    public function getUserProfile($user_id){
-        $user = $this->users->getUser($this->realm, $user_id);
+    public function getUserProfile($username){
+        $user = $this->users->getUser($this->realm, $username);
         $result = [];
         $result["email"] = $user->email;
         $result["firstname"] = $user->firstName;
@@ -239,8 +239,8 @@ class Keycloak {
      */
     public function usernameExists($user_id){
         try{
-            $user = $this->users->getUser($this->realm, $user_id);
-            return $user != null;
+            $users = $this->users->getUsers($this->realm, $user_id);
+            return $users != null && len($users) > 0;
         }catch (Exception $ex){
             // Username does not exists
             return false;
