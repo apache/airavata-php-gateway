@@ -233,7 +233,7 @@ class AdminController extends BaseController {
         $newCurrentRoles = Keycloak::getUserRoles($userId);
         if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $newCurrentRoles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $newCurrentRoles)
                 || in_array(Config::get("pga_config.wsis")["user-role-name"], $newCurrentRoles)){
-            $userProfile = Keycloak::getUserProfile($userId);
+            $userProfile = Keycloak::getUserProfile(Input::get("username"));
             $recipients = array($userProfile["email"]);
             $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $userId, $recipients);
 
@@ -327,7 +327,7 @@ class AdminController extends BaseController {
 		$mail->isHTML(true);
 
 		$mail->Subject = "Your user account (".$username.") privileges changed!";
-		$userProfile = Keycloak::getUserProfile($userId);
+		$userProfile = Keycloak::getUserProfile($username);
 		$wsisConfig = Config::get('pga_config.wsis');
 		if( $wsisConfig['tenant-domain'] == "")
 			$username = $username;
