@@ -68,10 +68,10 @@
                     </tr>
                     @foreach( (array)$users as $user)
                     <tr class="user-row">
-                        <td>{{ $user["username"] }}</td>
+                        <td>{{ $user }}</td>
                         <td>
                             <button class="button btn btn-default check-roles" type="button"
-                                    data-username="{{$user["username"]}}" data-userid="{{$user["id"]}}">Check All Roles
+                                    data-username="{{$user}}">Check All Roles
                             </button>
                             <div class="user-roles"></div>
                         </td>
@@ -113,7 +113,7 @@
                                 @endif
                             @endforeach
                         </select>
-                        <button type="button" class="btn btn-primary add-roles-submit" data-username="" data-userid="">Add Roles
+                        <button type="button" class="btn btn-primary add-roles-submit" data-username="">Add Roles
                         </button>
                     </div>
                 </div>
@@ -161,12 +161,12 @@
                 type: "POST",
                 url: $(".base-url").val() + "/admin/remove-role-from-user",
                 data: {
-                    userId: userId,
+                    username: userName,
                     roleName:$(this).attr("roleName")
                 }
             }).complete(function (data) {
                 //getting user's existing roles
-                repopulatePopup( userName, userId );
+                repopulatePopup( userName);
                 $(".success-message").html("<span class='alert alert-success col-md-12'>Role has been removed</span>");
             });
         }
@@ -174,8 +174,7 @@
 
     function update_users_existing_roles(that){
         userName = $(that).data("username");
-        userId = $(that).data("userid");
-        repopulatePopup( userName, userId );
+        repopulatePopup( userName);
     }
 
     $(".check-roles").click(function () {
@@ -192,8 +191,7 @@
         $(".success-message").html("");
         $(this).attr("disabled", "disabled");
         $(this).html("<img src='" + $(".base-url").val() + "/assets/ajax-loader.gif'/>");
-        userId = $(this).data("userid");
-        username = $(this).data("username");
+        userName = $(this).data("username");
         var rolesToAdd = $(".new-roles-select").val();
         if(rolesToAdd != null){
             $(".roles-list").find(".role-name").each(function () {
@@ -204,8 +202,7 @@
                 url: $(".base-url").val() + "/admin/add-roles-to-user",
                 data: {
                     add: true,
-                    userId: userId,
-                    username: username,
+                    username: userName,
                     roles: rolesToAdd
                 },
                 success : function(data)
@@ -224,21 +221,20 @@
         }
     });
 
-    function repopulatePopup( userName, userId ){
+    function repopulatePopup( username){
 
         $("#check-role-block").modal("show");
         $(".roles-of-user").html("User : " + userName);
         $(".roles-load").removeClass("hide");
         $(".roles-list").addClass("hide");
         $(".add-roles-submit").data("username", userName);
-        $(".add-roles-submit").data("userid", userId);
         $(document).find(".alert-success").remove();
 
         $.ajax({
             type: "POST",
             url: $(".base-url").val() + "/admin/check-roles",
             data: {
-                userId: userId
+                username: userName
             }
         }).complete(function (data) {
             roles = JSON.parse(data.responseText);

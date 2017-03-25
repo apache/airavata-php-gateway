@@ -152,7 +152,6 @@ class AdminController extends BaseController {
 		//check if username exists
 		if(Keycloak::usernameExists( Input::get("username")) )
 		{
-			// FIXME: this requires the user id not the username
             Keycloak::updateUserRoles(Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );
 			return Redirect::to("admin/dashboard/users?role=" . Config::get('wsis::admin-role-name'))->with("Gateway Admin has been added.");
 		}
@@ -212,7 +211,7 @@ class AdminController extends BaseController {
 	}
 
     public function addRolesToUser(){
-        $currentRoles = Keycloak::getUserRoles(Input::get("userId"));
+        $currentRoles = Keycloak::getUserRoles(Input::get("username"));
 		if(!is_array($currentRoles))
 			$currentRoles = array($currentRoles);
         $roles["new"] = array_diff(Input::all()["roles"], $currentRoles);
@@ -228,14 +227,14 @@ class AdminController extends BaseController {
             unset($roles["deleted"][$index]);
         }
 
-        $userId = Input::all()["userId"];
-        Keycloak::updateUserRoles($userId, $roles);
-        $newCurrentRoles = Keycloak::getUserRoles($userId);
+        $username = Input::all()["username"];
+        Keycloak::updateUserRoles($username, $roles);
+        $newCurrentRoles = Keycloak::getUserRoles($username);
         if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $newCurrentRoles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $newCurrentRoles)
                 || in_array(Config::get("pga_config.wsis")["user-role-name"], $newCurrentRoles)){
-            $userProfile = Keycloak::getUserProfile(Input::get("username"));
+            $userProfile = Keycloak::getUserProfile($username);
             $recipients = array($userProfile["email"]);
-            $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $userId, $recipients);
+            $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
 
             // remove the initial role when the initial role isn't a privileged
             // role and the admin has now assigned the user to a privileged
@@ -247,12 +246,12 @@ class AdminController extends BaseController {
                 if(in_array($initialRoleName, $newCurrentRoles) && !in_array($initialRoleName, $roles["new"])) {
                     $userRoles["new"] = array();
                     $userRoles["deleted"] = $initialRoleName;
-                    Keycloak::updateUserRoles( $userId, $userRoles);
+                    Keycloak::updateUserRoles( $username, $userRoles);
                 } else if(in_array($initialRoleName, $newCurrentRoles) && in_array($initialRoleName, $roles["new"])) {
                     // When initial role added remove all roles except for initial role and Internal/everyone
                     $userRoles["new"] = array();
                     $userRoles["deleted"] = array_diff($newCurrentRoles, array($initialRoleName, "Internal/everyone"));
-                    Keycloak::updateUserRoles( $userId, $userRoles);
+                    Keycloak::updateUserRoles( $username, $userRoles);
                 }
             }
         }
@@ -278,13 +277,13 @@ class AdminController extends BaseController {
     public function removeRoleFromUser(){
         $roles["deleted"] = array(Input::all()["roleName"]);
         $roles["new"] = array();
-        $userId = Input::all()["userId"];
-        Keycloak::updateUserRoles($userId, $roles);
+        $username = Input::all()["username"];
+        Keycloak::updateUserRoles($username, $roles);
         return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been deleted.");
     }
 
 	public function getRoles(){
-		return json_encode((array)Keycloak::getUserRoles(Input::get("userId")));
+		return json_encode((array)Keycloak::getUserRoles(Input::get("username")));
 	}
 
 	public function deleteRole(){
@@ -301,7 +300,7 @@ class AdminController extends BaseController {
 		return View::make("admin/manage-credentials", array("tokens" => $tokens , "pwdTokens" => $pwdTokens) );
 	}
 
-	private function sendAccessGrantedEmailToTheUser($username, $userId, $recipients){
+	private function sendAccessGrantedEmailToTheUser($username, $recipients){
 
 		$mail = new PHPMailer;
 

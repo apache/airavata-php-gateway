@@ -129,15 +129,15 @@ class Keycloak {
     /**
      * Function to list users
      *
-     * @return Array of username and user id
+     * @return Array of usernames
      */
     public function listUsers(){
         $users = $this->users->getUsers($this->realm);
-        $user_infos = [];
+        $usernames = [];
         foreach ($users as $user) {
-            $user_infos[] = array("username" => $user->username, "id" => $user->id);
+            $usernames[] = $user->username;
         }
-        return $user_infos;
+        return $usernames;
     }
 
     /**
@@ -165,10 +165,12 @@ class Keycloak {
      *
      * @return array of role names
      */
-    public function getUserRoles( $userid ){
+    public function getUserRoles( $username ){
         try {
+            // get userid from username
+            $user_id = $this->getUserId($username);
             // Get the user's realm roles, then convert to an array of just names
-            $roles = $this->role_mapper->getRealmRoleMappingsForUser($this->realm, $userid);
+            $roles = $this->role_mapper->getRealmRoleMappingsForUser($this->realm, $user_id);
             $role_names = [];
             foreach ($roles as $role) {
                 $role_names[] = $role->name;
@@ -182,14 +184,16 @@ class Keycloak {
     /**
      * Function to update role list of user
      *
-     * @param $user_id
+     * @param $username
      * @param $roles, an Array with two entries, "deleted" and "new", each of
      * which has a value of roles to be removed or added respectively
      * @return void
      */
-    public function updateUserRoles( $user_id, $roles){
+    public function updateUserRoles( $username, $roles){
         // Log::debug("updateUserRoles", array($user_id, $roles));
         try {
+            // get userid from username
+            $user_id = $this->getUserId($username);
             // Get all of the roles into an array keyed by role name
             $all_roles = $this->roles->getRoles($this->realm);
             $roles_by_name = [];
@@ -240,16 +244,30 @@ class Keycloak {
 
     /**
      * Function to check whether a user exists with the given userId
-     * @param $user_id
+     * @param $username
      * @return bool
      */
-    public function usernameExists($user_id){
+    public function usernameExists($username){
         try{
-            $users = $this->users->getUsers($this->realm, $user_id);
+            $users = $this->users->getUsers($this->realm, $username);
             return $users != null && count($users) > 0;
         }catch (Exception $ex){
             // Username does not exists
             return false;
+        }
+    }
+
+    /**
+     * Get the user's Keycloak user_id from their username
+     */
+    private function getUserId($username) {
+        $users = $this->users->getUsers($this->realm, $username);
+        if (count($users) > 1) {
+            throw new Exception("More than one user has username $username");
+        } else if (count($users) == 0) {
+            throw new Exception("No user found with username $username");
+        } else {
+            return $users[0]->id;
         }
     }
 
