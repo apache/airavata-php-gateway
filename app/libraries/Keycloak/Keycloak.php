@@ -127,6 +127,47 @@ class Keycloak {
     }
 
     /**
+     * Method to get refreshed access token
+     * @param $refreshToken
+     * @return mixed
+     */
+    public function getRefreshedOAuthToken($refresh_token){
+
+        $config = $this->getOpenIDConnectDiscoveryConfiguration();
+        $token_endpoint = $config->token_endpoint;
+
+        // Init cUrl.
+        $r = curl_init($token_endpoint);
+        curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
+        // Decode compressed responses.
+        curl_setopt($r, CURLOPT_ENCODING, 1);
+        curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+
+        // Add client ID and client secret to the headers.
+        curl_setopt($r, CURLOPT_HTTPHEADER, array(
+            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
+        ));
+
+        // Assemble POST parameters for the request.
+        $post_fields = "refresh_token=" . urlencode($refresh_token) . "&grant_type=refresh_token";
+
+        // Obtain and return the access token from the response.
+        curl_setopt($r, CURLOPT_POST, true);
+        curl_setopt($r, CURLOPT_POSTFIELDS, $post_fields);
+
+        $response = curl_exec($r);
+        if ($response == false) {
+            die("curl_exec() failed. Error: " . curl_error($r));
+        }
+
+        //Parse JSON return object.
+        $result = json_decode($response);
+        Log::debug("getRefreshedOAuthToken response", array($result));
+
+        return $result;
+    }
+
+    /**
      * Function to list users
      *
      * @return Array of usernames

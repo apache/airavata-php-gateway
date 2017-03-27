@@ -20,23 +20,22 @@ App::before(function ($request) {
     if(Session::has('authz-token')){
         $currentTime = time();
         if($currentTime > Session::get('oauth-expiration-time')){
-            // TODO: implement for Keycloak
-            // $response = WSIS::getRefreshedOAutheToken(Session::get('oauth-refresh-code'));
-            // if(isset($response->access_token)){
-            //     $accessToken = $response->access_token;
-            //     $refreshToken = $response->refresh_token;
-            //     $expirationTime = time() + $response->expires_in - 300;
-            //     $authzToken = Session::get('authz-token');
-            //     $authzToken->accessToken = $accessToken;
-            //     $authzToken->claimsMap['gatewayID'] = Config::get('pga_config.airavata')['gateway-id'];
-            //     $authzToken->claimsMap['userName'] = Session::get('username');
-            //     Session::put('authz-token',$authzToken);
-            //     Session::put('oauth-refresh-code',$refreshToken);
-            //     Session::put('oauth-expiration-time',$expirationTime);
-            // }else{
-            //     Session::flush();
-            //     return Redirect::to('home');
-            // }
+            $response = Keycloak::getRefreshedOAuthToken(Session::get('oauth-refresh-code'));
+            if(isset($response->access_token)){
+                $accessToken = $response->access_token;
+                $refreshToken = $response->refresh_token;
+                $expirationTime = time() + $response->expires_in - 300; // 5 minutes safe margin
+                $authzToken = Session::get('authz-token');
+                $authzToken->accessToken = $accessToken;
+                $authzToken->claimsMap['gatewayID'] = Config::get('pga_config.airavata')['gateway-id'];
+                $authzToken->claimsMap['userName'] = Session::get('username');
+                Session::put('authz-token',$authzToken);
+                Session::put('oauth-refresh-code',$refreshToken);
+                Session::put('oauth-expiration-time',$expirationTime);
+            }else{
+                Session::flush();
+                return Redirect::to('home');
+            }
         }
     }
 });

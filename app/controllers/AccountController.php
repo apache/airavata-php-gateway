@@ -185,7 +185,7 @@ class AccountController extends BaseController
 
         $accessToken = $response->access_token;
         $refreshToken = $response->refresh_token;
-        $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
+        $expirationTime = time() + $response->expires_in - 300; //5 minutes safe margin
 
         $userProfile = Keycloak::getUserProfileFromOAuthToken($accessToken);
         Log::debug("userProfile", array($userProfile));
