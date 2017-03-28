@@ -168,6 +168,15 @@ class Keycloak {
     }
 
     /**
+     * Function to get the OAuth logout url
+     */
+    public function getOAuthLogoutUrl($redirect_uri) {
+        $config = $this->getOpenIDConnectDiscoveryConfiguration();
+        $logout_endpoint = $config->end_session_endpoint;
+        return $logout_endpoint . '?redirect_uri=' . rawurlencode($redirect_uri);
+    }
+
+    /**
      * Function to list users
      *
      * @return Array of usernames

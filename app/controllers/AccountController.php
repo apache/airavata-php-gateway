@@ -465,14 +465,11 @@ class AccountController extends BaseController
 
     public function logout()
     {
-//        Session::flush();
-//        if(Config::get('pga_config.wsis')['auth-mode'] == "oauth"){
-//            return Redirect::away(WSIS::getOAuthLogoutUrl());
-//        }
-//        return Redirect::to('home');
-
-        Session::flush();
-        return Redirect::to('home');
+       Session::flush();
+       if(Config::get('pga_config.wsis')['oauth-grant-type'] == "authorization_code"){
+           return Redirect::away(Keycloak::getOAuthLogoutUrl(URL::to("/")));
+       }
+       return Redirect::to('home');
     }
 
     public function allocationRequestView(){
