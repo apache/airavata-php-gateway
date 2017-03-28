@@ -191,6 +191,22 @@ class Keycloak {
     }
 
     /**
+     * Function to search users
+     * NOTE: Keycloak uses the keyword to search in the username, first and last
+     * name and email address
+     * @param $keyword
+     * @return Array of usernames
+     */
+    public function searchUsers($phrase){
+        $users = $this->users->searchUsers($this->realm, $phrase);
+        $usernames = [];
+        foreach ($users as $user) {
+            $usernames[] = $user->username;
+        }
+        return $usernames;
+    }
+
+    /**
      * Function to get the list of all existing roles
      * For Keycloak this is a list of "Realm roles"
      *

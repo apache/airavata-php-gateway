@@ -85,7 +85,7 @@ class AdminController extends BaseController {
     public function searchUsersView(){
         if(Input::has("search_val"))
         {
-            $users =  WSIS::searchUsers(Input::get("search_val"));
+            $users =  Keycloak::searchUsers(Input::get("search_val"));
         }
         else
             $users = Keycloak::listUsers();
