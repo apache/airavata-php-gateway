@@ -87,7 +87,7 @@ if( Session::get("theme") == "base"){?>
             <h3>Contact Us</h3>
             <div class="col-md-6">
                 <span class="glyphicon glyphicon-envelope" style="font-size:6em;"></span><br/>
-            You can contact SEAGrid by sending a mail to <a href="mailto:psd@scigap.atlassian.net">Scigap E-mail</a>
+            You can contact Gateway Admin by sending a mail to <a href="mailto:psd@scigap.atlassian.net">Contact E-mail</a>
             </div>
             <div class="col-md-6">
                 <span class="glyphicon glyphicon-edit" style="font-size:6em;"></span><br/>
