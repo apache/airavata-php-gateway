@@ -921,14 +921,19 @@ class ExperimentUtilities
                                 break;
                             }
                         }
-                        $fileName = basename($currentOutputPath);
-                    }else{
+                        $path = parse_url($currentOutputPath);
+                        if(file_exists($path)){
+                            $fileName = basename($currentOutputPath);
+                            echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
+                                . '/download/?id=' . urlencode($output->value) . '">' . $fileName
+                                . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        }
+                    }else {
                         $fileName = basename($output->value);
+                        echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
+                            . '/download/?id=' . urlencode($output->value) . '">' . $fileName
+                            . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                     }
-                    echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
-                        . '/download/?id=' . urlencode($output->value) . '">' . $fileName
-                        . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
-
                 }
             } elseif ($output->type == DataType::STRING) {
                 echo '<p>' . $output->value . '</p>';
