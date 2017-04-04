@@ -921,7 +921,7 @@ class ExperimentUtilities
                                 break;
                             }
                         }
-                        $path = parse_url($currentOutputPath);
+                        $path = parse_url($currentOutputPath)['path'];
                         if(file_exists($path)){
                             $fileName = basename($currentOutputPath);
                             echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
