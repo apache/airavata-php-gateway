@@ -691,6 +691,9 @@ class ExperimentUtilities
                 $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
                 $experiment->userConfigurationData->useUserCRPref = $userHasComputeResourcePreference;
             }
+            // In case the gateway-data-store-resource-id has changed since the
+            // original experiment was created, update in this experiment
+            $experiment->userConfigurationData->storageId = Config::get('pga_config.airavata')['gateway-data-store-resource-id'];
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
             $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
