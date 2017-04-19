@@ -35,6 +35,7 @@ class KeycloakServiceProvider extends ServiceProvider {
             $identityServerConfig = Config::get('pga_config.wsis');
             return new Keycloak(
                 $identityServerConfig['tenant-domain'],
+                // TODO: we can derive this from tenant-domain and service-url
                 $identityServerConfig['openid-connect-discovery-url'],
                 $identityServerConfig['oauth-client-key'],
                 $identityServerConfig['oauth-client-secret'],
