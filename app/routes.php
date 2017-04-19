@@ -91,6 +91,8 @@ Route::get("project/shared-users", "ProjectController@sharedUsers");
 
 Route::get("project/unshared-users", "ProjectController@unsharedUsers");
 
+Route::get("project/all-users", "ProjectController@allUsers");
+
 /*
  * Experiment Routes
 */
