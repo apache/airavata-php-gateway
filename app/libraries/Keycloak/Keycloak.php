@@ -43,6 +43,51 @@ class Keycloak {
         $this->users = new Users($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
     }
 
+    /**
+     * Function to authenticate user
+     *
+     * @param string $username
+     * @param string $password
+     * @return boolean
+     * @throws Exception
+     */
+     public function authenticate($username, $password){
+
+        $config = $this->getOpenIDConnectDiscoveryConfiguration();
+        $token_endpoint = $config->token_endpoint;
+
+        // Init cUrl.
+        $r = curl_init($token_endpoint);
+        curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
+        // Decode compressed responses.
+        curl_setopt($r, CURLOPT_ENCODING, 1);
+        curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+
+        // Add client ID and client secret to the headers.
+        curl_setopt($r, CURLOPT_HTTPHEADER, array(
+            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
+        ));
+
+        // Assemble POST parameters for the request.
+        $post_fields = "client_id=" . urlencode($this->client_id) . "&client_secret=" . urlencode($this->client_secret) . "&grant_type=password";
+        $post_fields .= "&username=" . urlencode($username) . "&password=" . urlencode($password);
+
+        // Obtain and return the access token from the response.
+        curl_setopt($r, CURLOPT_POST, true);
+        curl_setopt($r, CURLOPT_POSTFIELDS, $post_fields);
+
+        $response = curl_exec($r);
+        if ($response == false) {
+            die("curl_exec() failed. Error: " . curl_error($r));
+        }
+
+        //Parse JSON return object.
+        $result = json_decode($response);
+        // Log::debug("password grant type authenciation response", array($result));
+
+        return $result;
+     }
+
     public function getOAuthRequestCodeUrl(){
         $config = $this->getOpenIDConnectDiscoveryConfiguration();
         $authorization_endpoint = $config->authorization_endpoint;

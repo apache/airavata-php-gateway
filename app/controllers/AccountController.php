@@ -99,31 +99,21 @@ class AccountController extends BaseController
     {
         if (CommonUtilities::form_submitted()) {
             $wsisConfig = Config::get('pga_config.wsis');
-            if( $wsisConfig['tenant-domain'] == "")
-                $username = Input::get("username");
-            else
-                $username = Input::get("username") . "@" . $wsisConfig['tenant-domain'];
+            $username = Input::get("username");
 
             $password = $_POST['password'];
-            $response = WSIS::authenticate($username, $password);
+            $response = Keycloak::authenticate($username, $password);
             if(!isset($response->access_token)){
                 return Redirect::to("login")->with("invalid-credentials", true);
             }
 
             $accessToken = $response->access_token;
             $refreshToken = $response->refresh_token;
-            $expirationTime = time() + $response->expires_in - 5; //5 seconds safe margin
+            $expirationTime = time() + $response->expires_in - 300; // 5 minutes safe margin
 
             $userProfile = Keycloak::getUserProfileFromOAuthToken($accessToken);
             $username = $userProfile['username'];
             $userRoles = $userProfile['roles'];
-
-            //FIXME There is a bug in WSO2 IS which doest not return the admin role for the default admin user.
-            //FIXME Hence as a workaround we manually add it here.
-            if ($username == Config::get('pga_config.wsis')['admin-username']
-                || $username == Config::get('pga_config.wsis')['admin-username'] . '@' . Config::get('pga_config.wsis')['tenant-domain']){
-                $userRoles[] = Config::get('pga_config.wsis')['admin-role-name'];
-            }
 
             $authzToken = new Airavata\Model\Security\AuthzToken();
             $authzToken->accessToken = $accessToken;
