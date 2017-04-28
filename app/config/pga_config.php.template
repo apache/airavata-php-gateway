@@ -215,6 +215,11 @@ return array(
         'portal-smtp-server-port' => '587',
 
         /**
+         * Email verification code valid time interval in minutes
+         */
+         'email-verify-code-valid-time' => 360,
+
+        /**
          * Set this to true if theme has set links to login
          */
         'theme-based-login-links-configured' => false,
