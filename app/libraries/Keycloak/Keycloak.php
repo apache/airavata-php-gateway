@@ -18,6 +18,7 @@ class Keycloak {
     private $client_id;
     private $client_secret;
     private $callback_url;
+    private $cafile_path;
     private $verify_peer;
 
     // API clients
@@ -29,13 +30,14 @@ class Keycloak {
      * Constructor
      *
      */
-    public function __construct($realm, $openid_connect_discovery_url, $client_id, $client_secret, $callback_url, $verify_peer, $base_endpoint_url, $admin_username, $admin_password) {
+    public function __construct($realm, $openid_connect_discovery_url, $client_id, $client_secret, $callback_url, $cafile_path, $verify_peer, $base_endpoint_url, $admin_username, $admin_password) {
 
         $this->realm = $realm;
         $this->openid_connect_discovery_url = $openid_connect_discovery_url;
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
         $this->callback_url = $callback_url;
+        $this->cafile_path = $cafile_path;
         $this->verify_peer = $verify_peer;
 
         $this->role_mapper = new RoleMapper($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
@@ -62,6 +64,7 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
 
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
@@ -110,6 +113,7 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
 
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
@@ -145,6 +149,7 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
             "Authorization: Bearer " . $token
         ));
@@ -187,6 +192,7 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
 
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
@@ -390,6 +396,7 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
 
         $result = curl_exec($r);
         if ($result == false) {
