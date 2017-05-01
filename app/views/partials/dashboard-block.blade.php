@@ -11,10 +11,6 @@
         @if( Session::has("admin-nav") && Session::get("admin-nav") == "manage-users") class="active" @endif>
             <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/users"><span class="glyphicon glyphicon-user"></span>&nbsp; Users</a>
         </li>
-        <li
-         @if( Session::has("admin-nav") && Session::get("admin-nav") == "manage-roles") class="active" @endif>
-            <a class="dashboard-link" href="{{ URL::to('/')}}/admin/dashboard/roles"><span class="glyphicon glyphicon-eye-open"></span>&nbsp; Roles</a>
-        </li>
         <li>
             <a><span class="glyphicon glyphicon-briefcase"></span>&nbsp; Compute Resources</a>
             <ul>

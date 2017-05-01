@@ -26,8 +26,7 @@ class ProjectController extends BaseController
     public function createView()
     {
         if (Config::get('pga_config.airavata')["data-sharing-enabled"]){
-            $users = SharingUtilities::getAllUserProfiles();
-            return View::make("project/create", array("users" => json_encode($users), "owner" => json_encode(array())));
+            return View::make("project/create", array("users" => json_encode(array()), "owner" => json_encode(array())));
         }else{
             return View::make("project/no-sharing-create");
         }
@@ -241,6 +240,11 @@ class ProjectController extends BaseController
         else {
             return Response::json(array("error" => "Error: No project specified"));
         }
+    }
+
+    public function allUsers()
+    {
+        return Response::json(SharingUtilities::getAllUserProfiles());
     }
 }
 

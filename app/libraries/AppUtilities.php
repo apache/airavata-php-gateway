@@ -74,7 +74,8 @@ class AppUtilities
                     "inputOrder" => intval($appInterfaceValues["inputOrder"][$index]),
                     "dataStaged" => intval($appInterfaceValues["dataStaged"][$index]),
                     "isRequired" => $appInterfaceValues["isRequiredInput"][$index],
-                    "requiredToAddedToCommandLine" => $appInterfaceValues["requiredToAddedToCommandLineInput"][$index]
+                    "requiredToAddedToCommandLine" => $appInterfaceValues["requiredToAddedToCommandLineInput"][$index],
+                    "isReadOnly" => $appInterfaceValues["isReadOnly"][$index]
                 ));
                 $appInterface->applicationInputs[] = $inputDataObjectType;
             }

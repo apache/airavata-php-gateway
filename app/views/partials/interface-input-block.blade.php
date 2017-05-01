@@ -26,9 +26,11 @@
         <div class="col-md-9">
             <select class="form-control" name="inputType[]" readonly>
                 @foreach( $dataTypes as $index => $dataType)
-                <option value="{{ $index }}"
-                @if( isset( $appInputs) ) @if( $index == $appInputs->type) selected @endif @endif>{{ $dataType
-                }}</option>
+                    @if( $dataType != 'URI_COLLECTION' && $dataType != 'STDOUT' && $dataType != 'STDERR')
+                        <option value="{{ $index }}"
+                        @if( isset( $appInputs) ) @if( $index == $appInputs->type) selected @endif @endif>{{ $dataType
+                        }}</option>
+                    @endif
                 @endforeach
             </select>
         </div>
@@ -53,6 +55,18 @@
             </select>
         </div>
     </div>
+        <div class="form-group">
+            <label class="control-label col-md-3">Is Read Only</label>
+
+            <div class="col-md-9">
+                <select class="form-control" name="isReadOnly[]" readonly>
+                    <option value="0"
+                            @if( isset( $appInputs) ) @if( 0 == $appInputs->isReadOnly) selected @endif @endif>False</option>
+                    <option value="1"
+                            @if( isset( $appInputs) ) @if( 1 == $appInputs->isReadOnly) selected @endif @endif>True</option>
+                </select>
+            </div>
+        </div>
     <div class="form-group">
         <label class="control-label col-md-3">User Friendly Description</label>
 

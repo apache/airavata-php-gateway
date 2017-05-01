@@ -712,6 +712,9 @@ class ExperimentUtilities
                 $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
                 $experiment->userConfigurationData->useUserCRPref = $userHasComputeResourcePreference;
             }
+            // In case the gateway-data-store-resource-id has changed since the
+            // original experiment was created, update in this experiment
+            $experiment->userConfigurationData->storageId = Config::get('pga_config.airavata')['gateway-data-store-resource-id'];
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
             $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
@@ -805,11 +808,15 @@ class ExperimentUtilities
 	
         //var_dump( $inputs); exit;
         foreach ($inputs as $input) {
+            $disabled = "";
+            if($input->isReadOnly)
+                $disabled = "disabled";
+
             switch ($input->type) {
                 case DataType::STRING:
                     echo '<div class="form-group">
                     <label for="experiment-input">' . $input->name . '</label>
-                    <input value="' . $input->value . '" type="text" class="form-control" name="' . $input->sanitizedFormName .
+                    <input '.$disabled . ' value="' . $input->value . '" type="text" class="form-control" name="' . $input->sanitizedFormName .
                         '" id="' . $input->sanitizedFormName .
                         '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
                     </div>';
@@ -817,7 +824,7 @@ class ExperimentUtilities
                 case DataType::INTEGER:
                     echo '<div class="form-group">
                     <label for="experiment-input">' . $input->name . '</label>
-                    <input value="' . $input->value . '" type="number" class="form-control" name="' . $input->sanitizedFormName .
+                    <input '.$disabled . ' value="' . $input->value . '" type="number" class="form-control" name="' . $input->sanitizedFormName .
                         '" id="' . $input->sanitizedFormName .
                         '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
                     </div>';
@@ -825,7 +832,7 @@ class ExperimentUtilities
                 case DataType::FLOAT:
                     echo '<div class="form-group">
                     <label for="experiment-input">' . $input->name . '</label>
-                    <input value="' . $input->value . '" type="number" step="0.01" class="form-control" name="' . $input->sanitizedFormName .
+                    <input '.$disabled . ' value="' . $input->value . '" type="number" step="0.01" class="form-control" name="' . $input->sanitizedFormName .
                         '" id="' . $input->sanitizedFormName .
                         '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
                     </div>';
@@ -947,14 +954,19 @@ class ExperimentUtilities
                                 break;
                             }
                         }
-                        $fileName = basename($currentOutputPath);
-                    }else{
+                        $path = parse_url($currentOutputPath)['path'];
+                        if(file_exists($path)){
+                            $fileName = basename($currentOutputPath);
+                            echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
+                                . '/download/?id=' . urlencode($output->value) . '">' . $fileName
+                                . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        }
+                    }else {
                         $fileName = basename($output->value);
+                        echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
+                            . '/download/?id=' . urlencode($output->value) . '">' . $fileName
+                            . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                     }
-                    echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
-                        . '/download/?id=' . urlencode($output->value) . '">' . $fileName
-                        . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
-
                 }
             } elseif ($output->type == DataType::STRING) {
                 echo '<p>' . $output->value . '</p>';
