@@ -107,6 +107,11 @@ return array(
         'airavata-port' => '8930',
 
         /**
+         * Airavata Profile Service port
+         */
+        'airavata-profile-service-port' => '8962',
+
+        /**
          * Airavata API server thrift communication timeout
          */
         'airavata-timeout' => '1000000',
