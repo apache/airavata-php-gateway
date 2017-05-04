@@ -66,48 +66,6 @@
                         placeholder="Last Name" required="required" title="" type="text"
                         value="{{Input::old('last_name') }}"/></div>
         </div>
-        <div class="form-group"><label class="control-label">Organization</label>
-
-            <div><input class="form-control" id="organization" name="organization"
-                        placeholder="Organization" title="" type="text" value="{{Input::old('organization') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">Address</label>
-
-            <div><input class="form-control" id="address" name="address"
-                        placeholder="Address" title="" type="text" value="{{Input::old('address') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">Country</label>
-
-            <div><input class="form-control" id="country" name="country"
-                        placeholder="Country" title="" type="text" value="{{Input::old('country') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">Telephone</label>
-
-            <div><input class="form-control" id="telephone" name="telephone"
-                        placeholder="Telephone" title="" type="tel" value="{{Input::old('telephone') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">Mobile</label>
-
-            <div><input class="form-control" id="mobile" name="mobile"
-                        placeholder="Mobile" title="" type="tel" value="{{Input::old('mobile') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">IM</label>
-
-            <div><input class="form-control" id="im" name="im"
-                        placeholder="IM" title="" type="text" value="{{Input::old('im') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">URL</label>
-
-            <div><input class="form-control" id="url" name="url"
-                        placeholder="URL" title="" type="text" value="{{Input::old('url') }}"/>
-            </div>
-        </div>
         <br/>
         <input name="Submit" type="submit" class="btn btn-primary btn-block" value="Create">
     </form>

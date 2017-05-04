@@ -249,7 +249,7 @@ class CommonUtilities
             $navbar .= '</ul></li>';
         } else {
 
-                    // $navbar .= '<li><a href="' . URL::to('/') . '/create"><span class="glyphicon glyphicon-user"></span> Create account</a></li>';
+                    $navbar .= '<li><a href="' . URL::to('/') . '/create"><span class="glyphicon glyphicon-user"></span> Create account</a></li>';
                     $navbar .= '<li><a href="' . URL::to('/') . '/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>';
         }
 

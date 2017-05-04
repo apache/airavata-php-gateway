@@ -5,6 +5,7 @@ namespace Keycloak;
 use Keycloak\API\RoleMapper;
 use Keycloak\API\Roles;
 use Keycloak\API\Users;
+use Keycloak\KeycloakUtil;
 
 use Exception;
 use Log;
@@ -20,6 +21,9 @@ class Keycloak {
     private $callback_url;
     private $cafile_path;
     private $verify_peer;
+    private $base_endpoint_url;
+    private $admin_username;
+    private $admin_password;
 
     // API clients
     private $role_mapper;
@@ -39,6 +43,9 @@ class Keycloak {
         $this->callback_url = $callback_url;
         $this->cafile_path = $cafile_path;
         $this->verify_peer = $verify_peer;
+        $this->base_endpoint_url = $base_endpoint_url;
+        $this->admin_username = $admin_username;
+        $this->admin_password = $admin_password;
 
         $this->role_mapper = new RoleMapper($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
         $this->roles = new Roles($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
@@ -372,6 +379,16 @@ class Keycloak {
             // Username does not exists
             return false;
         }
+    }
+
+    public function getAdminAuthzToken() {
+
+        $access_token = KeycloakUtil::getAPIAccessToken($this->base_endpoint_url, $this->realm, $this->admin_username, $this->admin_password, $this->verify_peer);
+        $authzToken = new \Airavata\Model\Security\AuthzToken();
+        $authzToken->accessToken = $access_token;
+        $authzToken->claimsMap['gatewayID'] = $this->realm;
+        $authzToken->claimsMap['userName'] = $this->admin_username;
+        return $authzToken;
     }
 
     /**

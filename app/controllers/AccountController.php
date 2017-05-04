@@ -39,43 +39,51 @@ class AccountController extends BaseController
         $password = $_POST['password'];
         $email = $_POST['email'];
 
-        $organization = isset($_POST['organization']) ? $_POST['organization'] : null;
-        $address = isset($_POST['address']) ? $_POST['address'] : null;
-        $country = isset($_POST['country']) ? $_POST['country'] : null;
-        $telephone = isset($_POST['telephone']) ? $_POST['telephone'] : null;
-        $mobile = isset($_POST['mobile']) ? $_POST['mobile'] : null;
-        $im = isset($_POST['im']) ? $_POST['im'] : null;
-        $url = isset($_POST['url']) ? $_POST['url'] : null;
-
         if (Keycloak::usernameExists($username)) {
             return Redirect::to("create")
                 ->withInput(Input::except('password', 'password_confirm'))
                 ->with("username_exists", true);
         } else {
 
-            WSIS::registerUserAccount($username, $password, $email, $first_name, $last_name, $organization, $address, $country, $telephone, $mobile, $im, $url,
-                Config::get('pga_config.wsis')['tenant-domain']);
+            $admin_authz_token = Keycloak::getAdminAuthzToken();
+
+            $gatewayId = Config::get('pga_config.airavata')['gateway-id'];
+            $user_details = new Airavata\Model\User\UserProfile();
+            $user_details->userId = $username;
+            $user_details->emails = array($email);
+            $user_details->firstName = $first_name;
+            $user_details->lastName = $last_name;
+            $user_details->gatewayId = $gatewayId;
+            $user_details->creationTime = 0;
+            $user_details->lastAccessTime = 0;
+            $user_details->validUntil = 0;
+            $user_details->State = Airavata\Model\User\Status::PENDING;
+
+            // TODO: do we need to pass this if we are passing an access token?
+            // Couldn't the backend just use the access token?
+            $realm_admin_credentials = new Airavata\Model\Credential\Store\PasswordCredential();
+            $realm_admin_credentials->gatewayId = $gatewayId;
+            $realm_admin_credentials->portalUserName = Config::get('pga_config.wsis')['admin-username'];
+            $realm_admin_credentials->loginUserName = Config::get('pga_config.wsis')['admin-username'];
+            $realm_admin_credentials->password = Config::get('pga_config.wsis')['admin-password'];
+
+            IamAdminServices::registerUser($admin_authz_token, $user_details, $realm_admin_credentials, $password);
 
             /*add user to the initial role */
 
-            $initialRoleName = CommonUtilities::getInitialRoleName();
-            $allRoles = Keycloak::getAllRoles();
-            if(! in_array( $initialRoleName, $allRoles)){
-                WSIS::addRole( $initialRoleName);
-            }
-
-            $userRoles["new"] = $initialRoleName;
-
-            if(  Config::get('pga_config.portal')['super-admin-portal'] == true ){
-
-                if(! in_array( "gateway-provider", $allRoles)){
-                    WSIS::addRole( "gateway-provider");
-                }
-                $userRoles["new"] = array("gateway-provider", "admin");
-            }
-            $userRoles["deleted"] = array();
-            // FIXME: this requires the $user_id, not the $username
-            Keycloak::updateUserRoles( $username, $userRoles);
+            // TODO: add user to initial role, etc.
+            // $initialRoleName = CommonUtilities::getInitialRoleName();
+            // $allRoles = Keycloak::getAllRoles();
+            // 
+            // $userRoles["new"] = $initialRoleName;
+            // 
+            // if(  Config::get('pga_config.portal')['super-admin-portal'] == true ){
+            // 
+            //     $userRoles["new"] = array("gateway-provider", "admin");
+            // }
+            // $userRoles["deleted"] = array();
+            // // FIXME: this requires the $user_id, not the $username
+            // Keycloak::updateUserRoles( $username, $userRoles);
 
             CommonUtilities::print_success_message('Account confirmation request was sent to your email account');
             return View::make('home');
