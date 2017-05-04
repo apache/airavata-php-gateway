@@ -65,7 +65,7 @@ class IamAdminServiceProvider extends ServiceProvider {
         $this->app->booting(function()
         {
             $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-            $loader->alias('Airavata', 'Airavata\Facades\IamAdminServices');
+            $loader->alias('IamAdminServices', 'Airavata\Facades\IamAdminServices');
         });
 	}
 
