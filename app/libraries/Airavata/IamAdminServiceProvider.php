@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Config;
 use Airavata\API\AiravataClient;
 use Thrift\Transport\TSocket;
 use Thrift\Protocol\TBinaryProtocol;
+use Thrift\Protocol\TMultiplexedProtocol;
 use Illuminate\Routing\Redirector;
 
 class IamAdminServiceProvider extends ServiceProvider {
@@ -47,6 +48,7 @@ class IamAdminServiceProvider extends ServiceProvider {
                 $transport->setSendTimeout( Config::get('pga_config.airavata')['airavata-timeout']);
 
                 $protocol = new TBinaryProtocol($transport);
+                $protocol = new TMultiplexedProtocol($protocol, "IamAdminServices");
                 $transport->open();
 
                 $client = new IamAdminServicesClient($protocol);
