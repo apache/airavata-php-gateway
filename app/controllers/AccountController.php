@@ -112,7 +112,11 @@ class AccountController extends BaseController
             $password = $_POST['password'];
             $response = Keycloak::authenticate($username, $password);
             if(!isset($response->access_token)){
-                return Redirect::to("login")->with("invalid-credentials", true);
+                if (Keycloak::isUpdatePasswordRequired($username)) {
+                    return Redirect::to("login")->with("update-password-required", true);
+                } else {
+                    return Redirect::to("login")->with("invalid-credentials", true);
+                }
             }
 
             $accessToken = $response->access_token;

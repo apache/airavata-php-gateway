@@ -381,6 +381,22 @@ class Keycloak {
         }
     }
 
+    // TODO: move this to IamAdminServices
+    public function isUpdatePasswordRequired($username) {
+
+        try{
+            $users = $this->users->getUsers($this->realm, $username);
+            if ($users != null && count($users) == 1) {
+                return in_array("UPDATE_PASSWORD", $users[0]->requiredActions);
+            } else {
+                return false;
+            }
+        }catch (Exception $ex){
+            // Username does not exists
+            return false;
+        }
+    }
+
     public function getAdminAuthzToken() {
 
         $access_token = KeycloakUtil::getAPIAccessToken($this->base_endpoint_url, $this->realm, $this->admin_username, $this->admin_password, $this->verify_peer);

@@ -20,9 +20,11 @@
         @if( Session::has("invalid-credentials") )
         {{ CommonUtilities::print_error_message('Invalid username or password. Please try again.') }}
         @endif
-        <?php
-        Session::forget("invalid-credentials");
-        ?>
+        @if( Session::has("update-password-required") )
+        <div class="alert alert-danger">
+            Your password has expired. Please <a href="{{URL::to('/') }}/forgot-password">reset your password</a>.
+        </div>
+        @endif
 
         <div class="form-group">
             <label class="sr-only" for="username">Username</label>
