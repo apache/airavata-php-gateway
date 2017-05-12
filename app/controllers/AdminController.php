@@ -460,7 +460,7 @@ class AdminController extends BaseController {
 		$inputs = Input::all();
 		
 		$rules = array(
-            "username" => "required|min:6",
+            "username" => "required",
             "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
