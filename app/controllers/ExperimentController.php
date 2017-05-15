@@ -37,10 +37,15 @@ class ExperimentController extends BaseController
             Session::put('exp_create_continue', true);
 
             $computeResources = CRUtilities::create_compute_resources_select($_POST['application'], null);
+
+            $nodeCount = Config::get('pga_config.airavata')["node-count"];
+            $cpuCount = Config::get('pga_config.airavata')["total-cpu-count"];
+            $wallTimeLimit = Config::get('pga_config.airavata')["wall-time-limit"];
+
             $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
-                "nodeCount" => Config::get('pga_config.airavata')["node-count"],
-                "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
-                "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
+                "nodeCount" => $nodeCount,
+                "cpuCount" => $cpuCount,
+                "wallTimeLimit" => $wallTimeLimit
             );
 
 
