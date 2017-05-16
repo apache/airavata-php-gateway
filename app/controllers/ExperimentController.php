@@ -293,6 +293,7 @@ class ExperimentController extends BaseController
 
         $computeResourceId = $experiment->userConfigurationData->computationalResourceScheduling->resourceHostId;
         $crResource = CRUtilities::get_compute_resource($computeResourceId);
+        $cpusPerNode = $crResource->cpusPerNode;
         if($crResource->defaultNodeCount > 0){
             $nodeCount = $crResource->defaultNodeCount;
         }
@@ -381,7 +382,8 @@ class ExperimentController extends BaseController
                     "users" => json_encode($users), "owner" => json_encode($owner),
                     "canEditSharing" => $canEditSharing,
                     "projectOwner" => json_encode($projectOwner),
-                    "updateSharingViaAjax" => false
+                    "updateSharingViaAjax" => false,
+                    "cpusPerNode" => $cpusPerNode
                 ));
             }
             else {
@@ -461,6 +463,7 @@ class ExperimentController extends BaseController
         $wallTimeLimit = Config::get('pga_config.airavata')["wall-time-limit"];
 
         $crResource = CRUtilities::get_compute_resource($computeResourceId);
+        $cpusPerNode = $crResource->cpusPerNode;
         if($crResource->defaultNodeCount > 0){
             $nodeCount = $crResource->defaultNodeCount;
         }
@@ -506,7 +509,8 @@ class ExperimentController extends BaseController
         }
         return View::make("partials/experiment-queue-block", array("queues" => $queues, "queueDefaults" => $queueDefaults,
             "useUserCRPref" => $userHasComputeResourcePreference,
-            "userHasComputeResourcePreference" => $userHasComputeResourcePreference));
+            "userHasComputeResourcePreference" => $userHasComputeResourcePreference,
+            "cpusPerNode" => $cpusPerNode));
     }
 
     public function browseView()
