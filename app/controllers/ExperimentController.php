@@ -274,15 +274,61 @@ class ExperimentController extends BaseController
 
     public function editView()
     {
-        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
-            "nodeCount" => Config::get('pga_config.airavata')["node-count"],
-            "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
-            "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
-        );
-
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
         $expVal = ExperimentUtilities::get_experiment_values($experiment);
         $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
+
+
+        $appInterfaces = AppUtilities::get_all_applications();
+        foreach($appInterfaces as $id=>$name) {
+            if ($id == $experiment->executionId) {
+                $appId = AppUtilities::get_application_interface($id)->applicationModules[0];
+            }
+        }
+
+        $nodeCount = Config::get('pga_config.airavata')["node-count"];
+        $cpuCount = Config::get('pga_config.airavata')["total-cpu-count"];
+        $wallTimeLimit = Config::get('pga_config.airavata')["wall-time-limit"];
+
+
+        $computeResourceId = $experiment->userConfigurationData->computationalResourceScheduling->resourceHostId;
+        $crResource = CRUtilities::get_compute_resource($computeResourceId);
+        if($crResource->defaultNodeCount > 0){
+            $nodeCount = $crResource->defaultNodeCount;
+        }
+        if($crResource->defaultCPUCount > 0){
+            $cpuCount = $crResource->defaultCPUCount;
+        }
+        if($crResource->defaultWalltime > 0){
+            $wallTimeLimit = $crResource->defaultWalltime;
+        }
+
+        $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), Session::get("gateway_id"));
+        $correctAppDeployment = null;
+        foreach($appDeployments as $appDeployment){
+            if($appDeployment->computeHostId == $computeResourceId && $appDeployment->appModuleId == $appId){
+                $correctAppDeployment = $appDeployment;
+                break;
+            }
+        }
+
+        if($correctAppDeployment != null){
+            if($correctAppDeployment->defaultNodeCount > 0){
+
+            }
+            if($correctAppDeployment->defaultCPUCount > 0){
+                $cpuCount = $correctAppDeployment->defaultCPUCount;
+            }
+            if($correctAppDeployment->defaultWalltime > 0) {
+                $wallTimeLimit = $correctAppDeployment->defaultWalltime;
+            }
+        }
+
+        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
+            "nodeCount" => $nodeCount,
+            "cpuCount" => $cpuCount,
+            "wallTimeLimit" => $wallTimeLimit
+        );
 
         $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
 
