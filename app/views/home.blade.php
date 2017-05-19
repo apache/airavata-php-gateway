@@ -83,7 +83,7 @@ if( Session::get("theme") == "base"){?>
 
         <div class="col-md-12">
     <div class="row">
-        <div class="col-md-10 col-md-offset-1 text-center breathing-spaces">
+        <div id="contact-scigap" class="col-md-10 col-md-offset-1 text-center breathing-spaces">
             <h3>Contact Us</h3>
             <div class="col-md-6">
                 <span class="glyphicon glyphicon-envelope" style="font-size:6em;"></span><br/>

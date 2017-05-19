@@ -71,7 +71,7 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 
 <style>
 .theme-footer{
-	margin: 20px 0;
+	margin: 20px 0 0 0;
 }
 </style>
 
