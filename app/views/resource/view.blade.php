@@ -82,6 +82,26 @@
             <input readonly type="number" min="0" class="form-control" value="{{ $computeResource->maxMemoryPerNode }}"
                    maxlength="30" name="maxMemoryPerNode"/>
         </div>
+        <div class="form-group">
+            <label class="control-label">CPUs Per Node</label>
+            <input type="number" min="0" class="form-control" value="{{ $computeResource->cpusPerNode }}"
+                   maxlength="30" name="cpusPerNode"/>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Default Node Count</label>
+            <input type="number" min="0" class="form-control" value="{{ $computeResource->defaultNodeCount }}"
+                   maxlength="30" name="defaultNodeCount"/>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Default CPU Count</label>
+            <input type="number" min="0" class="form-control" value="{{ $computeResource->defaultCPUCount }}"
+                   maxlength="30" name="defaultCPUCount"/>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Default Walltime</label>
+            <input type="number" min="0" class="form-control" value="{{ $computeResource->defaultWalltime }}"
+                   maxlength="30" name="defaultWalltime"/>
+        </div>
     </form>
 
 </div>

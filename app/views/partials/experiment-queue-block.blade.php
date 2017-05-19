@@ -86,7 +86,64 @@
 </div>
 
 
+@section('scripts')
+@parent
 <script>
+    //To work with experiment edit (Not Ajax)
+    $( document ).ready(function() {
+        var selectedQueue = $("#select-queue").val();
+        getQueueData(selectedQueue);
+        $("#select-queue").change(function () {
+            var selectedQueue = $("#select-queue").val();
+            getQueueData(selectedQueue);
+        });
+    });
+
+    $("#enable-auto-scheduling").change(function () {
+        var selectedQueue = $("#select-queue").val();
+        getQueueData(selectedQueue);
+    });
+
+    //Setting the file input view JS code
+    $( document ).ready(function() {
+        function readBlob(opt_startByte, opt_stopByte, fileId) {
+
+            var files = document.getElementById(fileId).files;
+            if (!files.length) {
+                alert('Please select a file!');
+                return;
+            }
+
+            var file = files[0];
+            var start = 0;
+            var stop = Math.min(512*1024,file.size - 1);
+
+            var reader = new FileReader();
+
+            // If we use onloadend, we need to check the readyState.
+            reader.onloadend = function(evt) {
+                if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                    $('#byte_content').html(evt.target.result.replace(/(?:\r\n|\r|\n)/g, '<br />'));
+                    $('#byte_range').html(
+                            ['Read bytes: ', start + 1, ' - ', stop + 1,
+                                ' of ', file.size, ' byte file'].join(''));
+                }
+            };
+
+            var blob = file.slice(start, stop + 1);
+            reader.readAsBinaryString(blob);
+
+            $('#input-file-view').modal('show');
+        }
+
+        $( ".readBytesButtons" ).click(function() {
+            var startByte = $(this).data('startbyte');
+            var endByte = $(this).data('endbyte');
+            var fileId = $(this).data('file-id');
+            readBlob(startByte, endByte, fileId);
+        });
+    });
+
     //To work work with experiment create (Ajax)
     var selectedQueue = $("#select-queue").val();
     getQueueData(selectedQueue);
@@ -162,65 +219,27 @@
         }
         $(".queue-data").removeClass("hide");
     }
-</script>
 
+    $(document).ready(function(){
+        var cpusPerNode = {{$cpusPerNode}};
+        var nodeCount=$("#node-count");
+        var cpuCount=$("#cpu-count");
 
-@section('scripts')
-@parent
-<script>
-    //To work with experiment edit (Not Ajax)
-    $( document ).ready(function() {
-        var selectedQueue = $("#select-queue").val();
-        getQueueData(selectedQueue);
-        $("#select-queue").change(function () {
-            var selectedQueue = $("#select-queue").val();
-            getQueueData(selectedQueue);
-        });
-    });
-
-    $("#enable-auto-scheduling").change(function () {
-        var selectedQueue = $("#select-queue").val();
-        getQueueData(selectedQueue);
-    });
-
-    //Setting the file input view JS code
-    $( document ).ready(function() {
-        function readBlob(opt_startByte, opt_stopByte, fileId) {
-
-            var files = document.getElementById(fileId).files;
-            if (!files.length) {
-                alert('Please select a file!');
-                return;
-            }
-
-            var file = files[0];
-            var start = 0;
-            var stop = Math.min(512*1024,file.size - 1);
-
-            var reader = new FileReader();
-
-            // If we use onloadend, we need to check the readyState.
-            reader.onloadend = function(evt) {
-                if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-                    $('#byte_content').html(evt.target.result.replace(/(?:\r\n|\r|\n)/g, '<br />'));
-                    $('#byte_range').html(
-                            ['Read bytes: ', start + 1, ' - ', stop + 1,
-                                ' of ', file.size, ' byte file'].join(''));
+        if(cpusPerNode > 0){
+            nodeCount.keyup(function(){
+                var nodeCountVal = parseInt(nodeCount.val());
+                if(nodeCountVal > 0){
+                    cpuCount.val(nodeCountVal*cpusPerNode);
                 }
-            };
+            });
 
-            var blob = file.slice(start, stop + 1);
-            reader.readAsBinaryString(blob);
-
-            $('#input-file-view').modal('show');
+            cpuCount.keyup(function(){
+                var cpuCountVal = parseInt(cpuCount.val());
+                if(cpuCountVal > 0){
+                    nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
+                }
+            });
         }
-
-        $( ".readBytesButtons" ).click(function() {
-            var startByte = $(this).data('startbyte');
-            var endByte = $(this).data('endbyte');
-            var fileId = $(this).data('file-id');
-            readBlob(startByte, endByte, fileId);
-        });
     });
 </script>
 @stop

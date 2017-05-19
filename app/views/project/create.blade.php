@@ -50,6 +50,7 @@
     });
     var users = {{ $users }};
     var owner = {{ $owner }};
+    $('#entity-share').data({url: "{{URL::to('/')}}/project/all-users"});
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}

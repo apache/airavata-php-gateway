@@ -113,7 +113,8 @@
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Gateway Acronym </label>
-                            <input type="text" name="gateway-acronym" class="gateway-acronym form-control" required="required" value="{{Input::old('gateway-acronym') }}" maxlength="6" data-toggle="popover" data-placement="left" data-content="Acronym cannot contain digits or special characters."/>
+                            <input type="text" name="gateway-acronym" class="gateway-acronym form-control" required="required" value="{{Input::old('gateway-acronym') }}"
+                                pattern="[A-Za-z]+" data-toggle="popover" data-placement="left" data-content="Acronym cannot contain digits or special characters or spaces."/>
                         </div>
 
                         <div class="form-group required">

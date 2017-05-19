@@ -173,7 +173,6 @@ class ProjectUtilities
         $project->name = "Default Project";
         $project->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
         $project->description = "This is the default project for user " . $project->owner;
-        $project->gatewayId = Config::get('pga_config.airavata')['gateway-id'];
 
 
         $projectId = null;
@@ -181,11 +180,13 @@ class ProjectUtilities
         try {
             $projectId = Airavata::createProject(Session::get('authz-token'), Config::get('pga_config.airavata')['gateway-id'], $project);
 
-            $share = new stdClass();
-            $share->{$username} = new stdClass();
-            $share->{$username}->read = true;
-            $share->{$username}->write = true;
-            ProjectUtilities::share_project($projectId, $share);
+            if (Config::get('pga_config.airavata')["data-sharing-enabled"]){
+                $share = new stdClass();
+                $share->{$username} = new stdClass();
+                $share->{$username}->read = true;
+                $share->{$username}->write = true;
+                ProjectUtilities::share_project($projectId, $share);
+            }
 
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());

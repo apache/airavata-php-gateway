@@ -27,6 +27,7 @@ class ExperimentController extends BaseController
 
     public function createView()
     {
+        Session::forget('exp_create_app_id');
         Session::forget('exp_create_continue');
         return View::make('experiment/create');
     }
@@ -35,12 +36,23 @@ class ExperimentController extends BaseController
     {
         if (isset($_POST['continue'])) {
             Session::put('exp_create_continue', true);
+            $appInterfaces = AppUtilities::get_all_applications();
+            foreach($appInterfaces as $id=>$name){
+                if($id == $_POST['application']){
+                    Session::put('exp_create_app_id', AppUtilities::get_application_interface($id)->applicationModules[0]);
+                }
+            }
 
             $computeResources = CRUtilities::create_compute_resources_select($_POST['application'], null);
+
+            $nodeCount = Config::get('pga_config.airavata')["node-count"];
+            $cpuCount = Config::get('pga_config.airavata')["total-cpu-count"];
+            $wallTimeLimit = Config::get('pga_config.airavata')["wall-time-limit"];
+
             $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
-                "nodeCount" => Config::get('pga_config.airavata')["node-count"],
-                "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
-                "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
+                "nodeCount" => $nodeCount,
+                "cpuCount" => $cpuCount,
+                "wallTimeLimit" => $wallTimeLimit
             );
 
 
@@ -262,15 +274,62 @@ class ExperimentController extends BaseController
 
     public function editView()
     {
-        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
-            "nodeCount" => Config::get('pga_config.airavata')["node-count"],
-            "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
-            "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
-        );
-
         $experiment = ExperimentUtilities::get_experiment($_GET['expId']);
         $expVal = ExperimentUtilities::get_experiment_values($experiment);
         $expVal["jobState"] = ExperimentUtilities::get_job_status($experiment);
+
+
+        $appInterfaces = AppUtilities::get_all_applications();
+        foreach($appInterfaces as $id=>$name) {
+            if ($id == $experiment->executionId) {
+                $appId = AppUtilities::get_application_interface($id)->applicationModules[0];
+            }
+        }
+
+        $nodeCount = Config::get('pga_config.airavata')["node-count"];
+        $cpuCount = Config::get('pga_config.airavata')["total-cpu-count"];
+        $wallTimeLimit = Config::get('pga_config.airavata')["wall-time-limit"];
+
+
+        $computeResourceId = $experiment->userConfigurationData->computationalResourceScheduling->resourceHostId;
+        $crResource = CRUtilities::get_compute_resource($computeResourceId);
+        $cpusPerNode = $crResource->cpusPerNode;
+        if($crResource->defaultNodeCount > 0){
+            $nodeCount = $crResource->defaultNodeCount;
+        }
+        if($crResource->defaultCPUCount > 0){
+            $cpuCount = $crResource->defaultCPUCount;
+        }
+        if($crResource->defaultWalltime > 0){
+            $wallTimeLimit = $crResource->defaultWalltime;
+        }
+
+        $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), Session::get("gateway_id"));
+        $correctAppDeployment = null;
+        foreach($appDeployments as $appDeployment){
+            if($appDeployment->computeHostId == $computeResourceId && $appDeployment->appModuleId == $appId){
+                $correctAppDeployment = $appDeployment;
+                break;
+            }
+        }
+
+        if($correctAppDeployment != null){
+            if($correctAppDeployment->defaultNodeCount > 0){
+
+            }
+            if($correctAppDeployment->defaultCPUCount > 0){
+                $cpuCount = $correctAppDeployment->defaultCPUCount;
+            }
+            if($correctAppDeployment->defaultWalltime > 0) {
+                $wallTimeLimit = $correctAppDeployment->defaultWalltime;
+            }
+        }
+
+        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
+            "nodeCount" => $nodeCount,
+            "cpuCount" => $cpuCount,
+            "wallTimeLimit" => $wallTimeLimit
+        );
 
         $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
 
@@ -323,7 +382,8 @@ class ExperimentController extends BaseController
                     "users" => json_encode($users), "owner" => json_encode($owner),
                     "canEditSharing" => $canEditSharing,
                     "projectOwner" => json_encode($projectOwner),
-                    "updateSharingViaAjax" => false
+                    "updateSharingViaAjax" => false,
+                    "cpusPerNode" => $cpusPerNode
                 ));
             }
             else {
@@ -394,12 +454,51 @@ class ExperimentController extends BaseController
 
     public function getQueueView()
     {
+        $appId = Session::get('exp_create_app_id');
         $computeResourceId = Input::get("crId");
+        $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), Session::get("gateway_id"));
+
+        $nodeCount = Config::get('pga_config.airavata')["node-count"];
+        $cpuCount = Config::get('pga_config.airavata')["total-cpu-count"];
+        $wallTimeLimit = Config::get('pga_config.airavata')["wall-time-limit"];
+
+        $crResource = CRUtilities::get_compute_resource($computeResourceId);
+        $cpusPerNode = $crResource->cpusPerNode;
+        if($crResource->defaultNodeCount > 0){
+            $nodeCount = $crResource->defaultNodeCount;
+        }
+        if($crResource->defaultCPUCount > 0){
+            $cpuCount = $crResource->defaultCPUCount;
+        }
+        if($crResource->defaultWalltime > 0){
+            $wallTimeLimit = $crResource->defaultWalltime;
+        }
+
+        $correctAppDeployment = null;
+        foreach($appDeployments as $appDeployment){
+            if($appDeployment->computeHostId == $computeResourceId && $appDeployment->appModuleId == $appId){
+                $correctAppDeployment = $appDeployment;
+                break;
+            }
+        }
+
+        if($correctAppDeployment != null){
+            if($correctAppDeployment->defaultNodeCount > 0){
+
+            }
+            if($correctAppDeployment->defaultCPUCount > 0){
+                $cpuCount = $correctAppDeployment->defaultCPUCount;
+            }
+            if($correctAppDeployment->defaultWalltime > 0) {
+                $wallTimeLimit = $correctAppDeployment->defaultWalltime;
+            }
+        }
+
         $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
         $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
-            "nodeCount" => Config::get('pga_config.airavata')["node-count"],
-            "cpuCount" => Config::get('pga_config.airavata')["total-cpu-count"],
-            "wallTimeLimit" => Config::get('pga_config.airavata')["wall-time-limit"]
+            "nodeCount" => $nodeCount,
+            "cpuCount" => $cpuCount,
+            "wallTimeLimit" => $wallTimeLimit
         );
 
         $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
@@ -410,7 +509,8 @@ class ExperimentController extends BaseController
         }
         return View::make("partials/experiment-queue-block", array("queues" => $queues, "queueDefaults" => $queueDefaults,
             "useUserCRPref" => $userHasComputeResourcePreference,
-            "userHasComputeResourcePreference" => $userHasComputeResourcePreference));
+            "userHasComputeResourcePreference" => $userHasComputeResourcePreference,
+            "cpusPerNode" => $cpusPerNode));
     }
 
     public function browseView()
