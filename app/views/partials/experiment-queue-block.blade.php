@@ -260,8 +260,8 @@
                     nodeCount.bind('keyup', nodeCountOnKeyUp(nodeCount, cpuCount, cpusPerNode));
                     cpuCount.bind('keyup', cpuCountOnKeyUp(nodeCount, cpuCount, cpusPerNode));
                 }else{
-                    nodeCount.unbind('keyup', nodeCountOnKeyUp);
-                    cpuCount.unbind('keyup', cpuCountOnKeyUp);
+//                    nodeCount.unbind('keyup', nodeCountOnKeyUp);
+//                    cpuCount.unbind('keyup', cpuCountOnKeyUp);
                 }
             }
         }
