@@ -118,7 +118,7 @@ class ComputeResourceController extends BaseController
                 "defaultCPUCount" => Input::get("defaultCPUCount"),
                 "defaultWalltime" => Input::get("defaultWalltime"),
                 "queueSpecificMacros" => Input::get("queueSpecificMacros"),
-                "isDefaultQueue" => true
+                "isDefaultQueue" => Input::get('isDefaultQueue') == 'on'
             );
 
             $computeDescription = CRUtilities::get_compute_resource(Input::get("crId"));
