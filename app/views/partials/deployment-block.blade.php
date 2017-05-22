@@ -143,18 +143,18 @@
     </div>
     <button type="button" class="btn btn-default control-label add-postJobCommand hide">Add Post Job Command</button>
 </div>
-<div class="form-group">
-    <label class="control-label">Default Node Count</label>
-    <input type="number" min="0" class="form-control" value="@if( isset( $deploymentObject)){{$deploymentObject->defaultNodeCount}}@endif"
-    required readonly maxlength="30" name="defaultNodeCount"/>
-</div>
-<div class="form-group">
-    <label class="control-label">Default CPU Count</label>
-    <input type="number" min="0" class="form-control" value="@if( isset( $deploymentObject)){{$deploymentObject->defaultCPUCount}}@endif"
-    required readonly maxlength="30" name="defaultCPUCount"/>
-</div>
-<div class="form-group">
-    <label class="control-label">Default Walltime</label>
-    <input type="number" min="0" class="form-control" value="@if( isset( $deploymentObject)){{$deploymentObject->defaultWalltime}}@endif"
-    required readonly maxlength="30" name="defaultWalltime"/>
-</div>
+{{--<div class="form-group">--}}
+    {{--<label class="control-label">Default Node Count</label>--}}
+    {{--<input type="number" min="0" class="form-control" value="@if( isset( $deploymentObject)){{$deploymentObject->defaultNodeCount}}@endif"--}}
+    {{--required readonly maxlength="30" name="defaultNodeCount"/>--}}
+{{--</div>--}}
+{{--<div class="form-group">--}}
+    {{--<label class="control-label">Default CPU Count</label>--}}
+    {{--<input type="number" min="0" class="form-control" value="@if( isset( $deploymentObject)){{$deploymentObject->defaultCPUCount}}@endif"--}}
+    {{--required readonly maxlength="30" name="defaultCPUCount"/>--}}
+{{--</div>--}}
+{{--<div class="form-group">--}}
+    {{--<label class="control-label">Default Walltime</label>--}}
+    {{--<input type="number" min="0" class="form-control" value="@if( isset( $deploymentObject)){{$deploymentObject->defaultWalltime}}@endif"--}}
+    {{--required readonly maxlength="30" name="defaultWalltime"/>--}}
+{{--</div>--}}

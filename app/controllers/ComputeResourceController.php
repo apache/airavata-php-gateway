@@ -95,10 +95,10 @@ class ComputeResourceController extends BaseController
             $computeDescription->ipAddresses = array_unique(array_filter(Input::get("ips")));
             $computeDescription->resourceDescription = Input::get("description");
             $computeDescription->maxMemoryPerNode = Input::get("maxMemoryPerNode");
-            $computeDescription->cpusPerNode = Input::get("cpusPerNode");
-            $computeDescription->defaultNodeCount = Input::get("defaultNodeCount");
-            $computeDescription->defaultCPUCount = Input::get("defaultCPUCount");
-            $computeDescription->defaultWalltime = Input::get("defaultWalltime");
+//            $computeDescription->cpusPerNode = Input::get("cpusPerNode");
+//            $computeDescription->defaultNodeCount = Input::get("defaultNodeCount");
+//            $computeDescription->defaultCPUCount = Input::get("defaultCPUCount");
+//            $computeDescription->defaultWalltime = Input::get("defaultWalltime");
             //var_dump( $computeDescription); exit;
 
             $computeResource = CRUtilities::register_or_update_compute_resource($computeDescription, true);
