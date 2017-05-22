@@ -257,8 +257,8 @@
                         }
                     });
                 }else{
-                    cpuCount.keyup(null);
-                    nodeCount.keyup(null);
+                    cpuCount.onkeyup = null;
+                    nodeCount.onkeyup = null;
                 }
             }
         }
