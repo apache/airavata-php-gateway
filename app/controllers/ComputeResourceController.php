@@ -122,7 +122,17 @@ class ComputeResourceController extends BaseController
             );
 
             $computeDescription = CRUtilities::get_compute_resource(Input::get("crId"));
-            $computeDescription->batchQueues[] = CRUtilities::createQueueObject($queue);
+            $updatedQueues = [];
+            if($queue["isDefaultQueue"]){
+                foreach($computeDescription->batchQueues as $aQueue){
+                    $aQueue->isDefaultQueue = false;
+                    $updatedQueues[] = $aQueue;
+                }
+            }else{
+                $updatedQueues = $computeDescription->batchQueues;
+            }
+            $updatedQueues[] = CRUtilities::createQueueObject($queue);
+            $computeDescription->batchQueues = $updatedQueues;
             $computeResource = CRUtilities::register_or_update_compute_resource($computeDescription, true);
             //var_dump( $computeResource); exit;
             $tabName = "#tab-queues";
