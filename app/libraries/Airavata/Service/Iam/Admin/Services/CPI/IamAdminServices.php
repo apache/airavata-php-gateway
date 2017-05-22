@@ -54,14 +54,14 @@ interface IamAdminServicesIf {
   public function enableUser(\Airavata\Model\Security\AuthzToken $authzToken, \Airavata\Model\User\UserProfile $userDetails, \Airavata\Model\Credential\Store\PasswordCredential $isRealmAdminCredentials);
   /**
    * @param \Airavata\Model\Security\AuthzToken $authzToken
-   * @param \Airavata\Model\User\UserProfile $userDetails
-   * @param \Airavata\Model\Credential\Store\PasswordCredential $isRealmAdminCredentials
+   * @param string $tenantId
+   * @param string $username
    * @param string $newPassword
    * @return bool
    * @throws \Airavata\Service\Iam\Admin\Services\CPI\Error\IamAdminServicesException
    * @throws \Airavata\API\Error\AuthorizationException
    */
-  public function resetUserPassword(\Airavata\Model\Security\AuthzToken $authzToken, \Airavata\Model\User\UserProfile $userDetails, \Airavata\Model\Credential\Store\PasswordCredential $isRealmAdminCredentials, $newPassword);
+  public function resetUserPassword(\Airavata\Model\Security\AuthzToken $authzToken, $tenantId, $username, $newPassword);
   /**
    * @param \Airavata\Model\Security\AuthzToken $authzToken
    * @param string $gatewayID
@@ -321,18 +321,18 @@ class IamAdminServicesClient implements \Airavata\Service\Iam\Admin\Services\CPI
     throw new \Exception("enableUser failed: unknown result");
   }
 
-  public function resetUserPassword(\Airavata\Model\Security\AuthzToken $authzToken, \Airavata\Model\User\UserProfile $userDetails, \Airavata\Model\Credential\Store\PasswordCredential $isRealmAdminCredentials, $newPassword)
+  public function resetUserPassword(\Airavata\Model\Security\AuthzToken $authzToken, $tenantId, $username, $newPassword)
   {
-    $this->send_resetUserPassword($authzToken, $userDetails, $isRealmAdminCredentials, $newPassword);
+    $this->send_resetUserPassword($authzToken, $tenantId, $username, $newPassword);
     return $this->recv_resetUserPassword();
   }
 
-  public function send_resetUserPassword(\Airavata\Model\Security\AuthzToken $authzToken, \Airavata\Model\User\UserProfile $userDetails, \Airavata\Model\Credential\Store\PasswordCredential $isRealmAdminCredentials, $newPassword)
+  public function send_resetUserPassword(\Airavata\Model\Security\AuthzToken $authzToken, $tenantId, $username, $newPassword)
   {
     $args = new \Airavata\Service\Iam\Admin\Services\CPI\IamAdminServices_resetUserPassword_args();
     $args->authzToken = $authzToken;
-    $args->userDetails = $userDetails;
-    $args->isRealmAdminCredentials = $isRealmAdminCredentials;
+    $args->tenantId = $tenantId;
+    $args->username = $username;
     $args->newPassword = $newPassword;
     $bin_accel = ($this->output_ instanceof TBinaryProtocolAccelerated) && function_exists('thrift_protocol_write_binary');
     if ($bin_accel)
@@ -1470,13 +1470,13 @@ class IamAdminServices_resetUserPassword_args {
    */
   public $authzToken = null;
   /**
-   * @var \Airavata\Model\User\UserProfile
+   * @var string
    */
-  public $userDetails = null;
+  public $tenantId = null;
   /**
-   * @var \Airavata\Model\Credential\Store\PasswordCredential
+   * @var string
    */
-  public $isRealmAdminCredentials = null;
+  public $username = null;
   /**
    * @var string
    */
@@ -1491,14 +1491,12 @@ class IamAdminServices_resetUserPassword_args {
           'class' => '\Airavata\Model\Security\AuthzToken',
           ),
         2 => array(
-          'var' => 'userDetails',
-          'type' => TType::STRUCT,
-          'class' => '\Airavata\Model\User\UserProfile',
+          'var' => 'tenantId',
+          'type' => TType::STRING,
           ),
         3 => array(
-          'var' => 'isRealmAdminCredentials',
-          'type' => TType::STRUCT,
-          'class' => '\Airavata\Model\Credential\Store\PasswordCredential',
+          'var' => 'username',
+          'type' => TType::STRING,
           ),
         4 => array(
           'var' => 'newPassword',
@@ -1510,11 +1508,11 @@ class IamAdminServices_resetUserPassword_args {
       if (isset($vals['authzToken'])) {
         $this->authzToken = $vals['authzToken'];
       }
-      if (isset($vals['userDetails'])) {
-        $this->userDetails = $vals['userDetails'];
+      if (isset($vals['tenantId'])) {
+        $this->tenantId = $vals['tenantId'];
       }
-      if (isset($vals['isRealmAdminCredentials'])) {
-        $this->isRealmAdminCredentials = $vals['isRealmAdminCredentials'];
+      if (isset($vals['username'])) {
+        $this->username = $vals['username'];
       }
       if (isset($vals['newPassword'])) {
         $this->newPassword = $vals['newPassword'];
@@ -1550,17 +1548,15 @@ class IamAdminServices_resetUserPassword_args {
           }
           break;
         case 2:
-          if ($ftype == TType::STRUCT) {
-            $this->userDetails = new \Airavata\Model\User\UserProfile();
-            $xfer += $this->userDetails->read($input);
+          if ($ftype == TType::STRING) {
+            $xfer += $input->readString($this->tenantId);
           } else {
             $xfer += $input->skip($ftype);
           }
           break;
         case 3:
-          if ($ftype == TType::STRUCT) {
-            $this->isRealmAdminCredentials = new \Airavata\Model\Credential\Store\PasswordCredential();
-            $xfer += $this->isRealmAdminCredentials->read($input);
+          if ($ftype == TType::STRING) {
+            $xfer += $input->readString($this->username);
           } else {
             $xfer += $input->skip($ftype);
           }
@@ -1593,20 +1589,14 @@ class IamAdminServices_resetUserPassword_args {
       $xfer += $this->authzToken->write($output);
       $xfer += $output->writeFieldEnd();
     }
-    if ($this->userDetails !== null) {
-      if (!is_object($this->userDetails)) {
-        throw new TProtocolException('Bad type in structure.', TProtocolException::INVALID_DATA);
-      }
-      $xfer += $output->writeFieldBegin('userDetails', TType::STRUCT, 2);
-      $xfer += $this->userDetails->write($output);
+    if ($this->tenantId !== null) {
+      $xfer += $output->writeFieldBegin('tenantId', TType::STRING, 2);
+      $xfer += $output->writeString($this->tenantId);
       $xfer += $output->writeFieldEnd();
     }
-    if ($this->isRealmAdminCredentials !== null) {
-      if (!is_object($this->isRealmAdminCredentials)) {
-        throw new TProtocolException('Bad type in structure.', TProtocolException::INVALID_DATA);
-      }
-      $xfer += $output->writeFieldBegin('isRealmAdminCredentials', TType::STRUCT, 3);
-      $xfer += $this->isRealmAdminCredentials->write($output);
+    if ($this->username !== null) {
+      $xfer += $output->writeFieldBegin('username', TType::STRING, 3);
+      $xfer += $output->writeString($this->username);
       $xfer += $output->writeFieldEnd();
     }
     if ($this->newPassword !== null) {
