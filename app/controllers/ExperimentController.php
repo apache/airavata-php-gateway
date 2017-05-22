@@ -484,7 +484,7 @@ class ExperimentController extends BaseController
 
         if($correctAppDeployment != null){
             if($correctAppDeployment->defaultNodeCount > 0){
-
+                $nodeCount = $correctAppDeployment->defaultNodeCount;
             }
             if($correctAppDeployment->defaultCPUCount > 0){
                 $cpuCount = $correctAppDeployment->defaultCPUCount;
@@ -495,25 +495,40 @@ class ExperimentController extends BaseController
         }
 
         $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
-        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
+
+        $queueName = Config::get('pga_config.airavata')["queue-name"];
+
+
+        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
+        $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
+
+        if ($userHasComputeResourcePreference)
+        {
+            $queueName = $userComputeResourcePreferences[$computeResourceId]->preferredBatchQueue;
+        }else{
+            foreach($queues as $aQueue){
+                if($aQueue->isDefaultQueue){
+                    $queueName = $aQueue->queueName;
+                    if($aQueue->defaultNodeCount > 0){
+                        $nodeCount = $aQueue->defaultNodeCount;
+                    }
+                    if($aQueue->defauktCPUCount > 0){
+                        $cpuCount = $aQueue->defaultCPUCount;
+                    }
+                    if($aQueue->defaultWalltime > 0){
+                        $wallTimeLimit = $aQueue->defaultWalltime;
+                    }
+                    break;
+                }
+            }
+        }
+
+        $queueDefaults = array("queueName" => $queueName,
             "nodeCount" => $nodeCount,
             "cpuCount" => $cpuCount,
             "wallTimeLimit" => $wallTimeLimit
         );
 
-        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
-        $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
-        if ($userHasComputeResourcePreference)
-        {
-            $queueDefaults["queueName"] = $userComputeResourcePreferences[$computeResourceId]->preferredBatchQueue;
-        }else{
-            foreach($queues as $aQueue){
-                if($aQueue->isDefaultQueue){
-                    $queueDefaults["queueName"] = $aQueue->queueName;
-                    break;
-                }
-            }
-        }
         return View::make("partials/experiment-queue-block", array("queues" => $queues, "queueDefaults" => $queueDefaults,
             "useUserCRPref" => $userHasComputeResourcePreference,
             "userHasComputeResourcePreference" => $userHasComputeResourcePreference,
@@ -542,7 +557,8 @@ class ExperimentController extends BaseController
         $can_write = array();
         foreach ($expContainer as $experiment) {
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-                $can_write[$experiment['experiment']->experimentId] = SharingUtilities::userCanWrite(Session::get("username"), $experiment['experiment']->experimentId, ResourceType::EXPERIMENT);
+                $can_write[$experiment['experiment']->experimentId] = SharingUtilities::userCanWrite(Session::get("username"),
+                    $experiment['experiment']->experimentId, ResourceType::EXPERIMENT);
             } else {
                 $can_write[$experiment['experiment']->experimentId] = true;
             }
