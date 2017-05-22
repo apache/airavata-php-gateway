@@ -506,6 +506,13 @@ class ExperimentController extends BaseController
         if ($userHasComputeResourcePreference)
         {
             $queueDefaults["queueName"] = $userComputeResourcePreferences[$computeResourceId]->preferredBatchQueue;
+        }else{
+            foreach($queues as $aQueue){
+                if($aQueue->isDefaultQueue){
+                    $queueDefaults["queueName"] = $aQueue->queueName;
+                    break;
+                }
+            }
         }
         return View::make("partials/experiment-queue-block", array("queues" => $queues, "queueDefaults" => $queueDefaults,
             "useUserCRPref" => $userHasComputeResourcePreference,
