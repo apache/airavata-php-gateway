@@ -257,8 +257,8 @@
                 var nodeCount=$("#node-count");
                 var cpuCount=$("#cpu-count");
                 if(cpusPerNode > 0){
-                    nodeCount.keyup(nodeCountOnKeyUp(nodeCount, cpuCount, cpusPerNode));
-                    cpuCount.keyup(cpuCountOnKeyUp(nodeCount, cpuCount, cpusPerNode));
+                    nodeCount.bind('keyup', nodeCountOnKeyUp(nodeCount, cpuCount, cpusPerNode));
+                    cpuCount.bind('keyup', cpuCountOnKeyUp(nodeCount, cpuCount, cpusPerNode));
                 }else{
                     nodeCount.unbind('keyup', nodeCountOnKeyUp);
                     cpuCount.unbind('keyup', cpuCountOnKeyUp);
