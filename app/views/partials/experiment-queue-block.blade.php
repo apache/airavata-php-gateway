@@ -161,6 +161,7 @@
         var queues = $.parseJSON($("#queue-array").val());
         var veryLargeValue = 9999999;
         console.log(queues);
+        $(".queue-data").addClass("hide");
         for (var i = 0; i < queues.length; i++) {
             if (queues[i]['queueName'] == selectedQueue) {
                 //node-count
