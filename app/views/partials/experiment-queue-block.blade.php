@@ -216,9 +216,9 @@
                     $(".walltime-count").parent().addClass("hide");
 
                 if(queues[i]['defaultWalltime'] > 0) {
-                    $("#walltime-count").val(queues[i]['defaultWalltime']);
+                    $("#wall-time").val(queues[i]['defaultWalltime']);
                 }else{
-                    $("#walltime-count").val(queueDefaults['wallTimeLimit']);
+                    $("#wall-time").val(queueDefaults['wallTimeLimit']);
                 }
 
                 //memory-count
@@ -239,6 +239,7 @@
                 }else{
                     var cpusPerNode = queueDefaults['cpusPerNode'];
                 }
+                console.log(cpusPerNode);
 
                 var nodeCount=$("#node-count");
                 var cpuCount=$("#cpu-count");
