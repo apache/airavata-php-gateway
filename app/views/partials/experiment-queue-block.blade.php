@@ -257,6 +257,13 @@
                             nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
                         }
                     });
+                }else{
+                    nodeCount.keyup(function(){
+                        //doing nothing
+                    });
+                    cpuCount.keyup(function(){
+                        //doing nothing
+                    });
                 }
             }
         }
