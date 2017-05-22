@@ -234,12 +234,11 @@
                 else
                     $(".memory-count").parent().addClass("hide");
 
-                if(queues[i]['cpusPerNode'] > 0){
-                    var cpusPerNode = queues[i]['cpusPerNode'];
+                if(queues[i]['cpuPerNode'] > 0){
+                    var cpusPerNode = queues[i]['cpuPerNode'];
                 }else{
                     var cpusPerNode = queueDefaults['cpusPerNode'];
                 }
-                console.log(cpusPerNode);
 
                 var nodeCount=$("#node-count");
                 var cpuCount=$("#cpu-count");
