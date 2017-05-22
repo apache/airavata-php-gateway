@@ -461,6 +461,7 @@ class ExperimentController extends BaseController
         $nodeCount = Config::get('pga_config.airavata')["node-count"];
         $cpuCount = Config::get('pga_config.airavata')["total-cpu-count"];
         $wallTimeLimit = Config::get('pga_config.airavata')["wall-time-limit"];
+        $cpusPerNode = 0;
         $queueName = Config::get('pga_config.airavata')["queue-name"];
 
 //        $crResource = CRUtilities::get_compute_resource($computeResourceId);
