@@ -258,12 +258,8 @@
                         }
                     });
                 }else{
-                    nodeCount.keyup(function(){
-                        //doing nothing
-                    });
-                    cpuCount.keyup(function(){
-                        //doing nothing
-                    });
+                    nodeCount.onkeyup = null;
+                    cpuCount.onkeyup = null;
                 }
             }
         }
