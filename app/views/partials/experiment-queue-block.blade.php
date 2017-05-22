@@ -174,6 +174,7 @@
                 else
                     $(".node-count").parent().addClass("hide");
 
+                $("#node-count").html(queues[i]['defaultNodeCount']);
 
                 //core-count
                 if (queues[i]['maxProcessors'] != 0 && queues[i]['maxProcessors'] != null) {
@@ -188,6 +189,8 @@
                 else
                     $(".cpu-count").parent().addClass("hide");
 
+                $("#cpu-count").html(queues[i]['defaultCPUCount']);
+
                 //walltime-count
                 if (queues[i]['maxRunTime'] != null && queues[i]['maxRunTime'] != 0) {
                     if($('#enable-auto-scheduling').prop('checked')){
@@ -200,6 +203,8 @@
                 }
                 else
                     $(".walltime-count").parent().addClass("hide");
+
+                $("#walltime-count").html(queues[i]['defaultWalltime']);
 
                 //memory-count
                 if (queues[i]['maxMemory'] != 0 && queues[i]['maxMemory'] != null) {
