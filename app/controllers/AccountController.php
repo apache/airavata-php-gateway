@@ -2,6 +2,8 @@
 
 class AccountController extends BaseController
 {
+    const PASSWORD_VALIDATION = "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/";
+    const PASSWORD_VALIDATION_MESSAGE = "Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$&*";
 
     public function __construct()
     {
@@ -17,13 +19,13 @@ class AccountController extends BaseController
     {
         $rules = array(
             "username" => "required|min:6",
-            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
+            "password" => self::PASSWORD_VALIDATION,
             "confirm_password" => "required|same:password",
             "email" => "required|email",
         );
 
         $messages = array(
-            'password.regex' => 'Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$&*',
+            'password.regex' => self::PASSWORD_VALIDATION_MESSAGE,
         );
 
         $validator = Validator::make(Input::all(), $rules, $messages);
@@ -273,27 +275,13 @@ class AccountController extends BaseController
             CommonUtilities::print_error_message("Please provide a valid username");
             return View::make("account/forgot-password");
         }else{
-            $wsisConfig = Config::get('pga_config.wsis');
-            if( $wsisConfig['tenant-domain'] == "")
-                $username = $username;
-            else
-                $username = $username . "@" . $wsisConfig['tenant-domain'];
             try{
-                $key = WSIS::validateUser(Input::get("userAnswer"),Input::get("imagePath"),Input::get("secretKey"), $username);
-                if(!empty($key)){
-                    $result = WSIS::sendPasswordResetNotification($username, $key);
-                    if($result===true){
-                        CommonUtilities::print_success_message("Password reset notification was sent to your email account");
-                        return View::make("home");
-                    }else{
-                        CommonUtilities::print_error_message("Failed to send password reset notification email");
-                        return View::make("home");
-                    }
-                }else{
-                    CommonUtilities::print_error_message("Failed to validate the given username");
-                    return View::make("account/forgot-password");
-                }
+                $user_profile = Keycloak::getUserProfile($username);
+                EmailUtilities::sendPasswordResetEmail($username, $user_profile["firstname"], $user_profile["lastname"], $user_profile["email"]);
+                CommonUtilities::print_success_message("Password reset notification was sent to your email account");
+                return View::make("home");
             }catch (Exception $ex){
+                Log::error($ex);
                 CommonUtilities::print_error_message("Password reset operation failed");
                 return View::make("home");
             }
@@ -328,28 +316,13 @@ class AccountController extends BaseController
 
     public function resetPassword()
     {
-        $confirmation = Input::get("confirmation");
-        $username = Input::get("username");
-        if(empty($username) || empty($confirmation)){
+        $code = Input::get("code", Input::old("code"));
+        $username = Input::get("username", Input::old("username"));
+        if(empty($username) || empty($code)){
             return View::make("home");
         }else{
-            $wsisConfig = Config::get('pga_config.wsis');
-            if( $wsisConfig['tenant-domain'] == "")
-                $username = $username;
-            else
-                $username = $username . "@" . $wsisConfig['tenant-domain'];
-            try{
-                $key = WSIS::validateConfirmationCode($username, $confirmation);
-                if(!empty($key)){
-                    return View::make("account/reset-password", array("key" => $key, "username"=>$username));
-                }else{
-                    return View::make("home");
-                }
-            }catch (Exception $e){
-                return View::make("home");
-            }
+            return View::make("account/reset-password", array("code" => $code, "username"=>$username));
         }
-
     }
 
     public function confirmAccountCreation()
@@ -393,7 +366,9 @@ class AccountController extends BaseController
         $mail = new PHPMailer;
 
         $mail->isSMTP();
-        $mail->SMTPDebug = 3;
+        // Note: setting SMTPDebug will cause output to be dumped into the
+        // response, so only enable for testing purposes
+        // $mail->SMTPDebug = 3;
         $mail->Host = Config::get('pga_config.portal')['portal-smtp-server-host'];
 
         $mail->SMTPAuth = true;
@@ -434,33 +409,46 @@ class AccountController extends BaseController
     public function resetPasswordSubmit()
     {
         $rules = array(
-            "new_password" => "required|min:6",
+            "new_password" => self::PASSWORD_VALIDATION,
             "confirm_new_password" => "required|same:new_password",
         );
+        $messages = array(
+            'password.regex' => self::PASSWORD_VALIDATION_MESSAGE,
+        );
 
-        $validator = Validator::make(Input::all(), $rules);
+        $validator = Validator::make(Input::all(), $rules, $messages);
         if ($validator->fails()) {
+            Log::debug("validation failed", array($validator->messages()));
             return Redirect::to("reset-password")
-                ->withInput(Input::except('new_password', 'confirm)new_password'))
+                ->withInput(Input::except('new_password', 'confirm_new_password'))
                 ->withErrors($validator);
         }
 
-        $key =  $_POST['key'];
+        $code =  $_POST['code'];
         $username =  $_POST['username'];
         $new_password =  $_POST['new_password'];
 
         try{
-            $result = WSIS::resetPassword($username, $new_password, $key);
+            $verified = EmailUtilities::verifyPasswordResetCode($username, $code);
+            if (!$verified){
+                CommonUtilities::print_error_message("Resetting user password operation failed. Please request to reset user password again.");
+                return View::make("home");
+            }
+
+            $admin_authz_token = Keycloak::getAdminAuthzToken();
+            $tenant_id = Config::get('pga_config.wsis')['tenant-domain'];
+
+            $result = IamAdminServices::resetUserPassword($admin_authz_token, $tenant_id, $username, $new_password);
             if($result){
                 CommonUtilities::print_success_message("User password was reset successfully");
-                return View::make("account/login");
+                return View::make("login");
             }else{
                 CommonUtilities::print_error_message("Resetting user password operation failed");
-                return View::make("account/home");
+                return View::make("home");
             }
         }catch (Exception $e){
             CommonUtilities::print_error_message("Resetting user password operation failed");
-            return View::make("account/home");
+            return View::make("home");
         }
     }
 

@@ -5,7 +5,8 @@ class EmailUtilities
 {
 
     public static function sendVerifyEmailAccount($username, $firstName, $lastName, $email){
-        $validTime = Config::get('pga_config.portal')['mail-verify-code-valid-time'];
+        $portalConfig = Config::get('pga_config.portal');
+        $validTime = isset($portalConfig['mail-verify-code-valid-time']) ? $portalConfig['mail-verify-code-valid-time'] : 30;
         $code = uniqid();
         Cache::put('PGA-VERIFY-EMAIL-' . $username, $code, $validTime);
 
@@ -32,7 +33,8 @@ class EmailUtilities
     }
 
     public static function sendPasswordResetEmail($username, $firstName, $lastName, $email){
-        $validTime = Config::get('pga_config.portal')['mail-verify-code-valid-time'];
+        $portalConfig = Config::get('pga_config.portal');
+        $validTime = isset($portalConfig['mail-verify-code-valid-time']) ? $portalConfig['mail-verify-code-valid-time'] : 30;
         $code = uniqid();
         Cache::put('PGA-RESET-PASSWORD-' . $username, $code, $validTime);
 
@@ -40,7 +42,7 @@ class EmailUtilities
         $subject = $emailTemplates->password_reset->subject;
         $body = trim(implode($emailTemplates->password_reset->body));
 
-        $body = str_replace("\$url", URL::to('/'). '/resetPassword?username=' . $username . '&code='.$code, $body);
+        $body = str_replace("\$url", URL::to('/'). '/reset-password?username=' . urlencode($username) . '&code='.urlencode($code), $body);
         $body = str_replace("\$firstName", $firstName, $body);
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$validTime", $validTime, $body);
@@ -63,7 +65,9 @@ class EmailUtilities
         $mail = new PHPMailer();
 
         $mail->isSMTP();
-        $mail->SMTPDebug = 3;
+        // Note: setting SMTPDebug will cause output to be dumped into the
+        // response, so only enable for testing purposes
+        // $mail->SMTPDebug = 3;
         $mail->Host = Config::get('pga_config.portal')['portal-smtp-server-host'];
 
         $mail->SMTPAuth = true;

@@ -24,6 +24,7 @@ class Keycloak {
     private $base_endpoint_url;
     private $admin_username;
     private $admin_password;
+    private $gateway_id;
 
     // API clients
     private $role_mapper;
@@ -34,7 +35,7 @@ class Keycloak {
      * Constructor
      *
      */
-    public function __construct($realm, $openid_connect_discovery_url, $client_id, $client_secret, $callback_url, $cafile_path, $verify_peer, $base_endpoint_url, $admin_username, $admin_password) {
+    public function __construct($realm, $openid_connect_discovery_url, $client_id, $client_secret, $callback_url, $cafile_path, $verify_peer, $base_endpoint_url, $admin_username, $admin_password, $gateway_id) {
 
         $this->realm = $realm;
         $this->openid_connect_discovery_url = $openid_connect_discovery_url;
@@ -46,6 +47,7 @@ class Keycloak {
         $this->base_endpoint_url = $base_endpoint_url;
         $this->admin_username = $admin_username;
         $this->admin_password = $admin_password;
+        $this->gateway_id = $gateway_id;
 
         $this->role_mapper = new RoleMapper($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
         $this->roles = new Roles($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
@@ -402,7 +404,7 @@ class Keycloak {
         $access_token = KeycloakUtil::getAPIAccessToken($this->base_endpoint_url, $this->realm, $this->admin_username, $this->admin_password, $this->verify_peer);
         $authzToken = new \Airavata\Model\Security\AuthzToken();
         $authzToken->accessToken = $access_token;
-        $authzToken->claimsMap['gatewayID'] = $this->realm;
+        $authzToken->claimsMap['gatewayID'] = $this->gateway_id;
         $authzToken->claimsMap['userName'] = $this->admin_username;
         return $authzToken;
     }

@@ -17,7 +17,7 @@
     <form role="form" method="POST" action="{{ URL::to('/') }}/reset-password">
         <div class="form-group form-horizontal">
             <input name="username" type="hidden" value="{{$username}}" class="form-control"/>
-            <input name="key" type="hidden" value="{{$key}}" class="form-control"/>
+            <input name="code" type="hidden" value="{{{$code}}}" class="form-control"/>
             <div class="form-group required"><label class="control-label">Password</label>
 
                 <div><input class="form-control" id="new_password" minlength="6" name="new_password" placeholder="New Password"
