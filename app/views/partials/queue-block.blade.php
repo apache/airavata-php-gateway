@@ -71,7 +71,7 @@
 </div>
 <div class="form-group">
     <label class="control-label">Set as Default Queue for the Resource</label>
-    <input type="checkbox" value="@if( isset( $queueData) && $queueData->isDefaultQueue == true){{checked}}@endif"
+    <input type="checkbox" value="@if( isset( $queueData) && $queueData->isDefaultQueue == true)checked@endif"
            name="isDefaultQueue" placeholder="Set as Default Queue for the Resource"
     @if( isset( $readOnly)){{ "readOnly" }}@endif/>
 </div>
