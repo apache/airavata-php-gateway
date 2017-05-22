@@ -86,8 +86,8 @@
 </div>
 
 
-@section('scripts')
-@parent
+{{--@section('scripts')--}}
+{{--@parent--}}
 <script>
     //To work with experiment edit (Not Ajax)
     $( document ).ready(function() {
@@ -243,4 +243,4 @@
         }
     });
 </script>
-@stop
+{{--@stop--}}
