@@ -155,6 +155,24 @@
         getQueueData(selectedQueue);
     });
 
+    function nodeCountOnKeyUp(){
+        var nodeCount=$("#node-count");
+        var cpuCount=$("#cpu-count");
+        var nodeCountVal = parseInt(nodeCount.val());
+        if(nodeCountVal > 0){
+            cpuCount.val(nodeCountVal*cpusPerNode);
+        }
+    }
+
+    function cpuCountOnKeyUp(){
+        var nodeCount=$("#node-count");
+        var cpuCount=$("#cpu-count");
+        var cpuCountVal = parseInt(cpuCount.val());
+        if(cpuCountVal > 0){
+            nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
+        }
+    }
+
     function getQueueData(selectedQueue) {
         var queues = $.parseJSON($("#queue-array").val());
         var queueDefaults = $.parseJSON($("#queue-defaults-array").val());
@@ -240,26 +258,12 @@
                     var cpusPerNode = queueDefaults['cpusPerNode'];
                 }
 
-                var nodeCount=$("#node-count");
-                var cpuCount=$("#cpu-count");
-
                 if(cpusPerNode > 0){
-                    nodeCount.keyup(function(){
-                        var nodeCountVal = parseInt(nodeCount.val());
-                        if(nodeCountVal > 0){
-                            cpuCount.val(nodeCountVal*cpusPerNode);
-                        }
-                    });
-
-                    cpuCount.keyup(function(){
-                        var cpuCountVal = parseInt(cpuCount.val());
-                        if(cpuCountVal > 0){
-                            nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
-                        }
-                    });
+                    nodeCount.keyup(nodeCountOnKeyUp);
+                    cpuCount.keyup(cpuCountOnKeyUp);
                 }else{
-                    nodeCount.onkeyup = null;
-                    cpuCount.onkeyup = null;
+                    nodeCount.unbind('keyup', nodeCountOnKeyUp);
+                    cpuCount.unbind('keyup', cpuCountOnKeyUp);
                 }
             }
         }
