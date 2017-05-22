@@ -512,7 +512,7 @@ class ExperimentController extends BaseController
                     if($aQueue->defaultNodeCount > 0){
                         $nodeCount = $aQueue->defaultNodeCount;
                     }
-                    if($aQueue->defauktCPUCount > 0){
+                    if($aQueue->defaultCPUCount > 0){
                         $cpuCount = $aQueue->defaultCPUCount;
                     }
                     if($aQueue->defaultWalltime > 0){
