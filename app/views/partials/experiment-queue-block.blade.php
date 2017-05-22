@@ -221,13 +221,6 @@
                     $("#walltime-count").val(queueDefaults['wallTimeLimit']);
                 }
 
-                if(queues[i]['cpusPerNode'] > 0){
-                    var cpusPerNode = queues[i]['cpusPerNode'];
-                }else{
-                    var cpusPerNode = queueDefaults['cpusPerNode'];
-                }
-
-
                 //memory-count
                 if (queues[i]['maxMemory'] != 0 && queues[i]['maxMemory'] != null) {
                     if($('#enable-auto-scheduling').prop('checked')){
@@ -240,30 +233,33 @@
                 }
                 else
                     $(".memory-count").parent().addClass("hide");
+
+                if(queues[i]['cpusPerNode'] > 0){
+                    var cpusPerNode = queues[i]['cpusPerNode'];
+                }else{
+                    var cpusPerNode = queueDefaults['cpusPerNode'];
+                }
+
+                var nodeCount=$("#node-count");
+                var cpuCount=$("#cpu-count");
+
+                if(cpusPerNode > 0){
+                    nodeCount.keyup(function(){
+                        var nodeCountVal = parseInt(nodeCount.val());
+                        if(nodeCountVal > 0){
+                            cpuCount.val(nodeCountVal*cpusPerNode);
+                        }
+                    });
+
+                    cpuCount.keyup(function(){
+                        var cpuCountVal = parseInt(cpuCount.val());
+                        if(cpuCountVal > 0){
+                            nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
+                        }
+                    });
+                }
             }
         }
         $(".queue-view").removeClass("hide");
     }
-
-    $(document).ready(function(){
-        var cpusPerNode = {{$cpusPerNode}};
-        var nodeCount=$("#node-count");
-        var cpuCount=$("#cpu-count");
-
-        if(cpusPerNode > 0){
-            nodeCount.keyup(function(){
-                var nodeCountVal = parseInt(nodeCount.val());
-                if(nodeCountVal > 0){
-                    cpuCount.val(nodeCountVal*cpusPerNode);
-                }
-            });
-
-            cpuCount.keyup(function(){
-                var cpuCountVal = parseInt(cpuCount.val());
-                if(cpuCountVal > 0){
-                    nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
-                }
-            });
-        }
-    });
 </script>
