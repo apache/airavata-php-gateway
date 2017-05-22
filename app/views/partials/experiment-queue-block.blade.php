@@ -155,18 +155,14 @@
         getQueueData(selectedQueue);
     });
 
-    function nodeCountOnKeyUp(){
-        var nodeCount=$("#node-count");
-        var cpuCount=$("#cpu-count");
+    function nodeCountOnKeyUp(nodeCount, cpuCount){
         var nodeCountVal = parseInt(nodeCount.val());
         if(nodeCountVal > 0){
             cpuCount.val(nodeCountVal*cpusPerNode);
         }
     }
 
-    function cpuCountOnKeyUp(){
-        var nodeCount=$("#node-count");
-        var cpuCount=$("#cpu-count");
+    function cpuCountOnKeyUp(nodeCount, cpuCount){
         var cpuCountVal = parseInt(cpuCount.val());
         if(cpuCountVal > 0){
             nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
@@ -258,9 +254,11 @@
                     var cpusPerNode = queueDefaults['cpusPerNode'];
                 }
 
+                var nodeCount=$("#node-count");
+                var cpuCount=$("#cpu-count");
                 if(cpusPerNode > 0){
-                    nodeCount.keyup(nodeCountOnKeyUp);
-                    cpuCount.keyup(cpuCountOnKeyUp);
+                    nodeCount.keyup(nodeCountOnKeyUp(nodeCount, cpuCount));
+                    cpuCount.keyup(cpuCountOnKeyUp(nodeCount, cpuCount));
                 }else{
                     nodeCount.unbind('keyup', nodeCountOnKeyUp);
                     cpuCount.unbind('keyup', cpuCountOnKeyUp);
