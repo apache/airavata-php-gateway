@@ -36,7 +36,7 @@
     @endif
 </div>
 
-<div class="queue-data @if(! isset($expVal) ) hide @endif">
+<div class="queue-data">
     <div class="form-group">
         <label for="node-count">Node Count <span>( Max Allowed Nodes - <span
                     class="node-count alert-warning"></span>)</span></label>
