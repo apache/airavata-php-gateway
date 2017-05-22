@@ -517,6 +517,8 @@ class ExperimentController extends BaseController
                     }
                     if($aQueue->defaultWalltime > 0){
                         $wallTimeLimit = $aQueue->defaultWalltime;
+                    }if($aQueue->cpuPerNode > 0){
+                        $cpusPerNode = $aQueue->cpuPerNode;
                     }
                     break;
                 }
