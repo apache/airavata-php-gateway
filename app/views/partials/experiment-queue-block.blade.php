@@ -243,26 +243,25 @@
                 var nodeCount=$("#node-count");
                 var cpuCount=$("#cpu-count");
 
+                cpuCount.keyup(function(){
+                    var cpuCountVal = parseInt(cpuCount.val());
+                    if(cpuCountVal > 0){
+                        nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
+                    }
+                });
+                nodeCount.keyup(function(){
+                    var nodeCountVal = parseInt(nodeCount.val());
+                    if(nodeCountVal > 0){
+                        cpuCount.val(nodeCountVal*cpusPerNode);
+                    }
+                });
+
                 if(cpusPerNode > 0){
-                    cpuCount.keyup(function(){
-                        var cpuCountVal = parseInt(cpuCount.val());
-                        if(cpuCountVal > 0){
-                            nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
-                        }
-                    });
-                    nodeCount.keyup(function(){
-                        var nodeCountVal = parseInt(nodeCount.val());
-                        if(nodeCountVal > 0){
-                            cpuCount.val(nodeCountVal*cpusPerNode);
-                        }
-                    });
+                    cpuCount.on('keyup');
+                    nodeCount.on('keyup');
                 }else{
-                    cpuCount.keyup(function(){
-                        return true;
-                    });
-                    nodeCount.keyup(function(){
-                        return true;
-                    });
+                    cpuCount.off('keyup');
+                    nodeCount.off('keyup');
                 }
             }
         }
