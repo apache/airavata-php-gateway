@@ -39,3 +39,33 @@
            maxlength="30" name="qmaxmemoryinqueue" placeholder="Max Memory For Queue"
     @if( isset( $readOnly)){{ "readOnly" }}@endif/>
 </div>
+<div class="form-group">
+    <label class="control-label">CPUs Per Node</label>
+    <input type="number" min="0" class="form-control" value="@if( isset( $queueData) ){{ $queueData->cpuPerNode }}@endif"
+           maxlength="30" name="cpuPerNode" placeholder="CPUs Per Node"
+    @if( isset( $readOnly)){{ "readOnly" }}@endif/>
+</div>
+<div class="form-group">
+    <label class="control-label">Default Node Count</label>
+    <input type="number" min="0" class="form-control" value="@if( isset( $queueData) ){{ $queueData->defaultNodeCount }}@endif"
+           maxlength="30" name="defaultNodeCount" placeholder="Default Node Count"
+    @if( isset( $readOnly)){{ "readOnly" }}@endif/>
+</div>
+<div class="form-group">
+    <label class="control-label">Default CPU Count</label>
+    <input type="number" min="0" class="form-control" value="@if( isset( $queueData) ){{ $queueData->defaultCPUCount }}@endif"
+           maxlength="30" name="defaultCPUCount" placeholder="defaultCPUCount"
+    @if( isset( $readOnly)){{ "readOnly" }}@endif/>
+</div>
+<div class="form-group">
+    <label class="control-label">Default Wall Time</label>
+    <input type="number" min="0" class="form-control" value="@if( isset( $queueData) ){{ $queueData->defaultWalltime }}@endif"
+           maxlength="30" name="defaultWalltime" placeholder="Default Wall Time"
+    @if( isset( $readOnly)){{ "readOnly" }}@endif/>
+</div>
+<div class="form-group">
+    <label class="control-label">Queue Specific Macros</label>
+    <input type="text" min="0" class="form-control" value="@if( isset( $queueData) ){{ $queueData->queueSpecificMacros }}@endif"
+           maxlength="100" name="queueSpecificMacros" placeholder="Queue Specific Macros"
+    @if( isset( $readOnly)){{ "readOnly" }}@endif/>
+</div>

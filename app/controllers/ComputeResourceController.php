@@ -112,7 +112,13 @@ class ComputeResourceController extends BaseController
                 "maxNodes" => Input::get("qmaxnodes"),
                 "maxProcessors" => Input::get("qmaxprocessors"),
                 "maxJobsInQueue" => Input::get("qmaxjobsinqueue"),
-                "maxMemory" => Input::get("qmaxmemoryinqueue")
+                "maxMemory" => Input::get("qmaxmemoryinqueue"),
+                "cpuPerNode" => Input::get("cpuPerNode"),
+                "defaultNodeCount" => Input::get("defaultNodeCount"),
+                "defaultCPUCount" => Input::get("defaultCPUCount"),
+                "defaultWalltime" => Input::get("defaultWalltime"),
+                "queueSpecificMacros" => Input::get("queueSpecificMacros"),
+                "isDefaultQueue" => Input::get("isDefaultQueue")
             );
 
             $computeDescription = CRUtilities::get_compute_resource(Input::get("crId"));
