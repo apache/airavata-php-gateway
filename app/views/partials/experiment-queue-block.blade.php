@@ -244,21 +244,21 @@
                 var cpuCount=$("#cpu-count");
 
                 if(cpusPerNode > 0){
-                    cpuCount.onkeyup(function(){
+                    cpuCount.keyup(function(){
                         var cpuCountVal = parseInt(cpuCount.val());
                         if(cpuCountVal > 0){
                             nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
                         }
                     });
-                    nodeCount.onkeyup(function(){
+                    nodeCount.keyup(function(){
                         var nodeCountVal = parseInt(nodeCount.val());
                         if(nodeCountVal > 0){
                             cpuCount.val(nodeCountVal*cpusPerNode);
                         }
                     });
                 }else{
-                    cpuCount.onkeyup(null);
-                    nodeCount.onkeyup(null);
+                    cpuCount.keyup(null);
+                    nodeCount.keyup(null);
                 }
             }
         }
