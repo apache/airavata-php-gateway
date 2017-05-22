@@ -464,38 +464,6 @@ class ExperimentController extends BaseController
         $cpusPerNode = 0;
         $queueName = Config::get('pga_config.airavata')["queue-name"];
 
-//        $crResource = CRUtilities::get_compute_resource($computeResourceId);
-//        $cpusPerNode = $crResource->cpusPerNode;
-//        if($crResource->defaultNodeCount > 0){
-//            $nodeCount = $crResource->defaultNodeCount;
-//        }
-//        if($crResource->defaultCPUCount > 0){
-//            $cpuCount = $crResource->defaultCPUCount;
-//        }
-//        if($crResource->defaultWalltime > 0){
-//            $wallTimeLimit = $crResource->defaultWalltime;
-//        }
-
-//        $correctAppDeployment = null;
-//        foreach($appDeployments as $appDeployment){
-//            if($appDeployment->computeHostId == $computeResourceId && $appDeployment->appModuleId == $appId){
-//                $correctAppDeployment = $appDeployment;
-//                break;
-//            }
-//        }
-//
-//        if($correctAppDeployment != null){
-//            if($correctAppDeployment->defaultNodeCount > 0){
-//                $nodeCount = $correctAppDeployment->defaultNodeCount;
-//            }
-//            if($correctAppDeployment->defaultCPUCount > 0){
-//                $cpuCount = $correctAppDeployment->defaultCPUCount;
-//            }
-//            if($correctAppDeployment->defaultWalltime > 0) {
-//                $wallTimeLimit = $correctAppDeployment->defaultWalltime;
-//            }
-//        }
-
         $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
 
         $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
@@ -508,17 +476,6 @@ class ExperimentController extends BaseController
             foreach($queues as $aQueue){
                 if($aQueue->isDefaultQueue){
                     $queueName = $aQueue->queueName;
-                    if($aQueue->defaultNodeCount > 0){
-                        $nodeCount = $aQueue->defaultNodeCount;
-                    }
-                    if($aQueue->defaultCPUCount > 0){
-                        $cpuCount = $aQueue->defaultCPUCount;
-                    }
-                    if($aQueue->defaultWalltime > 0){
-                        $wallTimeLimit = $aQueue->defaultWalltime;
-                    }if($aQueue->cpuPerNode > 0){
-                        $cpusPerNode = $aQueue->cpuPerNode;
-                    }
                     break;
                 }
             }
@@ -527,7 +484,8 @@ class ExperimentController extends BaseController
         $queueDefaults = array("queueName" => $queueName,
             "nodeCount" => $nodeCount,
             "cpuCount" => $cpuCount,
-            "wallTimeLimit" => $wallTimeLimit
+            "wallTimeLimit" => $wallTimeLimit,
+            "cpusPerNode" => $cpusPerNode
         );
 
         return View::make("partials/experiment-queue-block", array("queues" => $queues, "queueDefaults" => $queueDefaults,

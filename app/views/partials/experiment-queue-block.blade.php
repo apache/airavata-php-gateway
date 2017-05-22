@@ -8,6 +8,7 @@
 </div>
 @endif
 <input type="hidden" id="queue-array" value="{{ htmlentities( json_encode( $queues ) ) }}"/>
+<input type="hidden" id="queue-defaults-array" value="{{ htmlentities( json_encode( $queueDefaults ) ) }}"/>
 <div class="form-group required">
     @if( count( $queues) > 0 )
     <label class="control-label" for="node-count">Select a Queue</label>
@@ -156,6 +157,7 @@
 
     function getQueueData(selectedQueue) {
         var queues = $.parseJSON($("#queue-array").val());
+        var queueDefaults = $.parseJSON($("#queue-defaults-array").val());
         var veryLargeValue = 9999999;
         console.log(queues);
         $(".queue-view").addClass("hide");
@@ -174,7 +176,11 @@
                 else
                     $(".node-count").parent().addClass("hide");
 
-                $("#node-count").html(queues[i]['defaultNodeCount']);
+                if(queues[i]['defaultNodeCount'] > 0){
+                    $("#node-count").val(queues[i]['defaultNodeCount']);
+                }else{
+                    $("#node-count").val(queueDefaults['nodeCount']);
+                }
 
                 //core-count
                 if (queues[i]['maxProcessors'] != 0 && queues[i]['maxProcessors'] != null) {
@@ -189,7 +195,12 @@
                 else
                     $(".cpu-count").parent().addClass("hide");
 
-                $("#cpu-count").html(queues[i]['defaultCPUCount']);
+                if(queues[i]['defaultCPUCount'] > 0){
+                    $("#cpu-count").val(queues[i]['defaultCPUCount']);
+                }else{
+                    $("#cpu-count").val(queueDefaults['cpuCount']);
+                }
+
 
                 //walltime-count
                 if (queues[i]['maxRunTime'] != null && queues[i]['maxRunTime'] != 0) {
@@ -204,7 +215,18 @@
                 else
                     $(".walltime-count").parent().addClass("hide");
 
-                $("#walltime-count").html(queues[i]['defaultWalltime']);
+                if(queues[i]['defaultWalltime'] > 0) {
+                    $("#walltime-count").val(queues[i]['defaultWalltime']);
+                }else{
+                    $("#walltime-count").val(queueDefaults['wallTimeLimit']);
+                }
+
+                if(queues[i]['cpusPerNode'] > 0){
+                    var cpusPerNode = queues[i]['cpusPerNode'];
+                }else{
+                    var cpusPerNode = queueDefaults['cpusPerNode'];
+                }
+
 
                 //memory-count
                 if (queues[i]['maxMemory'] != 0 && queues[i]['maxMemory'] != null) {
