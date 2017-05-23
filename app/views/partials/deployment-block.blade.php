@@ -163,18 +163,3 @@
     <select name="defaultQueueName" class="form-control default-queue-name-select" readonly>
     </select>
 </div>
-
-<script>
-    $( document ).ready(function() {
-        $(".computeHostId").on('change', function () {
-            var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
-            for(var i = 0; i< computeResourceCompleteList.length; i++){
-                computeResource = computeResourceCompleteList[i];
-                if(computeResource.computeResourceId.startsWith(this.value)){
-                    $queues = computeResource.batchQueues;
-                    console.log($queues);
-                }
-            }
-        });
-    });
-</script>

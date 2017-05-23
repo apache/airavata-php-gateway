@@ -70,6 +70,17 @@ $( document).ready( function(){
         	$(".delete-deployment-id").html( $(this).parent().parent().find(".deployment-id").html() );
         	$(".delete-deploymentId").val( deploymentId )
         });
+
+	$(".computeHostId").on('change', function () {
+		var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
+		for(var i = 0; i< computeResourceCompleteList.length; i++){
+			computeResource = computeResourceCompleteList[i];
+			if(computeResource.computeResourceId.startsWith(this.value)){
+				$queues = computeResource.batchQueues;
+				console.log($queues);
+			}
+		}
+	});
 });
 
 function clearInputs( elem, removeJustReadOnly){
