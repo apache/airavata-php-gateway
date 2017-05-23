@@ -85,7 +85,7 @@ $( document).ready( function(){
 							$("#edit-app-deployment-block .default-queue-name-select").append("<option>"+queue.queueName+"</option>")
 								.attr("value", queue.queueName).attr("selected", true);
 						}else{
-							$("#edit-app-deployment-block.default-queue-name-select").append("<option>"+queue.queueName+"</option>")
+							$("#edit-app-deployment-block .default-queue-name-select").append("<option>"+queue.queueName+"</option>")
 								.attr("value", queue.queueName).text(queue.queueName);
 						}
 					}
