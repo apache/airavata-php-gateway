@@ -19,7 +19,7 @@
 </div>
 <div class="form-group required">
     <label class="control-label">Application Compute Host</label>
-    <select name="computeHostId" class="form-control" required readonly>
+    <select name="computeHostId" class="form-control computeHostId" required readonly>
         @foreach( $computeResources as $id => $crName)
         <option value="{{ $id }}"
         @if( isset( $deploymentObject) ) @if( $id == $deploymentObject->computeHostId) selected @endif @endif>{{ $crName
@@ -160,6 +160,21 @@
 {{--</div>--}}
 <div class="form-group required">
     <label class="control-label">Default Queue Name</label>
-    <select name="defaultQueueName" class="form-control" readonly>
+    <select name="defaultQueueName" class="form-control default-queue-name-select" readonly>
     </select>
 </div>
+
+<script>
+    $( document ).ready(function() {
+        $(".computeHostId").on('change', function () {
+            var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
+            for(var i = 0; i< computeResourceCompleteList.length; i++){
+                computeResource = computeResourceCompleteList[i];
+                if(computeResource.computeResourceId.startsWith(this.value)){
+                    $queues = computeResource.batchQueues;
+                    console.log($queues);
+                }
+            }
+        });
+    });
+</script>
