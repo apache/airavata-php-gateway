@@ -158,3 +158,8 @@
     {{--<input type="number" min="0" class="form-control" value="@if( isset( $deploymentObject)){{$deploymentObject->defaultWalltime}}@endif"--}}
     {{--required readonly maxlength="30" name="defaultWalltime"/>--}}
 {{--</div>--}}
+<div class="form-group required">
+    <label class="control-label">Default Queue Name</label>
+    <select name="defaultQueueName" class="form-control" readonly>
+    </select>
+</div>

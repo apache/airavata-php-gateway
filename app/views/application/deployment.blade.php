@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-
+<input type="hidden" id="compute-resource-full-objects" value="{{ htmlentities( json_encode( $computeResourceFullObjects ) ) }}"/>
 <div id="wrapper">
     <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
     @include( 'partials/dashboard-block')
@@ -63,7 +63,7 @@
                     <div class="panel-body">
                         <div class="app-deployment-block">
                             @include('partials/deployment-block', array( 'deploymentObject' => $deployment,
-                            'computeResources' => $computeResources, 'modules' => $modules) )
+                            'computeResources' => $computeResources, 'modules' => $modules, 'queueNames'=> $queueNames) )
                         </div>
                     </div>
                 </div>
