@@ -370,6 +370,7 @@ class ExperimentController extends BaseController
                     "updateSharingViaAjax" => false,
                     "cpusPerNode" => $cpusPerNode,
                     "appDeploymentDefaults" => $appDeploymentDefaults,
+                    "queueDefaults" => $queueDefaults
                 ));
             }
             else {
