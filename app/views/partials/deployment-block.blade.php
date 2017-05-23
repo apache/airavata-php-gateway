@@ -6,7 +6,7 @@
 -->
 @if( isset( $deploymentObject) )
 <input type="hidden" name="app-deployment-id" value="{{$deploymentObject->appDeploymentId}}"/>
-<input type="hidden" name="app-deployment-object" value="{{$deploymentObject}}"/>
+<input type="hidden" name="app-deployment-object" value="{{ htmlentities( json_encode( $deploymentObject ) ) }}"/>
 @endif
 <div class="form-group required">
     <label class="control-label">Application Module</label>
