@@ -22,8 +22,14 @@
         selected
         @endif
     @else
-        @if( $queueDefaults['queueName'] == $queue->queueName )
-        selected
+        @if(isset($appDeploymentDefaults['queueName']) && $appDeploymentDefaults['queueName'] != null)
+            @if($appDeploymentDefaults['queueName'] == $queue->queueName)
+                selected
+            @endif
+        @else
+            @if( $queueDefaults['queueName'] == $queue->queueName )
+                selected
+            @endif
         @endif
     @endif
     >
