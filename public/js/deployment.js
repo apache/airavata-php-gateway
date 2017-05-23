@@ -71,7 +71,7 @@ $( document).ready( function(){
         	$(".delete-deploymentId").val( deploymentId )
         });
 
-	$(".computeHostId").on('change', function () {
+	$("#edit-app-deployment-block").on('change', '.computeHostId', function () {
 		var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
 		for(var i = 0; i< computeResourceCompleteList.length; i++){
 			computeResource = computeResourceCompleteList[i];
