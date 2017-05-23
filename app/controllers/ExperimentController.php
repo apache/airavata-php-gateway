@@ -454,32 +454,15 @@ class ExperimentController extends BaseController
 
     public function getQueueView()
     {
-//        $appId = Session::get('exp_create_app_id');
+        $appId = Session::get('exp_create_app_id');
         $computeResourceId = Input::get("crId");
-//        $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), Session::get("gateway_id"));
+        $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), Session::get("gateway_id"));
 
         $nodeCount = Config::get('pga_config.airavata')["node-count"];
         $cpuCount = Config::get('pga_config.airavata')["total-cpu-count"];
         $wallTimeLimit = Config::get('pga_config.airavata')["wall-time-limit"];
         $cpusPerNode = 0;
         $queueName = Config::get('pga_config.airavata')["queue-name"];
-
-        $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
-
-        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
-        $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
-
-        if ($userHasComputeResourcePreference)
-        {
-            $queueName = $userComputeResourcePreferences[$computeResourceId]->preferredBatchQueue;
-        }else{
-            foreach($queues as $aQueue){
-                if($aQueue->isDefaultQueue){
-                    $queueName = $aQueue->queueName;
-                    break;
-                }
-            }
-        }
 
         $queueDefaults = array("queueName" => $queueName,
             "nodeCount" => $nodeCount,
@@ -488,7 +471,40 @@ class ExperimentController extends BaseController
             "cpusPerNode" => $cpusPerNode
         );
 
-        return View::make("partials/experiment-queue-block", array("queues" => $queues, "queueDefaults" => $queueDefaults,
+        $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
+        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
+        $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
+        if ($userHasComputeResourcePreference)
+        {
+            $queueDefaults['queueName'] = $userComputeResourcePreferences[$computeResourceId]->preferredBatchQueue;
+        }else{
+            foreach($queues as $aQueue){
+                if($aQueue->isDefaultQueue){
+                    $queueDefaults['queueName'] = $aQueue->queueName;
+                    break;
+                }
+            }
+        }
+
+        $correctAppDeployment = null;
+        foreach($appDeployments as $appDeployment){
+            if($appDeployment->computeHostId == $computeResourceId && $appDeployment->appModuleId == $appId){
+                $correctAppDeployment = $appDeployment;
+                break;
+            }
+        }
+
+        $appDeploymentDefaults = array();
+        if($correctAppDeployment != null){
+            $appDeploymentDefaults['nodeCount'] = $correctAppDeployment->defaultNodeCount;
+            $appDeploymentDefaults['cpuCount'] = $correctAppDeployment->defaultCPUCount;
+            $appDeploymentDefaults['wallTimeLimit'] = $wallTimeLimit;
+            $appDeploymentDefaults['queueName'] = $correctAppDeployment->defaultQueueName;
+        }
+
+        return View::make("partials/experiment-queue-block", array("queues" => $queues,
+            "queueDefaults" => $queueDefaults,
+            "appDeploymentDefaults" => $appDeploymentDefaults,
             "useUserCRPref" => $userHasComputeResourcePreference,
             "userHasComputeResourcePreference" => $userHasComputeResourcePreference,
             "cpusPerNode" => $cpusPerNode));

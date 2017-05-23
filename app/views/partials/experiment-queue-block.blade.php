@@ -8,6 +8,7 @@
 </div>
 @endif
 <input type="hidden" id="queue-array" value="{{ htmlentities( json_encode( $queues ) ) }}"/>
+<input type="hidden" id="app-deployment-defaults-array" value="{{ htmlentities( json_encode( $appDeploymentDefaults ) ) }}"/>
 <input type="hidden" id="queue-defaults-array" value="{{ htmlentities( json_encode( $queueDefaults ) ) }}"/>
 <div class="form-group required">
     @if( count( $queues) > 0 )
@@ -158,6 +159,8 @@
     function getQueueData(selectedQueue) {
         var queues = $.parseJSON($("#queue-array").val());
         var queueDefaults = $.parseJSON($("#queue-defaults-array").val());
+        var appDefaults = $.parseJSON($("#app-deployment-defaults-array").val());
+
         var veryLargeValue = 9999999;
         console.log(queues);
         $(".queue-view").addClass("hide");
@@ -176,7 +179,9 @@
                 else
                     $(".node-count").parent().addClass("hide");
 
-                if(queues[i]['defaultNodeCount'] > 0){
+                if(appDefaults['nodeCount'] > 0){
+                    $("#node-count").val(appDefaults['nodeCount']);
+                }else if(queues[i]['defaultNodeCount'] > 0){
                     $("#node-count").val(queues[i]['defaultNodeCount']);
                 }else{
                     $("#node-count").val(queueDefaults['nodeCount']);
@@ -195,7 +200,9 @@
                 else
                     $(".cpu-count").parent().addClass("hide");
 
-                if(queues[i]['defaultCPUCount'] > 0){
+                if(appDefaults['cpuCount'] > 0){
+                    $("#cpu-count").val(appDefaults['cpuCount']);
+                }else if(queues[i]['defaultCPUCount'] > 0){
                     $("#cpu-count").val(queues[i]['defaultCPUCount']);
                 }else{
                     $("#cpu-count").val(queueDefaults['cpuCount']);
@@ -215,7 +222,9 @@
                 else
                     $(".walltime-count").parent().addClass("hide");
 
-                if(queues[i]['defaultWalltime'] > 0) {
+                if(appDefaults['wallTimeLimit'] > 0){
+                    $("#wall-time").val(appDefaults['wallTimeLimit']);
+                }else if(queues[i]['defaultWalltime'] > 0) {
                     $("#wall-time").val(queues[i]['defaultWalltime']);
                 }else{
                     $("#wall-time").val(queueDefaults['wallTimeLimit']);
