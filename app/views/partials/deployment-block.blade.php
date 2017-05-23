@@ -162,5 +162,15 @@
 <div class="form-group required">
     <label class="control-label">Default Queue Name</label>
     <select name="defaultQueueName" class="form-control default-queue-name-select" readonly>
+        @foreach($computeResourceFullObjects as $computeResourceFullObject)
+            @if(0 === strpos($computeResourceFullObject->computeResourceId, $deploymentObject->computeHostId))
+                <?php $queues = $computeResourceFullObject->batchQueues;?>
+                @foreach( $queues as $queue)
+                    <option value="{{ $queue->queueName }}"
+                            @if( isset( $deploymentObject) ) @if( $queue->queueName == $deploymentObject->defaultQueueName) selected @endif
+                            @endif>{{ $queue->queueName }}</option>
+                @endforeach
+            @endif
+        @endforeach
     </select>
 </div>

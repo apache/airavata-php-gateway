@@ -63,7 +63,7 @@
                     <div class="panel-body">
                         <div class="app-deployment-block">
                             @include('partials/deployment-block', array( 'deploymentObject' => $deployment,
-                            'computeResources' => $computeResources, 'modules' => $modules) )
+                            'computeResources' => $computeResources, 'modules' => $modules, 'computeResourceFullObjects' => $computeResourceFullObjects) )
                         </div>
                     </div>
                 </div>
