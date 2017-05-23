@@ -82,11 +82,9 @@ $( document).ready( function(){
 					for(j=0; j<queues.length; j++){
 						queue = queues[j];
 						if(appDeploymentObject.defaultQueueName == queue.queueName){
-							$("#edit-app-deployment-block .default-queue-name-select").append("<option>"+queue.queueName+"</option>")
-								.attr("value", queue.queueName).attr("selected", true);
+							$("#edit-app-deployment-block .default-queue-name-select").append("<option value="+queue.queueName+" selected>"+queue.queueName+"</option>");
 						}else{
-							$("#edit-app-deployment-block .default-queue-name-select").append("<option>"+queue.queueName+"</option>")
-								.attr("value", queue.queueName).text(queue.queueName);
+							$("#edit-app-deployment-block .default-queue-name-select").append("<option value="+queue.queueName+">"+queue.queueName+"</option>");
 						}
 					}
 				}
