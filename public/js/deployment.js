@@ -74,10 +74,9 @@ $( document).ready( function(){
 	$("#edit-app-deployment-block").on('change', '.computeHostId', function () {
 		var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
 		var appDeploymentObject = $.parseJSON($("#app-deployment-object").val());
+		$('#edit-app-deployment-block .default-queue-name-select').find('option').remove();
 		for(i = 0; i< computeResourceCompleteList.length; i++){
 			computeResource = computeResourceCompleteList[i];
-
-			$('#edit-app-deployment-block .default-queue-name-select').find('option').remove();
 			if(computeResource.computeResourceId.startsWith(this.value)){
 				queues = computeResource.batchQueues;
 				if(queues != null){
