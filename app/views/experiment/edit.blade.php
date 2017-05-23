@@ -101,6 +101,7 @@
     $("#compute-resource").change(function () {
         var crId = $(this).val();
         $(".loading-img ").removeClass("hide");
+        $(".queue-view ").addClass("hide");
         $.ajax({
             url: '../experiment/getQueueView',
             type: 'get',
@@ -108,6 +109,7 @@
             success: function (data) {
                 $(".queue-view").html(data);
                 $(".loading-img ").addClass("hide");
+                $(".queue-view ").removeClass("hide");
             }
         });
     });
