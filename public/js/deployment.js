@@ -82,7 +82,7 @@ $( document).ready( function(){
 					for(j=0; j<queues.length; j++){
 						queue = queues[j];
 						if(appDeploymentObject.defaultQueueName == queue.queueName){
-							$("#edit-app-deployment-block.default-queue-name-select").append($("<option></option>")
+							$("#edit-app-deployment-block .default-queue-name-select").append($("<option></option>")
 								.attr("value", queue.queueName).attr("selected", true).text(queue.queueName));
 						}else{
 							$("#edit-app-deployment-block.default-queue-name-select").append($("<option></option>")
