@@ -9,6 +9,11 @@
 <div class="col-md-offset-3 col-md-6">
 
     <h3>Reset Password</h3>
+    @if( Session::has("password-reset-error") )
+    <div class="alert alert-danger">
+        {{{ Session::get("password-reset-error") }}}
+    </div>
+    @endif
     @if ($errors->has())
     @foreach ($errors->all() as $error)
     {{ CommonUtilities::print_error_message($error) }}

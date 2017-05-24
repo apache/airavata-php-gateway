@@ -25,6 +25,11 @@
             Your password has expired. Please <a href="{{URL::to('/') }}/forgot-password">reset your password</a>.
         </div>
         @endif
+        @if( Session::has("password-reset-success") )
+        <div class="alert alert-success">
+            {{{ Session::get("password-reset-success") }}}
+        </div>
+        @endif
 
         <div class="form-group">
             <label class="sr-only" for="username">Username</label>

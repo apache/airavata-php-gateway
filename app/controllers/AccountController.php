@@ -278,12 +278,10 @@ class AccountController extends BaseController
             try{
                 $user_profile = Keycloak::getUserProfile($username);
                 EmailUtilities::sendPasswordResetEmail($username, $user_profile["firstname"], $user_profile["lastname"], $user_profile["email"]);
-                CommonUtilities::print_success_message("Password reset notification was sent to your email account");
-                return View::make("home");
+                return Redirect::to("forgot-password")->with("forgot-password-success", "Password reset notification was sent to your email account");
             }catch (Exception $ex){
                 Log::error($ex);
-                CommonUtilities::print_error_message("Password reset operation failed");
-                return View::make("home");
+                return Redirect::to("forgot-password")->with("forgot-password-error", "Password reset operation failed");
             }
         }
     }
@@ -319,7 +317,7 @@ class AccountController extends BaseController
         $code = Input::get("code", Input::old("code"));
         $username = Input::get("username", Input::old("username"));
         if(empty($username) || empty($code)){
-            return View::make("home");
+            return Redirect::to("forgot-password")->with("password-reset-error", "Reset password link failed. Please request to reset user password again.");
         }else{
             return View::make("account/reset-password", array("code" => $code, "username"=>$username));
         }
@@ -431,8 +429,7 @@ class AccountController extends BaseController
         try{
             $verified = EmailUtilities::verifyPasswordResetCode($username, $code);
             if (!$verified){
-                CommonUtilities::print_error_message("Resetting user password operation failed. Please request to reset user password again.");
-                return View::make("home");
+                return Redirect::to("forgot-password")->with("password-reset-error", "Resetting user password operation failed. Please request to reset user password again.");
             }
 
             $admin_authz_token = Keycloak::getAdminAuthzToken();
@@ -440,15 +437,19 @@ class AccountController extends BaseController
 
             $result = IamAdminServices::resetUserPassword($admin_authz_token, $tenant_id, $username, $new_password);
             if($result){
-                CommonUtilities::print_success_message("User password was reset successfully");
-                return View::make("login");
+                return Redirect::to("login")->with("password-reset-success", "User password was reset successfully");
             }else{
-                CommonUtilities::print_error_message("Resetting user password operation failed");
-                return View::make("home");
+                Log::error("Failed to reset password for user $username");
+                return Redirect::to("reset-password")
+                    ->withInput(Input::except('new_password', 'confirm_new_password'))
+                    ->with("password-reset-error", "Resetting user password operation failed");
             }
         }catch (Exception $e){
-            CommonUtilities::print_error_message("Resetting user password operation failed");
-            return View::make("home");
+            Log::error("Failed to reset password for user $username");
+            Log::error($e);
+            return Redirect::to("reset-password")
+                ->withInput(Input::except('new_password', 'confirm_new_password'))
+                ->with("password-reset-error", "Resetting user password operation failed");
         }
     }
 
