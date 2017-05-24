@@ -49,9 +49,9 @@ class Keycloak {
         $this->admin_password = $admin_password;
         $this->gateway_id = $gateway_id;
 
-        $this->role_mapper = new RoleMapper($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
-        $this->roles = new Roles($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
-        $this->users = new Users($base_endpoint_url, $admin_username, $admin_password, $verify_peer);
+        $this->role_mapper = new RoleMapper($base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path);
+        $this->roles = new Roles($base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path);
+        $this->users = new Users($base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path);
     }
 
     /**
@@ -401,7 +401,7 @@ class Keycloak {
 
     public function getAdminAuthzToken() {
 
-        $access_token = KeycloakUtil::getAPIAccessToken($this->base_endpoint_url, $this->realm, $this->admin_username, $this->admin_password, $this->verify_peer);
+        $access_token = KeycloakUtil::getAPIAccessToken($this->base_endpoint_url, $this->realm, $this->admin_username, $this->admin_password, $this->verify_peer, $this->cafile_path);
         $authzToken = new \Airavata\Model\Security\AuthzToken();
         $authzToken->accessToken = $access_token;
         $authzToken->claimsMap['gatewayID'] = $this->gateway_id;

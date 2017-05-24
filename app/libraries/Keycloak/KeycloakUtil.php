@@ -6,7 +6,7 @@ use Log;
 
 class KeycloakUtil {
 
-    public static function getAPIAccessToken($base_endpoint_url, $realm, $admin_username, $admin_password, $verify_peer) {
+    public static function getAPIAccessToken($base_endpoint_url, $realm, $admin_username, $admin_password, $verify_peer, $cafile_path) {
 
         // http://www.keycloak.org/docs/2.5/server_development/topics/admin-rest-api.html
         // curl -d client_id=admin-cli -d username=username \
@@ -16,6 +16,7 @@ class KeycloakUtil {
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $verify_peer);
+        curl_setopt($r, CURLOPT_CAINFO, $cafile_path);
 
         // Assemble POST parameters for the request.
         $post_fields = "client_id=admin-cli&username=" . urlencode($admin_username) . "&password=" . urlencode($admin_password) . "&grant_type=password";
