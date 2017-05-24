@@ -319,7 +319,7 @@ class AccountController extends BaseController
         if(empty($username) || empty($code)){
             return Redirect::to("forgot-password")->with("password-reset-error", "Reset password link failed. Please request to reset user password again.");
         }else{
-            return View::make("account/reset-password", array("code" => $code, "username"=>$username));
+            return View::make("account/reset-password", array("code" => $code, "username"=>$username, "password_regex_tooltip"=>self::PASSWORD_VALIDATION_MESSAGE));
         }
     }
 
@@ -411,7 +411,7 @@ class AccountController extends BaseController
             "confirm_new_password" => "required|same:new_password",
         );
         $messages = array(
-            'password.regex' => self::PASSWORD_VALIDATION_MESSAGE,
+            'new_password.regex' => self::PASSWORD_VALIDATION_MESSAGE,
         );
 
         $validator = Validator::make(Input::all(), $rules, $messages);
