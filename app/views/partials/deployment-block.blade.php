@@ -6,6 +6,7 @@
 -->
 @if( isset( $deploymentObject) )
 <input type="hidden" name="app-deployment-id" value="{{$deploymentObject->appDeploymentId}}"/>
+<input type="hidden" name="app-deployment-object" id="app-deployment-object" value="{{ htmlentities( json_encode( $deploymentObject ) ) }}"/>
 @endif
 <div class="form-group required">
     <label class="control-label">Application Module</label>
@@ -19,7 +20,7 @@
 </div>
 <div class="form-group required">
     <label class="control-label">Application Compute Host</label>
-    <select name="computeHostId" class="form-control" required readonly>
+    <select name="computeHostId" class="form-control computeHostId" required readonly>
         @foreach( $computeResources as $id => $crName)
         <option value="{{ $id }}"
         @if( isset( $deploymentObject) ) @if( $id == $deploymentObject->computeHostId) selected @endif @endif>{{ $crName
@@ -153,8 +154,25 @@
     <input type="number" min="0" class="form-control" value="@if( isset( $deploymentObject)){{$deploymentObject->defaultCPUCount}}@endif"
     required readonly maxlength="30" name="defaultCPUCount"/>
 </div>
-<div class="form-group">
-    <label class="control-label">Default Walltime</label>
-    <input type="number" min="0" class="form-control" value="@if( isset( $deploymentObject)){{$deploymentObject->defaultWalltime}}@endif"
-    required readonly maxlength="30" name="defaultWalltime"/>
+{{--<div class="form-group">--}}
+    {{--<label class="control-label">Default Walltime</label>--}}
+    {{--<input type="number" min="0" class="form-control" value="@if( isset( $deploymentObject)){{$deploymentObject->defaultWalltime}}@endif"--}}
+    {{--required readonly maxlength="30" name="defaultWalltime"/>--}}
+{{--</div>--}}
+<div class="form-group required">
+    <label class="control-label">Default Queue Name</label>
+    <select name="defaultQueueName" class="form-control default-queue-name-select" readonly>
+        @if(isset($deploymentObject))
+            @foreach($computeResourceFullObjects as $computeResourceFullObject)
+                @if(0 === strpos($computeResourceFullObject->computeResourceId, $deploymentObject->computeHostId))
+                    <?php $queues = $computeResourceFullObject->batchQueues;?>
+                    @foreach( $queues as $queue)
+                        <option value="{{ $queue->queueName }}"
+                                @if( isset( $deploymentObject) ) @if( $queue->queueName == $deploymentObject->defaultQueueName) selected @endif
+                                @endif>{{ $queue->queueName }}</option>
+                    @endforeach
+                @endif
+            @endforeach
+        @endif
+    </select>
 </div>

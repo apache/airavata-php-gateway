@@ -539,6 +539,14 @@ class BatchQueue {
    */
   public $defaultCPUCount = null;
   /**
+   * @var int
+   */
+  public $defaultWalltime = null;
+  /**
+   * @var string
+   */
+  public $queueSpecificMacros = null;
+  /**
    * @var bool
    */
   public $isDefaultQueue = null;
@@ -587,6 +595,14 @@ class BatchQueue {
           'type' => TType::I32,
           ),
         11 => array(
+          'var' => 'defaultWalltime',
+          'type' => TType::I32,
+          ),
+        12 => array(
+          'var' => 'queueSpecificMacros',
+          'type' => TType::STRING,
+          ),
+        13 => array(
           'var' => 'isDefaultQueue',
           'type' => TType::BOOL,
           ),
@@ -622,6 +638,12 @@ class BatchQueue {
       }
       if (isset($vals['defaultCPUCount'])) {
         $this->defaultCPUCount = $vals['defaultCPUCount'];
+      }
+      if (isset($vals['defaultWalltime'])) {
+        $this->defaultWalltime = $vals['defaultWalltime'];
+      }
+      if (isset($vals['queueSpecificMacros'])) {
+        $this->queueSpecificMacros = $vals['queueSpecificMacros'];
       }
       if (isset($vals['isDefaultQueue'])) {
         $this->isDefaultQueue = $vals['isDefaultQueue'];
@@ -719,6 +741,20 @@ class BatchQueue {
           }
           break;
         case 11:
+          if ($ftype == TType::I32) {
+            $xfer += $input->readI32($this->defaultWalltime);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 12:
+          if ($ftype == TType::STRING) {
+            $xfer += $input->readString($this->queueSpecificMacros);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 13:
           if ($ftype == TType::BOOL) {
             $xfer += $input->readBool($this->isDefaultQueue);
           } else {
@@ -788,8 +824,18 @@ class BatchQueue {
       $xfer += $output->writeI32($this->defaultCPUCount);
       $xfer += $output->writeFieldEnd();
     }
+    if ($this->defaultWalltime !== null) {
+      $xfer += $output->writeFieldBegin('defaultWalltime', TType::I32, 11);
+      $xfer += $output->writeI32($this->defaultWalltime);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->queueSpecificMacros !== null) {
+      $xfer += $output->writeFieldBegin('queueSpecificMacros', TType::STRING, 12);
+      $xfer += $output->writeString($this->queueSpecificMacros);
+      $xfer += $output->writeFieldEnd();
+    }
     if ($this->isDefaultQueue !== null) {
-      $xfer += $output->writeFieldBegin('isDefaultQueue', TType::BOOL, 11);
+      $xfer += $output->writeFieldBegin('isDefaultQueue', TType::BOOL, 13);
       $xfer += $output->writeBool($this->isDefaultQueue);
       $xfer += $output->writeFieldEnd();
     }

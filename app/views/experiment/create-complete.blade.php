@@ -93,12 +93,14 @@
     $("#compute-resource").change(function () {
         var crId = $(this).val();
         $(".loading-img ").removeClass("hide");
+        $(".queue-view ").addClass("hide");
         $.ajax({
             url: '../experiment/getQueueView',
             type: 'get',
             data: {crId: crId},
             success: function (data) {
                 $(".queue-view").html(data);
+                $(".queue-view ").removeClass("hide");
                 $(".loading-img ").addClass("hide");
             }
         });

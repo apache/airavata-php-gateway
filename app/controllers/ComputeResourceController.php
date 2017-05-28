@@ -95,10 +95,10 @@ class ComputeResourceController extends BaseController
             $computeDescription->ipAddresses = array_unique(array_filter(Input::get("ips")));
             $computeDescription->resourceDescription = Input::get("description");
             $computeDescription->maxMemoryPerNode = Input::get("maxMemoryPerNode");
-            $computeDescription->cpusPerNode = Input::get("cpusPerNode");
-            $computeDescription->defaultNodeCount = Input::get("defaultNodeCount");
-            $computeDescription->defaultCPUCount = Input::get("defaultCPUCount");
-            $computeDescription->defaultWalltime = Input::get("defaultWalltime");
+//            $computeDescription->cpusPerNode = Input::get("cpusPerNode");
+//            $computeDescription->defaultNodeCount = Input::get("defaultNodeCount");
+//            $computeDescription->defaultCPUCount = Input::get("defaultCPUCount");
+//            $computeDescription->defaultWalltime = Input::get("defaultWalltime");
             //var_dump( $computeDescription); exit;
 
             $computeResource = CRUtilities::register_or_update_compute_resource($computeDescription, true);
@@ -112,11 +112,27 @@ class ComputeResourceController extends BaseController
                 "maxNodes" => Input::get("qmaxnodes"),
                 "maxProcessors" => Input::get("qmaxprocessors"),
                 "maxJobsInQueue" => Input::get("qmaxjobsinqueue"),
-                "maxMemory" => Input::get("qmaxmemoryinqueue")
+                "maxMemory" => Input::get("qmaxmemoryinqueue"),
+                "cpuPerNode" => Input::get("cpuPerNode"),
+                "defaultNodeCount" => Input::get("defaultNodeCount"),
+                "defaultCPUCount" => Input::get("defaultCPUCount"),
+                "defaultWalltime" => Input::get("defaultWalltime"),
+                "queueSpecificMacros" => Input::get("queueSpecificMacros"),
+                "isDefaultQueue" => Input::get('isDefaultQueue') == 'on'
             );
 
             $computeDescription = CRUtilities::get_compute_resource(Input::get("crId"));
-            $computeDescription->batchQueues[] = CRUtilities::createQueueObject($queue);
+            $updatedQueues = [];
+            if($queue["isDefaultQueue"]){
+                foreach($computeDescription->batchQueues as $aQueue){
+                    $aQueue->isDefaultQueue = false;
+                    $updatedQueues[] = $aQueue;
+                }
+            }else{
+                $updatedQueues = $computeDescription->batchQueues;
+            }
+            $updatedQueues[] = CRUtilities::createQueueObject($queue);
+            $computeDescription->batchQueues = $updatedQueues;
             $computeResource = CRUtilities::register_or_update_compute_resource($computeDescription, true);
             //var_dump( $computeResource); exit;
             $tabName = "#tab-queues";

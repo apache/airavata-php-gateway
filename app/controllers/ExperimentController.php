@@ -289,21 +289,16 @@ class ExperimentController extends BaseController
         $nodeCount = Config::get('pga_config.airavata')["node-count"];
         $cpuCount = Config::get('pga_config.airavata')["total-cpu-count"];
         $wallTimeLimit = Config::get('pga_config.airavata')["wall-time-limit"];
+        $cpusPerNode = 0;
 
+        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
+            "nodeCount" => $nodeCount,
+            "cpuCount" => $cpuCount,
+            "wallTimeLimit" => $wallTimeLimit,
+            "cpusPerNode" => $cpusPerNode
+        );
 
         $computeResourceId = $experiment->userConfigurationData->computationalResourceScheduling->resourceHostId;
-        $crResource = CRUtilities::get_compute_resource($computeResourceId);
-        $cpusPerNode = $crResource->cpusPerNode;
-        if($crResource->defaultNodeCount > 0){
-            $nodeCount = $crResource->defaultNodeCount;
-        }
-        if($crResource->defaultCPUCount > 0){
-            $cpuCount = $crResource->defaultCPUCount;
-        }
-        if($crResource->defaultWalltime > 0){
-            $wallTimeLimit = $crResource->defaultWalltime;
-        }
-
         $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), Session::get("gateway_id"));
         $correctAppDeployment = null;
         foreach($appDeployments as $appDeployment){
@@ -313,23 +308,13 @@ class ExperimentController extends BaseController
             }
         }
 
+        $appDeploymentDefaults = array();
         if($correctAppDeployment != null){
-            if($correctAppDeployment->defaultNodeCount > 0){
-
-            }
-            if($correctAppDeployment->defaultCPUCount > 0){
-                $cpuCount = $correctAppDeployment->defaultCPUCount;
-            }
-            if($correctAppDeployment->defaultWalltime > 0) {
-                $wallTimeLimit = $correctAppDeployment->defaultWalltime;
-            }
+            $appDeploymentDefaults['nodeCount'] = $correctAppDeployment->defaultNodeCount;
+            $appDeploymentDefaults['cpuCount'] = $correctAppDeployment->defaultCPUCount;
+            $appDeploymentDefaults['wallTimeLimit'] = $wallTimeLimit;
+            $appDeploymentDefaults['queueName'] = $correctAppDeployment->defaultQueueName;
         }
-
-        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
-            "nodeCount" => $nodeCount,
-            "cpuCount" => $cpuCount,
-            "wallTimeLimit" => $wallTimeLimit
-        );
 
         $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
 
@@ -383,7 +368,9 @@ class ExperimentController extends BaseController
                     "canEditSharing" => $canEditSharing,
                     "projectOwner" => json_encode($projectOwner),
                     "updateSharingViaAjax" => false,
-                    "cpusPerNode" => $cpusPerNode
+                    "cpusPerNode" => $cpusPerNode,
+                    "appDeploymentDefaults" => $appDeploymentDefaults,
+                    "queueDefaults" => $queueDefaults
                 ));
             }
             else {
@@ -461,17 +448,29 @@ class ExperimentController extends BaseController
         $nodeCount = Config::get('pga_config.airavata')["node-count"];
         $cpuCount = Config::get('pga_config.airavata')["total-cpu-count"];
         $wallTimeLimit = Config::get('pga_config.airavata')["wall-time-limit"];
+        $cpusPerNode = 0;
+        $queueName = Config::get('pga_config.airavata')["queue-name"];
 
-        $crResource = CRUtilities::get_compute_resource($computeResourceId);
-        $cpusPerNode = $crResource->cpusPerNode;
-        if($crResource->defaultNodeCount > 0){
-            $nodeCount = $crResource->defaultNodeCount;
-        }
-        if($crResource->defaultCPUCount > 0){
-            $cpuCount = $crResource->defaultCPUCount;
-        }
-        if($crResource->defaultWalltime > 0){
-            $wallTimeLimit = $crResource->defaultWalltime;
+        $queueDefaults = array("queueName" => $queueName,
+            "nodeCount" => $nodeCount,
+            "cpuCount" => $cpuCount,
+            "wallTimeLimit" => $wallTimeLimit,
+            "cpusPerNode" => $cpusPerNode
+        );
+
+        $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
+        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
+        $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
+        if ($userHasComputeResourcePreference)
+        {
+            $queueDefaults['queueName'] = $userComputeResourcePreferences[$computeResourceId]->preferredBatchQueue;
+        }else{
+            foreach($queues as $aQueue){
+                if($aQueue->isDefaultQueue){
+                    $queueDefaults['queueName'] = $aQueue->queueName;
+                    break;
+                }
+            }
         }
 
         $correctAppDeployment = null;
@@ -482,32 +481,17 @@ class ExperimentController extends BaseController
             }
         }
 
+        $appDeploymentDefaults = array();
         if($correctAppDeployment != null){
-            if($correctAppDeployment->defaultNodeCount > 0){
-
-            }
-            if($correctAppDeployment->defaultCPUCount > 0){
-                $cpuCount = $correctAppDeployment->defaultCPUCount;
-            }
-            if($correctAppDeployment->defaultWalltime > 0) {
-                $wallTimeLimit = $correctAppDeployment->defaultWalltime;
-            }
+            $appDeploymentDefaults['nodeCount'] = $correctAppDeployment->defaultNodeCount;
+            $appDeploymentDefaults['cpuCount'] = $correctAppDeployment->defaultCPUCount;
+            $appDeploymentDefaults['wallTimeLimit'] = $wallTimeLimit;
+            $appDeploymentDefaults['queueName'] = $correctAppDeployment->defaultQueueName;
         }
 
-        $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
-        $queueDefaults = array("queueName" => Config::get('pga_config.airavata')["queue-name"],
-            "nodeCount" => $nodeCount,
-            "cpuCount" => $cpuCount,
-            "wallTimeLimit" => $wallTimeLimit
-        );
-
-        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
-        $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
-        if ($userHasComputeResourcePreference)
-        {
-            $queueDefaults["queueName"] = $userComputeResourcePreferences[$computeResourceId]->preferredBatchQueue;
-        }
-        return View::make("partials/experiment-queue-block", array("queues" => $queues, "queueDefaults" => $queueDefaults,
+        return View::make("partials/experiment-queue-block", array("queues" => $queues,
+            "queueDefaults" => $queueDefaults,
+            "appDeploymentDefaults" => $appDeploymentDefaults,
             "useUserCRPref" => $userHasComputeResourcePreference,
             "userHasComputeResourcePreference" => $userHasComputeResourcePreference,
             "cpusPerNode" => $cpusPerNode));
@@ -535,7 +519,8 @@ class ExperimentController extends BaseController
         $can_write = array();
         foreach ($expContainer as $experiment) {
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-                $can_write[$experiment['experiment']->experimentId] = SharingUtilities::userCanWrite(Session::get("username"), $experiment['experiment']->experimentId, ResourceType::EXPERIMENT);
+                $can_write[$experiment['experiment']->experimentId] = SharingUtilities::userCanWrite(Session::get("username"),
+                    $experiment['experiment']->experimentId, ResourceType::EXPERIMENT);
             } else {
                 $can_write[$experiment['experiment']->experimentId] = true;
             }

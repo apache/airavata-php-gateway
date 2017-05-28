@@ -136,6 +136,8 @@ class AppUtilities
         $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), Session::get("gateway_id"));
         //var_dump( $appDeployments); exit;
         $computeResources = Airavata::getAllComputeResourceNames(Session::get('authz-token'));
+        $computeResourceFullObjects = CRUtilities::getAllCRObjects();
+
         $modules = AppUtilities::getAllModules();
         $apt = new ApplicationParallelismType();
 
@@ -143,7 +145,8 @@ class AppUtilities
             "appDeployments" => $appDeployments,
             "applicationParallelismTypes" => $apt::$__names,
             "computeResources" => $computeResources,
-            "modules" => $modules
+            "modules" => $modules,
+            "computeResourceFullObjects" => $computeResourceFullObjects
         );
     }
 
