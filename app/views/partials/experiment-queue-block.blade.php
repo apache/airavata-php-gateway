@@ -228,9 +228,7 @@
                 else
                     $(".walltime-count").parent().addClass("hide");
 
-                if(appDefaults['wallTimeLimit'] > 0){
-                    $("#wall-time").val(appDefaults['wallTimeLimit']);
-                }else if(queues[i]['defaultWalltime'] > 0) {
+                if(queues[i]['defaultWalltime'] > 0) {
                     $("#wall-time").val(queues[i]['defaultWalltime']);
                 }else{
                     $("#wall-time").val(queueDefaults['wallTimeLimit']);

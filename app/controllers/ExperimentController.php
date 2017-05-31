@@ -485,7 +485,6 @@ class ExperimentController extends BaseController
         if($correctAppDeployment != null){
             $appDeploymentDefaults['nodeCount'] = $correctAppDeployment->defaultNodeCount;
             $appDeploymentDefaults['cpuCount'] = $correctAppDeployment->defaultCPUCount;
-            $appDeploymentDefaults['wallTimeLimit'] = $wallTimeLimit;
             $appDeploymentDefaults['queueName'] = $correctAppDeployment->defaultQueueName;
         }
 
