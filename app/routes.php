@@ -64,6 +64,9 @@ Route::post("account/add-user-srp", "UserSettingsController@addUserStorageResour
 Route::post("account/update-user-srp", "UserSettingsController@updateUserStorageResourcePreference");
 Route::post("account/delete-user-srp", "UserSettingsController@deleteUserStorageResourcePreference");
 
+Route::get("account/user-profile", "UserSettingsController@getUserProfile");
+Route::post("account/user-profile", "UserSettingsController@updateUserProfile");
+
 /*
  * The following routes will not work without logging in.
  *

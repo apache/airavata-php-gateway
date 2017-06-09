@@ -11,7 +11,7 @@ body{
 	background: #ecf0f1;
 }
 .form-group.required .control-label:after { 
-   content:"*";
+   content:" *";
    color:red;
 }
 

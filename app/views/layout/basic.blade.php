@@ -30,8 +30,8 @@ $title = Session::get("portal-title");
 <!-- Getting user info -->
 @if(Session::has("user-profile"))
 <script>
-var email =  "{{ Session::get("user-profile")["email"] }}";
-var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get("user-profile")["lastname"]}}"
+var email =  {{ json_encode(Session::get("user-profile")->emails[0]) }};
+var fullName = {{ json_encode(Session::get("user-profile")->userName) }};
 </script>
 @endif
 

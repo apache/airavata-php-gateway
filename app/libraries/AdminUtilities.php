@@ -47,8 +47,7 @@ class AdminUtilities
         $gateway->reviewProposalDescription = $inputs["project-details"];
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
 
-        $userProfile = Session::get("user-profile");
-        $gateway->requesterUsername = $userProfile["username"];
+        $gateway->requesterUsername = Session::get('username');
 
         return Airavata::addGateway(Session::get('authz-token'), $gateway);
     }

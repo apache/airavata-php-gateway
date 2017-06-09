@@ -128,6 +128,7 @@ class AccountController extends BaseController
             $userProfile = Keycloak::getUserProfileFromOAuthToken($accessToken);
             $username = $userProfile['username'];
             $userRoles = $userProfile['roles'];
+            $userEmail = $userProfile["email"];
 
             $authzToken = new Airavata\Model\Security\AuthzToken();
             $authzToken->accessToken = $accessToken;
@@ -137,7 +138,6 @@ class AccountController extends BaseController
             Session::put('authz-token',$authzToken);
             Session::put('oauth-refresh-code',$refreshToken);
             Session::put('oauth-expiration-time',$expirationTime);
-            Session::put("user-profile", $userProfile);
 
             Session::put("roles", $userRoles);
             if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
@@ -162,7 +162,7 @@ class AccountController extends BaseController
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
             if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user")){
-                return $this->initializeWithAiravata($username);
+                return $this->initializeWithAiravata($username, $userEmail);
             }
 
             if(Session::has("admin") || Session::has("admin-read-only")){
@@ -194,8 +194,8 @@ class AccountController extends BaseController
         $userProfile = Keycloak::getUserProfileFromOAuthToken($accessToken);
         Log::debug("userProfile", array($userProfile));
         $username = $userProfile['username'];
-
         $userRoles = $userProfile['roles'];
+        $userEmail = $userProfile['email'];
 
         //FIXME There is a bug in WSO2 IS which doest not return the admin role for the default admin user.
         //FIXME Hence as a workaround we manually add it here.
@@ -210,7 +210,6 @@ class AccountController extends BaseController
         Session::put('authz-token',$authzToken);
         Session::put('oauth-refresh-code',$refreshToken);
         Session::put('oauth-expiration-time',$expirationTime);
-        Session::put("user-profile", $userProfile);
 
         if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
             Session::put("admin", true);
@@ -226,12 +225,12 @@ class AccountController extends BaseController
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
         if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
-            return $this->initializeWithAiravata($username);
+            return $this->initializeWithAiravata($username, $userEmail);
         }
         return Redirect::to("home");
     }
 
-    private function initializeWithAiravata($username){
+    private function initializeWithAiravata($username, $userEmail){
 
         // Log the user out if Airavata is down. If a new user we want to make
         // sure we create the default project and setup experiment storage
@@ -254,6 +253,13 @@ class AccountController extends BaseController
             mkdir($dirPath, 0777, true);
             umask($old_umask);
         }
+
+        // Create basic user profile if it doesn't exist
+        if (!UserProfileUtilities::does_user_profile_exist($username)) {
+            UserProfileUtilities::create_basic_user_profile($username, $userEmail);
+        }
+        $userProfile = UserProfileUtilities::get_user_profile($username);
+        Session::put('user-profile', $userProfile);
 
         if(Session::has("admin") || Session::has("admin-read-only")){
             return Redirect::to("admin/dashboard");
@@ -288,14 +294,15 @@ class AccountController extends BaseController
 
     public function dashboard(){
 
-        $userProfile = Session::get("user-profile");
+        $userRoles = Session::get("roles");
+        $userEmail = Session::get("user-profile")->emails[0];
 
-        if( in_array( "gateway-provider", $userProfile["roles"]) ) {
+        if( in_array( "gateway-provider", $userRoles ) ) {
             $gatewayOfUser = "";
 
             $gatewaysInfo = CRUtilities::getAllGateways();
             foreach ($gatewaysInfo as $index => $gateway) {
-                if ($gateway->emailAddress == $userProfile["email"]) {
+                if ($gateway->emailAddress == $userEmail) {
                     Session::set("gateway_id", $gateway->gatewayId);
                     $gatewayOfUser = $gateway->gatewayId;
                     Session::forget("super-admin");
@@ -303,8 +310,6 @@ class AccountController extends BaseController
                 }
             }
             if ($gatewayOfUser == "") {
-                $userInfo["username"] = $userProfile["username"];
-                $userInfo["email"] = $userProfile["email"];
                 Session::put("new-gateway-provider", true);
             }
         }
