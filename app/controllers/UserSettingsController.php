@@ -201,16 +201,9 @@ class UserSettingsController extends BaseController
         $userProfile = UserProfileUtilities::get_user_profile($username);
 
         // Copy data from form to $userProfile object and update
-        $userProfile->userName = Input::get("userName");
+        $userProfile->firstName = Input::get("firstName");
+        $userProfile->lastName = Input::get("lastName");
         $userProfile->homeOrganization = Input::get("homeOrganization");
-        $userProfile->country = Input::get("country");
-        if (Input::has("phones")) {
-            $phones = Input::get("phones");
-            // Filter out empty phone numbers
-            $userProfile->phones = array_filter($phones, function($phone) {
-                return trim($phone) !== "";
-            });
-        }
         try {
             UserProfileUtilities::update_user_profile($userProfile);
             // Now update the UserProfile in the Session

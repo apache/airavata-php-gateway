@@ -31,7 +31,7 @@ $title = Session::get("portal-title");
 @if(Session::has("user-profile"))
 <script>
 var email =  {{ json_encode(Session::get("user-profile")->emails[0]) }};
-var fullName = {{ json_encode(Session::get("user-profile")->userName) }};
+var fullName = {{ json_encode(Session::get("user-profile")->firstName . " " . Session::get("user-profile")->lastName) }};
 </script>
 @endif
 

@@ -42,10 +42,16 @@
             <p class="form-control-static">{{{ $userProfile->emails[0] }}}</p>
         </div>
         <div class="form-group required">
-            <label class="control-label">Name</label>
-            <div><input class="form-control" id="userName" maxlength="50" name="userName"
+            <label class="control-label">First Name</label>
+            <div><input class="form-control" id="firstName" maxlength="50" name="firstName"
                         placeholder="Name" type="text"
-                        value="{{{ $userProfile->userName }}}"/></div>
+                        value="{{{ $userProfile->firstName }}}"/></div>
+        </div>
+        <div class="form-group required">
+            <label class="control-label">Last Name</label>
+            <div><input class="form-control" id="lastName" maxlength="50" name="lastName"
+                        placeholder="Name" type="text"
+                        value="{{{ $userProfile->lastName }}}"/></div>
         </div>
         <div class="form-group">
             <label class="control-label">Organization</label>
@@ -54,41 +60,10 @@
                         value="{{{ $userProfile->homeOrganization }}}"/>
             </div>
         </div>
-        <div class="form-group">
-            <label class="control-label">Country</label>
-            <div><input class="form-control" id="country" name="country"
-                        placeholder="Country" type="text"
-                        value="{{{ $userProfile->country }}}"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label">Phone Numbers</label>
-            @foreach ($userProfile->phones as $phone)
-                @include('partials/user-profile-phone-template', array('phone' => $phone))
-            @endforeach
-            <button id="add-phone-button" class="btn btn-default" type="button">Add Phone</button>
-        </div>
 
         <input name="update" type="submit" class="btn btn-primary btn-block" value="Update">
     </form>
 
 </div>
 
-<div id="new-phone-template" class="hidden">
-    @include('partials/user-profile-phone-template', array('phone' => ''))
-</div>
-
-@stop
-
-@section('scripts')
-@parent
-<script>
-
-    $('#add-phone-button').click(function(e){
-        $(this).before($('#new-phone-template').html());
-    });
-    $(document).on('click', '.delete-phone-button', function(e){
-        $(this).closest('.input-group').remove();
-    });
-</script>
 @stop
