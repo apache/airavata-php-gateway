@@ -32,6 +32,35 @@ class EmailUtilities
         }
     }
 
+    public static function sendVerifyUpdatedEmailAccount($username, $firstName, $lastName, $email){
+        $portalConfig = Config::get('pga_config.portal');
+        $validTime = isset($portalConfig['mail-verify-code-valid-time']) ? $portalConfig['mail-verify-code-valid-time'] : 30;
+        $code = uniqid();
+        Cache::put('PGA-VERIFY-UPDATED-EMAIL-' . $username, $code, $validTime);
+
+        $emailTemplates = json_decode(File::get(app_path() . '/config/email_templates.json'));
+        $subject = $emailTemplates->email_update_verification->subject;
+        $body = trim(implode($emailTemplates->email_update_verification->body));
+
+        $body = str_replace("\$url", URL::to('/') . '/user-profile-confirm-email?username=' . $username . '&code=' . $code, $body);
+        $body = str_replace("\$firstName", $firstName, $body);
+        $body = str_replace("\$lastName", $lastName, $body);
+        $body = str_replace("\$validTime", $validTime, $body);
+
+        EmailUtilities::sendEmail($subject, [$email], $body);
+    }
+
+    public static function verifyUpdatedEmailAccount($username, $code){
+        if(Cache::has('PGA-VERIFY-UPDATED-EMAIL-' . $username)){
+            $storedCode = Cache::get('PGA-VERIFY-UPDATED-EMAIL-' . $username);
+            Cache::forget('PGA-VERIFY-UPDATED-EMAIL-' . $username);
+            return $storedCode == $code;
+        }else{
+            return false;
+        }
+    }
+
+
     public static function sendPasswordResetEmail($username, $firstName, $lastName, $email){
         $portalConfig = Config::get('pga_config.portal');
         $validTime = isset($portalConfig['mail-verify-code-valid-time']) ? $portalConfig['mail-verify-code-valid-time'] : 30;

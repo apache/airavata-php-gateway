@@ -19,6 +19,24 @@
     ]
   },
 
+  "email_update_verification" : {
+    "subject" : "Verify Your Email Account",
+    "body" : [
+      "<div>",
+          "<p>",
+              "Dear $firstName $lastName,<br/>",
+
+              "Please click on the following link to confirm your email address",
+              " and complete updating your email address<br/>",
+
+              "<a href=\"$url\">$url</a><br/>",
+
+              "This link will expire within $validTime minutes.<br/>",
+          "</p>",
+      "</div>"
+    ]
+  },
+
   "password_reset" : {
     "subject" : "Password Reset Request",
     "body" : [

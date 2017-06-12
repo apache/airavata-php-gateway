@@ -218,4 +218,62 @@ class UserSettingsController extends BaseController
         }
 
     }
+
+    public function showUpdateEmailView() {
+        $userProfile = UserProfileUtilities::get_user_profile(Session::get("username"));
+        return View::make("account/user-profile-update-email", array(
+            "email" => $userProfile->emails[0]
+        ));
+    }
+
+    public function submitUpdateEmail() {
+
+        try {
+            $username = Session::get("username");
+            $newEmail = Input::get("newEmail");
+            $user_profile = UserProfileUtilities::get_user_profile($username);
+            EmailUtilities::sendVerifyUpdatedEmailAccount($username, $user_profile->firstName, $user_profile->lastName, $newEmail);
+            Session::put("UserSettingsController_newEmail", $newEmail);
+            return Redirect::to("account/user-profile")->with("message",
+                "Confirmation email has been sent to " . htmlspecialchars($newEmail)
+                . ". Please click on the confirmation link in the email once you receive it.");
+        } catch (Exception $e) {
+            return View::make("account/user-profile-update-email", array(
+                "email" => Input::get("newEmail"),
+                "errorMessage" => "An error occurred while trying to submit updated email address: " . $e->getMessage()
+            ));
+        }
+    }
+
+    public function confirmUpdateEmail() {
+
+        try {
+            $username = Input::get("username");
+            $code = Input::get("code");
+
+            $verified = EmailUtilities::verifyUpdatedEmailAccount($username, $code);
+            if ($verified) {
+                $newEmail = Session::get("UserSettingsController_newEmail");
+                if (empty($newEmail)) {
+                    throw new Exception("New email not found in session");
+                }
+                $user_profile = UserProfileUtilities::get_user_profile($username);
+                $user_profile->emails = array($newEmail);
+                $result = UserProfileUtilities::update_user_profile($user_profile);
+                if ($result) {
+                    return Redirect::to("account/user-profile")->with(
+                        "message", "Email address updated successfully");
+                } else {
+                    return Redirect::to("account/user-profile-update-email")->with(
+                        "errorMessage", "Failed to update email address, please try again.");
+                }
+            } else {
+                return Redirect::to("account/user-profile-update-email")->with(
+                    "errorMessage", "Failed to update email address, please try again. Reason: confirmation link was not verified successfully.");
+            }
+        } catch (Exception $e) {
+            return Redirect::to("account/user-profile-update-email")->with(
+                "errorMessage", "Failed to update email address, please try again. Reason: " . $e->message);
+        }
+    }
 }
