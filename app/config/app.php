@@ -125,6 +125,7 @@ return array(
         'Keycloak\KeycloakServiceProvider',
         'Airavata\AiravataServiceProvider',
         'Airavata\IamAdminServiceProvider',
+        'Airavata\UserProfileServiceProvider',
         'Teepluss\Theme\ThemeServiceProvider',
         'GrahamCampbell\Markdown\MarkdownServiceProvider',
     ),
