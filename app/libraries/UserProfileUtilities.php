@@ -8,7 +8,7 @@ class UserProfileUtilities
 
     public static function does_user_profile_exist($userId) {
         $gatewayId = Session::get('gateway_id');
-        return UserProfileService::doesUserProfileExist(Session::get('authz-token'), $userId, $gatewayId);
+        return UserProfileService::doesUserExist(Session::get('authz-token'), $userId, $gatewayId);
     }
 
     public static function create_basic_user_profile($username, $userEmail) {
