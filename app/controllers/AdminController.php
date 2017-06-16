@@ -11,11 +11,13 @@ class AdminController extends BaseController {
 	public function dashboard(){
         $userInfo = array();
         $data = array();
-        $userProfile = Session::get("user-profile");
+        $userRoles = Session::get("roles");
+        $username = Session::get("username");
+        $userEmail = Session::get("user-profile")->emails[0];
         Session::forget("new-gateway-provider");
 
         //check for gateway provider users
-        if( in_array( "gateway-provider", $userProfile["roles"]) ) {
+        if( in_array( "gateway-provider", $userRoles) ) {
             $gatewayOfUser = "";
             Session::put("super-admin", true);
             $gatewaysInfo = CRUtilities::getAllGateways();
@@ -24,7 +26,7 @@ class AdminController extends BaseController {
             $gatewayApprovalStatuses = AdminUtilities::get_gateway_approval_statuses();
 
             foreach ($gatewaysInfo as $index => $gateway) {
-                if ($gateway->requesterUsername == $userProfile["username"]) {
+                if ($gateway->requesterUsername == $username) {
                     $gatewayOfUser = $gateway->gatewayId;
                     Session::forget("super-admin");
                     Session::put("new-gateway-provider", true);
@@ -47,8 +49,8 @@ class AdminController extends BaseController {
             Session::put("requestedGateways", $requestedGateways);
 
             if ($gatewayOfUser == "") {
-                $userInfo["username"] = $userProfile["username"];
-                $userInfo["email"] = $userProfile["email"];
+                $userInfo["username"] = $username;
+                $userInfo["email"] = $userEmail;
     			$data["userInfo"] = $userInfo;
     			$data["gatewaysInfo"] = $gatewaysInfo;
                 Session::put("new-gateway-provider", true);
@@ -70,9 +72,9 @@ class AdminController extends BaseController {
 			$users = AdminController::getUsersWithRole( Input::get("role"));
 		}
 		else
-	    	$users =  WSIS::listUsers();
+			$users =  Keycloak::listUsers();
 
-	    $roles = WSIS::getAllRoles();
+	    $roles = Keycloak::getAllRoles();
         Session::put("admin-nav", "manage-users");
 	    return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 	}
@@ -85,15 +87,15 @@ class AdminController extends BaseController {
     public function searchUsersView(){
         if(Input::has("search_val"))
         {
-            $users =  WSIS::searchUsers(Input::get("search_val"));
+            $users =  Keycloak::searchUsers(Input::get("search_val"));
         }
         else
-            $users = WSIS::listUsers();
+            $users = Keycloak::listUsers();
 
 		if(!isset($users) || empty($users)){
 			$users = array();
 		}
-        $roles = WSIS::getAllRoles();
+        $roles = Keycloak::getAllRoles();
         Session::put("admin-nav", "manage-users");
         return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 
@@ -150,9 +152,9 @@ class AdminController extends BaseController {
 
 	public function addGatewayAdminSubmit(){
 		//check if username exists
-		if(WSIS::usernameExists( Input::get("username")) )
+		if(Keycloak::usernameExists( Input::get("username")) )
 		{
-            WSIS::updateUserRoles(Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );
+            Keycloak::updateUserRoles(Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );
 			return Redirect::to("admin/dashboard/users?role=" . Config::get('wsis::admin-role-name'))->with("Gateway Admin has been added.");
 		}
 		else
@@ -184,7 +186,7 @@ class AdminController extends BaseController {
 	}
 
 	public function rolesView(){
-		$roles = WSIS::getAllRoles();
+		$roles = Keycloak::getAllRoles();
         Session::put("admin-nav", "manage-roles");
         return View::make("admin/manage-roles", array("roles" => $roles));
 	}
@@ -211,7 +213,7 @@ class AdminController extends BaseController {
 	}
 
     public function addRolesToUser(){
-        $currentRoles = WSIS::getUserRoles(Input::get("username"));
+        $currentRoles = Keycloak::getUserRoles(Input::get("username"));
 		if(!is_array($currentRoles))
 			$currentRoles = array($currentRoles);
         $roles["new"] = array_diff(Input::all()["roles"], $currentRoles);
@@ -228,11 +230,11 @@ class AdminController extends BaseController {
         }
 
         $username = Input::all()["username"];
-        WSIS::updateUserRoles($username, $roles);
-        $newCurrentRoles = WSIS::getUserRoles(Input::get("username"));
+        Keycloak::updateUserRoles($username, $roles);
+        $newCurrentRoles = Keycloak::getUserRoles($username);
         if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $newCurrentRoles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $newCurrentRoles)
                 || in_array(Config::get("pga_config.wsis")["user-role-name"], $newCurrentRoles)){
-            $userProfile = WSIS::getUserProfile(Input::get("username"));
+            $userProfile = Keycloak::getUserProfile($username);
             $recipients = array($userProfile["email"]);
             $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
 
@@ -246,12 +248,12 @@ class AdminController extends BaseController {
                 if(in_array($initialRoleName, $newCurrentRoles) && !in_array($initialRoleName, $roles["new"])) {
                     $userRoles["new"] = array();
                     $userRoles["deleted"] = $initialRoleName;
-                    WSIS::updateUserRoles( $username, $userRoles);
+                    Keycloak::updateUserRoles( $username, $userRoles);
                 } else if(in_array($initialRoleName, $newCurrentRoles) && in_array($initialRoleName, $roles["new"])) {
                     // When initial role added remove all roles except for initial role and Internal/everyone
                     $userRoles["new"] = array();
                     $userRoles["deleted"] = array_diff($newCurrentRoles, array($initialRoleName, "Internal/everyone"));
-                    WSIS::updateUserRoles( $username, $userRoles);
+                    Keycloak::updateUserRoles( $username, $userRoles);
                 }
             }
         }
@@ -278,12 +280,12 @@ class AdminController extends BaseController {
         $roles["deleted"] = array(Input::all()["roleName"]);
         $roles["new"] = array();
         $username = Input::all()["username"];
-        WSIS::updateUserRoles($username, $roles);
+        Keycloak::updateUserRoles($username, $roles);
         return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been deleted.");
     }
 
 	public function getRoles(){
-		return json_encode((array)WSIS::getUserRoles(Input::get("username")));
+		return json_encode((array)Keycloak::getUserRoles(Input::get("username")));
 	}
 
 	public function deleteRole(){
@@ -326,7 +328,7 @@ class AdminController extends BaseController {
 		$mail->isHTML(true);
 
 		$mail->Subject = "Your user account (".$username.") privileges changed!";
-		$userProfile = WSIS::getUserProfile($username);
+		$userProfile = Keycloak::getUserProfile($username);
 		$wsisConfig = Config::get('pga_config.wsis');
 		if( $wsisConfig['tenant-domain'] == "")
 			$username = $username;

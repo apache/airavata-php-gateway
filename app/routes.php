@@ -64,6 +64,12 @@ Route::post("account/add-user-srp", "UserSettingsController@addUserStorageResour
 Route::post("account/update-user-srp", "UserSettingsController@updateUserStorageResourcePreference");
 Route::post("account/delete-user-srp", "UserSettingsController@deleteUserStorageResourcePreference");
 
+Route::get("account/user-profile", "UserSettingsController@getUserProfile");
+Route::post("account/user-profile", "UserSettingsController@updateUserProfile");
+Route::get("account/user-profile-update-email", "UserSettingsController@showUpdateEmailView");
+Route::post("account/user-profile-update-email", "UserSettingsController@submitUpdateEmail");
+Route::get("user-profile-confirm-email", "UserSettingsController@confirmUpdateEmail");
+
 /*
  * The following routes will not work without logging in.
  *
