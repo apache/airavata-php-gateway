@@ -42,6 +42,19 @@ class Users extends BaseKeycloakAPIEndpoint {
         return $result;
     }
 
+    public function getUserByUsername($realm, $username){
+
+        # getUsers returns all users that have a username containing $username
+        # so we need to check the returned users for one that matches exactly
+        $users = $this->getUsers($realm, $username);
+        foreach ($users as $user) {
+            if ($user->username == $username) {
+                return $user;
+            }
+        }
+        return null;
+    }
+
     /**
      * Search users
      * GET /admin/realms/{realm}/users

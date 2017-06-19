@@ -354,9 +354,8 @@ class Keycloak {
      * @param $username
      */
     public function getUserProfile($username){
-        $users = $this->users->getUsers($this->realm, $username);
-        if(count($users) > 0){
-            $user = $users[0];
+        $user = $this->users->getUserByUsername($this->realm, $username);
+        if($user != null){
             $result = [];
             $result["email"] = $user->email;
             $result["firstname"] = $user->firstName;
@@ -375,8 +374,8 @@ class Keycloak {
      */
     public function usernameExists($username){
         try{
-            $users = $this->users->getUsers($this->realm, $username);
-            return $users != null && count($users) > 0;
+            $user = $this->users->getUserByUsername($this->realm, $username);
+            return $user != null;
         }catch (Exception $ex){
             // Username does not exists
             return false;
@@ -387,9 +386,9 @@ class Keycloak {
     public function isUpdatePasswordRequired($username) {
 
         try{
-            $users = $this->users->getUsers($this->realm, $username);
-            if ($users != null && count($users) == 1) {
-                return in_array("UPDATE_PASSWORD", $users[0]->requiredActions);
+            $user = $this->users->getUserByUsername($this->realm, $username);
+            if ($user != null) {
+                return in_array("UPDATE_PASSWORD", $user->requiredActions);
             } else {
                 return false;
             }
@@ -413,13 +412,11 @@ class Keycloak {
      * Get the user's Keycloak user_id from their username
      */
     private function getUserId($username) {
-        $users = $this->users->getUsers($this->realm, $username);
-        if (count($users) > 1) {
-            throw new Exception("More than one user has username $username");
-        } else if (count($users) == 0) {
-            throw new Exception("No user found with username $username");
+        $user = $this->users->getUserByUsername($this->realm, $username);
+        if ($user != null) {
+            return $user->id;
         } else {
-            return $users[0]->id;
+            throw new Exception("No user found with username $username");
         }
     }
 
