@@ -107,6 +107,12 @@ return array(
         'airavata-port' => '8930',
 
         /**
+         * Airavata Profile Service server location. Use tls:// as the protocol to
+         * connect over TLS
+         */
+        'airavata-profile-service-server' => 'gw56.iu.xsede.org',
+
+        /**
          * Airavata Profile Service port
          */
         'airavata-profile-service-port' => '8962',

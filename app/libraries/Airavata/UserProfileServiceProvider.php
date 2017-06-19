@@ -40,7 +40,7 @@ class UserProfileServiceProvider extends ServiceProvider {
         {
             try{
                 $transport = new TSocket(
-                    Config::get('pga_config.airavata')['airavata-server'],
+                    Config::get('pga_config.airavata')['airavata-profile-service-server'],
                     Config::get('pga_config.airavata')['airavata-profile-service-port']
                 );
                 $transport->setRecvTimeout( Config::get('pga_config.airavata')['airavata-timeout']);
