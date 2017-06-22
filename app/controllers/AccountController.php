@@ -18,13 +18,14 @@ class AccountController extends BaseController
     public function createAccountSubmit()
     {
         $rules = array(
-            "username" => "required|min:6",
+            "username" => "required|min:6|regex:/^[a-z0-9_-]+$/",
             "password" => self::PASSWORD_VALIDATION,
             "confirm_password" => "required|same:password",
             "email" => "required|email",
         );
 
         $messages = array(
+            'username.regex' => "Username can only contain lowercase letters, numbers, underscores and hyphens.",
             'password.regex' => self::PASSWORD_VALIDATION_MESSAGE,
         );
 

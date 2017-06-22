@@ -33,7 +33,9 @@
         <div class="form-group required"><label class="control-label">Username</label>
 
             <div><input class="form-control" id="username" minlength="6" maxlength="30" name="username"
-                        placeholder="Username" required="required" type="text" value="{{Input::old('username') }}"/>
+                        placeholder="Username" required="required" type="text" value="{{Input::old('username') }}"
+                        onblur="this.value = this.value.toLowerCase()"
+                        data-container="body" data-toggle="popover" data-placement="left" data-content="Username can only contain lowercase letters, numbers, underscores and hyphens."/>
             </div>
         </div>
         <div class="form-group required"><label class="control-label">Password</label>
@@ -85,10 +87,7 @@
 @section('scripts')
 @parent
 <script>
-    $("#password").popover({
-        'trigger':'focus'
-    });
-    $("#email").popover({
+    $("[data-toggle=popover]").popover({
         'trigger':'focus'
     });
 </script>
