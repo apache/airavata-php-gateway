@@ -126,6 +126,7 @@ return array(
         'Airavata\AiravataServiceProvider',
         'Airavata\IamAdminServiceProvider',
         'Airavata\UserProfileServiceProvider',
+        'Airavata\TenantProfileServiceProvider',
         'Teepluss\Theme\ThemeServiceProvider',
         'GrahamCampbell\Markdown\MarkdownServiceProvider',
     ),
