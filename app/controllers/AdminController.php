@@ -13,7 +13,11 @@ class AdminController extends BaseController {
         $data = array();
         $userRoles = Session::get("roles");
         $username = Session::get("username");
-        $userEmail = Session::get("user-profile")->emails[0];
+        if (Session::has("user-profile")) {
+            $userEmail = Session::get("user-profile")->emails[0];
+        } else {
+            $userEmail = Session::get("iam-user-profile")["email"];
+        }
         Session::forget("new-gateway-provider");
 
         //check for gateway provider users

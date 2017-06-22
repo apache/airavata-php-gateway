@@ -49,43 +49,19 @@ class AccountController extends BaseController
 
             $admin_authz_token = Keycloak::getAdminAuthzToken();
 
-            $gatewayId = Config::get('pga_config.airavata')['gateway-id'];
-            $user_details = new Airavata\Model\User\UserProfile();
-            $user_details->userId = $username;
-            $user_details->emails = array($email);
-            $user_details->firstName = $first_name;
-            $user_details->lastName = $last_name;
-            $user_details->gatewayId = $gatewayId;
-            $user_details->creationTime = 0;
-            $user_details->lastAccessTime = 0;
-            $user_details->validUntil = 0;
-            $user_details->State = Airavata\Model\User\Status::PENDING;
-
-            // TODO: do we need to pass this if we are passing an access token?
-            // Couldn't the backend just use the access token?
-            $realm_admin_credentials = new Airavata\Model\Credential\Store\PasswordCredential();
-            $realm_admin_credentials->gatewayId = $gatewayId;
-            $realm_admin_credentials->portalUserName = Config::get('pga_config.wsis')['admin-username'];
-            $realm_admin_credentials->loginUserName = Config::get('pga_config.wsis')['admin-username'];
-            $realm_admin_credentials->password = Config::get('pga_config.wsis')['admin-password'];
-
-            IamAdminServices::registerUser($admin_authz_token, $user_details, $realm_admin_credentials, $password);
+            IamAdminServices::registerUser($admin_authz_token, $username, $email, $first_name, $last_name, $password);
 
             /*add user to the initial role */
 
-            // TODO: add user to initial role, etc.
-            // $initialRoleName = CommonUtilities::getInitialRoleName();
-            // $allRoles = Keycloak::getAllRoles();
-            // 
-            // $userRoles["new"] = $initialRoleName;
-            // 
-            // if(  Config::get('pga_config.portal')['super-admin-portal'] == true ){
-            // 
-            //     $userRoles["new"] = array("gateway-provider", "admin");
-            // }
-            // $userRoles["deleted"] = array();
-            // // FIXME: this requires the $user_id, not the $username
-            // Keycloak::updateUserRoles( $username, $userRoles);
+            // add user to initial role
+            $initialRoleName = CommonUtilities::getInitialRoleName();
+            IamAdminServices::addRoleToUser($admin_authz_token, $username, $initialRoleName);
+            if(  Config::get('pga_config.portal')['super-admin-portal'] == true ){
+                IamAdminServices::addRoleToUser($admin_authz_token, $username, "gateway-provider");
+            }
+
+            // Send account confirmation email
+            EmailUtilities::sendVerifyEmailAccount($username, $first_name, $last_name, $email);
 
             CommonUtilities::print_success_message('Account confirmation request was sent to your email account');
             return View::make('home');
@@ -126,9 +102,12 @@ class AccountController extends BaseController
             $expirationTime = time() + $response->expires_in - 300; // 5 minutes safe margin
 
             $userProfile = Keycloak::getUserProfileFromOAuthToken($accessToken);
+            Session::put("iam-user-profile", $userProfile);
             $username = $userProfile['username'];
             $userRoles = $userProfile['roles'];
             $userEmail = $userProfile["email"];
+            $firstName = $userProfile["firstname"];
+            $lastName = $userProfile["lastname"];
 
             $authzToken = new Airavata\Model\Security\AuthzToken();
             $authzToken->accessToken = $accessToken;
@@ -162,7 +141,7 @@ class AccountController extends BaseController
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
             if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user")){
-                return $this->initializeWithAiravata($username, $userEmail);
+                return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName);
             }
 
             if(Session::has("admin") || Session::has("admin-read-only")){
@@ -175,6 +154,7 @@ class AccountController extends BaseController
 
     }
 
+    // TODO: add new user from OAuth login to initial role
     public function oauthCallback()
     {
         if (!isset($_GET["code"])) {
@@ -193,9 +173,12 @@ class AccountController extends BaseController
 
         $userProfile = Keycloak::getUserProfileFromOAuthToken($accessToken);
         Log::debug("userProfile", array($userProfile));
+        Session::put("iam-user-profile", $userProfile);
         $username = $userProfile['username'];
         $userRoles = $userProfile['roles'];
         $userEmail = $userProfile['email'];
+        $firstName = $userProfile['firstname'];
+        $lastName = $userProfile['lastName'];
 
         //FIXME There is a bug in WSO2 IS which doest not return the admin role for the default admin user.
         //FIXME Hence as a workaround we manually add it here.
@@ -225,12 +208,12 @@ class AccountController extends BaseController
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
         if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
-            return $this->initializeWithAiravata($username, $userEmail);
+            return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName);
         }
         return Redirect::to("home");
     }
 
-    private function initializeWithAiravata($username, $userEmail){
+    private function initializeWithAiravata($username, $userEmail, $firstName, $lastName){
 
         // Log the user out if Airavata is down. If a new user we want to make
         // sure we create the default project and setup experiment storage
@@ -256,7 +239,7 @@ class AccountController extends BaseController
 
         // Create basic user profile if it doesn't exist
         if (!UserProfileUtilities::does_user_profile_exist($username)) {
-            UserProfileUtilities::create_basic_user_profile($username, $userEmail);
+            UserProfileUtilities::create_basic_user_profile($username, $userEmail, $firstName, $lastName);
         }
         $userProfile = UserProfileUtilities::get_user_profile($username);
         Session::put('user-profile', $userProfile);
@@ -295,7 +278,11 @@ class AccountController extends BaseController
     public function dashboard(){
 
         $userRoles = Session::get("roles");
-        $userEmail = Session::get("user-profile")->emails[0];
+        if (Session::has("user-profile")) {
+            $userEmail = Session::get("user-profile")->emails[0];
+        } else {
+            $userEmail = Session::get("iam-user-profile")["email"];
+        }
 
         if( in_array( "gateway-provider", $userRoles ) ) {
             $gatewayOfUser = "";
@@ -330,33 +317,32 @@ class AccountController extends BaseController
 
     public function confirmAccountCreation()
     {
-        $confirmation = Input::get("confirmation");
+        $code = Input::get("code");
         $username = Input::get("username");
-        if(empty($username) || empty($confirmation)){
+        if(empty($username) || empty($code)){
             return View::make("home");
         }else{
             try{
-//                if(Input::has("userAnswer")){
-                    $result = WSIS::confirmUserRegistration($username, $confirmation, Config::get('pga_config.wsis')['tenant-domain']);
-                    if($result->verified){
-                        $this->sendAccountCreationNotification2Admin($username);
-                        return Redirect::to("login");
-//                    }else if(!$result->verified && preg_match('/Error while validating captcha for user/',$result->error) ){
-//                        CommonUtilities::print_error_message("Captcha Verification failed!");
-//                        $capatcha = WSIS::getCapatcha()->return;
-//                        return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
-//                            "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
-//                            "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
-                    }else{
-                        CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
-                        return View::make("home");
-                    }
-//                }else{
-//                    $capatcha = WSIS::getCapatcha()->return;
-//                    return View::make("account/verify-human", array("username"=>$username,"code"=>$confirmation,
-//                        "imagePath"=>$capatcha->imagePath, "secretKey"=>$capatcha->secretKey,
-//                        "imageUrl"=> Config::get("pga_config.wsis")["service-url"] . $capatcha->imagePath));
-//                }
+                $verified = EmailUtilities::verifyEmailVerification($username, $code);
+                if (!$verified){
+                    $user_profile = Keycloak::getUserProfile($username);
+                    EmailUtilities::sendVerifyEmailAccount($username,
+                        $user_profile["firstname"], $user_profile["lastname"], $user_profile["email"]);
+                    CommonUtilities::print_error_message("Account confirmation "
+                        . "failed! We're sending another confirmation email. "
+                        . "Please click the link in the confirmation email that "
+                        . "you should be receiving soon.");
+                    return View::make("home");
+                }
+                $admin_authz_token = Keycloak::getAdminAuthzToken();
+                $result = IamAdminServices::enableUser($admin_authz_token, $username);
+                if($result){
+                    $this->sendAccountCreationNotification2Admin($username);
+                    return Redirect::to("login")->with("account-created-success", "Your account has been successfully created. Please log in now.");
+                }else{
+                    CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
+                    return View::make("home");
+                }
             }catch (Exception $e){
                 CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
                 return View::make("home");
@@ -395,12 +381,10 @@ class AccountController extends BaseController
         $mail->Subject = "New User Account Was Created Successfully";
         $userProfile = Keycloak::getUserProfile($username);
         $wsisConfig = Config::get('pga_config.wsis');
-        if( $wsisConfig['tenant-domain'] == "")
-            $username = $username;
-        else
-            $username = $username . "@" . $wsisConfig['tenant-domain'];
+        $tenant = $wsisConfig['tenant-domain'];
 
         $str = "Gateway Portal: " . $_SERVER['SERVER_NAME'] ."<br/>";
+        $str = $str . "Tenant: " . $tenant . "<br/>";
         $str = $str . "Username: " . $username ."<br/>";
         $str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
         $str = $str . "Email: " . $userProfile["email"];

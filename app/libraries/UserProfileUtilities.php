@@ -11,13 +11,15 @@ class UserProfileUtilities
         return UserProfileService::doesUserExist(Session::get('authz-token'), $userId, $gatewayId);
     }
 
-    public static function create_basic_user_profile($username, $userEmail) {
+    public static function create_basic_user_profile($username, $userEmail, $firstName, $lastName) {
         $gatewayId = Session::get("gateway_id");
         $userProfileData = array();
         $userProfileData["airavataInternalUserId"] = $username . '@' . $gatewayId;
         $userProfileData["userId"] = $username;
         $userProfileData["gatewayId"] = $gatewayId;
         $userProfileData["emails"] = array($userEmail);
+        $userProfileData["firstName"] = $firstName;
+        $userProfileData["lastName"] = $lastName;
 
         Log::info("creating basic user profile for user", array($userProfileData));
         return UserProfileUtilities::add_user_profile($userProfileData);

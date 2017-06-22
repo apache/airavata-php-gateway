@@ -30,6 +30,11 @@
             {{{ Session::get("password-reset-success") }}}
         </div>
         @endif
+        @if( Session::has("account-created-success") )
+        <div class="alert alert-success">
+            {{{ Session::get("account-created-success") }}}
+        </div>
+        @endif
 
         <div class="form-group">
             <label class="sr-only" for="username">Username</label>

@@ -14,7 +14,7 @@ class EmailUtilities
         $subject = $emailTemplates->account_verification->subject;
         $body = trim(implode($emailTemplates->account_verification->body));
 
-        $body = str_replace("\$url", URL::to('/') . '/confirmAccountCreation?username=' . $username . '&code=' . $code, $body);
+        $body = str_replace("\$url", URL::to('/') . '/confirm-user-registration?username=' . $username . '&code=' . $code, $body);
         $body = str_replace("\$firstName", $firstName, $body);
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$validTime", $validTime, $body);
