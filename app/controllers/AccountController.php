@@ -55,17 +55,22 @@ class AccountController extends BaseController
             /*add user to the initial role */
 
             // add user to initial role
-            $initialRoleName = CommonUtilities::getInitialRoleName();
-            IamAdminServices::addRoleToUser($admin_authz_token, $username, $initialRoleName);
-            if(  Config::get('pga_config.portal')['super-admin-portal'] == true ){
-                IamAdminServices::addRoleToUser($admin_authz_token, $username, "gateway-provider");
-            }
-
+            $this->addUserToInitialRole($username);
             // Send account confirmation email
             EmailUtilities::sendVerifyEmailAccount($username, $first_name, $last_name, $email);
 
             CommonUtilities::print_success_message('Account confirmation request was sent to your email account');
             return View::make('home');
+        }
+    }
+
+    private function addUserToInitialRole($username) {
+
+        $admin_authz_token = Keycloak::getAdminAuthzToken();
+        $initialRoleName = CommonUtilities::getInitialRoleName();
+        IamAdminServices::addRoleToUser($admin_authz_token, $username, $initialRoleName);
+        if(  Config::get('pga_config.portal')['super-admin-portal'] == true ){
+            IamAdminServices::addRoleToUser($admin_authz_token, $username, "gateway-provider");
         }
     }
 
@@ -155,7 +160,6 @@ class AccountController extends BaseController
 
     }
 
-    // TODO: add new user from OAuth login to initial role
     public function oauthCallback()
     {
         if (!isset($_GET["code"])) {
@@ -181,11 +185,14 @@ class AccountController extends BaseController
         $firstName = $userProfile['firstname'];
         $lastName = $userProfile['lastName'];
 
-        //FIXME There is a bug in WSO2 IS which doest not return the admin role for the default admin user.
-        //FIXME Hence as a workaround we manually add it here.
-        if ($username == Config::get('pga_config.wsis')['admin-username']
-            || $username == Config::get('pga_config.wsis')['admin-username'] . '@' . Config::get('pga_config.wsis')['tenant-domain']){
-            $userRoles[] = Config::get('pga_config.wsis')['admin-role-name'];
+        # As a workaround to figuring out if the user is logging in for the first
+        # time, if the user has no roles, assume they are logging in for the first
+        # time and add them to the initial role
+        if (!$this->hasAnyRoles($userRoles)){
+            $this->addUserToInitialRole($username);
+            # Reload the roles
+            $userProfile = Keycloak::getUserProfileFromOAuthToken($accessToken);
+            $userRoles = $userProfile['roles'];
         }
 
         $authzToken = new Airavata\Model\Security\AuthzToken();
@@ -214,6 +221,14 @@ class AccountController extends BaseController
         return Redirect::to("home");
     }
 
+    private function hasAnyRoles($roles) {
+        return in_array("gateway-provider", $roles)
+            or in_array("user-pending", $roles)
+            or in_array(Config::get('pga_config.wsis')['admin-role-name'], $roles)
+            or in_array(Config::get('pga_config.wsis')['read-only-admin-role-name'], $roles)
+            or in_array(Config::get('pga_config.wsis')['user-role-name'], $roles)
+            or in_array(Config::get('pga_config.wsis')['initial-role-name'], $roles);
+    }
     private function initializeWithAiravata($username, $userEmail, $firstName, $lastName){
 
         // Log the user out if Airavata is down. If a new user we want to make
