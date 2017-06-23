@@ -48,29 +48,15 @@ class AccountController extends BaseController
                 ->with("username_exists", true);
         } else {
 
-            $admin_authz_token = Keycloak::getAdminAuthzToken();
-
-            IamAdminServices::registerUser($admin_authz_token, $username, $email, $first_name, $last_name, $password);
-
-            /*add user to the initial role */
+            IamAdminServicesUtilities::registerUser($username, $email, $first_name, $last_name, $password);
 
             // add user to initial role
-            $this->addUserToInitialRole($username);
+            IamAdminServicesUtilities::addInitialRoleToUser($username);
             // Send account confirmation email
             EmailUtilities::sendVerifyEmailAccount($username, $first_name, $last_name, $email);
 
             CommonUtilities::print_success_message('Account confirmation request was sent to your email account');
             return View::make('home');
-        }
-    }
-
-    private function addUserToInitialRole($username) {
-
-        $admin_authz_token = Keycloak::getAdminAuthzToken();
-        $initialRoleName = CommonUtilities::getInitialRoleName();
-        IamAdminServices::addRoleToUser($admin_authz_token, $username, $initialRoleName);
-        if(  Config::get('pga_config.portal')['super-admin-portal'] == true ){
-            IamAdminServices::addRoleToUser($admin_authz_token, $username, "gateway-provider");
         }
     }
 
@@ -350,8 +336,7 @@ class AccountController extends BaseController
                         . "you should be receiving soon.");
                     return View::make("home");
                 }
-                $admin_authz_token = Keycloak::getAdminAuthzToken();
-                $result = IamAdminServices::enableUser($admin_authz_token, $username);
+                $result = IamAdminServicesUtilities::enableUser($username);
                 if($result){
                     $this->sendAccountCreationNotification2Admin($username);
                     return Redirect::to("login")->with("account-created-success", "Your account has been successfully created. Please log in now.");
@@ -437,10 +422,7 @@ class AccountController extends BaseController
                 return Redirect::to("forgot-password")->with("password-reset-error", "Resetting user password operation failed. Please request to reset user password again.");
             }
 
-            $admin_authz_token = Keycloak::getAdminAuthzToken();
-            $tenant_id = Config::get('pga_config.wsis')['tenant-domain'];
-
-            $result = IamAdminServices::resetUserPassword($admin_authz_token, $tenant_id, $username, $new_password);
+            $result = IamAdminServicesUtilities::resetUserPassword($username, $new_password);
             if($result){
                 return Redirect::to("login")->with("password-reset-success", "User password was reset successfully");
             }else{
