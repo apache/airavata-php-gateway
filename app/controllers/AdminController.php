@@ -334,13 +334,11 @@ class AdminController extends BaseController {
 		$mail->Subject = "Your user account (".$username.") privileges changed!";
 		$userProfile = Keycloak::getUserProfile($username);
 		$wsisConfig = Config::get('pga_config.wsis');
-		if( $wsisConfig['tenant-domain'] == "")
-			$username = $username;
-		else
-			$username = $username . "@" . $wsisConfig['tenant-domain'];
+		$tenant = $wsisConfig['tenant-domain'];
 
 		$str = "Please re-login into the portal to use new privileges" ."<br/><br/>";
 		$str = $str . "Gateway Portal: " . $_SERVER['SERVER_NAME'] ."<br/>";
+		$str = $str . "Tenant: " . $tenant . "<br/>";
 		$str = $str . "Username: " . $username ."<br/>";
 		$str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
 		$str = $str . "Email: " . $userProfile["email"] ;

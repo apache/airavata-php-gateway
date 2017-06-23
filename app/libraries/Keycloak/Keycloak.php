@@ -100,7 +100,7 @@ class Keycloak {
         return $result;
      }
 
-    public function getOAuthRequestCodeUrl(){
+    public function getOAuthRequestCodeUrl($extra_params=null){
         $config = $this->getOpenIDConnectDiscoveryConfiguration();
         $authorization_endpoint = $config->authorization_endpoint;
 
@@ -108,6 +108,9 @@ class Keycloak {
         $url = $authorization_endpoint . '?response_type=code&client_id=' . urlencode($this->client_id)
             . '&redirect_uri=' . urlencode($this->callback_url)
             . '&scope=openid';
+        if ($extra_params != null) {
+            $url = $url . '&' . $extra_params;
+        }
         return $url;
     }
 

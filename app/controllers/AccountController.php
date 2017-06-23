@@ -62,14 +62,38 @@ class AccountController extends BaseController
 
     public function loginView()
     {
-        if(Config::get('pga_config.wsis')['oauth-grant-type'] == "authorization_code"){
-            $url = Keycloak::getOAuthRequestCodeUrl();
-            return Redirect::away($url);
-        }else{
-            if(CommonUtilities::id_in_session()){
-                return Redirect::to("home");
-            }else
-                return View::make('account/login');
+        // If user already logged in, redirect to home
+        if(CommonUtilities::id_in_session()){
+            return Redirect::to("home");
+        }
+
+        $auth_options = Config::get('pga_config.wsis')['auth-options'];
+        // Only support for one password option
+        $auth_password_option = null;
+        // Support for many external identity providers (authorization code auth flow)
+        $auth_code_options = array();
+        foreach ($auth_options as $auth_option) {
+            if ($auth_option["oauth-grant-type"] == "password") {
+                $auth_password_option = $auth_option;
+            } else if ($auth_option["oauth-grant-type"] == "authorization_code") {
+                $extra_params = isset($auth_option["oauth-authorize-url-extra-params"]) ? $auth_option["oauth-authorize-url-extra-params"] : null;
+                $auth_url = Keycloak::getOAuthRequestCodeUrl($extra_params);
+                $auth_option["auth_url"] = $auth_url;
+                $auth_code_options[] = $auth_option;
+            } else {
+                throw new Exception("Unrecognized oauth-grant-type: " . $auth_option["oauth-grant-type"]);
+            }
+        }
+
+        // If no username/password option and only one external identity
+        // provider, just redirect immediately
+        if ($auth_password_option == null && count($auth_code_options)) {
+            return Redirect::away($auth_code_options[0]["auth_url"]);
+        } else {
+            return View::make('account/login', array(
+                "auth_password_option" => $auth_password_option,
+                "auth_code_options" => $auth_code_options,
+            ));
         }
     }
 
@@ -169,16 +193,18 @@ class AccountController extends BaseController
         $userRoles = $userProfile['roles'];
         $userEmail = $userProfile['email'];
         $firstName = $userProfile['firstname'];
-        $lastName = $userProfile['lastName'];
+        $lastName = $userProfile['lastname'];
 
         # As a workaround to figuring out if the user is logging in for the first
         # time, if the user has no roles, assume they are logging in for the first
         # time and add them to the initial role
         if (!$this->hasAnyRoles($userRoles)){
-            $this->addUserToInitialRole($username);
+            IamAdminServicesUtilities::addInitialRoleToUser($username);
             # Reload the roles
             $userProfile = Keycloak::getUserProfileFromOAuthToken($accessToken);
             $userRoles = $userProfile['roles'];
+            # Notify admin
+            $this->sendAccountCreationNotification2Admin($username);
         }
 
         $authzToken = new Airavata\Model\Security\AuthzToken();
@@ -188,6 +214,7 @@ class AccountController extends BaseController
         Session::put('oauth-refresh-code',$refreshToken);
         Session::put('oauth-expiration-time',$expirationTime);
 
+        Session::put("roles", $userRoles);
         if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
             Session::put("admin", true);
         }
@@ -204,7 +231,13 @@ class AccountController extends BaseController
         if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
             return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName);
         }
-        return Redirect::to("home");
+
+        if(Session::has("admin") || Session::has("admin-read-only")){
+
+            return Redirect::to("admin/dashboard");
+        }else{
+            return Redirect::to("account/dashboard");
+        }
     }
 
     private function hasAnyRoles($roles) {
@@ -444,10 +477,7 @@ class AccountController extends BaseController
     public function logout()
     {
        Session::flush();
-       if(Config::get('pga_config.wsis')['oauth-grant-type'] == "authorization_code"){
-           return Redirect::away(Keycloak::getOAuthLogoutUrl(URL::to("/")));
-       }
-       return Redirect::to('home');
+       return Redirect::away(Keycloak::getOAuthLogoutUrl(URL::to("/")));
     }
 
     public function allocationRequestView(){

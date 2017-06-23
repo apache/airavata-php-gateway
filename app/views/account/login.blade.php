@@ -8,48 +8,15 @@
 
 <div class="col-md-offset-4 col-md-4">
 
-    <h3>
-        Login
-        <small>
-            <small> (Not registered? <a href="create">Create account</a>)</small>
-        </small>
-    </h3>
-
-
-    <form action="login" method="post" role="form">
-        @if( Session::has("invalid-credentials") )
-        {{ CommonUtilities::print_error_message('Invalid username or password. Please try again.') }}
+    @if (!empty($auth_password_option))
+        @include('partials/login-form', array("auth_name" => $auth_password_option["name"]))
+        @if (!empty($auth_code_options))
+            <h4>OR</h4>
         @endif
-        @if( Session::has("update-password-required") )
-        <div class="alert alert-danger">
-            Your password has expired. Please <a href="{{URL::to('/') }}/forgot-password">reset your password</a>.
-        </div>
-        @endif
-        @if( Session::has("password-reset-success") )
-        <div class="alert alert-success">
-            {{{ Session::get("password-reset-success") }}}
-        </div>
-        @endif
-        @if( Session::has("account-created-success") )
-        <div class="alert alert-success">
-            {{{ Session::get("account-created-success") }}}
-        </div>
-        @endif
-
-        <div class="form-group">
-            <label class="sr-only" for="username">Username</label>
-            <input type="text" class="form-control" name="username" placeholder="Username" autofocus required>
-        </div>
-        <div class="form-group">
-            <label class="sr-only" for="password">Password</label>
-            <input type="password" class="form-control" name="password" placeholder="Password" required>
-        </div>
-        <input name="Submit" type="submit" class="btn btn-primary btn-block" value="Sign in">
-    </form>
-
-    <small>
-        <small> (Forgot Password? Click <a href="{{URL::to('/') }}/forgot-password">here</a>)</small>
-    </small>
+    @endif
+    @foreach ($auth_code_options as $auth_code_option)
+        <a href="{{ $auth_code_option["auth_url"] }}" class="btn btn-primary">Sign in with {{{ $auth_code_option["name"] }}}</a>
+    @endforeach
 </div>
 
 @stop
