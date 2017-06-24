@@ -68,10 +68,13 @@ return array(
             // Example of external identity provider login
             [
                 'oauth-grant-type' => 'authorization_code',
-                // kc_idp_hint is used to skip Keycloak login screen and redirect immediately to this identity provider
+                'name' => 'CILogon',
+                // Optional
+                // Note: kc_idp_hint is used to skip Keycloak login screen and redirect immediately to this identity provider
                 // http://www.keycloak.org/docs/2.5/server_admin/topics/identity-broker/suggested.html
                 'oauth-authorize-url-extra-params' => 'kc_idp_hint=oidc',
-                'name' => 'CILogon',
+                // Optional
+                'logo': '/assets/path_to_image.png'
             ],
         ],
 
