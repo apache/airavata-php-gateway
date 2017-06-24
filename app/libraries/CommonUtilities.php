@@ -249,8 +249,10 @@ class CommonUtilities
             $navbar .= '</ul></li>';
         } else {
 
-                    $navbar .= '<li><a href="' . URL::to('/') . '/create"><span class="glyphicon glyphicon-user"></span> Create account</a></li>';
-                    $navbar .= '<li><a href="' . URL::to('/') . '/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>';
+            if( CommonUtilities::hasAuthPasswordOption() ){
+                $navbar .= '<li><a href="' . URL::to('/') . '/create"><span class="glyphicon glyphicon-user"></span> Create account</a></li>';
+            }
+            $navbar .= '<li><a href="' . URL::to('/') . '/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>';
         }
 
         $navbar .= '</ul></div></div></nav>';
@@ -442,5 +444,39 @@ class CommonUtilities
     public static function getInitialRoleName() {
         return Config::get('pga_config.wsis.initial-role-name', 'user-pending');
     }
+
+    public static function hasAuthPasswordOption() {
+        return CommonUtilities::getAuthPasswordOption() != null;
+    }
+
+    public static function getAuthPasswordOption() {
+
+        $auth_options = Config::get('pga_config.wsis')['auth-options'];
+        $auth_password_option_array = array_filter($auth_options, function($auth_option) {
+            return $auth_option["oauth-grant-type"] == "password";
+        });
+        return count($auth_password_option_array) > 0 ? $auth_password_option_array[0] : null;
+    }
+
+    public static function getAuthCodeOptions() {
+
+        $auth_options = Config::get('pga_config.wsis')['auth-options'];
+        // Support for many external identity providers (authorization code auth flow)
+        $auth_code_options = array();
+        foreach ($auth_options as $auth_option) {
+            if ($auth_option["oauth-grant-type"] == "password") {
+                continue;
+            } else if ($auth_option["oauth-grant-type"] == "authorization_code") {
+                $extra_params = isset($auth_option["oauth-authorize-url-extra-params"]) ? $auth_option["oauth-authorize-url-extra-params"] : null;
+                $auth_url = Keycloak::getOAuthRequestCodeUrl($extra_params);
+                $auth_option["auth_url"] = $auth_url;
+                $auth_code_options[] = $auth_option;
+            } else {
+                throw new Exception("Unrecognized oauth-grant-type: " . $auth_option["oauth-grant-type"]);
+            }
+        }
+        return $auth_code_options;
+    }
+
 }
 

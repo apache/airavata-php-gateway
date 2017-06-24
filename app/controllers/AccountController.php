@@ -12,7 +12,15 @@ class AccountController extends BaseController
 
     public function createAccountView()
     {
-        return View::make('account/create');
+        $auth_options = Config::get('pga_config.wsis')['auth-options'];
+        $auth_password_option = CommonUtilities::getAuthPasswordOption();
+        if ($auth_password_option == null) {
+            return Redirect::to("login");
+        }
+        $auth_code_options = CommonUtilities::getAuthCodeOptions();
+        return View::make('account/create', array(
+            "auth_password_option" => $auth_password_option,
+            "auth_code_options" => $auth_code_options));
     }
 
     public function createAccountSubmit()
@@ -67,23 +75,10 @@ class AccountController extends BaseController
             return Redirect::to("home");
         }
 
-        $auth_options = Config::get('pga_config.wsis')['auth-options'];
         // Only support for one password option
-        $auth_password_option = null;
+        $auth_password_option = CommonUtilities::getAuthPasswordOption();
         // Support for many external identity providers (authorization code auth flow)
-        $auth_code_options = array();
-        foreach ($auth_options as $auth_option) {
-            if ($auth_option["oauth-grant-type"] == "password") {
-                $auth_password_option = $auth_option;
-            } else if ($auth_option["oauth-grant-type"] == "authorization_code") {
-                $extra_params = isset($auth_option["oauth-authorize-url-extra-params"]) ? $auth_option["oauth-authorize-url-extra-params"] : null;
-                $auth_url = Keycloak::getOAuthRequestCodeUrl($extra_params);
-                $auth_option["auth_url"] = $auth_url;
-                $auth_code_options[] = $auth_option;
-            } else {
-                throw new Exception("Unrecognized oauth-grant-type: " . $auth_option["oauth-grant-type"]);
-            }
-        }
+        $auth_code_options = CommonUtilities::getAuthCodeOptions();
 
         // If no username/password option and only one external identity
         // provider, just redirect immediately

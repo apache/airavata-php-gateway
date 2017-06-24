@@ -14,9 +14,9 @@
             <h4>OR</h4>
         @endif
     @endif
-    @foreach ($auth_code_options as $auth_code_option)
-        <a href="{{ $auth_code_option["auth_url"] }}" class="btn btn-primary">Sign in with {{{ $auth_code_option["name"] }}}</a>
-    @endforeach
+    @if (!empty($auth_code_options))
+        @include('partials/login-external', array("auth_code_options" => $auth_code_options))
+    @endif
 </div>
 
 @stop
