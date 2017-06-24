@@ -11,7 +11,7 @@
     @if (!empty($auth_password_option))
         @include('partials/login-form', array("auth_name" => $auth_password_option["name"]))
         @if (!empty($auth_code_options))
-            <h4>OR</h4>
+            <h3 id="login-option-separator" class="horizontal-rule">OR</h4>
         @endif
     @endif
     @if (!empty($auth_code_options))
