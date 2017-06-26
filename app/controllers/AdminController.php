@@ -78,9 +78,10 @@ class AdminController extends BaseController {
 		else
 			$users =  Keycloak::listUsers();
 
-	    $roles = Keycloak::getAllRoles();
-        Session::put("admin-nav", "manage-users");
-	    return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
+		$roles = Keycloak::getAllRoles();
+		sort($roles);
+		Session::put("admin-nav", "manage-users");
+		return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 	}
 
 	public function getUserCountInRole(){
@@ -88,22 +89,22 @@ class AdminController extends BaseController {
 			return count( $users);
 	}
 
-    public function searchUsersView(){
-        if(Input::has("search_val"))
-        {
-            $users =  Keycloak::searchUsers(Input::get("search_val"));
-        }
-        else
-            $users = Keycloak::listUsers();
+	public function searchUsersView(){
+		if(Input::has("search_val"))
+		{
+			$users =  Keycloak::searchUsers(Input::get("search_val"));
+		}
+		else
+			$users = Keycloak::listUsers();
 
 		if(!isset($users) || empty($users)){
 			$users = array();
 		}
-        $roles = Keycloak::getAllRoles();
-        Session::put("admin-nav", "manage-users");
-        return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
-
-    }
+		$roles = Keycloak::getAllRoles();
+		sort($roles);
+		Session::put("admin-nav", "manage-users");
+		return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
+	}
 
 	private function cmp($a, $b)
 	{
@@ -191,8 +192,9 @@ class AdminController extends BaseController {
 
 	public function rolesView(){
 		$roles = Keycloak::getAllRoles();
-        Session::put("admin-nav", "manage-roles");
-        return View::make("admin/manage-roles", array("roles" => $roles));
+		sort($roles);
+		Session::put("admin-nav", "manage-roles");
+		return View::make("admin/manage-roles", array("roles" => $roles));
 	}
 
 	public function experimentsView(){
@@ -289,7 +291,9 @@ class AdminController extends BaseController {
     }
 
 	public function getRoles(){
-		return json_encode((array)Keycloak::getUserRoles(Input::get("username")));
+		$roles = Keycloak::getUserRoles(Input::get("username"));
+		sort($roles);
+		return json_encode((array)$roles);
 	}
 
 	public function deleteRole(){

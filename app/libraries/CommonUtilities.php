@@ -445,6 +445,20 @@ class CommonUtilities
         return Config::get('pga_config.wsis.initial-role-name', 'user-pending');
     }
 
+    /**
+     * Filter given list of role names to only include Airavata roles.
+     */
+    public static function filterAiravataRoles($roles) {
+        return array_filter($roles, function($role) {
+            return $role == Config::get('pga_config.wsis.admin-role-name')
+                || $role == Config::get('pga_config.wsis.read-only-admin-role-name')
+                || $role == Config::get('pga_config.wsis.user-role-name')
+                || $role == Config::get('pga_config.wsis.initial-role-name')
+                || $role == 'user-pending'
+                || $role == 'gateway-provider';
+        });
+    }
+
     public static function hasAuthPasswordOption() {
         return CommonUtilities::getAuthPasswordOption() != null;
     }

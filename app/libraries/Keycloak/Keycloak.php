@@ -7,6 +7,8 @@ use Keycloak\API\Roles;
 use Keycloak\API\Users;
 use Keycloak\KeycloakUtil;
 
+use CommonUtilities;
+
 use Exception;
 use Log;
 use Illuminate\Routing\UrlGenerator;
@@ -185,6 +187,7 @@ class Keycloak {
         foreach ($role_mappings as $role_mapping) {
             $roles[] = $role_mapping->name;
         }
+        $roles = CommonUtilities::filterAiravataRoles($roles);
         return array('username'=>$username, 'firstname'=>$firstname, 'lastname'=>$lastname, 'email'=>$email, 'roles'=>$roles);
     }
 
@@ -282,7 +285,7 @@ class Keycloak {
             foreach ($roles as $role) {
                 $role_names[] = $role->name;
             }
-            return $role_names;
+            return CommonUtilities::filterAiravataRoles($role_names);
         } catch (Exception $ex) {
             throw new Exception("Unable to get all roles", 0, $ex);
         }
@@ -304,7 +307,7 @@ class Keycloak {
             foreach ($roles as $role) {
                 $role_names[] = $role->name;
             }
-            return $role_names;
+            return CommonUtilities::filterAiravataRoles($role_names);
         } catch (Exception $ex) {
             throw new Exception("Unable to get User roles.", 0, $ex);
         }
