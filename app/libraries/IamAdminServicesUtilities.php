@@ -27,6 +27,17 @@ class IamAdminServicesUtilities {
         return IamAdminServices::resetUserPassword($admin_authz_token, $username, $new_password);
     }
 
+    public static function getUsersWithRole($role_name) {
+
+        $authz_token = Session::get('authz-token');
+        $user_profiles = IamAdminServices::getUsersWithRole($authz_token, $role_name);
+        $users = [];
+        foreach ($user_profiles as $user_profile) {
+            $users[] = $user_profile->userId;
+        }
+        return $users;
+    }
+
     private static function getAdminAuthzToken() {
         return Keycloak::getAdminAuthzToken();
     }

@@ -73,7 +73,7 @@ class AdminController extends BaseController {
 	public function usersView(){
 		if( Input::has("role"))
 		{
-			$users = AdminController::getUsersWithRole( Input::get("role"));
+			$users = IamAdminServicesUtilities::getUsersWithRole(Input::get("role"));
 		}
 		else
 			$users =  Keycloak::listUsers();
@@ -85,7 +85,7 @@ class AdminController extends BaseController {
 	}
 
 	public function getUserCountInRole(){
-			$users = AdminController::getUsersWithRole( Input::get("role"));
+			$users = IamAdminServicesUtilities::getUsersWithRole(Input::get("role"));
 			return count( $users);
 	}
 
@@ -407,16 +407,6 @@ class AdminController extends BaseController {
 		else
 			return 0;
 
-	}
-
-	public function getUsersWithRole( $role){
-			$users = WSIS::getUserlistOfRole( $role);
-			if( isset( $users->return))
-		    	$users = $users->return;
-		    else
-		    	$users = array();
-
-		    return $users;
 	}
 
 
