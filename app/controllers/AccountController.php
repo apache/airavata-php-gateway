@@ -307,6 +307,11 @@ class AccountController extends BaseController
 
     public function dashboard(){
 
+        // dashboard requires that the user is logged in, if not redirect to login
+        if (!CommonUtilities::id_in_session()) {
+            return Redirect::to("login");
+        }
+
         $userRoles = Session::get("roles");
         if (Session::has("user-profile")) {
             $userEmail = Session::get("user-profile")->emails[0];
