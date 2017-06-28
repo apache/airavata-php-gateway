@@ -170,13 +170,15 @@ class AccountController extends BaseController
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
             if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user")){
-                return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken);
+                return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken, $refreshToken, $expirationTime);
             }
 
             if(Session::has("admin") || Session::has("admin-read-only")){
-                return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username);
+                return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
+                    . "refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
             }else{
-                return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken . "&username=".$username);
+                return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
+                    . "refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
             }
         }
 
@@ -241,13 +243,15 @@ class AccountController extends BaseController
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
         if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
-            return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken);
+            return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken, $refreshToken, $expirationTime);
         }
 
         if(Session::has("admin") || Session::has("admin-read-only")){
-            return Redirect::to("admin/dashboard" . "?status=ok&code=" . $accessToken . "&username=".$username);
+            return Redirect::to("admin/dashboard" . "?status=ok&code=" . $accessToken . "&username=".$username
+                . "refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
         }else{
-            return Redirect::to("account/dashboard" . "?status=ok&code=".$accessToken . "&username=".$username);
+            return Redirect::to("account/dashboard" . "?status=ok&code=".$accessToken . "&username=".$username
+                . "refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
         }
     }
 
@@ -259,7 +263,7 @@ class AccountController extends BaseController
             or in_array(Config::get('pga_config.wsis')['user-role-name'], $roles)
             or in_array(Config::get('pga_config.wsis')['initial-role-name'], $roles);
     }
-    private function initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken){
+    private function initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken, $refreshToken, $validTime){
 
         // Log the user out if Airavata is down. If a new user we want to make
         // sure we create the default project and setup experiment storage
@@ -291,9 +295,11 @@ class AccountController extends BaseController
         Session::put('user-profile', $userProfile);
 
         if(Session::has("admin") || Session::has("admin-read-only")){
-            return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username);
+            return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
+                . "refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
         }else{
-            return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken ."&username=".$username);
+            return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken ."&username=".$username
+                . "refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
         }
     }
 
