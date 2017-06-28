@@ -245,9 +245,9 @@ class AccountController extends BaseController
         }
 
         if(Session::has("admin") || Session::has("admin-read-only")){
-            return Redirect::route("admin/dashboard", array('status'=>'ok', 'code'=>$accessToken));
+            return Redirect::to("admin/dashboard", array('status'=>'ok', 'code'=>$accessToken));
         }else{
-            return Redirect::route("account/dashboard", array('status'=>'ok', 'code'=>$accessToken));
+            return Redirect::to("account/dashboard", array('status'=>'ok', 'code'=>$accessToken));
         }
     }
 
@@ -291,9 +291,9 @@ class AccountController extends BaseController
         Session::put('user-profile', $userProfile);
 
         if(Session::has("admin") || Session::has("admin-read-only")){
-            return Redirect::route("admin/dashboard", array('status'=>'ok', 'code'=>$accessToken));
+            return Redirect::to("admin/dashboard", array('status'=>'ok', 'code'=>$accessToken));
         }else{
-            return Redirect::route("account/dashboard", array('status'=>'ok', 'code'=>$accessToken));
+            return Redirect::to("account/dashboard", array('status'=>'ok', 'code'=>$accessToken));
         }
     }
 
