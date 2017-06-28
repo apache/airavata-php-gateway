@@ -245,9 +245,9 @@ class AccountController extends BaseController
         }
 
         if(Session::has("admin") || Session::has("admin-read-only")){
-            return Redirect::to("admin/dashboard", array('status'=>'ok', 'code'=>$accessToken));
+            return Redirect::route("admin/dashboard", array('status'=>'ok', 'code'=>$accessToken));
         }else{
-            return Redirect::to("account/dashboard", array('status'=>'ok', 'code'=>$accessToken));
+            return Redirect::route("account/dashboard", array('status'=>'ok', 'code'=>$accessToken));
         }
     }
 
