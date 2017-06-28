@@ -120,9 +120,9 @@ class AccountController extends BaseController
             $response = Keycloak::authenticate($username, $password);
             if(!isset($response->access_token)){
                 if (Keycloak::isUpdatePasswordRequired($username)) {
-                    return Redirect::to("login?status=failed")->with("update-password-required", true);
+                    return Redirect::to("login", array('status'=>'failed'))->with("update-password-required", true);
                 } else {
-                    return Redirect::to("login?status=failed")->with("invalid-credentials", true);
+                    return Redirect::to("login", array('status'=>'failed'))->with("invalid-credentials", true);
                 }
             }
 
@@ -173,11 +173,10 @@ class AccountController extends BaseController
                 return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName);
             }
 
-            $status = '?status=ok&code=' . $accessToken;
             if(Session::has("admin") || Session::has("admin-read-only")){
-                return Redirect::to("admin/dashboard" . $status);
+                return Redirect::to("admin/dashboard", array('status'=>'ok', 'code'=>$accessToken));
             }else{
-                return Redirect::to("account/dashboard" . $status);
+                return Redirect::to("account/dashboard", array('status'=>'ok', 'code'=>$accessToken));
             }
         }
 
@@ -245,11 +244,10 @@ class AccountController extends BaseController
             return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName);
         }
 
-        $status = '?status=ok&code=' . $accessToken;
         if(Session::has("admin") || Session::has("admin-read-only")){
-            return Redirect::to("admin/dashboard" . $status);
+            return Redirect::to("admin/dashboard", array('status'=>'ok', 'code'=>$accessToken));
         }else{
-            return Redirect::to("account/dashboard" . $status);
+            return Redirect::to("account/dashboard", array('status'=>'ok', 'code'=>$accessToken));
         }
     }
 
