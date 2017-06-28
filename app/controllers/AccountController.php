@@ -241,7 +241,7 @@ class AccountController extends BaseController
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
         if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
-            return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName);
+            return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken);
         }
 
         if(Session::has("admin") || Session::has("admin-read-only")){
