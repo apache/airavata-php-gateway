@@ -170,7 +170,7 @@ class AccountController extends BaseController
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
             if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user")){
-                return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName);
+                return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken);
             }
 
             if(Session::has("admin") || Session::has("admin-read-only")){
@@ -259,7 +259,7 @@ class AccountController extends BaseController
             or in_array(Config::get('pga_config.wsis')['user-role-name'], $roles)
             or in_array(Config::get('pga_config.wsis')['initial-role-name'], $roles);
     }
-    private function initializeWithAiravata($username, $userEmail, $firstName, $lastName){
+    private function initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken){
 
         // Log the user out if Airavata is down. If a new user we want to make
         // sure we create the default project and setup experiment storage
@@ -291,9 +291,9 @@ class AccountController extends BaseController
         Session::put('user-profile', $userProfile);
 
         if(Session::has("admin") || Session::has("admin-read-only")){
-            return Redirect::to("admin/dashboard");
+            return Redirect::route("admin/dashboard", array('status'=>'ok', 'code'=>$accessToken));
         }else{
-            return Redirect::to("account/dashboard");
+            return Redirect::route("account/dashboard", array('status'=>'ok', 'code'=>$accessToken));
         }
     }
 
