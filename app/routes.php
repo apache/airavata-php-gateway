@@ -22,6 +22,8 @@ Route::get("login", "AccountController@loginView");
 
 Route::post("login", "AccountController@loginSubmit");
 
+Route::get("login-desktop", "AccountController@loginDesktopView");
+
 Route::get("account/dashboard", "AccountController@dashboard");
 
 Route::get("callback-url", "AccountController@oauthCallback");

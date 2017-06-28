@@ -1,9 +1,11 @@
 
 <h3>
     Login with {{{ $auth_name }}}
-    <small>
-        <small> (Not registered? <a href="create">Create account</a>)</small>
-    </small>
+    @if (!isset($desktop))
+        <small>
+            <small> (Not registered? <a href="create">Create account</a>)</small>
+        </small>
+    @endif
 </h3>
 
 
@@ -39,5 +41,7 @@
 </form>
 
 <small>
-    <small> (Forgot Password? Click <a href="{{URL::to('/') }}/forgot-password">here</a>)</small>
+    @if (!isset($desktop))
+        <small> (Forgot Password? Click <a href="{{URL::to('/') }}/forgot-password">here</a>)</small>
+    @endif
 </small>

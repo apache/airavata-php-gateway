@@ -92,19 +92,37 @@ class AccountController extends BaseController
         }
     }
 
+    public function loginDesktopView()
+    {
+        // Only support for one password option
+        $auth_password_option = CommonUtilities::getAuthPasswordOption();
+        // Support for many external identity providers (authorization code auth flow)
+        $auth_code_options = CommonUtilities::getAuthCodeOptions();
+
+        // If no username/password option and only one external identity
+        // provider, just redirect immediately
+        if ($auth_password_option == null && count($auth_code_options)) {
+            return Redirect::away($auth_code_options[0]["auth_url"]);
+        } else {
+            return View::make('account/login-desktop', array(
+                "auth_password_option" => $auth_password_option,
+                "auth_code_options" => $auth_code_options,
+            ));
+        }
+    }
+
     public function loginSubmit()
     {
         if (CommonUtilities::form_submitted()) {
-            $wsisConfig = Config::get('pga_config.wsis');
             $username = Input::get("username");
 
             $password = $_POST['password'];
             $response = Keycloak::authenticate($username, $password);
             if(!isset($response->access_token)){
                 if (Keycloak::isUpdatePasswordRequired($username)) {
-                    return Redirect::to("login")->with("update-password-required", true);
+                    return Redirect::to("login?status=failed")->with("update-password-required", true);
                 } else {
-                    return Redirect::to("login")->with("invalid-credentials", true);
+                    return Redirect::to("login?status=failed")->with("invalid-credentials", true);
                 }
             }
 
@@ -155,11 +173,11 @@ class AccountController extends BaseController
                 return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName);
             }
 
+            $status = '?status=ok&code=' . $accessToken;
             if(Session::has("admin") || Session::has("admin-read-only")){
-
-                return Redirect::to("admin/dashboard");
+                return Redirect::to("admin/dashboard" . $status);
             }else{
-                return Redirect::to("account/dashboard");
+                return Redirect::to("account/dashboard" . $status);
             }
         }
 
@@ -227,11 +245,11 @@ class AccountController extends BaseController
             return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName);
         }
 
+        $status = '?status=ok&code=' . $accessToken;
         if(Session::has("admin") || Session::has("admin-read-only")){
-
-            return Redirect::to("admin/dashboard");
+            return Redirect::to("admin/dashboard" . $status);
         }else{
-            return Redirect::to("account/dashboard");
+            return Redirect::to("account/dashboard" . $status);
         }
     }
 
@@ -472,7 +490,6 @@ class AccountController extends BaseController
                 ->with("password-reset-error", "Resetting user password operation failed");
         }
     }
-
 
     public function logout()
     {
