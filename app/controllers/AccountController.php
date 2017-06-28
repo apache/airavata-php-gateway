@@ -120,9 +120,9 @@ class AccountController extends BaseController
             $response = Keycloak::authenticate($username, $password);
             if(!isset($response->access_token)){
                 if (Keycloak::isUpdatePasswordRequired($username)) {
-                    return Redirect::to("login" . '&status=failed')->with("update-password-required", true);
+                    return Redirect::to("login" . '?status=failed')->with("update-password-required", true);
                 } else {
-                    return Redirect::to("login". '&status=failed')->with("invalid-credentials", true);
+                    return Redirect::to("login". '?status=failed')->with("invalid-credentials", true);
                 }
             }
 
@@ -174,9 +174,9 @@ class AccountController extends BaseController
             }
 
             if(Session::has("admin") || Session::has("admin-read-only")){
-                return Redirect::to("admin/dashboard", array('status'=>'ok', 'code'=>$accessToken));
+                return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken);
             }else{
-                return Redirect::to("account/dashboard", array('status'=>'ok', 'code'=>$accessToken));
+                return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken);
             }
         }
 
