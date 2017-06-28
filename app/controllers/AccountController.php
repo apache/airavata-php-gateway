@@ -174,9 +174,9 @@ class AccountController extends BaseController
             }
 
             if(Session::has("admin") || Session::has("admin-read-only")){
-                return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken);
+                return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username);
             }else{
-                return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken);
+                return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken . "&username=".$username);
             }
         }
 
@@ -245,9 +245,9 @@ class AccountController extends BaseController
         }
 
         if(Session::has("admin") || Session::has("admin-read-only")){
-            return Redirect::to("admin/dashboard" . "?status=ok&code=".$accessToken);
+            return Redirect::to("admin/dashboard" . "?status=ok&code=" . $accessToken . "&username=".$username);
         }else{
-            return Redirect::to("account/dashboard" . "?status=ok&code=".$accessToken);
+            return Redirect::to("account/dashboard" . "?status=ok&code=".$accessToken . "&username=".$username);
         }
     }
 
@@ -291,9 +291,9 @@ class AccountController extends BaseController
         Session::put('user-profile', $userProfile);
 
         if(Session::has("admin") || Session::has("admin-read-only")){
-            return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken);
+            return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username);
         }else{
-            return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken);
+            return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken ."&username=".$username);
         }
     }
 
