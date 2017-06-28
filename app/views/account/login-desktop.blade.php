@@ -6,7 +6,7 @@
 
 @section('content')
 
-<div class="col-md-offset-5 col-md-2">
+<div class="col-md-offset-4 col-md-4">
     @if (!empty($auth_password_option))
         @include('partials/login-form', array("auth_name" => $auth_password_option["name"], "desktop" => true))
         @if (!empty($auth_code_options))
