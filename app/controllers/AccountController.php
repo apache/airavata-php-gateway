@@ -175,10 +175,10 @@ class AccountController extends BaseController
 
             if(Session::has("admin") || Session::has("admin-read-only")){
                 return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
-                    . "refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
+                    . "&refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
             }else{
                 return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
-                    . "refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
+                    . "&refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
             }
         }
 
@@ -248,10 +248,10 @@ class AccountController extends BaseController
 
         if(Session::has("admin") || Session::has("admin-read-only")){
             return Redirect::to("admin/dashboard" . "?status=ok&code=" . $accessToken . "&username=".$username
-                . "refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
+                . "&refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
         }else{
             return Redirect::to("account/dashboard" . "?status=ok&code=".$accessToken . "&username=".$username
-                . "refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
+                . "&refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
         }
     }
 
@@ -296,10 +296,10 @@ class AccountController extends BaseController
 
         if(Session::has("admin") || Session::has("admin-read-only")){
             return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
-                . "refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
+                . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
         }else{
             return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken ."&username=".$username
-                . "refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
+                . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
         }
     }
 
