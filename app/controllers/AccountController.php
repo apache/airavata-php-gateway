@@ -170,16 +170,12 @@ class AccountController extends BaseController
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
             if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user")){
-                return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken, $refreshToken, $expirationTime);
+                return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken,
+                    $refreshToken, $expirationTime);
             }
 
-            if(Session::has("admin") || Session::has("admin-read-only")){
-                return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
-                    . "&refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
-            }else{
-                return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
-                    . "&refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
-            }
+            return Redirect::to("account/dashboard" . "?status=less_privileged&code=".$accessToken . "&username=".$username
+                . "&refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
         }
 
     }
@@ -246,13 +242,9 @@ class AccountController extends BaseController
             return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken, $refreshToken, $expirationTime);
         }
 
-        if(Session::has("admin") || Session::has("admin-read-only")){
-            return Redirect::to("admin/dashboard" . "?status=ok&code=" . $accessToken . "&username=".$username
-                . "&refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
-        }else{
-            return Redirect::to("account/dashboard" . "?status=ok&code=".$accessToken . "&username=".$username
-                . "&refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
-        }
+        return Redirect::to("account/dashboard" . "?status=less_privileged&code=".$accessToken . "&username=".$username
+            . "&refresh_code=" . $refreshToken . "&valid_time=" . $expirationTime);
+
     }
 
     private function hasAnyRoles($roles) {
@@ -492,6 +484,19 @@ class AccountController extends BaseController
             return Redirect::to("reset-password")
                 ->withInput(Input::except('new_password', 'confirm_new_password'))
                 ->with("password-reset-error", "Resetting user password operation failed");
+        }
+    }
+
+    public function getRefreshedTokenForDesktop(){
+        $refreshToken = Input::get('refresh_code');
+        $response = Keycloak::getRefreshedOAuthToken($refreshToken);
+        if(isset($response->access_token)){
+            $accessToken = $response->access_token;
+            $refreshToken = $response->refresh_token;
+            $expirationTime = $response->expires_in; // 5 minutes safe margin
+            var_dump(array('status'=>'ok', 'code'=>$accessToken, 'refresh_code'=>$refreshToken, 'valid_time'=>$expirationTime));
+        }else{
+            var_dump(array('status'=>'failed'));
         }
     }
 

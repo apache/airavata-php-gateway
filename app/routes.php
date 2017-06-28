@@ -24,6 +24,8 @@ Route::post("login", "AccountController@loginSubmit");
 
 Route::get("login-desktop", "AccountController@loginDesktopView");
 
+Route::get("refreshed-token-desktop", "AccountController@getRefreshedTokenForDesktop");
+
 Route::get("account/dashboard", "AccountController@dashboard");
 
 Route::get("callback-url", "AccountController@oauthCallback");
