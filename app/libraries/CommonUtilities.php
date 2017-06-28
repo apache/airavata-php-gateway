@@ -210,18 +210,17 @@ class CommonUtilities
                     $active = " active ";
             }
 
+            if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') || Session::has('gateway-provider')){
+                //notification bell
+                $notices = array();
+                if (CommonUtilities::isAiravataUp()) {
+                    $notices = CommonUtilities::get_all_notices();
+                }
+                $navbar .= CommonUtilities::get_notices_ui( $notices);
+            }
+
             if( !Session::has("gateway-provider"))
             {
-                if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only')){
-                    //notification bell
-                    $notices = array();
-                    if (CommonUtilities::isAiravataUp()) {
-                        $notices = CommonUtilities::get_all_notices();
-                    }
-                    $navbar .= CommonUtilities::get_notices_ui( $notices);
-                }
-
-
                 if (Session::has("admin") || Session::has("admin-read-only") )
                     $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
                 else
