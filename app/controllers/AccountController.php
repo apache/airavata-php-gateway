@@ -494,9 +494,9 @@ class AccountController extends BaseController
             $accessToken = $response->access_token;
             $refreshToken = $response->refresh_token;
             $expirationTime = $response->expires_in; // 5 minutes safe margin
-            var_dump(json_encode(array('status'=>'ok', 'code'=>$accessToken, 'refresh_code'=>$refreshToken, 'valid_time'=>$expirationTime)));
+            echo json_encode(array('status'=>'ok', 'code'=>$accessToken, 'refresh_code'=>$refreshToken, 'valid_time'=>$expirationTime));
         }else{
-            var_dump(json_encode(array('status'=>'failed')));
+            echo json_encode(array('status'=>'failed'));
         }
     }
 
