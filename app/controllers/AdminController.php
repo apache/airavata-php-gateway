@@ -267,7 +267,7 @@ class AdminController extends BaseController {
     }
 
     /*
-     * Return true if the initial-role-name is one of the three privileged
+     * Return true if the initial-role-name is one of the four privileged
      * roles. This is used to figure out whether the initial-role-name is a
      * 'user-pending' kind of role (returns false), or whether the initial role
      * is a privileged role (returns true) and no admin intervention is
@@ -279,7 +279,8 @@ class AdminController extends BaseController {
         $adminRoleName = Config::get("pga_config.wsis")["admin-role-name"];
         $adminReadOnlyRoleName = Config::get("pga_config.wsis")["read-only-admin-role-name"];
         $userRoleName = Config::get("pga_config.wsis")["user-role-name"];
-        return in_array($initialRoleName, array($adminRoleName, $adminReadOnlyRoleName, $userRoleName));
+        $gatewayProviderRoleName = "gateway-provider";
+        return in_array($initialRoleName, array($adminRoleName, $adminReadOnlyRoleName, $userRoleName, $gatewayProviderRoleName));
     }
 
     public function removeRoleFromUser(){
