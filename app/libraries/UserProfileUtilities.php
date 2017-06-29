@@ -45,6 +45,11 @@ class UserProfileUtilities
 
         return UserProfileService::updateUserProfile(Session::get('authz-token'), $userProfile);
     }
+
+    public static function get_all_user_profiles($offset, $limit) {
+        return UserProfileService::getAllUserProfilesInGateway(
+            Session::get('authz-token'), Session::get('gateway_id'), $offset, $limit);
+    }
 }
 
 ?>

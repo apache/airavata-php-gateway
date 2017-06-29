@@ -77,19 +77,19 @@ class SharingUtilities {
         $owner = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::OWNER);
 
         foreach($read as $uid) {
-            if ($uid !== Session::get('username') && Keycloak::usernameExists($uid)) {
+            if ($uid !== Session::get('username') && UserProfileUtilities::does_user_profile_exist($uid)) {
                 $users[$uid] = array('read' => true, 'write' => false);
             }
         }
 
         foreach($write as $uid) {
-            if ($uid !== Session::get('username') && Keycloak::usernameExists($uid)) {
+            if ($uid !== Session::get('username') && UserProfileUtilities::does_user_profile_exist($uid)) {
                 $users[$uid]['write'] = true;
             }
         }
 
         foreach($owner as $uid) {
-            if ($uid !== Session::get('username') && WSIS::usernameExists($uid)) {
+            if ($uid !== Session::get('username') && UserProfileUtilities::does_user_profile_exist($uid)) {
                 $users[$uid]['owner'] = true;
             }
         }
@@ -104,14 +104,31 @@ class SharingUtilities {
      * @return An array [uid => [firstname => string, lastname => string, email => string]]
      */
     public static function getUserProfiles($uids) {
-        $uids = array_filter($uids, function($uid) {
-            return ($uid !== Session::get('username') && Keycloak::usernameExists($uid));
+        // FIXME: instead of loading all user profiles it would be better to
+        // have the user search for users and just load profiles matching the search
+        $all_profiles = SharingUtilities::convertUserProfilesToSharingProfiles(UserProfileUtilities::get_all_user_profiles(0, 100000));
+        Log::debug("all_profiles", array($all_profiles));
+        $uids = array_filter($uids, function($uid) use ($all_profiles) {
+            return ($uid !== Session::get('username') && array_key_exists($uid, $all_profiles));
         });
         $profiles = array();
         foreach ($uids as $uid) {
-            $profiles[$uid] = Keycloak::getUserProfile($uid);
+            $profiles[$uid] = $all_profiles[$uid];
         }
         return $profiles;
+    }
+
+    private static function convertUserProfilesToSharingProfiles($user_profiles) {
+        $sharing_profiles = array();
+        foreach ($user_profiles as $user_profile) {
+            $sharing_profile = array(
+                'firstname' => $user_profile->firstName,
+                'lastname' => $user_profile->lastName,
+                'email' => $user_profile->emails[0],
+            );
+            $sharing_profiles[$user_profile->userId] = $sharing_profile;
+        }
+        return $sharing_profiles;
     }
 
     /**
