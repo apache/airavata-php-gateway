@@ -114,7 +114,7 @@ class AccountController extends BaseController
     public function loginSubmit()
     {
         if (CommonUtilities::form_submitted()) {
-            $username = Input::get("username");
+            $username = strtolower(Input::get("username"));
 
             $password = $_POST['password'];
             $response = Keycloak::authenticate($username, $password);
@@ -303,7 +303,7 @@ class AccountController extends BaseController
 
     public function forgotPasswordSubmit()
     {
-        $username = Input::get("username");
+        $username = strtolower(Input::get("username"));
         if(empty($username)){
             CommonUtilities::print_error_message("Please provide a valid username");
             return View::make("account/forgot-password");
