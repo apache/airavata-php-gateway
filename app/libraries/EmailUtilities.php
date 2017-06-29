@@ -101,7 +101,7 @@ class EmailUtilities
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$gatewayName", $gatewayName, $body);
 
-        EmailUtilities::sendEmail($subject, [$email], $body);
+        EmailUtilities::sendEmail($subject, $email, $body);
 
     }
 
@@ -117,7 +117,7 @@ class EmailUtilities
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$gatewayId", $gatewayId, $body);
 
-        EmailUtilities::sendEmail($subject, [$email], $body);
+        EmailUtilities::sendEmail($subject, $email, $body);
 
     }
 
@@ -131,7 +131,7 @@ class EmailUtilities
         $body = str_replace("\$url", URL::to('/') . '/admin/dashboard/gateway', $body);
         $body = str_replace("\$gatewayId", $gatewayId, $body);
 
-        EmailUtilities::sendEmail($subject, [$email], $body);
+        EmailUtilities::sendEmail($subject, $email, $body);
 
     }
 
