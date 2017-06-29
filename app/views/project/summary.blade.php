@@ -36,7 +36,7 @@
                     <th>Owner</th>
                     <th>Application</th>
                     <th>Compute Resource</th>
-                    <th>Last Modified Time</th>
+                    <th>Creation Time</th>
                     <th>Experiment Status</th>
                     <th>Job Status</th>
 
@@ -77,7 +77,7 @@
                     </td>
 
                     <td>{{ $resourceName }}</td>
-                    <td class="time" unix-time="{{$expValues["experimentTimeOfStateChange"]}}"></td>
+                    <td class="time" unix-time="{{$expValues["experimentCreationTime"]}}"></td>
                     <td>
                         <div class="{{ExperimentUtilities::get_status_color_class( $expValues["experimentStatusString"])}}">
                             {{ $expValues["experimentStatusString"] }}
