@@ -137,14 +137,22 @@ class AppUtilities
         //var_dump( $appDeployments); exit;
         $computeResources = Airavata::getAllComputeResourceNames(Session::get('authz-token'));
         $computeResourceFullObjects = CRUtilities::getAllCRObjects();
+        $gatewayResourceProfile = Airavata::getGatewayResourceProfile(Session::get('authz-token'), Session::get("gateway_id"));
+        $computeResourcePreferences = $gatewayResourceProfile->computeResourcePreferences;
+        foreach ($computeResourcePreferences as $computeResourcePreference) {
+            $computeResourcePreference->crName = $computeResources[$computeResourcePreference->computeResourceId];
+        }
+        // Sort compute resource preferences by crName
+        usort($computeResourcePreferences, CommonUtilities::arrSortObjsByKey('crName', 'ASC'));
 
         $modules = AppUtilities::getAllModules();
+        usort($modules, CommonUtilities::arrSortObjsByKey('appModuleName', 'ASC'));
         $apt = new ApplicationParallelismType();
 
         return array(
             "appDeployments" => $appDeployments,
             "applicationParallelismTypes" => $apt::$__names,
-            "computeResources" => $computeResources,
+            "computeResourcePreferences" => $computeResourcePreferences,
             "modules" => $modules,
             "computeResourceFullObjects" => $computeResourceFullObjects
         );

@@ -21,10 +21,12 @@
 <div class="form-group required">
     <label class="control-label">Application Compute Host</label>
     <select name="computeHostId" class="form-control computeHostId" required readonly>
-        @foreach( $computeResources as $id => $crName)
-        <option value="{{ $id }}"
-        @if( isset( $deploymentObject) ) @if( $id == $deploymentObject->computeHostId) selected @endif @endif>{{ $crName
-        }}</option>
+        @foreach( $computeResourcePreferences as $computeResourcePreference)
+        <option value="{{{ $computeResourcePreference->computeResourceId }}}"
+        @if( isset($deploymentObject) && $computeResourcePreference->computeResourceId == $deploymentObject->computeHostId) selected @endif
+        >
+        {{{ $computeResourcePreference->crName }}}
+        </option>
         @endforeach
     </select>
 </div>
