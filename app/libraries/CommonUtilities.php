@@ -325,7 +325,12 @@ class CommonUtilities
         </div><div class="slimScrollBar" style=""></div>
 
         <div class="slimScrollRail" style=""></div></div> <!-- / .notifications-list -->';
-        if ( Session::has("admin"))
+        // NOTE: There is a legacy issue where gateway-provider users were also
+        // given the admin role.  To allow gateway-provider users to see
+        // notifications but not be able to manage them we have to check that
+        // the user doesn't have the gateway-provider role.
+        // if ( Session::has("admin") && !Session::has("gateway-provider"))
+        if ( Session::has("admin") && !Session::has("gateway-provider"))
         {        
             $noticesUI .= '<a href="' . URL::to('/') . '/admin/dashboard/notices" class="notifications-link">Manage Notifications</a>';
         }
