@@ -25,6 +25,9 @@ class AdminController extends BaseController {
             $gatewayOfUser = "";
             Session::put("super-admin", true);
             $gatewaysInfo = CRUtilities::getAllGateways();
+            Log::info("Gateways: ", $gatewaysInfo);
+            Log::info("Username: ", [Session::get("username")]);
+            //$gatewaysInfo = CRUtilities::getAllGateways();
             //var_dump( $gatewaysInfo); exit;
             $requestedGateways = array();
             $gatewayApprovalStatuses = AdminUtilities::get_gateway_approval_statuses();
@@ -36,8 +39,8 @@ class AdminController extends BaseController {
                     Session::put("new-gateway-provider", true);
                     Session::put("existing-gateway-provider", true);
 
-                    $requestedGateways[ $gateway->gatewayId]["gatewayInfo"] = $gateway;
-                    $requestedGateways[ $gateway->gatewayId]["approvalStatus"] = $gatewayApprovalStatuses[ $gateway->gatewayApprovalStatus];
+                    $requestedGateways[ $gateway->airavataInternalGatewayId]["gatewayInfo"] = $gateway;
+                    $requestedGateways[ $gateway->airavataInternalGatewayId]["approvalStatus"] = $gatewayApprovalStatuses[ $gateway->gatewayApprovalStatus];
                     //seeing if admin wants to start managing one of the gateways
 		            if( Input::has("gatewayId")){
 		            	if( Input::get("gatewayId") == $gateway->gatewayId)
