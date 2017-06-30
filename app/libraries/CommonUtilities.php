@@ -219,12 +219,12 @@ class CommonUtilities
                 $navbar .= CommonUtilities::get_notices_ui( $notices);
             }
 
-            if( !Session::has("gateway-provider"))
+            if( Session::has("gateway-provider"))
             {
                 if (Session::has("admin") || Session::has("admin-read-only") )
                     $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
                 else
-                    $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/account/dashboard"><span class="glyphicon glyphicon-user"></span> Dashboard</a></li>';
+                    $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/account/dashboard"><span class="glyphicon glyphicon-user"></span>Dashboard</a></li>';
             }
 
             $navbar .= '<li class="dropdown' . (Session::get("nav-active") == 'user-menu' ? ' active' : '') . '">
