@@ -28,7 +28,7 @@ Route::get("refreshed-token-desktop", "AccountController@getRefreshedTokenForDes
 
 Route::get("account/dashboard", "AccountController@dashboard");
 
-Route::get("account/update-gateway", "UpdateController@updateGatewayRequest");
+Route::get("account/update-gateway", "GatewayRequestUpdateController@updateGatewayRequest");
 
 Route::get("callback-url", "AccountController@oauthCallback");
 
@@ -362,7 +362,7 @@ Route::post("admin/remove-pwd-token", "AdminController@removePWD");
 //GatewayProviders
 Route::get("provider/request-gateway", "AdminController@checkRequest");
 Route::get("provider/add-gateway", "AdminController@requestGateway");
-Route::get("provider/update-details", "UpdateController@updateDetails");
+Route::get("provider/update-details", "GatewayRequestUpdateController@updateDetails");
 //notices
 Route::get("admin/dashboard/notices", "AdminController@noticesView");
 

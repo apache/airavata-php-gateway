@@ -1,6 +1,6 @@
 <?php
 
-class UpdateController extends BaseController
+class GatewayRequestUpdateController extends BaseController
 {
 
     public function updateGatewayRequest(){
