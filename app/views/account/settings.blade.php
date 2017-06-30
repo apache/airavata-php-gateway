@@ -26,7 +26,7 @@
         </a>
     </div>
 
-    <div class="row well user-settings">
+    {{--<div class="row well user-settings">
 
         <h3>Manage Personal Computing and Storage Resources</h3>
         <p>Use these settings if you have your own compute and/or
@@ -64,7 +64,7 @@
                 </div>
             </div>
         </a>
-    </div>
+    </div>--}}
 </div>
 
 @stop
