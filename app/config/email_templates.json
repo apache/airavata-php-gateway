@@ -55,5 +55,55 @@
           "</p>",
       "</div>"
     ]
+  },
+
+  "gateway_request" : {
+    "subject" : "New Gateway Request",
+    "body" : [
+      "<div>",
+          "<p>",
+              "Dear Admin,<br/>",
+
+              "$firstName $lastName has initiated a new Gateway request.",
+              " The requested Gateway is $gatewayName.",
+              " Please click the link below to verify the request.<br/>",
+
+              "<a href=\"$url\">$url</a><br/>",
+          "</p>",
+      "</div>"
+    ]
+  },
+
+  "update_to_admin" : {
+    "subject" : "Gateway Details Updated",
+    "body" : [
+        "<div>",
+            "<p>",
+                "Dear Admin,<br/>",
+
+                "There has been an update in the Gateway info for Gateway with ID - $gatewayId.",
+                " Please click the link below to view the changes.<br/>",
+
+                "<a href=\"$url\">$url</a><br/>",
+            "</p>",
+        "</div>"
+    ]
+  },
+
+  "update_to_user" : {
+    "subject" : "Gateway Details Updated",
+    "body" : [
+        "<div>",
+            "<p>",
+                "Dear $firstName $lastName,<br/>",
+
+                "There has been an update in the Gateway info for your Gateway with ID - $gatewayId.",
+                " Please click the link below to view the changes.<br/>",
+
+                "<a href=\"$url\">$url</a><br/>",
+            "</p>",
+        "</div>"
+    ]
   }
+
 }

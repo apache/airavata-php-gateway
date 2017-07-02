@@ -28,6 +28,8 @@ Route::get("refreshed-token-desktop", "AccountController@getRefreshedTokenForDes
 
 Route::get("account/dashboard", "AccountController@dashboard");
 
+Route::get("account/update-gateway", "GatewayRequestUpdateController@updateGatewayRequest");
+
 Route::get("callback-url", "AccountController@oauthCallback");
 
 Route::get("logout", "AccountController@logout");
@@ -358,8 +360,9 @@ Route::post("admin/create-pwd-token", "AdminController@createPWD");
 Route::post("admin/remove-pwd-token", "AdminController@removePWD");
 
 //GatewayProviders
-Route::get("provider/request-gateway", "AdminController@requestGateway");
-
+Route::get("provider/request-gateway", "AdminController@checkRequest");
+Route::get("provider/add-gateway", "AdminController@requestGateway");
+Route::get("provider/update-details", "GatewayRequestUpdateController@updateDetails");
 //notices
 Route::get("admin/dashboard/notices", "AdminController@noticesView");
 
@@ -373,8 +376,8 @@ Route::post("notice-seen-ack", "AccountController@noticeSeenAck");
 
 //Super Admin Specific calls
 
-Route::post("admin/add-gateway", "AdminController@addGateway");
-Route::get("admin/add-gateway", "AdminController@addGateway");
+Route::get("admin/add-gateway", "AdminController@createGateway");
+Route::get("admin/add-new-gateway", "AdminController@addGateway");
 
 Route::get("admin/update-gateway-request", "AdminController@updateGatewayRequest");
 

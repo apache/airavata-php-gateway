@@ -19,6 +19,18 @@
         {{ Session::forget("message") }}
         @endif
 
+        @if (Session::has("errorMessages"))
+        <div class="row">
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                            class="sr-only">Close</span></button>
+                {{ Session::get("errorMessages") }}
+            </div>
+        </div>
+            {{ Session::forget("errorMessages") }}
+        @endif
+
+
         @if( Session::has('new-gateway-provider') )
             <div style="margin-top:50px;" class="col-md-12">
             @if( Session::has("existing-gateway-provider") )
@@ -55,7 +67,7 @@
                             <td style="max-width: 400px; word-wrap: break-word;">{{ $gateway["gatewayInfo"]->gatewayPublicAbstract }}</td>
                             <td>{{ $gateway["approvalStatus"] }}</td>
                             <td>
-                                @if( $gateway["approvalStatus"] == "APPROVED")
+                                @if( $gateway["approvalStatus"] == "CREATED" || $gateway["approvalStatus"] == "DEPLOYED" )
                                     <div class="btn-group" role="group" aria-label="...">
                                         <button type="button" class="btn btn-default view-credentials" data-gatewayobject="{{ htmlentities( json_encode( $gateway['gatewayInfo'])) }}">View Credentials</button>
                                         <!--
@@ -64,10 +76,15 @@
                                         <button type="button" class="btn btn-danger deactivateGateway-button" data-toggle="modal" data-target="#deactivateGateway" data-gatewayid="{{$gatewayId}}">Deactivate Gateway</button>
                                         -->
                                     </div>
-                                @elseif( $gateway["approvalStatus"] == "REQUESTED")
+                                @elseif( $gateway["approvalStatus"] == "REQUESTED" || $gateway["approvalStatus"] == "APPROVED")
                                     <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gatewayId}}&cancelRequest=true">
                                         <button type="button" class="btn btn-danger">Cancel Request</button>
                                     </a>
+                                    @if( $gateway["approvalStatus"] == "APPROVED")
+                                        <a href="{{URL::to('/')}}/account/update-gateway?gateway-id={{$gatewayId}}&updateRequest=true">
+                                            <button type="button" class="gateway-update-button btn btn-default">Update Request</button>
+                                        </a>
+                                    @endif
                                 @endif
                             </td>
                             <td>
@@ -96,14 +113,16 @@
             <div class="well">
                 <h6 class="text-center">Need faster or more customised solutions for your Gateway? Contact us at: <a href="mailto:help@scigap.org">help@scigap.org</a></h6>
             </div>
+
             @if ($errors->has())
                 @foreach ($errors->all() as $error)
                 {{ CommonUtilities::print_error_message($error) }}
                 @endforeach
             @endif
+
             <div class="row @if(! $errors->has())hide @endif gateway-request-form">
                 <div class="col-md-offset-2 col-md-8">
-                    <form id="add-tenant-form" action="{{ URL::to('/') }}/provider/request-gateway">
+                    <form id="request-tenant-form" action="{{ URL::to('/') }}/provider/request-gateway">
                         <div class="col-md-12 text-center" style="margin-top:20px;">
                             <h3>Request your gateway now!</h3>
                         </div>
@@ -112,44 +131,8 @@
                             <input type="text" maxlength="50" name="gateway-name" class="form-control" required="required" value="{{Input::old('gateway-name') }}" />
                         </div>
                         <div class="form-group required">
-                            <label class="control-label">Gateway Acronym </label>
-                            <input type="text" name="gateway-acronym" class="gateway-acronym form-control" required="required" value="{{Input::old('gateway-acronym') }}"
-                                pattern="[A-Za-z]+" data-toggle="popover" data-placement="left" data-content="Acronym cannot contain digits or special characters or spaces."/>
-                        </div>
-
-                        <div class="form-group required">
-                            <label class="control-label">Gateway URL</label>
-                            <input type="text" name="gateway-url" id="gateway-url" class="form-control" value="{{Input::old('gateway-url') }}" data-container="body" data-toggle="popover" data-placement="left" data-content="URL to Portal home page or Download URL (for desktop applications) where gateway has been deployed."/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Gateway Admin Username</label>
-                            <input type="text" name="admin-username" value="{{Input::old('admin-username')}}" class="form-control" required="required" />
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Gateway Admin Password</label>
-                            <input type="password" id="password" name="admin-password" class="form-control" required="required" title="" type="password" data-container="body" data-toggle="popover" data-placement="left" data-content="Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$*"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Admin Password Confirmation</label>
-                            <input type="password" name="admin-password-confirm" class="form-control" required="required"/>
-                        </div>
-
-                        <div class="form-group required">
-                            <label class="control-label">Admin First Name</label>
-                            <input type="text" name="admin-firstname" class="form-control" required="required" value="{{Input::old('admin-firstname') }}"/>
-                        </div>
-
-                        <div class="form-group required">
-                            <label class="control-label">Admin Last Name</label>
-                            <input type="text" name="admin-lastname" class="form-control" required="required" value="{{Input::old('admin-lastname') }}"/>
-                        </div>
-                        <div class="form-group required">
                             <label class="control-label">Gateway Contact Email</label>
                             <input type="text" name="email-address" class="form-control" required="required" value="{{Input::old('email-address') }}"/>
-                        </div>
-                        <div class="form-group required">
-                            <label class="control-label">Project Details</label>
-                            <textarea type="text" name="project-details" maxlength="250" id="project-details" class="form-control" required="required"  data-container="body" data-toggle="popover" data-placement="left" data-content="This information will help us to understand and identify your gateway requirements, such as local or remote resources, user management, field of science and communities supported, applications and interfaces, license handling, allocation management, data management, etc... It will help us in serving you and providing you with the best option for you and your research community.">{{Input::old('project-details') }}</textarea>
                         </div>
                         <div class="form-group required">
                             <label class="control-label">Public Project Description</label>
@@ -162,6 +145,11 @@
             </div>
             <hr/>
             </div>
+
+            <hr/>
+    </div>
+
+
         <!-- View Credentials -->
         <div class="modal fade" id="viewCredentials" tabindex="-1" role="dialog" aria-labelledby="vc">
           <div class="modal-dialog" role="document">
@@ -188,16 +176,8 @@
                             <td class="gateway-url"></td>
                         </tr>
                         <tr>
-                            <td>Gateway Domain</td>
-                            <td class="gateway-domain"></td>
-                        </tr>
-                        <tr>
                             <td>Admin Username</td>
                             <td class="admin-username"></td>
-                        </tr>
-                        <tr>
-                            <td>Admin Password</td>
-                            <td class="admin-password"></td>
                         </tr>
                         <tr>
                             <td>Oauth Client Key</td>

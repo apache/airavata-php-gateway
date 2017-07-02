@@ -89,6 +89,52 @@ class EmailUtilities
         }
     }
 
+    //PGA sends email to Admin about new request
+    public static function gatewayRequestMail($firstName, $lastName, $email, $gatewayName){
+
+        $emailTemplates = json_decode(File::get(app_path() . '/config/email_templates.json'));
+        $subject = $emailTemplates->gateway_request->subject;
+        $body = trim(implode($emailTemplates->gateway_request->body));
+
+        $body = str_replace("\$url", URL::to('/') . '/admin/dashboard/gateway', $body);
+        $body = str_replace("\$firstName", $firstName, $body);
+        $body = str_replace("\$lastName", $lastName, $body);
+        $body = str_replace("\$gatewayName", $gatewayName, $body);
+
+        EmailUtilities::sendEmail($subject, $email, $body);
+
+    }
+
+    //PGA sends email to User when Gateway is UPDATED
+    public static function mailToUser($firstName, $lastName, $email, $gatewayId){
+
+        $emailTemplates = json_decode(File::get(app_path() . '/config/email_templates.json'));
+        $subject = $emailTemplates->update_to_user->subject;
+        $body = trim(implode($emailTemplates->update_to_user->body));
+
+        $body = str_replace("\$url", URL::to('/') . '/admin/dashboard', $body);
+        $body = str_replace("\$firstName", $firstName, $body);
+        $body = str_replace("\$lastName", $lastName, $body);
+        $body = str_replace("\$gatewayId", $gatewayId, $body);
+
+        EmailUtilities::sendEmail($subject, $email, $body);
+
+    }
+
+    //PGA sends email to Admin when Gateway is UPDATED
+    public static function mailToAdmin($email, $gatewayId){
+
+        $emailTemplates = json_decode(File::get(app_path() . '/config/email_templates.json'));
+        $subject = $emailTemplates->update_to_admin->subject;
+        $body = trim(implode($emailTemplates->update_to_admin->body));
+
+        $body = str_replace("\$url", URL::to('/') . '/admin/dashboard/gateway', $body);
+        $body = str_replace("\$gatewayId", $gatewayId, $body);
+
+        EmailUtilities::sendEmail($subject, $email, $body);
+
+    }
+
     public static function sendEmail($subject, $recipients, $body){
 
         $mail = new PHPMailer();

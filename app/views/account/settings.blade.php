@@ -26,6 +26,7 @@
         </a>
     </div>
 
+    @if( !Session::has("gateway-provider"))
     <div class="row well user-settings">
 
         <h3>Manage Personal Computing and Storage Resources</h3>
@@ -65,6 +66,7 @@
             </div>
         </a>
     </div>
+    @endif
 </div>
 
 @stop

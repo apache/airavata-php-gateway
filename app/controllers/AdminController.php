@@ -25,6 +25,9 @@ class AdminController extends BaseController {
             $gatewayOfUser = "";
             Session::put("super-admin", true);
             $gatewaysInfo = CRUtilities::getAllGateways();
+            Log::info("Gateways: ", $gatewaysInfo);
+            Log::info("Username: ", [Session::get("username")]);
+            //$gatewaysInfo = CRUtilities::getAllGateways();
             //var_dump( $gatewaysInfo); exit;
             $requestedGateways = array();
             $gatewayApprovalStatuses = AdminUtilities::get_gateway_approval_statuses();
@@ -36,8 +39,8 @@ class AdminController extends BaseController {
                     Session::put("new-gateway-provider", true);
                     Session::put("existing-gateway-provider", true);
 
-                    $requestedGateways[ $gateway->gatewayId]["gatewayInfo"] = $gateway;
-                    $requestedGateways[ $gateway->gatewayId]["approvalStatus"] = $gatewayApprovalStatuses[ $gateway->gatewayApprovalStatus];
+                    $requestedGateways[ $gateway->airavataInternalGatewayId]["gatewayInfo"] = $gateway;
+                    $requestedGateways[ $gateway->airavataInternalGatewayId]["approvalStatus"] = $gatewayApprovalStatuses[ $gateway->gatewayApprovalStatus];
                     //seeing if admin wants to start managing one of the gateways
 		            if( Input::has("gatewayId")){
 		            	if( Input::get("gatewayId") == $gateway->gatewayId)
@@ -170,23 +173,36 @@ class AdminController extends BaseController {
 
 	public function updateGatewayRequest(){
 
-		//first step of adding tenant and changing gateway request status to Approved.	 
-		$returnVal = AdminUtilities::update_gateway( Input::get("gateway_id"), Input::all());
+		$returnVal = AdminUtilities::update_gateway( Input::get("gateway_id"), Input::except("oauthClientId","oauthClientSecret"));
 		if( Request::ajax()){
-			if( $returnVal == 1)
-				return json_encode( AdminUtilities::get_gateway( Input::get("gateway_id")) );
-			else
-				return $returnVal; // anything other than positive update result
+			if( $returnVal == 1) {
+                $username = Session::get("username");
+                $email = Config::get('pga_config.portal')['admin-emails'];
+                $user_profile = Keycloak::getUserProfile($username);
+                EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $email, Input::get("gateway_id"));
+                EmailUtilities::mailToAdmin($email, Input::get("gateway_id"));
+                return json_encode(AdminUtilities::get_gateway(Input::get("gateway_id")));
+            }
+			else {
+                return $returnVal; // anything other than positive update result
+            }
 		}
 		else{
-			if( $returnVal == 1)
-				Session::put("message", "Request has been updated");
-			else
-				Session::put("message", "An error has occurred while updating your request. Please try again or contact admin to report the issue.");
+			if( $returnVal) {
+                $username = Session::get("username");
+                $email = Config::get('pga_config.portal')['admin-emails'];
+                $user_profile = Keycloak::getUserProfile($username);
+                EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $email, Input::get("gateway_id"));
+                EmailUtilities::mailToAdmin($email, Input::get("gateway_id"));
+                Session::put("message", "Request has been updated");
+            }
+			else {
+                Session::put("message", "An error has occurred while updating your request. Please make sure you've entered all the details correctly. Try again or contact admin to report the issue.");
+            }
 
-			return Redirect::to("admin/dashboard");
+			return Redirect::back();
 
-		} 
+		}
 		//return 1;
 	}
 
@@ -413,6 +429,12 @@ class AdminController extends BaseController {
 
 	/* ---- Super Admin Functions ------- */
 
+    public function createGateway(){
+
+        return View::make("admin/create-gateway");
+
+    }
+
 	public function addGateway(){
 		$inputs = Input::all();
 
@@ -435,25 +457,64 @@ class AdminController extends BaseController {
 
         $validator = Validator::make( $checkValidation, $rules, $messages);
         if ($validator->fails()) {
-            return Response::json( $validator->messages() );
+            Session::put("validationMessages", [$validator->messages()] );
+            return Redirect::back()
+                ->withErrors($validator);
         }
         else{
-	        $gateway = AdminUtilities::add_gateway(Input::all());
+            $username = Session::get("username");
+            $returnVal = AdminUtilities::add_gateway(Input::all());
 
-			$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"],
-				$inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
+            if ($returnVal == 1){
+                $email = Config::get('pga_config.portal')['admin-emails'];
+                $user_profile = Keycloak::getUserProfile($username);
+                EmailUtilities::gatewayRequestMail($user_profile["firstname"], $user_profile["lastname"], $email, Input::get("gateway-name"));
+                Session::put("message", "Gateway " . $inputs["gateway-name"] . " has been added.");
+            }
+            else{
+                Session::put("errorMessages", "Error: A Gateway already exists with the same GatewayId, Name or URL! Please make a new request.");
+            }
 
-			Session::put("message", "Gateway " . $inputs["gatewayName"] . " has been added.");
-			
-			return Response::json( array( "gateway" =>$gateway, "tm" => $tm ) ); 
-			if( $gateway ==  $inputs["gatewayName"] && is_object( $tm ) )
-				return Response::json( array( "gateway" =>$gateway, "tm" => $tm ) ); 
-			else
-				return 0;
-			//return Redirect::to("admin/dashboard/gateway")->with("message", "Gateway has been successfully added.");
+			return Redirect::back();
 		}
 	}
 
+	public function checkRequest(){
+	    $inputs = Input::all();
+
+        $rules = array(
+            "email" => "required|email",
+        );
+
+        $messages = array(
+            'email.format' => 'Please enter a valid Email ID',
+        );
+
+        $checkValidation = array();
+        $checkValidation["email"] = $inputs["email-address"];
+
+        $validator = Validator::make( $checkValidation, $rules, $messages);
+        if ($validator->fails()) {
+            Session::put("validationMessages", [$validator->messages()] );
+            return Redirect::to("admin/dashboard")
+                ->withErrors($validator);
+        }
+        else{
+            $username = Session::get("username");
+            $returnVal = AdminUtilities::check_request(Input::all());
+
+            if ($returnVal == 1) {
+                $email = Config::get('pga_config.portal')['admin-emails'];
+                $user_profile = Keycloak::getUserProfile($username);
+                EmailUtilities::gatewayRequestMail($user_profile["firstname"], $user_profile["lastname"], $email, $inputs["gateway-name"]);
+                Session::put("message", "Your request for Gateway " . $inputs["gateway-name"] . " has been created.");
+            }
+            else{
+                Session::put("errorMessages", "Error: A Gateway already exists with the same GatewayId, Name or URL! Please make a new request.");
+            }
+            return Redirect::to("admin/dashboard");
+        }
+    }
 
 	public function requestGateway(){
 		$inputs = Input::all();
@@ -484,9 +545,6 @@ class AdminController extends BaseController {
         }
         else{
 	        $gateway = AdminUtilities::request_gateway(Input::all());
-
-			//$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"], inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
-
 			Session::put("message", "Your request for Gateway " . $inputs["gateway-name"] . " has been created.");
 			
             return Redirect::to("admin/dashboard");
