@@ -494,6 +494,7 @@ class AdminController extends BaseController {
         if ($validator->fails()) {
             Session::put("validationMessages", [$validator->messages()] );
             return Redirect::to("admin/dashboard")
+                ->withInput()
                 ->withErrors($validator);
         }
         else{
@@ -505,11 +506,14 @@ class AdminController extends BaseController {
                 $user_profile = Keycloak::getUserProfile($username);
                 EmailUtilities::gatewayRequestMail($user_profile["firstname"], $user_profile["lastname"], $email, $inputs["gateway-name"]);
                 Session::put("message", "Your request for Gateway " . $inputs["gateway-name"] . " has been created.");
+                return Redirect::to("admin/dashboard");
             }
             else{
-                Session::put("errorMessages", "Error: A Gateway already exists with the same GatewayId, Name or URL! Please make a new request.");
+                $error = "A Gateway already exists with the same GatewayId, Name or URL! Please make a new request.";
+                return Redirect::to("admin/dashboard")
+                    ->withInput()
+                    ->withErrors($error);
             }
-            return Redirect::to("admin/dashboard");
         }
     }
 
