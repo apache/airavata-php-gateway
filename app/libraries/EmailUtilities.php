@@ -117,7 +117,7 @@ class EmailUtilities
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$gatewayId", $gatewayId, $body);
 
-        EmailUtilities::sendEmail($subject, $email, $body);
+        EmailUtilities::sendEmail($subject, [$email], $body);
 
     }
 

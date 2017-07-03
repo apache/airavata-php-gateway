@@ -176,7 +176,7 @@ class AdminController extends BaseController {
                 $username = Session::get("username");
                 $email = Config::get('pga_config.portal')['admin-emails'];
                 $user_profile = Keycloak::getUserProfile($username);
-                EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $email, Input::get("gateway_id"));
+                EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $user_profile["email"], Input::get("gateway_id"));
                 EmailUtilities::mailToAdmin($email, Input::get("gateway_id"));
                 return json_encode(AdminUtilities::get_gateway(Input::get("internal_gateway_id")));
             }
@@ -189,7 +189,7 @@ class AdminController extends BaseController {
                 $username = Session::get("username");
                 $email = Config::get('pga_config.portal')['admin-emails'];
                 $user_profile = Keycloak::getUserProfile($username);
-                EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $email, Input::get("gateway_id"));
+                EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $user_profile["email"], Input::get("gateway_id"));
                 EmailUtilities::mailToAdmin($email, Input::get("gateway_id"));
                 Session::put("message", "Request has been updated");
             }
