@@ -144,6 +144,10 @@ class AdminUtilities
         }
         if( isset($gatewayData["createTenant"])) {
             $gatewayData["declinedReason"] = " ";
+            if ($gateway->identityServerPasswordToken == null)
+            {
+                Session::put("errorMessages", "Error: Please ask the Gateway Provider to submit a password.");
+            }
             foreach ($gatewayData as $data) {
                 if ($data == null) {
                     return -1;
@@ -153,6 +157,13 @@ class AdminUtilities
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CREATED;
         }
         elseif( isset( $gatewayData["approveRequest"])){
+            $gateway->emailAddress = $gatewayData["emailAddress"];
+            $gateway->gatewayURL = $gatewayData["gatewayURL"];
+            $gateway->gatewayAdminFirstName = $gatewayData["gatewayAdminFirstName"];
+            $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
+            $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
+            $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
+            $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
         }
         elseif( isset( $gatewayData["denyRequest"])){
