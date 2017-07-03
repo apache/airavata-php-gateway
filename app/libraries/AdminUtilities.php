@@ -149,6 +149,8 @@ class AdminUtilities
                     return -1;
                 }
             }
+            if ($gateway->identityServerPasswordToken == null)
+                return -1;
             $gateway = IamAdminServices::setUpGateway( Session::get('authz-token'), $gateway);
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CREATED;
         }

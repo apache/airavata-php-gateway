@@ -168,7 +168,7 @@ class AdminController extends BaseController {
 		}
 	}
 
-	public function updateGatewayRequest(){
+	public function updateGateway(){
 
 		$returnVal = AdminUtilities::update_gateway( Input::get("internal_gateway_id"), Input::except("oauthClientId","oauthClientSecret"));
 		if( Request::ajax()){
@@ -178,6 +178,10 @@ class AdminController extends BaseController {
                 $user_profile = Keycloak::getUserProfile($username);
                 EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $email, Input::get("gateway_id"));
                 EmailUtilities::mailToAdmin($email, Input::get("gateway_id"));
+                if (isset($gatewayData["createTenant"]))
+                    Session::put("successMessages", "Tenant has been created successfully!");
+                else
+                    Session::put("successMessages", "Gateway has been updated successfully!");
                 return json_encode(AdminUtilities::get_gateway(Input::get("internal_gateway_id")));
             }
 			else {
@@ -191,10 +195,10 @@ class AdminController extends BaseController {
                 $user_profile = Keycloak::getUserProfile($username);
                 EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $email, Input::get("gateway_id"));
                 EmailUtilities::mailToAdmin($email, Input::get("gateway_id"));
-                Session::put("message", "Request has been updated");
+                Session::put("message", "Gateway has been updated successfully!");
             }
 			else {
-                Session::put("message", "An error has occurred while updating your request. Please make sure you've entered all the details correctly. Try again or contact admin to report the issue.");
+                Session::put("message", "An error has occurred while updating your Gateway. Please make sure you've entered all the details correctly. Try again or contact the Admin to report the issue.");
             }
 
 			return Redirect::back();

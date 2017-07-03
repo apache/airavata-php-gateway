@@ -46,6 +46,17 @@
             </div>
             {{ Session::forget("errorMessages") }}
         @endif
+
+        @if (Session::has("successMessages"))
+            <div class="row">
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                                class="sr-only">Close</span></button>
+                    {{ Session::get("successMessages") }}
+                </div>
+            </div>
+            {{ Session::forget("successMessages") }}
+        @endif
         </div>
 
         @if ($errors->has())
@@ -230,7 +241,7 @@
             <form action="{{URL::to('/')}}/admin/update-gateway-request" id="update-gateway-request" method="GET">
             
                 <div class="modal-header">
-                    <button type="button" class="close update-gateway-request-close-modal" data-dismiss="modal" aria-label="Close" onclick="window.location.reload()"><span
+                    <button type="button" class="close update-gateway-request-close-modal" data-dismiss="modal" aria-label="Close" ><span
                                 aria-hidden="true">&times;</span></button>
 
                     <h3>View the Gateway Details</h3>
@@ -768,23 +779,24 @@
             if( data == -1 ){
                 //errors only with -1
                 if( updateVal == "createTenant"){
-                $(".submit-actions").before("<div class='alert alert-danger fail-alert'>All fields are required to create the gateway! Please make sure you've first updated all the Gateway details accurately. Try again or contact admin to report the issue.");
+                $(".submit-actions").before("<div class='alert alert-danger fail-alert'>All fields are required to create the gateway! Please make sure you've first updated all the Gateway details accurately and try again. Ask the Gateway Provider to set a Password token if they haven't set it yet.");
                 }
                 else{
                     $(".submit-actions").before("<div class='alert alert-danger fail-alert'>Error updating Gateway. Please try again.");
                 }
             }
             else{
-                if( updateVal == "createTenant"){
+                /*if( updateVal == "createTenant"){
                     $(".submit-actions").before("<div class='alert alert-success success-alert'>Tenant has been created!");
                     $(".notCreatedGateway").addClass("hide");
 
                     $(".createdGateway").removeClass("hide");
-
                 }
                 else{
                     $(".submit-actions").before("<div class='alert alert-success success-alert'>Gateway has been updated successfully.");
-                }
+                }*/
+
+                window.location.reload();
 
                 //refresh data next time if same popup is opened.
                 var gatewayIdWithoutSpaces = dataObj['gateway_id'].replace(/\s+/g, '-');
