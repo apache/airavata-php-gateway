@@ -166,6 +166,7 @@ class AdminUtilities
             $gateway->gatewayAdminFirstName = $gatewayData["gatewayAdminFirstName"];
             $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
             $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
+            $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
             $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
             $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
