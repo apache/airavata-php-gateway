@@ -539,7 +539,7 @@ class CRUtilities
             usort($gateways, CommonUtilities::arrSortObjsByKey('requestCreationTime', 'ASC'));
         }
         else {
-            $gateways[0] = TenantProfileService::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
+            $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
         }
         return $gateways;
     }

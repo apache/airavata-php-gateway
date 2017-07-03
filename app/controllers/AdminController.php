@@ -24,30 +24,27 @@ class AdminController extends BaseController {
         if( in_array( "gateway-provider", $userRoles) ) {
             $gatewayOfUser = "";
             Session::put("super-admin", true);
-            $gatewaysInfo = CRUtilities::getAllGateways();
+            $gatewaysInfo = AdminUtilities::get_gateways_for_requester( $username );
             Log::info("Gateways: ", $gatewaysInfo);
             Log::info("Username: ", [Session::get("username")]);
-            //$gatewaysInfo = CRUtilities::getAllGateways();
             //var_dump( $gatewaysInfo); exit;
             $requestedGateways = array();
             $gatewayApprovalStatuses = AdminUtilities::get_gateway_approval_statuses();
 
             foreach ($gatewaysInfo as $index => $gateway) {
-                if ($gateway->requesterUsername == $username) {
-                    $gatewayOfUser = $gateway->gatewayId;
-                    Session::forget("super-admin");
-                    Session::put("new-gateway-provider", true);
-                    Session::put("existing-gateway-provider", true);
+                $gatewayOfUser = $gateway->gatewayId;
+                Session::forget("super-admin");
+                Session::put("new-gateway-provider", true);
+                Session::put("existing-gateway-provider", true);
 
-                    $requestedGateways[ $gateway->airavataInternalGatewayId]["gatewayInfo"] = $gateway;
-                    $requestedGateways[ $gateway->airavataInternalGatewayId]["approvalStatus"] = $gatewayApprovalStatuses[ $gateway->gatewayApprovalStatus];
-                    //seeing if admin wants to start managing one of the gateways
-		            if( Input::has("gatewayId")){
-		            	if( Input::get("gatewayId") == $gateway->gatewayId)
-		            	{
-		            		Session::put("gateway_id", $gateway->gatewayId);
-		            	}
-		            }
+                $requestedGateways[ $gateway->airavataInternalGatewayId]["gatewayInfo"] = $gateway;
+                $requestedGateways[ $gateway->airavataInternalGatewayId]["approvalStatus"] = $gatewayApprovalStatuses[ $gateway->gatewayApprovalStatus];
+                //seeing if admin wants to start managing one of the gateways
+                if( Input::has("gatewayId")){
+                    if( Input::get("gatewayId") == $gateway->gatewayId)
+                    {
+                        Session::put("gateway_id", $gateway->gatewayId);
+                    }
                 }
             }
             $data["requestedGateways"] = $requestedGateways;
@@ -173,7 +170,7 @@ class AdminController extends BaseController {
 
 	public function updateGatewayRequest(){
 
-		$returnVal = AdminUtilities::update_gateway( Input::get("gateway_id"), Input::except("oauthClientId","oauthClientSecret"));
+		$returnVal = AdminUtilities::update_gateway( Input::get("internal_gateway_id"), Input::except("oauthClientId","oauthClientSecret"));
 		if( Request::ajax()){
 			if( $returnVal == 1) {
                 $username = Session::get("username");
@@ -181,7 +178,7 @@ class AdminController extends BaseController {
                 $user_profile = Keycloak::getUserProfile($username);
                 EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $email, Input::get("gateway_id"));
                 EmailUtilities::mailToAdmin($email, Input::get("gateway_id"));
-                return json_encode(AdminUtilities::get_gateway(Input::get("gateway_id")));
+                return json_encode(AdminUtilities::get_gateway(Input::get("internal_gateway_id")));
             }
 			else {
                 return $returnVal; // anything other than positive update result

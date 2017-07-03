@@ -7,13 +7,14 @@ class GatewayRequestUpdateController extends BaseController
 
         $gateway = AdminUtilities::update_form( Input::get("gateway-id"), Input::all() );
 
-        $gatewayData = array ("gatewayId" => $gateway->gatewayId,
+        $gatewayData = array ("airavataInternalGatewayId" => $gateway->airavataInternalGatewayId,
+                              "gatewayId" => $gateway->gatewayId,
                               "gatewayName" => $gateway->gatewayName,
                               "emailAddress" => $gateway->emailAddress,
                               "publicProjectDescription" => $gateway->gatewayPublicAbstract,
                               "gatewayURL" => $gateway->gatewayURL,
                               "adminFirstName" => $gateway->gatewayAdminFirstName,
-                              "adminLastName" => $gateway-> gatewayAdminLastName,
+                              "adminLastName" => $gateway->gatewayAdminLastName,
                               "adminUsername" => $gateway->identityServerUserName,
                               "adminEmail" => $gateway->gatewayAdminEmail,
                               "projectDetails" => $gateway->reviewProposalDescription);
@@ -26,7 +27,6 @@ class GatewayRequestUpdateController extends BaseController
 
         $inputs = Input::all();
         $rules = array(
-            "username" => "required|min:6",
             "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
@@ -37,7 +37,6 @@ class GatewayRequestUpdateController extends BaseController
         );
 
         $checkValidation = array();
-        $checkValidation["username"] = $inputs["admin-username"];
         $checkValidation["password"] = $inputs["admin-password"];
         $checkValidation["confirm_password"] = $inputs["admin-password-confirm"];
         $checkValidation["email"] = $inputs["admin-email"];
@@ -50,7 +49,7 @@ class GatewayRequestUpdateController extends BaseController
                 ->withErrors($validator);
         }
         else {
-            $returnVal = AdminUtilities::user_update_gateway(Input::get("gateway-id"), Input::all());
+            $returnVal = AdminUtilities::user_update_gateway(Input::get("internal-gateway-id"), Input::all());
 
             if ($returnVal == 1) {
                 $username = Session::get("username");

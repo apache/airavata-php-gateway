@@ -48,6 +48,11 @@ class AdminUtilities
         return TenantProfileService::getGateway( Session::get("authz-token"), $gateway_id);
     }
 
+    public static function get_gateways_for_requester( $username )
+    {
+        return TenantProfileService::getAllGatewaysForUser( Session::get("authz-token"), $username );
+    }
+
     public static function check_request( $inputs)
     {
         $gateway = new Gateway( $inputs);

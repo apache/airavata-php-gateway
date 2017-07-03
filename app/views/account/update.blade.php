@@ -40,10 +40,11 @@
                         @endforeach
                     @endif
 
-                    <form id="add-tenant-form" action="{{ URL::to('/') }}/provider/update-details?gateway_id={{ $gatewayData["gatewayId"] }}&updateRequest=true">
+                    <form id="add-tenant-form" action="{{ URL::to('/') }}/provider/update-details?updateRequest=true">
                         <div class="col-md-12 text-center" style="margin-top:20px;">
                             <h3>Update your Gateway details now!</h3>
                         </div>
+                        <input type="hidden" name="internal-gateway-id" value="{{ $gatewayData["airavataInternalGatewayId"] }}" />
                         <div class="form-group required">
                             <label class="control-label">Gateway ID</label>
                             <input type="text" maxlength="50" name="gateway-id" class="form-control" readonly="readonly" required="required" value="{{ $gatewayData["gatewayId"] }}" />

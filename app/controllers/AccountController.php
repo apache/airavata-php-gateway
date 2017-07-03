@@ -169,7 +169,7 @@ class AccountController extends BaseController
             CommonUtilities::store_id_in_session($username);
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
-            if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user")){
+            if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user") || Session::has("gateway-provider")){
                 return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken,
                     $refreshToken, $expirationTime);
             }
@@ -234,11 +234,19 @@ class AccountController extends BaseController
         if (in_array(Config::get('pga_config.wsis')['user-role-name'], $userRoles)) {
             Session::put("authorized-user", true);
         }
+        //gateway-provider-code
+        if (in_array("gateway-provider", $userRoles)) {
+            Session::put("gateway-provider", true);
+        }
+        //only for super admin
+        if(  Config::get('pga_config.portal')['super-admin-portal'] == true && Session::has("admin")){
+            Session::put("super-admin", true);
+        }
 
         CommonUtilities::store_id_in_session($username);
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
-        if(Session::get("admin") || Session::get("admin-read-only") || Session::get("authorized-user")){
+        if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user") || Session::has("gateway-provider")){
             return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken, $refreshToken, $expirationTime);
         }
 
@@ -286,7 +294,7 @@ class AccountController extends BaseController
         $userProfile = UserProfileUtilities::get_user_profile($username);
         Session::put('user-profile', $userProfile);
 
-        if(Session::has("admin") || Session::has("admin-read-only")){
+        if(Session::has("admin") || Session::has("admin-read-only") || Session::has("gateway-provider")){
             return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
                 . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
         }else{
@@ -331,23 +339,6 @@ class AccountController extends BaseController
             $userEmail = Session::get("user-profile")->emails[0];
         } else {
             $userEmail = Session::get("iam-user-profile")["email"];
-        }
-
-        if( in_array( "gateway-provider", $userRoles ) ) {
-            $gatewayOfUser = "";
-
-            $gatewaysInfo = CRUtilities::getAllGateways();
-            foreach ($gatewaysInfo as $index => $gateway) {
-                if ($gateway->emailAddress == $userEmail) {
-                    Session::set("gateway_id", $gateway->gatewayId);
-                    $gatewayOfUser = $gateway->gatewayId;
-                    Session::forget("super-admin");
-                    break;
-                }
-            }
-            if ($gatewayOfUser == "") {
-                Session::put("new-gateway-provider", true);
-            }
         }
 
         return View::make("account/dashboard");

@@ -311,6 +311,7 @@
                         -->
                     </div>
                     <input type="hidden" class="gatewayid-for-approval" name="gateway_id">
+                    <input type="hidden" name="internal_gateway_id">
                 </div>
                 <div class="modal-footer submit-actions">
                     <button type="submit" name="status" class="btn btn-primary update-gateway notApprovedGateway" value="approveRequest" >Approve Request</button>
@@ -345,6 +346,7 @@
                     </div>
                 </div>
                 <input type="hidden" class="gatewayid-for-approval" name="gateway_id">
+                <input type="hidden" name="internal_gateway_id">
                 <div class="modal-footer">
                     <input type="submit" name="status" class="btn btn-danger" value="Deny"/>
                     <input type="cancel"  data-dismiss="modal"  class="btn btn-default" value="Cancel"/>
@@ -592,6 +594,7 @@
 
         $(".onTenantLoad").removeClass("hide");
         $(".gatewayid-for-approval").val( gatewayId).html(  gatewayId);
+        $("#approve-gateway").find("input[name=internal_gateway_id]").val( gatewayObject.airavataInternalGatewayId );
         $(".gatewayName").val( gatewayObject.gatewayName);
         $(".gatewayAcronym").val( gatewayObject.gatewayAcronym);
         //$(".domain").val( gatewayObject.domain);
@@ -813,6 +816,7 @@
 
     $(".deny-approval").click( function(){
         $(".gatewayid-for-approval").val( $(this).data("gatewayid")).html(  $(this).data("gatewayid"));
+        $("#deny-gateway").find("input[name=internal_gateway_id]").val( gatewayObject.airavataInternalGatewayId );
         $("#deny-gateway").modal("show");
     });
 

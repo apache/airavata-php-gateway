@@ -49,7 +49,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach( $requestedGateways as $gatewayId => $gateway)
+                    @foreach( $requestedGateways as $internalGatewayId => $gateway)
                         <tr>
                             <td>{{ $gateway["gatewayInfo"]->gatewayName }}</td>
                             <?php 
@@ -71,17 +71,17 @@
                                     <div class="btn-group" role="group" aria-label="...">
                                         <button type="button" class="btn btn-default view-credentials" data-gatewayobject="{{ htmlentities( json_encode( $gateway['gatewayInfo'])) }}">View Credentials</button>
                                         <!--
-                                        <button type="button" class="btn btn-default"><a href="{{URL::to('/')}}/admin/dashboard?gatewayId={{$gatewayId}}">Manage Gateway</a></button>
+                                        <button type="button" class="btn btn-default"><a href="{{URL::to('/')}}/admin/dashboard?gatewayId={{$internalGatewayId}}">Manage Gateway</a></button>
                                         
-                                        <button type="button" class="btn btn-danger deactivateGateway-button" data-toggle="modal" data-target="#deactivateGateway" data-gatewayid="{{$gatewayId}}">Deactivate Gateway</button>
+                                        <button type="button" class="btn btn-danger deactivateGateway-button" data-toggle="modal" data-target="#deactivateGateway" data-gateway_id="{{$gateway['gatewayInfo']->gatewayId}}" data-internal_gateway_id="{{$internalGatewayId}}">Deactivate Gateway</button>
                                         -->
                                     </div>
                                 @elseif( $gateway["approvalStatus"] == "REQUESTED" || $gateway["approvalStatus"] == "APPROVED")
-                                    <a href="{{URL::to('/')}}/admin/update-gateway-request?gateway_id={{$gatewayId}}&cancelRequest=true">
+                                    <a href="{{URL::to('/')}}/admin/update-gateway-request?internal_gateway_id={{$internalGatewayId}}&gateway_id={{$gateway['gatewayInfo']->gatewayId}}&cancelRequest=true">
                                         <button type="button" class="btn btn-danger">Cancel Request</button>
                                     </a>
                                     @if( $gateway["approvalStatus"] == "APPROVED")
-                                        <a href="{{URL::to('/')}}/account/update-gateway?gateway-id={{$gatewayId}}&updateRequest=true">
+                                        <a href="{{URL::to('/')}}/account/update-gateway?gateway-id={{$internalGatewayId}}&updateRequest=true">
                                             <button type="button" class="gateway-update-button btn btn-default">Update Request</button>
                                         </a>
                                     @endif
@@ -213,6 +213,7 @@
                 <form action="{{URL::to('/')}}/admin/update-gateway-request?status=3" method="GET">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <input type="hidden" id="deactivateGatewayId" name="gateway_id" value=""/>
+                    <input type="hidden" id="deactivateInternalGatewayId" name="internal_gateway_id" value=""/>
                     <button type="submit" class="btn btn-danger">Deactivate</button>
                 </form>
               </div>
@@ -466,8 +467,10 @@
     */
 
     $(".deactivateGateway-button").click( function(){
-        var gatewayId = $(this).data("gatewayid");
-        $("#deactivateGatewayId").val( gatewayId);
+        var gatewayId = $(this).data("gateway_id");
+        var internalGatewayId = $(this).data("internal_gateway_id");
+        $("#deactivateGatewayId").val( gatewayId );
+        $("#deactivateInternalGatewayId").val( internalGatewayId );
     });
 
     $(".view-credentials").click( function(){
