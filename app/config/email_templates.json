@@ -93,16 +93,16 @@
   "update_to_user" : {
     "subject" : "Gateway Details Updated",
     "body" : [
-        "<div>",
-            "<p>",
-                "Dear $firstName $lastName,<br/>",
+      "<div>",
+      "<p>",
+      "Hello,<br/>",
 
-                "There has been an update in the Gateway info for your Gateway with ID - $gatewayId.",
-                " Please click the link below to view the changes.<br/>",
+      "There has been an update in the Gateway info for your Gateway with ID - $gatewayId.",
+      " Please click the link below to view the changes.<br/>",
 
-                "<a href=\"$url\">$url</a><br/>",
-            "</p>",
-        "</div>"
+      "<a href=\"$url\">$url</a><br/>",
+      "</p>",
+      "</div>"
     ]
   }
 
