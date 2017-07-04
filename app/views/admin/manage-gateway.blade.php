@@ -69,7 +69,7 @@
             <ul class="nav nav-tabs nav-justified" id="tabs" role="tablist">
                 <li class="active"><a href="#tab-currentGateway" data-toggle="tab">Gateway - {{ Session::get("gateway_id") }}</a></li>
                 @if( Session::has('super-admin'))
-                    <li><a href="#tab-allGateways" data-toggle="tab">Approved Gateways</a></li>
+                    <li><a href="#tab-allGateways" data-toggle="tab">Created Gateways</a></li>
                     <li><a href="#tab-requestedGateways" data-toggle="tab">Gateway Requests</a></li>
                 @endif
             </ul>
@@ -169,9 +169,8 @@
 
                     <div class="panel-group super-admin-gateways-view" id="accordion1">
                         @foreach( $gateways as $indexGP => $gp )
-                            @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "APPROVED" ||
-                                $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "ACTIVE" ||
-                                $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "CREATED")
+                            @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "CREATED" ||
+                                   $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "DEPLOYED" )
                                 
                                 @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
                                 
