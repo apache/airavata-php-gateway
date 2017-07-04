@@ -158,7 +158,8 @@
 
                     <div class="panel-group super-admin-gateways-view" id="accordion1">
                         @foreach( $gateways as $indexGP => $gp )
-                            @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "CREATED")
+                            @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "CREATED" ||
+                                   $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "DEPLOYED" )
                                 
                                 @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
                                 
