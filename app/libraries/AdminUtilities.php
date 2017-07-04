@@ -28,7 +28,8 @@ class AdminUtilities
         $gateway->gatewayAdminEmail = $inputs["admin-email"];
         $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
         $gateway->identityServerUserName = $inputs["admin-username"];
-        $gateway->identityServerPasswordToken  = $inputs["admin-password"];
+        $token = create_pwd_token([Session::get('username'), $inputs["admin-password"]]);
+        $gateway->identityServerPasswordToken  = $token;
         $gateway->reviewProposalDescription = $inputs["project-details"];
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
         $gateway->requesterUsername = Session::get('username');
@@ -88,7 +89,8 @@ class AdminUtilities
         $gateway->gatewayAdminFirstName = $inputs["admin-firstname"];
         $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
         $gateway->identityServerUserName = $inputs["admin-username"];
-        $gateway->identityServerPasswordToken  = $inputs["admin-password"];
+        $token = create_pwd_token([Session::get('username'), $inputs["admin-password"]]);
+        $gateway->identityServerPasswordToken  = $token;
         $gateway->reviewProposalDescription = $inputs["project-details"];
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
         $gateway->requesterUsername = Session::get('username');
@@ -116,7 +118,8 @@ class AdminUtilities
         $gateway->emailAddress = $gatewayData["email-address"];
         $gateway->gatewayURL = $gatewayData["gateway-url"];
         $gateway->identityServerUserName = $gatewayData["admin-username"];
-        $gateway->identityServerPasswordToken  = $gatewayData["admin-password"];
+        $token = create_pwd_token([Session::get('username'), $gatewayData["admin-password"]]);
+        $gateway->identityServerPasswordToken  = $token;
         $gateway->gatewayAdminFirstName = $gatewayData["admin-firstname"];
         $gateway->gatewayAdminLastName = $gatewayData["admin-lastname"];
         $gateway->gatewayAdminEmail = $gatewayData["admin-email"];
@@ -147,14 +150,13 @@ class AdminUtilities
             if ($gateway->identityServerPasswordToken == null)
             {
                 Session::put("errorMessages", "Error: Please ask the Gateway Provider to submit a password.");
+                return -1;
             }
             foreach ($gatewayData as $data) {
                 if ($data == null) {
                     return -1;
                 }
             }
-            if ($gateway->identityServerPasswordToken == null)
-                return -1;
             $gateway = IamAdminServices::setUpGateway( Session::get('authz-token'), $gateway);
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CREATED;
         }
