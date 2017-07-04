@@ -175,7 +175,7 @@ class AdminController extends BaseController {
 		if( Request::ajax()){
 			if( $returnVal == 1) {
                 $email = Config::get('pga_config.portal')['admin-emails'];
-                EmailUtilities::gatewayUpdateMailToProvider($gateway->gatewayAdminFirstName, $gateway->gatewayAdminLastName, $gateway->emailAddress, Input::get("gateway_id"));
+                EmailUtilities::gatewayUpdateMailToProvider($gateway->emailAddress, Input::get("gateway_id"));
                 EmailUtilities::gatewayUpdateMailToAdmin($email, Input::get("gateway_id"));
                 if (isset($gatewayData["createTenant"]))
                     Session::put("successMessages", "Tenant has been created successfully!");
@@ -190,7 +190,7 @@ class AdminController extends BaseController {
 		else{
 			if( $returnVal) {
                 $email = Config::get('pga_config.portal')['admin-emails'];
-                EmailUtilities::gatewayUpdateMailToProvider($gateway->gatewayAdminFirstName, $gateway->gatewayAdminLastName, $gateway->emailAddress, Input::get("gateway_id"));
+                EmailUtilities::gatewayUpdateMailToProvider($gateway->emailAddress, Input::get("gateway_id"));
                 EmailUtilities::gatewayUpdateMailToAdmin($email, Input::get("gateway_id"));
                 Session::put("message", "Gateway has been updated successfully!");
             }

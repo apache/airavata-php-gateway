@@ -106,26 +106,14 @@ class EmailUtilities
     }
 
     //PGA sends email to User when Gateway is UPDATED
-    public static function gatewayUpdateMailToProvider($firstName, $lastName, $email, $gatewayId){
+    public static function gatewayUpdateMailToProvider($email, $gatewayId){
 
-        if ($firstName == null || $lastName == null){
-            $emailTemplates = json_decode(File::get(app_path() . '/config/email_templates.json'));
-            $subject = $emailTemplates->update_to_empty_user->subject;
-            $body = trim(implode($emailTemplates->update_to_empty_user->body));
+        $emailTemplates = json_decode(File::get(app_path() . '/config/email_templates.json'));
+        $subject = $emailTemplates->update_to_user->subject;
+        $body = trim(implode($emailTemplates->update_to_user->body));
 
-            $body = str_replace("\$url", URL::to('/') . '/admin/dashboard', $body);
-            $body = str_replace("\$gatewayId", $gatewayId, $body);
-        }
-        else{
-            $emailTemplates = json_decode(File::get(app_path() . '/config/email_templates.json'));
-            $subject = $emailTemplates->update_to_user->subject;
-            $body = trim(implode($emailTemplates->update_to_user->body));
-
-            $body = str_replace("\$url", URL::to('/') . '/admin/dashboard', $body);
-            $body = str_replace("\$firstName", $firstName, $body);
-            $body = str_replace("\$lastName", $lastName, $body);
-            $body = str_replace("\$gatewayId", $gatewayId, $body);
-        }
+        $body = str_replace("\$url", URL::to('/') . '/admin/dashboard', $body);
+        $body = str_replace("\$gatewayId", $gatewayId, $body);
 
 
         EmailUtilities::sendEmail($subject, [$email], $body);
