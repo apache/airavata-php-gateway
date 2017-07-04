@@ -170,14 +170,13 @@ class AdminController extends BaseController {
 
 	public function updateGatewayRequest(){
 
+	    $gateway = TenantProfileService::getGateway( Session::get('authz-token'), Input::get("internal_gateway_id"));
 		$returnVal = AdminUtilities::update_gateway( Input::get("internal_gateway_id"), Input::except("oauthClientId","oauthClientSecret"));
 		if( Request::ajax()){
 			if( $returnVal == 1) {
-                $username = Session::get("username");
                 $email = Config::get('pga_config.portal')['admin-emails'];
-                $user_profile = Keycloak::getUserProfile($username);
-                EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $user_profile["email"], Input::get("gateway_id"));
-                EmailUtilities::mailToAdmin($email, Input::get("gateway_id"));
+                EmailUtilities::gatewayUpdateMailToProvider($gateway->gatewayAdminFirstName, $gateway->gatewayAdminLastName, $gateway->emailAddress, Input::get("gateway_id"));
+                EmailUtilities::gatewayUpdateMailToAdmin($email, Input::get("gateway_id"));
                 return json_encode(AdminUtilities::get_gateway(Input::get("internal_gateway_id")));
             }
 			else {
@@ -186,11 +185,9 @@ class AdminController extends BaseController {
 		}
 		else{
 			if( $returnVal) {
-                $username = Session::get("username");
                 $email = Config::get('pga_config.portal')['admin-emails'];
-                $user_profile = Keycloak::getUserProfile($username);
-                EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $user_profile["email"], Input::get("gateway_id"));
-                EmailUtilities::mailToAdmin($email, Input::get("gateway_id"));
+                EmailUtilities::gatewayUpdateMailToProvider($gateway->gatewayAdminFirstName, $gateway->gatewayAdminLastName, $gateway->emailAddress, Input::get("gateway_id"));
+                EmailUtilities::gatewayUpdateMailToAdmin($email, Input::get("gateway_id"));
                 Session::put("message", "Request has been updated");
             }
 			else {
