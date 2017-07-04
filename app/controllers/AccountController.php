@@ -82,7 +82,7 @@ class AccountController extends BaseController
 
         // If no username/password option and only one external identity
         // provider, just redirect immediately
-        if ($auth_password_option == null && count($auth_code_options)) {
+        if ($auth_password_option == null && count($auth_code_options) == 1) {
             return Redirect::away($auth_code_options[0]["auth_url"]);
         } else {
             return View::make('account/login', array(
@@ -101,7 +101,7 @@ class AccountController extends BaseController
 
         // If no username/password option and only one external identity
         // provider, just redirect immediately
-        if ($auth_password_option == null && count($auth_code_options)) {
+        if ($auth_password_option == null && count($auth_code_options) == 1) {
             return Redirect::away($auth_code_options[0]["auth_url"]);
         } else {
             return View::make('account/login-desktop', array(

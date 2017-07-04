@@ -144,15 +144,28 @@ class AdminUtilities
         }
         if( isset($gatewayData["createTenant"])) {
             $gatewayData["declinedReason"] = " ";
+            if ($gateway->identityServerPasswordToken == null)
+            {
+                Session::put("errorMessages", "Error: Please ask the Gateway Provider to submit a password.");
+            }
             foreach ($gatewayData as $data) {
                 if ($data == null) {
                     return -1;
                 }
             }
+            if ($gateway->identityServerPasswordToken == null)
+                return -1;
             $gateway = IamAdminServices::setUpGateway( Session::get('authz-token'), $gateway);
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CREATED;
         }
         elseif( isset( $gatewayData["approveRequest"])){
+            $gateway->emailAddress = $gatewayData["emailAddress"];
+            $gateway->gatewayURL = $gatewayData["gatewayURL"];
+            $gateway->gatewayAdminFirstName = $gatewayData["gatewayAdminFirstName"];
+            $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
+            $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
+            $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
+            $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
         }
         elseif( isset( $gatewayData["denyRequest"])){
@@ -164,6 +177,7 @@ class AdminUtilities
             $gateway->gatewayAdminFirstName = $gatewayData["gatewayAdminFirstName"];
             $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
             $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
+            $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
             $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
             $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
