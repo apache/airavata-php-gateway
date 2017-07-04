@@ -153,6 +153,8 @@ class AdminUtilities
                     return -1;
                 }
             }
+            if ($gateway->identityServerPasswordToken == null)
+                return -1;
             $gateway = IamAdminServices::setUpGateway( Session::get('authz-token'), $gateway);
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CREATED;
         }
@@ -175,6 +177,7 @@ class AdminUtilities
             $gateway->gatewayAdminFirstName = $gatewayData["gatewayAdminFirstName"];
             $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
             $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
+            $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
             $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
             $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;

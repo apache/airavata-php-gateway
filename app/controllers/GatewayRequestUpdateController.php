@@ -3,7 +3,7 @@
 class GatewayRequestUpdateController extends BaseController
 {
 
-    public function updateGatewayRequest(){
+    public function updateGateway(){
 
         $gateway = AdminUtilities::update_form( Input::get("gateway-id"), Input::all() );
 

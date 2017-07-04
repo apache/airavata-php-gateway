@@ -28,7 +28,7 @@ Route::get("refreshed-token-desktop", "AccountController@getRefreshedTokenForDes
 
 Route::get("account/dashboard", "AccountController@dashboard");
 
-Route::get("account/update-gateway", "GatewayRequestUpdateController@updateGatewayRequest");
+Route::get("account/update-gateway", "GatewayRequestUpdateController@updateGateway");
 
 Route::get("callback-url", "AccountController@oauthCallback");
 
@@ -379,7 +379,7 @@ Route::post("notice-seen-ack", "AccountController@noticeSeenAck");
 Route::get("admin/add-gateway", "AdminController@createGateway");
 Route::get("admin/add-new-gateway", "AdminController@addGateway");
 
-Route::get("admin/update-gateway-request", "AdminController@updateGatewayRequest");
+Route::get("admin/update-gateway-request", "AdminController@updateGateway");
 
 /*
 * Theme Pages Routes
