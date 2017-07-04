@@ -220,7 +220,14 @@ class UserSettingsController extends BaseController
     }
 
     public function showUpdateEmailView() {
-        $userProfile = UserProfileUtilities::get_user_profile(Session::get("username"));
+        try {
+            $userProfile = UserProfileUtilities::get_user_profile(Session::get("username"));
+        } catch (Exception $e) {
+            Log::error("Failed to retrieve user profile. Error: " . $e->getMessage());
+            return View::make("account/user-profile-update-email", array(
+                "email" => null
+            ));
+        }
         return View::make("account/user-profile-update-email", array(
             "email" => $userProfile->emails[0]
         ));
@@ -272,8 +279,10 @@ class UserSettingsController extends BaseController
                     "errorMessage", "Failed to update email address, please try again. Reason: confirmation link was not verified successfully.");
             }
         } catch (Exception $e) {
+            Log::error("Failed to update email address", array(Input::all()));
+            Log::error($e);
             return Redirect::to("account/user-profile-update-email")->with(
-                "errorMessage", "Failed to update email address, please try again. Reason: " . $e->message);
+                "errorMessage", "Failed to update email address, please try again. Reason: " . $e->getMessage());
         }
     }
 }

@@ -22,9 +22,9 @@
         </div>
     @endif
 
-    @if( isset($errorMessage) )
+    @if( Session::has("errorMessage") )
         <div class="alert alert-danger" role="alert">
-            {{{ $errorMessage }}}
+            {{{ Session::get("errorMessage") }}}
         </div>
     @endif
 
