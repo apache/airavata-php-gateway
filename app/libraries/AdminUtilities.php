@@ -28,7 +28,11 @@ class AdminUtilities
         $gateway->gatewayAdminEmail = $inputs["admin-email"];
         $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
         $gateway->identityServerUserName = $inputs["admin-username"];
-        $token = create_pwd_token([Session::get('username'), $inputs["admin-password"]]);
+        $token = AdminUtilities::create_pwd_token([
+            "username" => $inputs["admin-username"],
+            "password" => $inputs["admin-password"],
+            "description" => "Admin user password for Gateway " . $id
+        ]);
         $gateway->identityServerPasswordToken  = $token;
         $gateway->reviewProposalDescription = $inputs["project-details"];
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
@@ -79,7 +83,9 @@ class AdminUtilities
     public static function request_gateway( $inputs)
     {
         $gateway = new Gateway( $inputs);
-        $gateway->gatewayId = $inputs["gateway-name"];
+        $id = preg_replace('~^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$~', '', $inputs["gateway-name"]);
+        $id = strtolower(preg_replace('~[^a-zA-Z0-9]+~', '-', $id));
+        $gateway->gatewayId = $id;
         $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
         //$gateway->domain = 'airavata.' . $inputs["gateway-acronym"];
         $gateway->gatewayName = $inputs["gateway-name"];
@@ -89,7 +95,11 @@ class AdminUtilities
         $gateway->gatewayAdminFirstName = $inputs["admin-firstname"];
         $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
         $gateway->identityServerUserName = $inputs["admin-username"];
-        $token = create_pwd_token([Session::get('username'), $inputs["admin-password"]]);
+        $token = AdminUtilities::create_pwd_token([
+            "username" => $inputs["admin-username"],
+            "password" => $inputs["admin-password"],
+            "description" => "Admin user password for Gateway " . $id
+        ]);
         $gateway->identityServerPasswordToken  = $token;
         $gateway->reviewProposalDescription = $inputs["project-details"];
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
@@ -118,7 +128,11 @@ class AdminUtilities
         $gateway->emailAddress = $gatewayData["email-address"];
         $gateway->gatewayURL = $gatewayData["gateway-url"];
         $gateway->identityServerUserName = $gatewayData["admin-username"];
-        $token = create_pwd_token([Session::get('username'), $gatewayData["admin-password"]]);
+        $token = AdminUtilities::create_pwd_token([
+            "username" => $gatewayData["admin-username"],
+            "password" => $gatewayData["admin-password"],
+            "description" => "Admin user password for Gateway " . $gatewayId
+        ]);
         $gateway->identityServerPasswordToken  = $token;
         $gateway->gatewayAdminFirstName = $gatewayData["admin-firstname"];
         $gateway->gatewayAdminLastName = $gatewayData["admin-lastname"];
