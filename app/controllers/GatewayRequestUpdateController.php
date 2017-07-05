@@ -52,11 +52,9 @@ class GatewayRequestUpdateController extends BaseController
             $returnVal = AdminUtilities::user_update_gateway(Input::get("internal-gateway-id"), Input::all());
 
             if ($returnVal == 1) {
-                $username = Session::get("username");
                 $email = Config::get('pga_config.portal')['admin-emails'];
-                $user_profile = Keycloak::getUserProfile($username);
-                EmailUtilities::mailToUser($user_profile["firstname"], $user_profile["lastname"], $email, Input::get("gateway-id"));
-                EmailUtilities::mailToAdmin($email, Input::get("gateway-id"));
+                EmailUtilities::gatewayUpdateMailToProvider(Input::get("email-address"), Input::get("gateway-id"));
+                EmailUtilities::gatewayUpdateMailToAdmin($email, Input::get("gateway-id"));
                 Session::put("message", "Your Gateway has been updated");
             } else
                 Session::put("errorMessages", "Error: Please try again or contact admin to report the issue.");
