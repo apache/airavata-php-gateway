@@ -273,6 +273,13 @@ class AccountController extends BaseController
             return Redirect::to("home")->with("airavata-down", true);
         }
 
+        // Create basic user profile if it doesn't exist
+        if (!UserProfileUtilities::does_user_profile_exist($username)) {
+            UserProfileUtilities::create_basic_user_profile($username, $userEmail, $firstName, $lastName);
+        }
+        $userProfile = UserProfileUtilities::get_user_profile($username);
+        Session::put('user-profile', $userProfile);
+
         //creating a default project for user
         $projects = ProjectUtilities::get_all_user_projects(Config::get('pga_config.airavata')['gateway-id'], $username);
         if($projects == null || count($projects) == 0){
@@ -286,13 +293,6 @@ class AccountController extends BaseController
             mkdir($dirPath, 0777, true);
             umask($old_umask);
         }
-
-        // Create basic user profile if it doesn't exist
-        if (!UserProfileUtilities::does_user_profile_exist($username)) {
-            UserProfileUtilities::create_basic_user_profile($username, $userEmail, $firstName, $lastName);
-        }
-        $userProfile = UserProfileUtilities::get_user_profile($username);
-        Session::put('user-profile', $userProfile);
 
         if(Session::has("admin") || Session::has("admin-read-only") || Session::has("gateway-provider")){
             return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
