@@ -228,7 +228,7 @@ class Keycloak {
 
         //Parse JSON return object.
         $result = json_decode($response);
-        Log::debug("getRefreshedOAuthToken response", array($result));
+        // Log::debug("getRefreshedOAuthToken response", array($result));
 
         return $result;
     }
@@ -443,7 +443,7 @@ class Keycloak {
 
         $json = json_decode($result);
 
-        Log::debug("openid connect discovery configuration", array($json));
+        // Log::debug("openid connect discovery configuration", array($json));
         return $json;
     }
 }

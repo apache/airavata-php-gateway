@@ -107,7 +107,7 @@ class SharingUtilities {
         // FIXME: instead of loading all user profiles it would be better to
         // have the user search for users and just load profiles matching the search
         $all_profiles = SharingUtilities::convertUserProfilesToSharingProfiles(UserProfileUtilities::get_all_user_profiles(0, 100000));
-        Log::debug("all_profiles", array($all_profiles));
+        // Log::debug("all_profiles", array($all_profiles));
         $uids = array_filter($uids, function($uid) use ($all_profiles) {
             return ($uid !== Session::get('username') && array_key_exists($uid, $all_profiles));
         });
