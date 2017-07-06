@@ -437,7 +437,6 @@ class AdminController extends BaseController {
 		$inputs = Input::all();
 
 		$rules = array(
-            "username" => "required|min:6",
             "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
@@ -448,7 +447,6 @@ class AdminController extends BaseController {
         );
 
         $checkValidation = array();
-        $checkValidation["username"] = $inputs["admin-username"];
         $checkValidation["password"] = $inputs["admin-password"];
         $checkValidation["confirm_password"] = $inputs["admin-password-confirm"];
         $checkValidation["email"] = $inputs["admin-email"];
