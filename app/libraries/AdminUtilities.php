@@ -179,6 +179,7 @@ class AdminUtilities
             $gateway->gatewayURL = $gatewayData["gatewayURL"];
             $gateway->gatewayAdminFirstName = $gatewayData["gatewayAdminFirstName"];
             $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
+            $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
             $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
             $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
             $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
@@ -192,8 +193,8 @@ class AdminUtilities
             $gateway->gatewayURL = $gatewayData["gatewayURL"];
             $gateway->gatewayAdminFirstName = $gatewayData["gatewayAdminFirstName"];
             $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
-            $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
             $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
+            $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
             $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
             $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;

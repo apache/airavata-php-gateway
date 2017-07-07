@@ -504,7 +504,7 @@ class AdminController extends BaseController {
                 $email = Config::get('pga_config.portal')['admin-emails'];
                 $user_profile = Keycloak::getUserProfile($username);
                 EmailUtilities::gatewayRequestMail($user_profile["firstname"], $user_profile["lastname"], $email, $inputs["gateway-name"]);
-                Session::put("message", "Your request for Gateway " . $inputs["gateway-name"] . " has been created.");
+                Session::put("message", "Your request for Gateway " . $inputs["gateway-name"] . " has been created. Your new Gateway request is yet to be approved. You will be notified of the approval status via email notification.");
             }
             else{
                 $error = "A Gateway already exists with the same GatewayId, Name or URL! Please make a new request.";
