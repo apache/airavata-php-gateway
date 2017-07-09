@@ -221,8 +221,10 @@ class CommonUtilities
 
             if ( (Session::has("admin") || Session::has("admin-read-only")) && !Session::has("gateway-provider") )
                 $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
-            else
+            else if ( Session::has("gateway-provider"))
                 $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Dashboard</a></li>';
+            else
+                $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/account/dashboard"><span class="glyphicon glyphicon-user"></span>Dashboard</a></li>';
 
             $navbar .= '<li class="dropdown' . (Session::get("nav-active") == 'user-menu' ? ' active' : '') . '">
 
