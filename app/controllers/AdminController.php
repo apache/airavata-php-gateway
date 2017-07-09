@@ -73,6 +73,9 @@ class AdminController extends BaseController {
 	public function usersView(){
 		if( Input::has("role"))
 		{
+			Session::flash("warning-message", "Please note: the following list "
+			. "may not be complete. Only the most recent 100 users have been "
+			. "searched for role " . htmlspecialchars(Input::get("role")) . ".");
 			$users = IamAdminServicesUtilities::getUsersWithRole(Input::get("role"));
 		}
 		else
