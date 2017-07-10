@@ -457,8 +457,7 @@ class CommonUtilities
                 || $role == Config::get('pga_config.wsis.read-only-admin-role-name')
                 || $role == Config::get('pga_config.wsis.user-role-name')
                 || $role == Config::get('pga_config.wsis.initial-role-name')
-                || $role == 'user-pending'
-                || $role == 'gateway-provider';
+                || $role == 'user-pending';
         });
     }
 
