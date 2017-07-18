@@ -158,6 +158,7 @@
             <td><strong>Creation Time</strong></td>
             <td class="time" unix-time="{{ $expVal["experimentCreationTime"] }}"></td>
         </tr>
+{{-- Commented by dREG 
         <tr>
             <td><strong>Last Modified Time</strong></td>
             <td class="time" unix-time="{{ $expVal["experimentTimeOfStateChange"] }}"></td>
@@ -178,14 +179,59 @@
             <td><strong>Queue</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->queueName }}</td>
         </tr>
+--}}
         <tr>
             <td><strong>Inputs</strong></td>
             <td>{{ ExperimentUtilities::list_input_files($experiment->experimentInputs) }}</td>
         </tr>
         <tr>
             <td><strong>Outputs</strong></td>
+{{-- Commented by dREG
             <td>{{ ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus[0]->state, false) }}</td>
         </tr>
+--}}
+
+{{-- Added by dREG --}}
+<?php
+    if(0 === strpos($experiment->userConfigurationData->experimentDataDir, Config::get("pga_config.airavata")['experiment-data-absolute-path'])){
+      $expDataDir = str_replace(Config::get("pga_config.airavata")['experiment-data-absolute-path'], "", $experiment->userConfigurationData->experimentDataDir);
+    }else{
+      $expDataDir = $experiment->userConfigurationData->experimentDataDir;
+    }
+
+    $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+?>
+            <td>
+                <select id="download">
+                    <option value=''>Select results</option>
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/out.dREG.tar.gz') )
+                    <option value="out.dREG.tar.gz">Full results</option>  
+@endif
+                    <option value="out.dREG.HD.stringent.bed.gz">Stringent Bed regions</option>
+                    <option value="out.dREG.HD.relaxed.bed.gz">Relaxed Bed regions</option> 
+                    <option value="out.dREG.HD.imputedDnase.bw">Imputed DNase-I</option>
+                    <option value="out.dREG.peak.gz">dREG regions</option>         
+                    <option value="out.dREG.pred.gz">dREG scores</option>  
+                </select> &nbsp;&nbsp;&nbsp;&nbsp;
+
+   	       <a href="" target="_blank" id="retLinks">Download&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></a>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Genome Browser</strong></td>
+            <td>
+                <select id="genomebuilder">
+                    <option value="">Select genome </option>
+                    <option value="hg19">hg19</option>
+                    <option value="hg38">hg38</option>  
+                    <option value="mm10">mm10</option>
+                </select> 
+                &nbsp;or input&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="text" id="customeGB" style="width:40px"/> 
+  	        <a href="#1" target="_blank" id="gbLinks">Switch to genome browser&nbsp;<span class="glyphicon glyphicon-new-window"  style="width:20px"></span></a>
+            </td>
+        </tr>
+{{-- dREG --}}
         <tr>
             <td><strong>Storage Directory</strong></td>
             <?php
@@ -229,11 +275,13 @@
 
     <form id="experiment-form" action="{{URL::to('/') }}/experiment/summary" method="post" role="form">
 
+{{-- Commented by dREG 
         <div class="form-group">
         @if(Config::get('pga_config.airavata')["data-sharing-enabled"] && isset($updateSharingViaAjax))
             @include('partials/sharing-display-body', array("form" => !$updateSharingViaAjax))
         @endif
         </div>
+--}}
         <div class="btn-toolbar">
             <button name="launch"
                     type="submit"
@@ -434,6 +482,51 @@
 </script>
 
 <script>
+{{-- Added by dREG --}}
+    $('#retLinks').on('click', function(e) {
+        var file = $('#download').val();
+        if (file == '') return false;
+        window.open('/download?path={{$expDataDir}}/ARCHIVE/' + file);
+        return false; 
+    });
+
+<?php
+	$filelist="";
+        if( count( $experiment->experimentInputs) > 0 ) 
+            foreach( $experiment->experimentInputs as $input)
+                if ($input->type == Airavata\Model\Application\Io\DataType::URI) {
+		
+                    $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
+                    $currentOutputPath = "";
+                    foreach ($dataProductModel->replicaLocations as $rp) 
+                      if($rp->replicaLocationCategory == Airavata\Model\Data\Replica\ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                        $currentOutputPath = $rp->filePath;
+                      break;
+                    }
+                   
+                    $path = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
+                    $filelist = $filelist . $input->name . "\n". $path. "\n";
+                }
+
+    $filelist = $expDataDir ."\n". $filelist;
+    $protocol = 'http';
+    if ( isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') 
+        $protocol = 'https';
+?>
+
+    $('#gbLinks').on('click', function(e) {
+        var gb = $('#customeGB').val();
+        if (gb == '')
+            gb = $('#genomebuilder').val(); 
+        if (gb == '') 
+            return false;
+
+        var gbUrl = "http://epigenomegateway.wustl.edu/browser/?datahub={{ $protocol .'://'. $_SERVER['HTTP_HOST']. '/gbrowser/'. RBase64::encode( $filelist ) }}&genome=";
+        window.open(gbUrl + gb);
+        return false; 
+    });
+{{-- dREG --}}
+
 
     $('#clone-button').on('click', function(e){
 

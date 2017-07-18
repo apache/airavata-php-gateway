@@ -122,45 +122,66 @@ Route::get("experiment/shared-users", "ExperimentController@sharedUsers");
 Route::get("experiment/unshared-users", "ExperimentController@unsharedUsers");
 Route::post("experiment/update-sharing", "ExperimentController@updateSharing");
 
+
 Route::get("download", function(){
-    if(Input::has("path") && (0 == strpos(Input::get("path"), Session::get('username'))
+        if(Input::has("path") && (0 == strpos(Input::get("path"), Session::get('username'))
             || 0 == strpos(Input::get("path"), "/" . Session::get('username')))){
-        $path = Input::get("path");
+            $path = Input::get("path");
 
-        if (strpos($path, '/../') !== false || strpos($path, '/..') !== false || strpos($path, '../') !== false)
-            return null;
+            if (strpos($path, '/../') !== false || strpos($path, '/..') !== false || strpos($path, '../') !== false)
+                return null;
 
-        if(0 === strpos($path, '/')){
-            $path = substr($path, 1);
-        }
-        $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path;
-        return Response::download( $downloadLink);
-    }else if(Input::has("id") && (0 == strpos(Input::get("id"), "airavata-dp"))){
-        $id = Input::get("id");
-
-        $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
-        if(!((($temp = strlen($dataRoot) - strlen("/")) >= 0 && strpos($dataRoot, "/", $temp) !== false)))
-            $dataRoot = $dataRoot . "/";
-
-        $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $id);
-        $currentOutputPath = "";
-        foreach ($dataProductModel->replicaLocations as $rp) {
-            if($rp->replicaLocationCategory == Airavata\Model\Data\Replica\ReplicaLocationCategory::GATEWAY_DATA_STORE){
-                $currentOutputPath = $rp->filePath;
-                break;
+            if(0 === strpos($path, '/')){
+                $path = substr($path, 1);
             }
-        }
+	
+            $downloadLink = Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path;
+            return Response::download( $downloadLink);
+        }else if(Input::has("id") && (0 == strpos(Input::get("id"), "airavata-dp"))){
+            $id = Input::get("id");
 
-        //TODO check permission
-        $path = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
-        $downloadLink = parse_url(URL::to('/') . Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path, PHP_URL_PATH);
-        return Response::download( $downloadLink);
-    }
+            $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+            if(!((($temp = strlen($dataRoot) - strlen("/")) >= 0 && strpos($dataRoot, "/", $temp) !== false)))
+                $dataRoot = $dataRoot . "/";
+
+            $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $id);
+            $currentOutputPath = "";
+            foreach ($dataProductModel->replicaLocations as $rp) {
+                if($rp->replicaLocationCategory == Airavata\Model\Data\Replica\ReplicaLocationCategory::GATEWAY_DATA_STORE){
+                    $currentOutputPath = $rp->filePath;
+                    break;
+                }
+            }
+
+            //TODO check permission
+            $path = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
+            $downloadLink = parse_url(URL::to('/') . Config::get('pga_config.airavata')['experiment-data-absolute-path'] . '/' . $path, PHP_URL_PATH);
+            return Response::download( $downloadLink);
+        }
 });
 
 Route::get("files/browse", "FilemanagerController@browse");
 
 Route::get("files/get","FilemanagerController@get");
+
+// Added by dREG 
+Route::get("gbrowser/{filelist}", function($filelist){
+    return FileTransfer::gbrowser($filelist);
+});
+
+Route::get("gbfile/{file}", function($file){
+    return FileTransfer::gbfile($file);
+});
+
+Route::any("experiment/upload", function(){
+    return FileTransfer::upload("");
+});
+
+Route::any("experiment/upload/{file}", function($file){
+    return FileTransfer::upload($file);
+});
+
+// dREG
 
 /*
  * Group Routes
