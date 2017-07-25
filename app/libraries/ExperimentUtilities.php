@@ -794,27 +794,60 @@ class ExperimentUtilities
             switch ($input->type) {
                 case DataType::STRING:
                     echo '<div class="form-group">
-                    <label for="experiment-input">' . $input->name . '</label>
-                    <input '.$disabled . ' value="' . $input->value . '" type="text" class="form-control" name="' . $input->sanitizedFormName .
-                        '" id="' . $input->sanitizedFormName .
-                        '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
-                    </div>';
+                    <label for="experiment-input">' . $input->name . '</label>';
+                    if(!empty($input->value) && count(explode(",", $input->value)) > 1){
+                        echo '<select class="form-control" name="' . $input->sanitizedFormName .
+                            '" id="' . $input->sanitizedFormName . '">';
+                        $vals = explode(",", $input->value);
+                        echo '<option value="'.$vals[0].'" selected>'.$vals[0] .'</option>';
+                        for($i=1; $i<count(explode(",", $input->value)); $i++){
+                            echo '<option value="'.$vals[$i].'"'.$vals[$i] .'</option>';
+                        }
+                        echo '</select>';
+                    }else{
+                        echo '<input '.$disabled . ' value="' . $input->value . '" type="text" class="form-control" name="' . $input->sanitizedFormName .
+                            '" id="' . $input->sanitizedFormName .
+                            '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
+                        </div>';
+                    }
                     break;
                 case DataType::INTEGER:
                     echo '<div class="form-group">
-                    <label for="experiment-input">' . $input->name . '</label>
-                    <input '.$disabled . ' value="' . $input->value . '" type="number" class="form-control" name="' . $input->sanitizedFormName .
-                        '" id="' . $input->sanitizedFormName .
-                        '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
-                    </div>';
+                    <label for="experiment-input">' . $input->name . '</label>';
+                    if(!empty($input->value) && count(explode(",", $input->value)) > 1){
+                        echo '<select class="form-control" name="' . $input->sanitizedFormName .
+                            '" id="' . $input->sanitizedFormName . '">';
+                        $vals = explode(",", $input->value);
+                        echo '<option value="'.$vals[0].'" selected>'.$vals[0] .'</option>';
+                        for($i=1; $i<count(explode(",", $input->value)); $i++){
+                            echo '<option value="'.$vals[$i].'"'.$vals[$i] .'</option>';
+                        }
+                        echo '</select>';
+                    }else{
+                        echo '<input '.$disabled . ' value="' . $input->value . '" type="number" class="form-control" name="' . $input->sanitizedFormName .
+                            '" id="' . $input->sanitizedFormName .
+                            '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
+                            </div>';
+                    }
                     break;
                 case DataType::FLOAT:
                     echo '<div class="form-group">
-                    <label for="experiment-input">' . $input->name . '</label>
-                    <input '.$disabled . ' value="' . $input->value . '" type="number" step="0.01" class="form-control" name="' . $input->sanitizedFormName .
-                        '" id="' . $input->sanitizedFormName .
-                        '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
-                    </div>';
+                    <label for="experiment-input">' . $input->name . '</label>';
+                    if(!empty($input->value) && count(explode(",", $input->value)) > 1){
+                        echo '<select class="form-control" name="' . $input->sanitizedFormName .
+                            '" id="' . $input->sanitizedFormName . '">';
+                        $vals = explode(",", $input->value);
+                        echo '<option value="'.$vals[0].'" selected>'.$vals[0] .'</option>';
+                        for($i=1; $i<count(explode(",", $input->value)); $i++){
+                            echo '<option value="'.$vals[$i].'"'.$vals[$i] .'</option>';
+                        }
+                        echo '</select>';
+                    }else{
+                        echo '<input '.$disabled . ' value="' . $input->value . '" type="number" step="0.01" class="form-control" name="' . $input->sanitizedFormName .
+                            '" id="' . $input->sanitizedFormName .
+                            '" placeholder="' . $input->userFriendlyDescription . '"' . $required . '>
+                        </div>';
+                    }
                     break;
                 case DataType::URI:
                     if(!empty($input->metaData) && json_decode($input->metaData)->location == "remote"){
