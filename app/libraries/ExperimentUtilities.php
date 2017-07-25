@@ -801,7 +801,7 @@ class ExperimentUtilities
                         $vals = explode(",", $input->value);
                         echo '<option value="'.$vals[0].'" selected>'.$vals[0] .'</option>';
                         for($i=1; $i<count(explode(",", $input->value)); $i++){
-                            echo '<option value="'.$vals[$i].'"'.$vals[$i] .'</option>';
+                            echo '<option value="'.$vals[$i].'">'.$vals[$i] .'</option>';
                         }
                         echo '</select>';
                     }else{
