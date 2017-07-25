@@ -89,7 +89,7 @@ class AppUtilities
                     "type" => $appInterfaceValues["outputType"][$index],
                     "applicationArgument" => $appInterfaceValues["applicationArgumentOutput"][$index],
                     "dataMovement" => intval($appInterfaceValues["dataMovement"][$index]),
-                    "location" => $appInterfaceValues["location"][$index],
+//                    "location" => $appInterfaceValues["location"][$index],
                     "isRequired" => $appInterfaceValues["isRequiredOutput"][$index],
                     "requiredToAddedToCommandLine" => $appInterfaceValues["requiredToAddedToCommandLineOutput"][$index],
                     "searchQuery" => $appInterfaceValues["searchQuery"][$index]
