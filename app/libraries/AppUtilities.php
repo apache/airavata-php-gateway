@@ -70,7 +70,7 @@ class AppUtilities
                     "applicationArgument" => $appInterfaceValues["applicationArgumentInput"][$index],
                     "standardInput" => $appInterfaceValues["standardInput"][$index],
                     "userFriendlyDescription" => $appInterfaceValues["userFriendlyDescription"][$index],
-                    "metaData" => $appInterfaceValues["metaData"][$index],
+//                    "metaData" => $appInterfaceValues["metaData"][$index],
                     "inputOrder" => intval($appInterfaceValues["inputOrder"][$index]),
                     "dataStaged" => intval($appInterfaceValues["dataStaged"][$index]),
                     "isRequired" => $appInterfaceValues["isRequiredInput"][$index],
