@@ -179,8 +179,10 @@ class ExperimentUtilities
                 $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
                 if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                     $dataRoot = $dataRoot . "/";
-                $filePath = str_replace($dataRoot, "", parse_url($output->value, PHP_URL_PATH));
+
+                $filePath = parse_url($output->value, PHP_URL_PATH);
                 if(file_exists($filePath)){
+                    $filePath = str_replace($dataRoot, "", parse_url($output->value, PHP_URL_PATH));
                     echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
                         . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
