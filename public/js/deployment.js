@@ -71,6 +71,23 @@ $( document).ready( function(){
         	$(".delete-deploymentId").val( deploymentId )
         });
 
+	$("#create-app-deployment-block").on('change', '.computeHostId', function () {
+		var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
+		$('#create-app-deployment-block .default-queue-name-select').find('option').remove();
+		for(i = 0; i< computeResourceCompleteList.length; i++){
+			computeResource = computeResourceCompleteList[i];
+			if(computeResource.computeResourceId.startsWith(this.value)){
+				queues = computeResource.batchQueues;
+				if(queues != null){
+					for(j=0; j<queues.length; j++){
+						queue = queues[j];
+						$("#create-app-deployment-block .default-queue-name-select").append("<option value="+queue.queueName+">"+queue.queueName+"</option>");
+					}
+				}
+			}
+		}
+	});
+
 	$("#edit-app-deployment-block").on('change', '.computeHostId', function () {
 		var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
 		var appDeploymentObject = $.parseJSON($("#app-deployment-object").val());
