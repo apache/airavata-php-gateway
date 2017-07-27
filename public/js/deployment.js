@@ -71,45 +71,55 @@ $( document).ready( function(){
         	$(".delete-deploymentId").val( deploymentId )
         });
 
+	updateQueueNamesForCreateAppDep();
 	$("#create-app-deployment-block").on('change', '.computeHostId', function () {
-		var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
-		$('#create-app-deployment-block .default-queue-name-select').find('option').remove();
-		for(i = 0; i< computeResourceCompleteList.length; i++){
-			computeResource = computeResourceCompleteList[i];
-			if(computeResource.computeResourceId.startsWith(this.value)){
-				queues = computeResource.batchQueues;
-				if(queues != null){
-					for(j=0; j<queues.length; j++){
-						queue = queues[j];
-						$("#create-app-deployment-block .default-queue-name-select").append("<option value="+queue.queueName+">"+queue.queueName+"</option>");
-					}
-				}
-			}
-		}
+		updateQueueNamesForCreateAppDep();
 	});
 
+	updateQueueNamesForEditAppDep();
 	$("#edit-app-deployment-block").on('change', '.computeHostId', function () {
-		var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
-		var appDeploymentObject = $.parseJSON($("#app-deployment-object").val());
-		$('#edit-app-deployment-block .default-queue-name-select').find('option').remove();
-		for(i = 0; i< computeResourceCompleteList.length; i++){
-			computeResource = computeResourceCompleteList[i];
-			if(computeResource.computeResourceId.startsWith(this.value)){
-				queues = computeResource.batchQueues;
-				if(queues != null){
-					for(j=0; j<queues.length; j++){
-						queue = queues[j];
-						if(appDeploymentObject.defaultQueueName == queue.queueName){
-							$("#edit-app-deployment-block .default-queue-name-select").append("<option value="+queue.queueName+" selected>"+queue.queueName+"</option>");
-						}else{
-							$("#edit-app-deployment-block .default-queue-name-select").append("<option value="+queue.queueName+">"+queue.queueName+"</option>");
-						}
+		updateQueueNamesForEditAppDep();
+	});
+});
+
+function updateQueueNamesForCreateAppDep(){
+	var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
+	$('#create-app-deployment-block .default-queue-name-select').find('option').remove();
+	for(i = 0; i< computeResourceCompleteList.length; i++){
+		computeResource = computeResourceCompleteList[i];
+		if(computeResource.computeResourceId.startsWith(this.value)){
+			queues = computeResource.batchQueues;
+			if(queues != null){
+				for(j=0; j<queues.length; j++){
+					queue = queues[j];
+					$("#create-app-deployment-block .default-queue-name-select").append("<option value="+queue.queueName+">"+queue.queueName+"</option>");
+				}
+			}
+		}
+	}
+}
+
+function updateQueueNamesForEditAppDep(){
+	var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
+	var appDeploymentObject = $.parseJSON($("#app-deployment-object").val());
+	$('#edit-app-deployment-block .default-queue-name-select').find('option').remove();
+	for(i = 0; i< computeResourceCompleteList.length; i++){
+		computeResource = computeResourceCompleteList[i];
+		if(computeResource.computeResourceId.startsWith(this.value)){
+			queues = computeResource.batchQueues;
+			if(queues != null){
+				for(j=0; j<queues.length; j++){
+					queue = queues[j];
+					if(appDeploymentObject.defaultQueueName == queue.queueName){
+						$("#edit-app-deployment-block .default-queue-name-select").append("<option value="+queue.queueName+" selected>"+queue.queueName+"</option>");
+					}else{
+						$("#edit-app-deployment-block .default-queue-name-select").append("<option value="+queue.queueName+">"+queue.queueName+"</option>");
 					}
 				}
 			}
 		}
-	});
-});
+	}
+}
 
 function clearInputs( elem, removeJustReadOnly){
 
