@@ -71,12 +71,12 @@ $( document).ready( function(){
         	$(".delete-deploymentId").val( deploymentId )
         });
 
-	updateQueueNamesForCreateAppDep($('#create-app-deployment-block .computeHostId').filter(":selected").val());
+	updateQueueNamesForCreateAppDep($('#create-app-deployment-block .computeHostId').filter(":first").val());
 	$("#create-app-deployment-block").on('change', '.computeHostId', function () {
 		updateQueueNamesForCreateAppDep(this.value);
 	});
 
-	updateQueueNamesForEditAppDep($('#edit-app-deployment-block .computeHostId').filter(":selected").val());
+	updateQueueNamesForEditAppDep($('#edit-app-deployment-block .computeHostId').filter(":first").val());
 	$("#edit-app-deployment-block").on('change', '.computeHostId', function () {
 		updateQueueNamesForEditAppDep(this.value);
 	});
