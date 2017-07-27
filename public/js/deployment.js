@@ -71,23 +71,23 @@ $( document).ready( function(){
         	$(".delete-deploymentId").val( deploymentId )
         });
 
-	updateQueueNamesForCreateAppDep();
+	updateQueueNamesForCreateAppDep($('#create-app-deployment-block .computeHostId').filter(":selected").val());
 	$("#create-app-deployment-block").on('change', '.computeHostId', function () {
-		updateQueueNamesForCreateAppDep();
+		updateQueueNamesForCreateAppDep(this.value);
 	});
 
-	updateQueueNamesForEditAppDep();
+	updateQueueNamesForEditAppDep($('#edit-app-deployment-block .computeHostId').filter(":selected").val());
 	$("#edit-app-deployment-block").on('change', '.computeHostId', function () {
-		updateQueueNamesForEditAppDep();
+		updateQueueNamesForEditAppDep(this.value);
 	});
 });
 
-function updateQueueNamesForCreateAppDep(){
+function updateQueueNamesForCreateAppDep(selectedVal){
 	var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
 	$('#create-app-deployment-block .default-queue-name-select').find('option').remove();
 	for(i = 0; i< computeResourceCompleteList.length; i++){
 		computeResource = computeResourceCompleteList[i];
-		if(computeResource.computeResourceId.startsWith(this.value)){
+		if(computeResource.computeResourceId.startsWith(selectedVal)){
 			queues = computeResource.batchQueues;
 			if(queues != null){
 				for(j=0; j<queues.length; j++){
@@ -99,13 +99,13 @@ function updateQueueNamesForCreateAppDep(){
 	}
 }
 
-function updateQueueNamesForEditAppDep(){
+function updateQueueNamesForEditAppDep(selectedVal){
 	var computeResourceCompleteList = $.parseJSON($("#compute-resource-full-objects").val());
 	var appDeploymentObject = $.parseJSON($("#app-deployment-object").val());
 	$('#edit-app-deployment-block .default-queue-name-select').find('option').remove();
 	for(i = 0; i< computeResourceCompleteList.length; i++){
 		computeResource = computeResourceCompleteList[i];
-		if(computeResource.computeResourceId.startsWith(this.value)){
+		if(computeResource.computeResourceId.startsWith(selectedVal)){
 			queues = computeResource.batchQueues;
 			if(queues != null){
 				for(j=0; j<queues.length; j++){
