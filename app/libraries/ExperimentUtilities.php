@@ -180,8 +180,10 @@ class ExperimentUtilities
                 if(!ExperimentUtilities::endsWith($dataRoot, "/"))
                     $dataRoot = $dataRoot . "/";
                 $filePath = str_replace($dataRoot, "", parse_url($output->value, PHP_URL_PATH));
-                echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
-                    . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                if(file_exists($filePath)){
+                    echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
+                        . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                }
             }
             elseif ($output->type == DataType::STRING) {
                 echo '<p>' . $output->value . '</p>';
