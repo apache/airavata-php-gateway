@@ -106,7 +106,7 @@
                 ?>
                 <tr>
                     <td>
-                        {{$project->name}}
+                        {{{$project->name}}}
                         @if($can_write[$project->projectID])
                         <a href="{{URL::to('/')}}/project/edit?projId={{urlencode($project->projectID)}}" title="Edit">
                             <span class="glyphicon glyphicon-pencil"></span>
@@ -114,7 +114,7 @@
                         @endif
                     </td>
                     <td>
-                        {{$project->owner}}
+                        {{{$project->owner}}}
                     </td>
                     <td class="time" unix-time="
                             <?php echo $project->creationTime / 1000 ?>">
