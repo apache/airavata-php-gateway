@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-
+<input type="hidden" id="compute-resource-full-objects" value="{{ htmlentities( json_encode( $computeResourceFullObjects ) ) }}"/>
 <div id="wrapper">
     <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
     @include( 'partials/dashboard-block')
@@ -26,7 +26,16 @@
         @endif
         @if(Session::has("admin"))
         <div class="row">
-            <button class="btn btn-default create-app-deployment">Create a new Application Deployment</button>
+            @if(empty($computeResourcePreferences))
+            <div class="alert alert-warning" role="alert">
+                You cannot create any application deployments until you <a
+                href="{{ URL::to("admin/dashboard/gateway") }}">create at least one
+                compute resource preference</a>.
+            </div>
+            @endif
+            <button class="btn btn-default create-app-deployment"
+            @if(empty($computeResourcePreferences)) disabled="disabled"@endif
+            >Create a new Application Deployment</button>
         </div>
         @endif
         @if( count( $appDeployments) )
@@ -63,7 +72,7 @@
                     <div class="panel-body">
                         <div class="app-deployment-block">
                             @include('partials/deployment-block', array( 'deploymentObject' => $deployment,
-                            'computeResources' => $computeResources, 'modules' => $modules) )
+                            'computeResourcePreferences' => $computeResourcePreferences, 'modules' => $modules, 'computeResourceFullObjects' => $computeResourceFullObjects) )
                         </div>
                     </div>
                 </div>
@@ -146,8 +155,8 @@
                         <div class="modal-body row">
                             <div class="col-md-12">
                                 <div class="create-app-deployment-block">
-                                    @include('partials/deployment-block', array( 'computeResources' =>
-                                    $computeResources, 'modules' => $modules) )
+                                    @include('partials/deployment-block', array( 'computeResourcePreferences' =>
+                                    $computeResourcePreferences, 'modules' => $modules) )
                                 </div>
                             </div>
                         </div>

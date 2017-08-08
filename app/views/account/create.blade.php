@@ -7,10 +7,11 @@
 @section('content')
 
 <div class="col-md-offset-4 col-md-4">
+    @if (!empty($auth_password_option))
     <div class="page-header">
-        <h3>Create New Account
+        <h3>Create New {{{ $auth_password_option["name"] }}} Account
             <small>
-                <small> (Already registered? <a href="login">Log in</a>)</small>
+                <small> (Already registered? <a href="login">Log in with {{{ $auth_password_option["name"] }}}</a>)</small>
             </small>
         </h3>
     </div>
@@ -33,7 +34,9 @@
         <div class="form-group required"><label class="control-label">Username</label>
 
             <div><input class="form-control" id="username" minlength="6" maxlength="30" name="username"
-                        placeholder="Username" required="required" type="text" value="{{Input::old('username') }}"/>
+                        placeholder="Username" required="required" type="text" value="{{Input::old('username') }}"
+                        onblur="this.value = this.value.toLowerCase()"
+                        data-container="body" data-toggle="popover" data-placement="left" data-content="Username can only contain lowercase letters, numbers, underscores and hyphens."/>
             </div>
         </div>
         <div class="form-group required"><label class="control-label">Password</label>
@@ -66,51 +69,18 @@
                         placeholder="Last Name" required="required" title="" type="text"
                         value="{{Input::old('last_name') }}"/></div>
         </div>
-        <div class="form-group"><label class="control-label">Organization</label>
-
-            <div><input class="form-control" id="organization" name="organization"
-                        placeholder="Organization" title="" type="text" value="{{Input::old('organization') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">Address</label>
-
-            <div><input class="form-control" id="address" name="address"
-                        placeholder="Address" title="" type="text" value="{{Input::old('address') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">Country</label>
-
-            <div><input class="form-control" id="country" name="country"
-                        placeholder="Country" title="" type="text" value="{{Input::old('country') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">Telephone</label>
-
-            <div><input class="form-control" id="telephone" name="telephone"
-                        placeholder="Telephone" title="" type="tel" value="{{Input::old('telephone') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">Mobile</label>
-
-            <div><input class="form-control" id="mobile" name="mobile"
-                        placeholder="Mobile" title="" type="tel" value="{{Input::old('mobile') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">IM</label>
-
-            <div><input class="form-control" id="im" name="im"
-                        placeholder="IM" title="" type="text" value="{{Input::old('im') }}"/>
-            </div>
-        </div>
-        <div class="form-group"><label class="control-label">URL</label>
-
-            <div><input class="form-control" id="url" name="url"
-                        placeholder="URL" title="" type="text" value="{{Input::old('url') }}"/>
-            </div>
-        </div>
         <br/>
         <input name="Submit" type="submit" class="btn btn-primary btn-block" value="Create">
     </form>
+
+        @if (!empty($auth_code_options))
+            <h3 id="login-option-separator" class="horizontal-rule">OR</h4>
+        @endif
+    @endif {{-- @if (!empty($auth_password_option)) --}}
+
+    @if (!empty($auth_code_options))
+        @include('partials/login-external', array("auth_code_options" => $auth_code_options))
+    @endif
 
     <style media="screen" type="text/css">
         .form-group.required .control-label:after {
@@ -127,10 +97,7 @@
 @section('scripts')
 @parent
 <script>
-    $("#password").popover({
-        'trigger':'focus'
-    });
-    $("#email").popover({
+    $("[data-toggle=popover]").popover({
         'trigger':'focus'
     });
 </script>

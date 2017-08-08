@@ -8,36 +8,15 @@
 
 <div class="col-md-offset-4 col-md-4">
 
-    <h3>
-        Login
-        <small>
-            <small> (Not registered? <a href="create">Create account</a>)</small>
-        </small>
-    </h3>
-
-
-    <form action="login" method="post" role="form">
-        @if( Session::has("invalid-credentials") )
-        {{ CommonUtilities::print_error_message('Invalid username or password. Please try again.') }}
+    @if (!empty($auth_password_option))
+        @include('partials/login-form', array("auth_name" => $auth_password_option["name"]))
+        @if (!empty($auth_code_options))
+            <h3 id="login-option-separator" class="horizontal-rule">OR</h4>
         @endif
-        <?php
-        Session::forget("invalid-credentials");
-        ?>
-
-        <div class="form-group">
-            <label class="sr-only" for="username">Username</label>
-            <input type="text" class="form-control" name="username" placeholder="Username" autofocus required>
-        </div>
-        <div class="form-group">
-            <label class="sr-only" for="password">Password</label>
-            <input type="password" class="form-control" name="password" placeholder="Password" required>
-        </div>
-        <input name="Submit" type="submit" class="btn btn-primary btn-block" value="Sign in">
-    </form>
-
-    <small>
-        <small> (Forgot Password? Click <a href="{{URL::to('/') }}/forgot-password">here</a>)</small>
-    </small>
+    @endif
+    @if (!empty($auth_code_options))
+        @include('partials/login-external', array("auth_code_options" => $auth_code_options))
+    @endif
 </div>
 
 @stop

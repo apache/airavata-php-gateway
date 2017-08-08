@@ -13,7 +13,7 @@ return array(
     |
     */
 
-    'debug' => true,
+    'debug' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -121,8 +121,12 @@ return array(
         'Illuminate\Validation\ValidationServiceProvider',
         'Illuminate\View\ViewServiceProvider',
         'Illuminate\Workbench\WorkbenchServiceProvider',
-        'Wsis\WsisServiceProvider',
+        // 'Wsis\WsisServiceProvider',
+        'Keycloak\KeycloakServiceProvider',
         'Airavata\AiravataServiceProvider',
+        'Airavata\IamAdminServiceProvider',
+        'Airavata\UserProfileServiceProvider',
+        'Airavata\TenantProfileServiceProvider',
         'Teepluss\Theme\ThemeServiceProvider',
         'GrahamCampbell\Markdown\MarkdownServiceProvider',
     ),
@@ -191,8 +195,8 @@ return array(
         'URL' => 'Illuminate\Support\Facades\URL',
         'Validator' => 'Illuminate\Support\Facades\Validator',
         'View' => 'Illuminate\Support\Facades\View',
-        'WSIS' => 'Wsis\Facades\Wsis',
         'Airavata' => 'Airavata\Facades\Airavata',
+        'Airavata.IAM' => 'Airavata\Facades\IamAdminServices',
         'Theme' => 'Teepluss\Theme\Facades\Theme',
         'Markdown' => 'GrahamCampbell\Markdown\Facades\Markdown',
     ),

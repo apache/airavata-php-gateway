@@ -88,7 +88,8 @@
                 @include( 'partials/experiment-queue-block', array('queues'=>
                 $expInputs['expVal']['computeResource']->batchQueues, 'expVal' => $expInputs['expVal'],
                 'useUserCRPref' => $expInputs['useUserCRPref'],
-                'userHasComputeResourcePreference' => $expInputs['userHasComputeResourcePreference'] ))
+                'userHasComputeResourcePreference' => $expInputs['userHasComputeResourcePreference'],
+                 'cpusPerNode' => $cpusPerNode))
                 @endif
             </div>
         </div>

@@ -22,6 +22,15 @@
             </div>
             {{ Session::forget("message") }}
             @endif
+            @if( Session::has("warning-message"))
+            <div class="row">
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    {{ Session::get("warning-message") }}
+                </div>
+            </div>
+            @endif
         </div>
         <div class="container-fluid">
             <div class="col-md-12">

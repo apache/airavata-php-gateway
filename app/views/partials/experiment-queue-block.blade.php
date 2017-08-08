@@ -8,6 +8,8 @@
 </div>
 @endif
 <input type="hidden" id="queue-array" value="{{ htmlentities( json_encode( $queues ) ) }}"/>
+<input type="hidden" id="app-deployment-defaults-array" value="{{ htmlentities( json_encode( $appDeploymentDefaults ) ) }}"/>
+<input type="hidden" id="queue-defaults-array" value="{{ htmlentities( json_encode( $queueDefaults ) ) }}"/>
 <div class="form-group required">
     @if( count( $queues) > 0 )
     <label class="control-label" for="node-count">Select a Queue</label>
@@ -20,8 +22,14 @@
         selected
         @endif
     @else
-        @if( $queueDefaults['queueName'] == $queue->queueName )
-        selected
+        @if(isset($appDeploymentDefaults['queueName']) && $appDeploymentDefaults['queueName'] != null)
+            @if($appDeploymentDefaults['queueName'] == $queue->queueName)
+                selected
+            @endif
+        @else
+            @if( $queueDefaults['queueName'] == $queue->queueName )
+                selected
+            @endif
         @endif
     @endif
     >
@@ -36,7 +44,7 @@
     @endif
 </div>
 
-<div class="queue-data @if(! isset($expVal) ) hide @endif">
+<div class="queue-data">
     <div class="form-group">
         <label for="node-count">Node Count <span>( Max Allowed Nodes - <span
                     class="node-count alert-warning"></span>)</span></label>
@@ -85,88 +93,6 @@
     {{--</div>--}}
 </div>
 
-
-<script>
-    //To work work with experiment create (Ajax)
-    var selectedQueue = $("#select-queue").val();
-    getQueueData(selectedQueue);
-    $("#select-queue").change(function () {
-        var selectedQueue = $(this).val();
-        getQueueData(selectedQueue);
-    });
-
-    $("#enable-auto-scheduling").change(function () {
-        var selectedQueue = $("#select-queue").val();
-        getQueueData(selectedQueue);
-    });
-
-    function getQueueData(selectedQueue) {
-        var queues = $.parseJSON($("#queue-array").val());
-        var veryLargeValue = 9999999;
-        console.log(queues);
-        for (var i = 0; i < queues.length; i++) {
-            if (queues[i]['queueName'] == selectedQueue) {
-                //node-count
-                if (queues[i]['maxNodes'] != 0 && queues[i]['maxNodes'] != null) {
-                    if($('#enable-auto-scheduling').prop('checked')){
-                        $("#node-count").attr("max", veryLargeValue);
-                    }else{
-                        $("#node-count").attr("max", queues[i]['maxNodes']);
-                    }
-                    $(".node-count").html(queues[i]['maxNodes']);
-                    $(".node-count").parent().removeClass("hide");
-                }
-                else
-                    $(".node-count").parent().addClass("hide");
-
-
-                //core-count
-                if (queues[i]['maxProcessors'] != 0 && queues[i]['maxProcessors'] != null) {
-                    if($('#enable-auto-scheduling').prop('checked')){
-                        $("#cpu-count").attr("max", veryLargeValue);
-                    }else {
-                        $("#cpu-count").attr("max", queues[i]['maxProcessors']);
-                    }
-                    $(".cpu-count").html(queues[i]['maxProcessors']);
-                    $(".cpu-count").parent().removeClass("hide");
-                }
-                else
-                    $(".cpu-count").parent().addClass("hide");
-
-                //walltime-count
-                if (queues[i]['maxRunTime'] != null && queues[i]['maxRunTime'] != 0) {
-                    if($('#enable-auto-scheduling').prop('checked')){
-                        $("#wall-time").attr("max", veryLargeValue);
-                    }else {
-                        $("#wall-time").attr("max", queues[i]['maxRunTime']);
-                    }
-                    $(".walltime-count").html(queues[i]['maxRunTime']);
-                    $(".walltime-count").parent().removeClass("hide");
-                }
-                else
-                    $(".walltime-count").parent().addClass("hide");
-
-                //memory-count
-                if (queues[i]['maxMemory'] != 0 && queues[i]['maxMemory'] != null) {
-                    if($('#enable-auto-scheduling').prop('checked')){
-                        $("#memory-count").attr("max", veryLargeValue);
-                    }else {
-                        $("#memory-count").attr("max", queues[i]['maxMemory']).val(0);
-                    }
-                    $(".memory-count").html(queues[i]['maxMemory']);
-                    $(".memory-count").parent().removeClass("hide");
-                }
-                else
-                    $(".memory-count").parent().addClass("hide");
-            }
-        }
-        $(".queue-data").removeClass("hide");
-    }
-</script>
-
-
-@section('scripts')
-@parent
 <script>
     //To work with experiment edit (Not Ajax)
     $( document ).ready(function() {
@@ -222,5 +148,136 @@
             readBlob(startByte, endByte, fileId);
         });
     });
+
+    //To work work with experiment create (Ajax)
+    var selectedQueue = $("#select-queue").val();
+    getQueueData(selectedQueue);
+    $("#select-queue").change(function () {
+        var selectedQueue = $(this).val();
+        getQueueData(selectedQueue);
+    });
+
+    $("#enable-auto-scheduling").change(function () {
+        var selectedQueue = $("#select-queue").val();
+        getQueueData(selectedQueue);
+    });
+
+    function getQueueData(selectedQueue) {
+        var queues = $.parseJSON($("#queue-array").val());
+        var queueDefaults = $.parseJSON($("#queue-defaults-array").val());
+        var appDefaults = $.parseJSON($("#app-deployment-defaults-array").val());
+
+        var veryLargeValue = 9999999;
+        console.log(queues);
+        $(".queue-view").addClass("hide");
+        for (var i = 0; i < queues.length; i++) {
+            if (queues[i]['queueName'] == selectedQueue) {
+                //node-count
+                if (queues[i]['maxNodes'] != 0 && queues[i]['maxNodes'] != null) {
+                    if($('#enable-auto-scheduling').prop('checked')){
+                        $("#node-count").attr("max", veryLargeValue);
+                    }else{
+                        $("#node-count").attr("max", queues[i]['maxNodes']);
+                    }
+                    $(".node-count").html(queues[i]['maxNodes']);
+                    $(".node-count").parent().removeClass("hide");
+                }
+                else
+                    $(".node-count").parent().addClass("hide");
+
+                if(appDefaults['nodeCount'] > 0){
+                    $("#node-count").val(appDefaults['nodeCount']);
+                }else if(queues[i]['defaultNodeCount'] > 0){
+                    $("#node-count").val(queues[i]['defaultNodeCount']);
+                }else{
+                    $("#node-count").val(queueDefaults['nodeCount']);
+                }
+
+                //core-count
+                if (queues[i]['maxProcessors'] != 0 && queues[i]['maxProcessors'] != null) {
+                    if($('#enable-auto-scheduling').prop('checked')){
+                        $("#cpu-count").attr("max", veryLargeValue);
+                    }else {
+                        $("#cpu-count").attr("max", queues[i]['maxProcessors']);
+                    }
+                    $(".cpu-count").html(queues[i]['maxProcessors']);
+                    $(".cpu-count").parent().removeClass("hide");
+                }
+                else
+                    $(".cpu-count").parent().addClass("hide");
+
+                if(appDefaults['cpuCount'] > 0){
+                    $("#cpu-count").val(appDefaults['cpuCount']);
+                }else if(queues[i]['defaultCPUCount'] > 0){
+                    $("#cpu-count").val(queues[i]['defaultCPUCount']);
+                }else{
+                    $("#cpu-count").val(queueDefaults['cpuCount']);
+                }
+
+
+                //walltime-count
+                if (queues[i]['maxRunTime'] != null && queues[i]['maxRunTime'] != 0) {
+                    if($('#enable-auto-scheduling').prop('checked')){
+                        $("#wall-time").attr("max", veryLargeValue);
+                    }else {
+                        $("#wall-time").attr("max", queues[i]['maxRunTime']);
+                    }
+                    $(".walltime-count").html(queues[i]['maxRunTime']);
+                    $(".walltime-count").parent().removeClass("hide");
+                }
+                else
+                    $(".walltime-count").parent().addClass("hide");
+
+                if(queues[i]['defaultWalltime'] > 0) {
+                    $("#wall-time").val(queues[i]['defaultWalltime']);
+                }else{
+                    $("#wall-time").val(queueDefaults['wallTimeLimit']);
+                }
+
+                //memory-count
+                if (queues[i]['maxMemory'] != 0 && queues[i]['maxMemory'] != null) {
+                    if($('#enable-auto-scheduling').prop('checked')){
+                        $("#memory-count").attr("max", veryLargeValue);
+                    }else {
+                        $("#memory-count").attr("max", queues[i]['maxMemory']).val(0);
+                    }
+                    $(".memory-count").html(queues[i]['maxMemory']);
+                    $(".memory-count").parent().removeClass("hide");
+                }
+                else
+                    $(".memory-count").parent().addClass("hide");
+
+                if(queues[i]['cpuPerNode'] > 0){
+                    var cpusPerNode = queues[i]['cpuPerNode'];
+                }else{
+                    var cpusPerNode = queueDefaults['cpusPerNode'];
+                }
+
+                var nodeCount=$("#node-count");
+                var cpuCount=$("#cpu-count");
+
+                cpuCount.keyup(function(){
+                    var cpuCountVal = parseInt(cpuCount.val());
+                    if(cpuCountVal > 0){
+                        nodeCount.val(Math.ceil(cpuCountVal/cpusPerNode));
+                    }
+                });
+                nodeCount.keyup(function(){
+                    var nodeCountVal = parseInt(nodeCount.val());
+                    if(nodeCountVal > 0){
+                        cpuCount.val(nodeCountVal*cpusPerNode);
+                    }
+                });
+
+                if(cpusPerNode > 0){
+                    cpuCount.on('keyup');
+                    nodeCount.on('keyup');
+                }else{
+                    cpuCount.off('keyup');
+                    nodeCount.off('keyup');
+                }
+            }
+        }
+        $(".queue-view").removeClass("hide");
+    }
 </script>
-@stop

@@ -52,7 +52,7 @@
     var users = {{ $users }};
     var owner = {{ $owner }};
     var projectOwner = {{ $projectOwner }};
-    $('#entity-share').data({url: "{{URL::to('/')}}/project/unshared-users", resourceId: "{{$expInputs['project']}}"})
+    $('#entity-share').data({url: "{{URL::to('/')}}/project/unshared-users", resourceId: {{json_encode($expInputs['project'])}}})
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}
@@ -164,12 +164,14 @@
     $("#compute-resource").change(function () {
         var crId = $(this).val();
         $(".loading-img ").removeClass("hide");
+        $(".queue-view ").addClass("hide");
         $.ajax({
             url: '../experiment/getQueueView',
             type: 'get',
             data: {crId: crId},
             success: function (data) {
                 $(".queue-view").html(data);
+                $(".queue-view ").removeClass("hide");
                 $(".loading-img ").addClass("hide");
             }
         });

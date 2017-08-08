@@ -6,8 +6,13 @@ function convertTimestamp(timestamp) {
         return;
     else
         timestamp = $.trim( timestamp);
-    if( timestamp.length <= 10)
-        timestamp = timestamp * 1000;// Convert the passed timestamp to milliseconds    
+    timestamp = parseFloat( timestamp );
+    if( isNaN( timestamp ) ){
+        return;
+    }
+    // If timestamp is a number of seconds, convert it to milliseconds
+    if( timestamp < Math.pow(2, 32) )
+        timestamp = timestamp * 1000;
     var d = new Date( parseInt( timestamp) ),
         yyyy = d.getFullYear(),
         mm = ('0' + (d.getMonth() + 1)).slice(-2),	// Months are zero based. Add leading 0.

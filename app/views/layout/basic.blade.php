@@ -15,7 +15,7 @@ $title = Session::get("portal-title");
     z-index:101;
 }
 .content-area{
-    margin: 20px 0;
+    margin: 20px 0 !important;
 }
 </style>
 <div class="theme-header">
@@ -30,8 +30,8 @@ $title = Session::get("portal-title");
 <!-- Getting user info -->
 @if(Session::has("user-profile"))
 <script>
-var email =  "{{ Session::get("user-profile")["email"] }}";
-var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get("user-profile")["lastname"]}}"
+var email =  {{ json_encode(Session::get("user-profile")->emails[0]) }};
+var fullName = {{ json_encode(Session::get("user-profile")->firstName . " " . Session::get("user-profile")->lastName) }};
 </script>
 @endif
 
@@ -71,7 +71,7 @@ var fullName = "{{Session::get("user-profile")["firstname"] . " " . Session::get
 
 <style>
 .theme-footer{
-	margin: 20px 0;
+	margin: 20px 0 0 0;
 }
 </style>
 

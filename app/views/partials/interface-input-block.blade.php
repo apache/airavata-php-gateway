@@ -75,18 +75,18 @@
                 ){{$appInputs->userFriendlyDescription}}@endif</textarea>
         </div>
     </div>
-    <div class="form-group col-md-6">
-        <label class="control-label col-md-5">Input Order</label>
+    <div class="form-group">
+        <label class="control-label col-md-3">Input Order</label>
 
-        <div class="col-md-7">
+        <div class="col-md-9">
             <input type="number" readonly class="form-control" name="inputOrder[]"
                    value="@if( isset( $appInputs) ){{$appInputs->inputOrder}}@endif"/>
         </div>
     </div>
-    <div class="form-group col-md-7">
-        <label class="control-label col-md-4">Data is Staged?</label>
+    <div class="form-group">
+        <label class="control-label col-md-3">Data is Staged?</label>
 
-        <div class="col-md-8">
+        <div class="col-md-9">
             <select name="dataStaged[]" readonly class="form-control">
                 <option value="0"
                         @if( isset( $appInputs) ) @if( $appInputs->dataStaged == 0) selected @endif @endif>False</option>
@@ -103,10 +103,10 @@
         </label>
         -->
     </div>
-    <div class="form-group col-md-6">
-        <label class="control-label col-md-6">Is the Input required?</label>
+    <div class="form-group">
+        <label class="control-label col-md-3">Is the Input required?</label>
 
-        <div class="col-md-6">
+        <div class="col-md-9">
             <select class="form-control" name="isRequiredInput[]" readonly>
                 <option value="0"
                 @if( isset( $appInputs) ) @if( 0 == $appInputs->isRequired) selected @endif @endif>False</option>
@@ -115,10 +115,10 @@
             </select>
         </div>
     </div>
-    <div class="form-group col-md-7">
-        <label class="control-label col-md-6">Required on command line?</label>
+    <div class="form-group">
+        <label class="control-label col-md-3">Required on command line?</label>
 
-        <div class="col-md-6">
+        <div class="col-md-9">
             <select class="form-control" name="requiredToAddedToCommandLineInput[]" readonly>
                 <option value="0"
                 @if( isset( $appInputs) ) @if( 0 == $appInputs->requiredToAddedToCommandLine) selected @endif
@@ -129,12 +129,12 @@
             </select>
         </div>
     </div>
-    <div class="form-group">
+    {{-- <div class="form-group">
         <label class="control-label col-md-3">Meta Data</label>
 
         <div class="col-md-9">
             <textarea readonly class="form-control" name="metaData[]">@if( isset( $appInputs)
                 ){{$appInputs->metaData}}@endif</textarea>
         </div>
-    </div>
+    </div> --}}
 </div>

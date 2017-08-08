@@ -233,23 +233,21 @@ class CommonUtilities
                     $active = " active ";
             }
 
-            if( !Session::has("gateway-provider"))
-            {
-                if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only')){
-                    //notification bell
-                    $notices = array();
-                    if (CommonUtilities::isAiravataUp()) {
-                        $notices = CommonUtilities::get_all_notices();
-                    }
-                    $navbar .= CommonUtilities::get_notices_ui( $notices);
+            if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') || Session::has('gateway-provider')){
+                //notification bell
+                $notices = array();
+                if (CommonUtilities::isAiravataUp()) {
+                    $notices = CommonUtilities::get_all_notices();
                 }
-
-
-                if (Session::has("admin") || Session::has("admin-read-only") )
-                    $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
-                else
-                    $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/account/dashboard"><span class="glyphicon glyphicon-user"></span> Dashboard</a></li>';
+                $navbar .= CommonUtilities::get_notices_ui( $notices);
             }
+
+            if ( (Session::has("admin") || Session::has("admin-read-only")) && !Session::has("gateway-provider") )
+                $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Admin Dashboard</a></li>';
+            else if ( Session::has("gateway-provider"))
+                $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/admin/dashboard"><span class="glyphicon glyphicon-user"></span>Dashboard</a></li>';
+            else
+                $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/account/dashboard"><span class="glyphicon glyphicon-user"></span>Dashboard</a></li>';
 
             $navbar .= '<li class="dropdown' . (Session::get("nav-active") == 'user-menu' ? ' active' : '') . '">
 
@@ -265,15 +263,17 @@ class CommonUtilities
                 }
             }
 
-            if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only')){
+            if( Session::has('authorized-user') || Session::has('admin') || Session::has('admin-read-only') || Session::has('gateway-provider') ){
                 $navbar .= '<li><a href="' . URL::to('/') . '/account/settings"><span class="glyphicon glyphicon-cog"></span> User settings</a></li>';
             }
             $navbar .= '<li><a href="' . URL::to('/') . '/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>';
             $navbar .= '</ul></li>';
         } else {
 
-                    $navbar .= '<li><a href="' . URL::to('/') . '/create"><span class="glyphicon glyphicon-user"></span> Create account</a></li>';
-                    $navbar .= '<li><a href="' . URL::to('/') . '/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>';
+            if( CommonUtilities::hasAuthPasswordOption() ){
+                $navbar .= '<li><a href="' . URL::to('/') . '/create"><span class="glyphicon glyphicon-user"></span> Create account</a></li>';
+            }
+            $navbar .= '<li><a href="' . URL::to('/') . '/login"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>';
         }
 
         $navbar .= '</ul></div></div></nav>';
@@ -347,7 +347,12 @@ class CommonUtilities
         </div><div class="slimScrollBar" style=""></div>
 
         <div class="slimScrollRail" style=""></div></div> <!-- / .notifications-list -->';
-        if ( Session::has("admin"))
+        // NOTE: There is a legacy issue where gateway-provider users were also
+        // given the admin role.  To allow gateway-provider users to see
+        // notifications but not be able to manage them we have to check that
+        // the user doesn't have the gateway-provider role.
+        // if ( Session::has("admin") && !Session::has("gateway-provider"))
+        if ( Session::has("admin") && !Session::has("gateway-provider"))
         {        
             $noticesUI .= '<a href="' . URL::to('/') . '/admin/dashboard/notices" class="notifications-link">Manage Notifications</a>';
         }
@@ -465,5 +470,52 @@ class CommonUtilities
     public static function getInitialRoleName() {
         return Config::get('pga_config.wsis.initial-role-name', 'user-pending');
     }
+
+    /**
+     * Filter given list of role names to only include Airavata roles.
+     */
+    public static function filterAiravataRoles($roles) {
+        return array_filter($roles, function($role) {
+            return $role == Config::get('pga_config.wsis.admin-role-name')
+                || $role == Config::get('pga_config.wsis.read-only-admin-role-name')
+                || $role == Config::get('pga_config.wsis.user-role-name')
+                || $role == Config::get('pga_config.wsis.initial-role-name')
+                || $role == 'user-pending';
+        });
+    }
+
+    public static function hasAuthPasswordOption() {
+        return CommonUtilities::getAuthPasswordOption() != null;
+    }
+
+    public static function getAuthPasswordOption() {
+
+        $auth_options = Config::get('pga_config.wsis')['auth-options'];
+        $auth_password_option_array = array_filter($auth_options, function($auth_option) {
+            return $auth_option["oauth-grant-type"] == "password";
+        });
+        return count($auth_password_option_array) > 0 ? $auth_password_option_array[0] : null;
+    }
+
+    public static function getAuthCodeOptions() {
+
+        $auth_options = Config::get('pga_config.wsis')['auth-options'];
+        // Support for many external identity providers (authorization code auth flow)
+        $auth_code_options = array();
+        foreach ($auth_options as $auth_option) {
+            if ($auth_option["oauth-grant-type"] == "password") {
+                continue;
+            } else if ($auth_option["oauth-grant-type"] == "authorization_code") {
+                $extra_params = isset($auth_option["oauth-authorize-url-extra-params"]) ? $auth_option["oauth-authorize-url-extra-params"] : null;
+                $auth_url = Keycloak::getOAuthRequestCodeUrl($extra_params);
+                $auth_option["auth_url"] = $auth_url;
+                $auth_code_options[] = $auth_option;
+            } else {
+                throw new Exception("Unrecognized oauth-grant-type: " . $auth_option["oauth-grant-type"]);
+            }
+        }
+        return $auth_code_options;
+    }
+
 }
 

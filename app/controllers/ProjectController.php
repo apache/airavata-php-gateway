@@ -37,7 +37,7 @@ class ProjectController extends BaseController
     {
         if (isset($_POST['save'])) {
             $projectId = ProjectUtilities::create_project();
-            return Redirect::to('project/summary?projId=' . $projectId);
+            return Redirect::to('project/summary?projId=' . urlencode($projectId));
         } else {
             return Redirect::to('project/create');
         }
@@ -125,7 +125,7 @@ class ProjectController extends BaseController
                 return $this->createEditView(Input::get("projectId"), $projectDetails, null)->with("errorMessage", "Failed to update project: " . $ex->getMessage());
             }
         }
-        return Redirect::to("project/summary?projId=" . Input::get("projectId"))->with("project_edited", true);
+        return Redirect::to("project/summary?projId=" . urlencode(Input::get("projectId")))->with("project_edited", true);
     }
 
     /**
@@ -164,7 +164,7 @@ class ProjectController extends BaseController
                         "canEditSharing" => $canEditSharing
                     ));
             }else {
-                return Redirect::to('project/summary?projId=' . $projectId)->with("error", "You do not have permission to edit this project.");
+                return Redirect::to('project/summary?projId=' . urlencode($projectId))->with("error", "You do not have permission to edit this project.");
             }
         } else {
             return View::make("project/no-sharing-edit",

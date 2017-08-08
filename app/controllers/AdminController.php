@@ -11,34 +11,40 @@ class AdminController extends BaseController {
 	public function dashboard(){
         $userInfo = array();
         $data = array();
-        $userProfile = Session::get("user-profile");
+        $userRoles = Session::get("roles");
+        $username = Session::get("username");
+        if (Session::has("user-profile")) {
+            $userEmail = Session::get("user-profile")->emails[0];
+        } else {
+            $userEmail = Session::get("iam-user-profile")["email"];
+        }
         Session::forget("new-gateway-provider");
 
         //check for gateway provider users
-        if( in_array( "gateway-provider", $userProfile["roles"]) ) {
+        if( in_array( "gateway-provider", $userRoles) ) {
             $gatewayOfUser = "";
             Session::put("super-admin", true);
-            $gatewaysInfo = CRUtilities::getAllGateways();
+            $gatewaysInfo = AdminUtilities::get_gateways_for_requester( $username );
+            Log::info("Gateways: ", $gatewaysInfo);
+            Log::info("Username: ", [Session::get("username")]);
             //var_dump( $gatewaysInfo); exit;
             $requestedGateways = array();
             $gatewayApprovalStatuses = AdminUtilities::get_gateway_approval_statuses();
 
             foreach ($gatewaysInfo as $index => $gateway) {
-                if ($gateway->requesterUsername == $userProfile["username"]) {
-                    $gatewayOfUser = $gateway->gatewayId;
-                    Session::forget("super-admin");
-                    Session::put("new-gateway-provider", true);
-                    Session::put("existing-gateway-provider", true);
+                $gatewayOfUser = $gateway->gatewayId;
+                Session::forget("super-admin");
+                Session::put("new-gateway-provider", true);
+                Session::put("existing-gateway-provider", true);
 
-                    $requestedGateways[ $gateway->gatewayId]["gatewayInfo"] = $gateway;
-                    $requestedGateways[ $gateway->gatewayId]["approvalStatus"] = $gatewayApprovalStatuses[ $gateway->gatewayApprovalStatus];
-                    //seeing if admin wants to start managing one of the gateways
-		            if( Input::has("gatewayId")){
-		            	if( Input::get("gatewayId") == $gateway->gatewayId)
-		            	{
-		            		Session::put("gateway_id", $gateway->gatewayId);
-		            	}
-		            }
+                $requestedGateways[ $gateway->airavataInternalGatewayId]["gatewayInfo"] = $gateway;
+                $requestedGateways[ $gateway->airavataInternalGatewayId]["approvalStatus"] = $gatewayApprovalStatuses[ $gateway->gatewayApprovalStatus];
+                //seeing if admin wants to start managing one of the gateways
+                if( Input::has("gatewayId")){
+                    if( Input::get("gatewayId") == $gateway->gatewayId)
+                    {
+                        Session::put("gateway_id", $gateway->gatewayId);
+                    }
                 }
             }
             $data["requestedGateways"] = $requestedGateways;
@@ -47,8 +53,8 @@ class AdminController extends BaseController {
             Session::put("requestedGateways", $requestedGateways);
 
             if ($gatewayOfUser == "") {
-                $userInfo["username"] = $userProfile["username"];
-                $userInfo["email"] = $userProfile["email"];
+                $userInfo["username"] = $username;
+                $userInfo["email"] = $userEmail;
     			$data["userInfo"] = $userInfo;
     			$data["gatewaysInfo"] = $gatewaysInfo;
                 Session::put("new-gateway-provider", true);
@@ -67,37 +73,41 @@ class AdminController extends BaseController {
 	public function usersView(){
 		if( Input::has("role"))
 		{
-			$users = AdminController::getUsersWithRole( Input::get("role"));
+			Session::flash("warning-message", "Please note: the following list "
+			. "may not be complete. Only the most recent 100 users have been "
+			. "searched for role " . htmlspecialchars(Input::get("role")) . ".");
+			$users = IamAdminServicesUtilities::getUsersWithRole(Input::get("role"));
 		}
 		else
-	    	$users =  WSIS::listUsers();
+			$users =  Keycloak::listUsers();
 
-	    $roles = WSIS::getAllRoles();
-        Session::put("admin-nav", "manage-users");
-	    return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
+		$roles = Keycloak::getAllRoles();
+		sort($roles);
+		Session::put("admin-nav", "manage-users");
+		return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
 	}
 
 	public function getUserCountInRole(){
-			$users = AdminController::getUsersWithRole( Input::get("role"));
+			$users = IamAdminServicesUtilities::getUsersWithRole(Input::get("role"));
 			return count( $users);
 	}
 
-    public function searchUsersView(){
-        if(Input::has("search_val"))
-        {
-            $users =  WSIS::searchUsers(Input::get("search_val"));
-        }
-        else
-            $users = WSIS::listUsers();
+	public function searchUsersView(){
+		if(Input::has("search_val"))
+		{
+			$users =  Keycloak::searchUsers(Input::get("search_val"));
+		}
+		else
+			$users = Keycloak::listUsers();
 
 		if(!isset($users) || empty($users)){
 			$users = array();
 		}
-        $roles = WSIS::getAllRoles();
-        Session::put("admin-nav", "manage-users");
-        return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
-
-    }
+		$roles = Keycloak::getAllRoles();
+		sort($roles);
+		Session::put("admin-nav", "manage-users");
+		return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
+	}
 
 	private function cmp($a, $b)
 	{
@@ -150,9 +160,9 @@ class AdminController extends BaseController {
 
 	public function addGatewayAdminSubmit(){
 		//check if username exists
-		if(WSIS::usernameExists( Input::get("username")) )
+		if(Keycloak::usernameExists( Input::get("username")) )
 		{
-            WSIS::updateUserRoles(Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );
+            Keycloak::updateUserRoles(Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );
 			return Redirect::to("admin/dashboard/users?role=" . Config::get('wsis::admin-role-name'))->with("Gateway Admin has been added.");
 		}
 		else
@@ -161,32 +171,47 @@ class AdminController extends BaseController {
 		}
 	}
 
-	public function updateGatewayRequest(){
+	public function updateGateway(){
 
-		//first step of adding tenant and changing gateway request status to Approved.	 
-		$returnVal = AdminUtilities::update_gateway( Input::get("gateway_id"), Input::all());
+	    $gateway = TenantProfileService::getGateway( Session::get('authz-token'), Input::get("internal_gateway_id"));
+		$returnVal = AdminUtilities::update_gateway( Input::get("internal_gateway_id"), Input::except("oauthClientId","oauthClientSecret"));
 		if( Request::ajax()){
-			if( $returnVal == 1)
-				return json_encode( AdminUtilities::get_gateway( Input::get("gateway_id")) );
-			else
-				return $returnVal; // anything other than positive update result
+			if( $returnVal == 1) {
+                $email = Config::get('pga_config.portal')['admin-emails'];
+                EmailUtilities::gatewayUpdateMailToProvider($gateway->emailAddress, Input::get("gateway_id"));
+                EmailUtilities::gatewayUpdateMailToAdmin($email, Input::get("gateway_id"));
+                if (isset($gatewayData["createTenant"]))
+                    Session::put("successMessages", "Tenant has been created successfully!");
+                else
+                    Session::put("successMessages", "Gateway has been updated successfully!");
+                return json_encode(AdminUtilities::get_gateway(Input::get("internal_gateway_id")));
+            }
+			else {
+                return $returnVal; // anything other than positive update result
+            }
 		}
 		else{
-			if( $returnVal == 1)
-				Session::put("message", "Request has been updated");
-			else
-				Session::put("message", "An error has occurred while updating your request. Please try again or contact admin to report the issue.");
+			if( $returnVal) {
+                $email = Config::get('pga_config.portal')['admin-emails'];
+                EmailUtilities::gatewayUpdateMailToProvider($gateway->emailAddress, Input::get("gateway_id"));
+                EmailUtilities::gatewayUpdateMailToAdmin($email, Input::get("gateway_id"));
+                Session::put("message", "Gateway has been updated successfully!");
+            }
+			else {
+                Session::put("message", "An error has occurred while updating your Gateway. Please make sure you've entered all the details correctly. Try again or contact the Admin to report the issue.");
+            }
 
-			return Redirect::to("admin/dashboard");
+			return Redirect::back();
 
-		} 
+		}
 		//return 1;
 	}
 
 	public function rolesView(){
-		$roles = WSIS::getAllRoles();
-        Session::put("admin-nav", "manage-roles");
-        return View::make("admin/manage-roles", array("roles" => $roles));
+		$roles = Keycloak::getAllRoles();
+		sort($roles);
+		Session::put("admin-nav", "manage-roles");
+		return View::make("admin/manage-roles", array("roles" => $roles));
 	}
 
 	public function experimentsView(){
@@ -211,7 +236,7 @@ class AdminController extends BaseController {
 	}
 
     public function addRolesToUser(){
-        $currentRoles = WSIS::getUserRoles(Input::get("username"));
+        $currentRoles = Keycloak::getUserRoles(Input::get("username"));
 		if(!is_array($currentRoles))
 			$currentRoles = array($currentRoles);
         $roles["new"] = array_diff(Input::all()["roles"], $currentRoles);
@@ -228,11 +253,11 @@ class AdminController extends BaseController {
         }
 
         $username = Input::all()["username"];
-        WSIS::updateUserRoles($username, $roles);
-        $newCurrentRoles = WSIS::getUserRoles(Input::get("username"));
+        Keycloak::updateUserRoles($username, $roles);
+        $newCurrentRoles = Keycloak::getUserRoles($username);
         if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $newCurrentRoles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $newCurrentRoles)
                 || in_array(Config::get("pga_config.wsis")["user-role-name"], $newCurrentRoles)){
-            $userProfile = WSIS::getUserProfile(Input::get("username"));
+            $userProfile = Keycloak::getUserProfile($username);
             $recipients = array($userProfile["email"]);
             $this->sendAccessGrantedEmailToTheUser(Input::get("username"), $recipients);
 
@@ -246,12 +271,12 @@ class AdminController extends BaseController {
                 if(in_array($initialRoleName, $newCurrentRoles) && !in_array($initialRoleName, $roles["new"])) {
                     $userRoles["new"] = array();
                     $userRoles["deleted"] = $initialRoleName;
-                    WSIS::updateUserRoles( $username, $userRoles);
+                    Keycloak::updateUserRoles( $username, $userRoles);
                 } else if(in_array($initialRoleName, $newCurrentRoles) && in_array($initialRoleName, $roles["new"])) {
                     // When initial role added remove all roles except for initial role and Internal/everyone
                     $userRoles["new"] = array();
                     $userRoles["deleted"] = array_diff($newCurrentRoles, array($initialRoleName, "Internal/everyone"));
-                    WSIS::updateUserRoles( $username, $userRoles);
+                    Keycloak::updateUserRoles( $username, $userRoles);
                 }
             }
         }
@@ -259,7 +284,7 @@ class AdminController extends BaseController {
     }
 
     /*
-     * Return true if the initial-role-name is one of the three privileged
+     * Return true if the initial-role-name is one of the four privileged
      * roles. This is used to figure out whether the initial-role-name is a
      * 'user-pending' kind of role (returns false), or whether the initial role
      * is a privileged role (returns true) and no admin intervention is
@@ -271,19 +296,22 @@ class AdminController extends BaseController {
         $adminRoleName = Config::get("pga_config.wsis")["admin-role-name"];
         $adminReadOnlyRoleName = Config::get("pga_config.wsis")["read-only-admin-role-name"];
         $userRoleName = Config::get("pga_config.wsis")["user-role-name"];
-        return in_array($initialRoleName, array($adminRoleName, $adminReadOnlyRoleName, $userRoleName));
+        $gatewayProviderRoleName = "gateway-provider";
+        return in_array($initialRoleName, array($adminRoleName, $adminReadOnlyRoleName, $userRoleName, $gatewayProviderRoleName));
     }
 
     public function removeRoleFromUser(){
         $roles["deleted"] = array(Input::all()["roleName"]);
         $roles["new"] = array();
         $username = Input::all()["username"];
-        WSIS::updateUserRoles($username, $roles);
+        Keycloak::updateUserRoles($username, $roles);
         return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been deleted.");
     }
 
 	public function getRoles(){
-		return json_encode((array)WSIS::getUserRoles(Input::get("username")));
+		$roles = Keycloak::getUserRoles(Input::get("username"));
+		sort($roles);
+		return json_encode((array)$roles);
 	}
 
 	public function deleteRole(){
@@ -326,15 +354,13 @@ class AdminController extends BaseController {
 		$mail->isHTML(true);
 
 		$mail->Subject = "Your user account (".$username.") privileges changed!";
-		$userProfile = WSIS::getUserProfile($username);
+		$userProfile = Keycloak::getUserProfile($username);
 		$wsisConfig = Config::get('pga_config.wsis');
-		if( $wsisConfig['tenant-domain'] == "")
-			$username = $username;
-		else
-			$username = $username . "@" . $wsisConfig['tenant-domain'];
+		$tenant = $wsisConfig['tenant-domain'];
 
 		$str = "Please re-login into the portal to use new privileges" ."<br/><br/>";
 		$str = $str . "Gateway Portal: " . $_SERVER['SERVER_NAME'] ."<br/>";
+		$str = $str . "Tenant: " . $tenant . "<br/>";
 		$str = $str . "Username: " . $username ."<br/>";
 		$str = $str . "Name: " . $userProfile["firstname"] . " " . $userProfile["lastname"] . "<br/>";
 		$str = $str . "Email: " . $userProfile["email"] ;
@@ -401,24 +427,19 @@ class AdminController extends BaseController {
 
 	}
 
-	public function getUsersWithRole( $role){
-			$users = WSIS::getUserlistOfRole( $role);
-			if( isset( $users->return))
-		    	$users = $users->return;
-		    else
-		    	$users = array();
-
-		    return $users;
-	}
-
 
 	/* ---- Super Admin Functions ------- */
+
+    public function createGateway(){
+
+        return View::make("admin/create-gateway");
+
+    }
 
 	public function addGateway(){
 		$inputs = Input::all();
 
 		$rules = array(
-            "username" => "required|min:6",
             "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
@@ -429,38 +450,80 @@ class AdminController extends BaseController {
         );
 
         $checkValidation = array();
-        $checkValidation["username"] = $inputs["admin-username"];
         $checkValidation["password"] = $inputs["admin-password"];
         $checkValidation["confirm_password"] = $inputs["admin-password-confirm"];
         $checkValidation["email"] = $inputs["admin-email"];
 
         $validator = Validator::make( $checkValidation, $rules, $messages);
         if ($validator->fails()) {
-            return Response::json( $validator->messages() );
+            Session::put("validationMessages", [$validator->messages()] );
+            return Redirect::back()
+                ->withErrors($validator);
         }
         else{
-	        $gateway = AdminUtilities::add_gateway(Input::all());
+            $username = Session::get("username");
+            $returnVal = AdminUtilities::add_gateway(Input::all());
 
-			$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"],
-				$inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
+            if ($returnVal == 1){
+                $email = Config::get('pga_config.portal')['admin-emails'];
+                $user_profile = Keycloak::getUserProfile($username);
+                EmailUtilities::gatewayRequestMail($user_profile["firstname"], $user_profile["lastname"], $email, Input::get("gateway-name"));
+                Session::put("message", "Gateway " . $inputs["gateway-name"] . " has been added.");
+            }
+            else{
+                Session::put("errorMessages", "Error: A Gateway already exists with the same GatewayId, Name or URL! Please make a new request.");
+            }
 
-			Session::put("message", "Gateway " . $inputs["gatewayName"] . " has been added.");
-			
-			return Response::json( array( "gateway" =>$gateway, "tm" => $tm ) ); 
-			if( $gateway ==  $inputs["gatewayName"] && is_object( $tm ) )
-				return Response::json( array( "gateway" =>$gateway, "tm" => $tm ) ); 
-			else
-				return 0;
-			//return Redirect::to("admin/dashboard/gateway")->with("message", "Gateway has been successfully added.");
+			return Redirect::back();
 		}
 	}
 
+	public function checkRequest(){
+	    $inputs = Input::all();
+
+        $rules = array(
+            "email" => "required|email",
+        );
+
+        $messages = array(
+            'email.format' => 'Please enter a valid Email ID',
+        );
+
+        $checkValidation = array();
+        $checkValidation["email"] = $inputs["email-address"];
+
+        $validator = Validator::make( $checkValidation, $rules, $messages);
+        if ($validator->fails()) {
+            Session::put("validationMessages", [$validator->messages()] );
+            return Redirect::to("admin/dashboard")
+                ->withInput()
+                ->withErrors($validator);
+        }
+        else{
+            $username = Session::get("username");
+            $returnVal = AdminUtilities::check_request(Input::all());
+
+            if ($returnVal == 1) {
+                $email = Config::get('pga_config.portal')['admin-emails'];
+                $user_profile = Keycloak::getUserProfile($username);
+                EmailUtilities::gatewayRequestMail($user_profile["firstname"], $user_profile["lastname"], $email, $inputs["gateway-name"]);
+                Session::put("message", "Your Gateway request for " . $inputs["gateway-name"] . " has been created. Your new Gateway request is yet to be approved. You will be notified of the approval status via email notification.");
+            }
+            else{
+                $error = "A Gateway already exists with the same GatewayId, Name or URL! Please make a new request.";
+                return Redirect::to("admin/dashboard")
+                    ->withInput()
+                    ->withErrors($error);
+            }
+            return Redirect::to("admin/dashboard");
+        }
+    }
 
 	public function requestGateway(){
 		$inputs = Input::all();
 		
 		$rules = array(
-            "username" => "required|min:6",
+            "username" => "required",
             "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
@@ -485,9 +548,6 @@ class AdminController extends BaseController {
         }
         else{
 	        $gateway = AdminUtilities::request_gateway(Input::all());
-
-			//$tm = WSIS::createTenant(1, $inputs["admin-username"] . "@" . $inputs["domain"], $inputs["admin-password"], inputs["admin-email"], $inputs["admin-firstname"], $inputs["admin-lastname"], $inputs["domain"]);
-
 			Session::put("message", "Your request for Gateway " . $inputs["gateway-name"] . " has been created.");
 			
             return Redirect::to("admin/dashboard");

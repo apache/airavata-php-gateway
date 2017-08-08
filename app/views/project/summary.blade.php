@@ -13,20 +13,20 @@
     ?>
     <h1>Project Summary
         @if( !isset($dashboard))
-        <small><a href="{{ URL::to('/') }}/project/summary?projId={{ $project->projectID }}"
+        <small><a href="{{ URL::to('/') }}/project/summary?projId={{ urlencode($project->projectID) }}"
                   title="Refresh"><span class="glyphicon glyphicon-refresh refresh-exp"></span></a></small>
         @endif
     </h1>
     <div>
         <div>
-            <h3>{{ $project->name }}
+            <h3>{{{ $project->name }}}
                 @if($project_can_write === true)
-                <a href="edit?projId={{ $project->projectID }}" title="Edit">
+                <a href="edit?projId={{ urlencode($project->projectID) }}" title="Edit">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
                 @endif
             </h3>
-            <p>{{ $project->description }}</p>
+            <p>{{{ $project->description }}}</p>
         </div>
         <div class="table-responsive">
             <table class="table">
@@ -36,7 +36,7 @@
                     <th>Owner</th>
                     <th>Application</th>
                     <th>Compute Resource</th>
-                    <th>Last Modified Time</th>
+                    <th>Creation Time</th>
                     <th>Experiment Status</th>
                     <th>Job Status</th>
 
@@ -67,27 +67,27 @@
                             <a href="{{URL::to('/')}}/experiment/edit?expId={{urlencode($experiment->experimentId)}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
                         @endif
                     </td>
-                    <td>{{ $experiment->userName }}</td>
+                    <td>{{{ $experiment->userName }}}</td>
                     <td>
                         @if( $applicationInterface != null )
-                            {{ $applicationInterface->applicationName }}
+                            {{{ $applicationInterface->applicationName }}}
                         @else
                             <span class='text-danger'>Removed</span>
                         @endif
                     </td>
 
                     <td>{{ $resourceName }}</td>
-                    <td class="time" unix-time="{{$expValues["experimentTimeOfStateChange"]}}"></td>
+                    <td class="time" unix-time="{{{$expValues["experimentCreationTime"]}}}"></td>
                     <td>
-                        <div class="{{ExperimentUtilities::get_status_color_class( $expValues["experimentStatusString"])}}">
-                            {{ $expValues["experimentStatusString"] }}
+                        <div class="{{{ExperimentUtilities::get_status_color_class( $expValues["experimentStatusString"])}}}">
+                            {{{ $expValues["experimentStatusString"] }}}
                         </div>
                     </td>
 
                     <td>
                     @if (isset($expValues["jobState"]) )
-                        <div class="{{ ExperimentUtilities::get_status_color_class( $expValues["jobState"]) }}">
-                            {{ $expValues["jobState"] }}
+                        <div class="{{{ ExperimentUtilities::get_status_color_class( $expValues["jobState"]) }}}">
+                            {{{ $expValues["jobState"] }}}
                         </div>
                     @endif
                     </td>

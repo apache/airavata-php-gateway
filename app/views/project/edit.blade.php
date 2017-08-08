@@ -33,15 +33,15 @@
                    class="form-control"
                    name="project-name"
                    id="project-name"
-                   value="{{ $project->name }}" required maxlength="50">
+                   value="{{{ $project->name }}}" required maxlength="50">
         </div>
         <div class="form-group">
             <label for="project-description">Project Description</label>
             <textarea class="form-control"
                       name="project-description"
-                      id="project-description" maxlength="200">{{ $project->description }}</textarea>
-            <input type="hidden" name="projectId" value="{{ $projectId }}"/>
-            <input type="hidden" name="projectOwner" value="{{ $project->owner}}"/>
+                      id="project-description" maxlength="200">{{{ $project->description }}}</textarea>
+            <input type="hidden" name="projectId" value="{{{ $projectId }}}"/>
+            <input type="hidden" name="projectOwner" value="{{{ $project->owner }}}"/>
         </div>
 
         <div class="form-group">
@@ -69,7 +69,7 @@
 <script>
     var users = {{ $users }};
     var owner = {{ $owner }};
-    $('#entity-share').data({url: "{{ URL::to('/') }}/project/unshared-users", resourceId: "{{ $projectId }}"})
+    $('#entity-share').data({url: "{{ URL::to('/') }}/project/unshared-users", resourceId: {{ json_encode($projectId) }}})
 </script>
 {{ HTML::script('js/sharing/sharing_utils.js') }}
 {{ HTML::script('js/sharing/share.js') }}

@@ -22,7 +22,13 @@ Route::get("login", "AccountController@loginView");
 
 Route::post("login", "AccountController@loginSubmit");
 
+Route::get("login-desktop", "AccountController@loginDesktopView");
+
+Route::get("refreshed-token-desktop", "AccountController@getRefreshedTokenForDesktop");
+
 Route::get("account/dashboard", "AccountController@dashboard");
+
+Route::get("account/update-gateway", "GatewayRequestUpdateController@updateGateway");
 
 Route::get("callback-url", "AccountController@oauthCallback");
 
@@ -63,6 +69,12 @@ Route::get("account/user-storage-resources", "UserSettingsController@getStorageR
 Route::post("account/add-user-srp", "UserSettingsController@addUserStorageResourcePreference");
 Route::post("account/update-user-srp", "UserSettingsController@updateUserStorageResourcePreference");
 Route::post("account/delete-user-srp", "UserSettingsController@deleteUserStorageResourcePreference");
+
+Route::get("account/user-profile", "UserSettingsController@getUserProfile");
+Route::post("account/user-profile", "UserSettingsController@updateUserProfile");
+Route::get("account/user-profile-update-email", "UserSettingsController@showUpdateEmailView");
+Route::post("account/user-profile-update-email", "UserSettingsController@submitUpdateEmail");
+Route::get("user-profile-confirm-email", "UserSettingsController@confirmUpdateEmail");
 
 /*
  * The following routes will not work without logging in.
@@ -369,8 +381,9 @@ Route::post("admin/create-pwd-token", "AdminController@createPWD");
 Route::post("admin/remove-pwd-token", "AdminController@removePWD");
 
 //GatewayProviders
-Route::get("provider/request-gateway", "AdminController@requestGateway");
-
+Route::get("provider/request-gateway", "AdminController@checkRequest");
+Route::get("provider/add-gateway", "AdminController@requestGateway");
+Route::get("provider/update-details", "GatewayRequestUpdateController@updateDetails");
 //notices
 Route::get("admin/dashboard/notices", "AdminController@noticesView");
 
@@ -384,10 +397,10 @@ Route::post("notice-seen-ack", "AccountController@noticeSeenAck");
 
 //Super Admin Specific calls
 
-Route::post("admin/add-gateway", "AdminController@addGateway");
-Route::get("admin/add-gateway", "AdminController@addGateway");
+Route::get("admin/add-gateway", "AdminController@createGateway");
+Route::get("admin/add-new-gateway", "AdminController@addGateway");
 
-Route::get("admin/update-gateway-request", "AdminController@updateGatewayRequest");
+Route::get("admin/update-gateway-request", "AdminController@updateGateway");
 
 /*
 * Theme Pages Routes

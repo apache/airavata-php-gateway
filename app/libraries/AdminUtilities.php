@@ -5,6 +5,7 @@ use Airavata\Model\Workspace\GatewayApprovalStatus;
 use Airavata\Model\Workspace\Notification;
 use Airavata\Model\Workspace\NotificationPriority;
 use Airavata\Model\Credential\Store\CredentialOwnerType;
+use Illuminate\Support\Facades\Log;
 
 class AdminUtilities
 {
@@ -14,43 +15,97 @@ class AdminUtilities
      * @param $input
      * @return string
      */
-    public static function add_gateway($input)
+    public static function add_gateway($inputs)
     {
         $gateway = new Gateway();
-        $gateway->gatewayId = $input["gatewayName"];
-        $gateway->domain = $input["domain"];
-        $gateway->gatewayName = $input["gatewayName"];
-        $gateway->emailAddress = $input["admin-email"];
+        $id = preg_replace('~^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$~', '', $inputs["gateway-name"]);
+        $id = strtolower(preg_replace('~[^a-zA-Z0-9]+~', '-', $id));
+        $gateway->gatewayId = $id;
+        $gateway->gatewayName = $inputs["gateway-name"];
+        $gateway->emailAddress = $inputs["email-address"];
+        $gateway->gatewayURL = $inputs["gateway-url"];
+        $gateway->gatewayAdminFirstName = $inputs["admin-firstname"];
+        $gateway->gatewayAdminEmail = $inputs["admin-email"];
+        $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
+        $gateway->identityServerUserName = $inputs["admin-username"];
+        $token = AdminUtilities::create_pwd_token([
+            "username" => $inputs["admin-username"],
+            "password" => $inputs["admin-password"],
+            "description" => "Admin user password for Gateway " . $id
+        ]);
+        $gateway->identityServerPasswordToken  = $token;
+        $gateway->reviewProposalDescription = $inputs["project-details"];
+        $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
+        $gateway->requesterUsername = Session::get('username');
         $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
-        return Airavata::addGateway(Session::get('authz-token'), $gateway);
+
+        try {
+            TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
+            return 1;
+        }
+        catch (Exception $ex) {
+            return -1;
+        }
     }
 
     public static function get_gateway( $gateway_id)
     {
-        return Airavata::getGateway( Session::get("authz-token"), $gateway_id);
+        return TenantProfileService::getGateway( Session::get("authz-token"), $gateway_id);
+    }
+
+    public static function get_gateways_for_requester( $username )
+    {
+        return TenantProfileService::getAllGatewaysForUser( Session::get("authz-token"), $username );
+    }
+
+    public static function check_request( $inputs)
+    {
+        $gateway = new Gateway( $inputs);
+        $id = preg_replace('~^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$~', '', $inputs["gateway-name"]);
+        $id = strtolower(preg_replace('~[^a-zA-Z0-9]+~', '-', $id));
+        $gateway->gatewayId = $id;
+        $gateway->gatewayApprovalStatus = GatewayApprovalStatus::REQUESTED;
+        //$gateway->domain = 'airavata.' . $inputs["gateway-acronym"];
+        $gateway->gatewayName = $inputs["gateway-name"];
+        $gateway->emailAddress = $inputs["email-address"];
+        $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
+        $gateway->requesterUsername = Session::get('username');
+
+        try {
+            TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
+            return 1;
+        }
+        catch (Exception $ex) {
+            return -1;
+        }
     }
 
     public static function request_gateway( $inputs)
     {
         $gateway = new Gateway( $inputs);
-        $gateway->gatewayId = $inputs["gateway-name"];
-        $gateway->gatewayApprovalStatus = GatewayApprovalStatus::REQUESTED;
-        $gateway->domain = 'airavata.' . $inputs["gateway-acronym"];
+        $id = preg_replace('~^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$~', '', $inputs["gateway-name"]);
+        $id = strtolower(preg_replace('~[^a-zA-Z0-9]+~', '-', $id));
+        $gateway->gatewayId = $id;
+        $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
+        //$gateway->domain = 'airavata.' . $inputs["gateway-acronym"];
         $gateway->gatewayName = $inputs["gateway-name"];
         $gateway->emailAddress = $inputs["email-address"];
-        $gateway->gatewayAcronym = $inputs["gateway-acronym"];
+        //$gateway->gatewayAcronym = $inputs["gateway-acronym"];
         $gateway->gatewayURL = $inputs["gateway-url"];
         $gateway->gatewayAdminFirstName = $inputs["admin-firstname"];
         $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
         $gateway->identityServerUserName = $inputs["admin-username"];
-        $gateway->identityServerPasswordToken  = $inputs["admin-password"];
+        $token = AdminUtilities::create_pwd_token([
+            "username" => $inputs["admin-username"],
+            "password" => $inputs["admin-password"],
+            "description" => "Admin user password for Gateway " . $id
+        ]);
+        $gateway->identityServerPasswordToken  = $token;
         $gateway->reviewProposalDescription = $inputs["project-details"];
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
+        $gateway->requesterUsername = Session::get('username');
 
-        $userProfile = Session::get("user-profile");
-        $gateway->requesterUsername = $userProfile["username"];
-
-        return Airavata::addGateway(Session::get('authz-token'), $gateway);
+        return TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
     }
 
     public static function get_gateway_approval_statuses()
@@ -59,39 +114,99 @@ class AdminUtilities
         return $gatewayApprovalStatusObject::$__names;
     }
 
+    public static function update_form( $gatewayId, $gatewayData){
+
+        if( isset( $gatewayData["updateRequest"])) {
+            return TenantProfileService::getGateway( Session::get('authz-token'), $gatewayId);
+        }
+
+    }
+
+    public static function user_update_gateway( $gatewayId, $gatewayData){
+        $gateway = TenantProfileService::getGateway( Session::get('authz-token'), $gatewayId);
+        $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
+        $gateway->emailAddress = $gatewayData["email-address"];
+        $gateway->gatewayURL = $gatewayData["gateway-url"];
+        $gateway->identityServerUserName = $gatewayData["admin-username"];
+        $token = AdminUtilities::create_pwd_token([
+            "username" => $gatewayData["admin-username"],
+            "password" => $gatewayData["admin-password"],
+            "description" => "Admin user password for Gateway " . $gatewayId
+        ]);
+        $gateway->identityServerPasswordToken  = $token;
+        $gateway->gatewayAdminFirstName = $gatewayData["admin-firstname"];
+        $gateway->gatewayAdminLastName = $gatewayData["admin-lastname"];
+        $gateway->gatewayAdminEmail = $gatewayData["admin-email"];
+        $gateway->reviewProposalDescription = $gatewayData["project-details"];
+        $gateway->gatewayPublicAbstract = $gatewayData["public-project-description"];
+        if( TenantProfileService::updateGateway( Session::get('authz-token'), $gateway) ){
+            return 1;
+        }
+        else{
+            //Need to find a better way for this.
+            // retun echo "Tenant Name is already in use";
+            return -1;
+        }
+    }
+
     public static function update_gateway( $gatewayId, $gatewayData){
 
-        $gateway = Airavata::getGateway( Session::get('authz-token'), $gatewayId);
+        $gateway = TenantProfileService::getGateway( Session::get('authz-token'), $gatewayId);
         if( isset( $gatewayData["cancelRequest"]))
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CANCELLED;
         else{
             $gateway->gatewayName = $gatewayData["gatewayName"];
-            $gateway->gatewayAcronym = $gatewayData["gatewayAcronym"];
-            $gateway->domain = 'airavata.'. $gatewayData["gatewayAcronym"];
             $gateway->gatewayURL = $gatewayData["gatewayURL"];
-            $gateway->gatewayName = $gatewayData["gatewayName"];
             $gateway->declinedReason = $gatewayData["declinedReason"];
         }
-
-        if( isset($gatewayData["createTenant"])){
-            if( AdminUtilities::add_tenant( $gateway) )
-                $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
+        if( isset($gatewayData["createTenant"])) {
+            $gatewayData["declinedReason"] = " ";
+            if ($gateway->identityServerPasswordToken == null)
+            {
+                Session::put("errorMessages", "Error: Please ask the Gateway Provider to submit a password.");
+                return -1;
+            }
+            foreach ($gatewayData as $data) {
+                if ($data == null) {
+                    return -1;
+                }
+            }
+            $gateway = IamAdminServices::setUpGateway( Session::get('authz-token'), $gateway);
+            $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CREATED;
+        }
+        elseif( isset( $gatewayData["approveRequest"])){
+            $gateway->emailAddress = $gatewayData["emailAddress"];
+            $gateway->gatewayURL = $gatewayData["gatewayURL"];
+            $gateway->gatewayAdminFirstName = $gatewayData["gatewayAdminFirstName"];
+            $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
+            $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
+            $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
+            $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
+            $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
+            $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
         }
         elseif( isset( $gatewayData["denyRequest"])){
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::DENIED;
-
         }
         elseif( isset( $gatewayData["updateGateway"])){
-
-            //$gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
-            $gateway->oauthClientId = $gatewayData["oauthClientId"];
-            $gateway->oauthClientSecret = $gatewayData["oauthClientSecret"];
+            $gateway->emailAddress = $gatewayData["emailAddress"];
+            $gateway->gatewayURL = $gatewayData["gatewayURL"];
+            $gateway->gatewayAdminFirstName = $gatewayData["gatewayAdminFirstName"];
+            $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
+            $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
+            $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
+            $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
+            $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
+            $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
+        }
+        elseif( isset( $gatewayData["deployGateway"])){
+            $gateway->gatewayApprovalStatus = GatewayApprovalStatus::DEPLOYED;
         }
         elseif( isset( $gatewayData["deactivateGateway"])){
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::DEACTIVATED;
         }
 
-        if( Airavata::updateGateway( Session::get('authz-token'), $gateway->gatewayId, $gateway) ){
+        if( TenantProfileService::updateGateway( Session::get('authz-token'), $gateway) ){
             return 1;
         }
         else{

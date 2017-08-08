@@ -35,13 +35,41 @@
             </div>
             {{ Session::forget("message") }}
             @endif
+
+        @if (Session::has("errorMessages"))
+            <div class="row">
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                                class="sr-only">Close</span></button>
+                    {{ Session::get("errorMessages") }}
+                </div>
+            </div>
+            {{ Session::forget("errorMessages") }}
+        @endif
+
+        @if (Session::has("successMessages"))
+            <div class="row">
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                                class="sr-only">Close</span></button>
+                    {{ Session::get("successMessages") }}
+                </div>
+            </div>
+            {{ Session::forget("successMessages") }}
+        @endif
         </div>
+
+        @if ($errors->has())
+            @foreach ($errors->all() as $error)
+                {{ CommonUtilities::print_error_message($error) }}
+            @endforeach
+        @endif
 
         <div class="col-md-12">
             <ul class="nav nav-tabs nav-justified" id="tabs" role="tablist">
                 <li class="active"><a href="#tab-currentGateway" data-toggle="tab">Gateway - {{ Session::get("gateway_id") }}</a></li>
                 @if( Session::has('super-admin'))
-                    <li><a href="#tab-allGateways" data-toggle="tab">Approved Gateways</a></li>
+                    <li><a href="#tab-allGateways" data-toggle="tab">Created Gateways</a></li>
                     <li><a href="#tab-requestedGateways" data-toggle="tab">Gateway Requests</a></li>
                 @endif
             </ul>
@@ -64,14 +92,11 @@
                 <div class="tab-pane" id="tab-requestedGateways">
 
                     <div class="row">
-                        <form id="add-tenant-form" action="{{ URL::to('/') }}/admin/add-gateway">
-                            <div class="col-md-12">
-                                <button type="button" class="btn btn-default toggle-add-tenant"><span
+                        <a href="{{ URL::to('/') }}/admin/add-gateway">
+                            <button type="button" class="btn btn-default toggle-add-tenant"><span
                                         class="glyphicon glyphicon-plus"></span>Add a new gateway
-                                </button>
-                            </div>
-                            @include('partials/add-gateway-block')
-                        </form>
+                            </button>
+                        </a>
                     </div>
                     <div class="row">
                         <div class="col-md-12 table-responsive">
@@ -144,9 +169,8 @@
 
                     <div class="panel-group super-admin-gateways-view" id="accordion1">
                         @foreach( $gateways as $indexGP => $gp )
-                            @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "APPROVED" ||
-                                $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "ACTIVE" ||
-                                $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "CREATED")
+                            @if( $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "CREATED" ||
+                                   $gatewayApprovalStatuses[$gp->gatewayApprovalStatus] == "DEPLOYED" )
                                 
                                 @include('partials/gateway-preferences-block', array("gp" => $gp, "accName" => "accordion1"))
                                 
@@ -216,9 +240,11 @@
             <form action="{{URL::to('/')}}/admin/update-gateway-request" id="update-gateway-request" method="GET">
             
                 <div class="modal-header">
-                    <button type="button" class="close update-gateway-request-close-modal" data-dismiss="modal" aria-label="Close"><span
+                    <button type="button" class="close update-gateway-request-close-modal" data-dismiss="modal" aria-label="Close" ><span
                                 aria-hidden="true">&times;</span></button>
-                    <h3>Approve Gateway Request</h3>
+
+                    <h3>View the Gateway Details</h3>
+
                 </div>
                 <!--
                 <div class="modal-body onTenantLoad">
@@ -230,59 +256,53 @@
                     <h3>Gateway Tenant has been added. Please fill in rest of the required details.</h3>
                     -->
                     <div class="form-group">
-                        <h4>GatewayId: <span class="gatewayid-for-approval"></span></h4>
+                        <h4>Gateway ID: <span class="gatewayid-for-approval"></span></h4>
                     </div>
                     <div class="form-group">
                         <label>Gateway Name</label>
-                        <input type="text" name="gatewayName" class="form-control gatewayName"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Gateway Acronym</label>
-                        <input type="text" name="gatewayAcronym" class="form-control gatewayAcronym"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Gateway Domain</label>
-                        <input type="text" class="form-control domain" value="Domain will become - 'airavata' . [gateway acroym]" readonly="readonly" />
-                    </div>
-                    <div class="form-group">
-                        <label>Gateway Url</label>
-                        <input type="text" name="gatewayURL" class="form-control gatewayURL"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Gateway Public Abstract</label>
-                        <textarea readonly="readonly" name="gatewayPublicAbstract" class="form-control gatewayPublicAbstract"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Gateway Proposal Description</label>
-                        <textarea readonly="readonly" name="reviewProposalDescription" class="form-control reviewProposalDescription"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Gateway Admin First Name</label>
-                        <input type="text" readonly="readonly" name="gatewayAdminFirstName" class="form-control gatewayAdminFirstName"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Gateway Admin Last Name</label>
-                        <input type="text" readonly="readonly" name="gatewayAdminLastName" class="form-control gatewayAdminLastName"/>
+                        <input type="text" readonly="readonly" name="gatewayName" class="form-control gatewayName"/>
                     </div>
                     <div class="form-group">
                         <label>Contact Email Address</label>
-                        <input type="text" readonly="readonly" name="emailAddress" class="form-control emailAddress"/>
+                        <input type="text" name="emailAddress" id="emailAddress" class="form-control emailAddress"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Gateway URL</label>
+                        <input type="text" name="gatewayURL" id="gatewayURL" class="form-control gatewayURL"/>
                     </div>
                     <div class="form-group">
                         <label>Gateway Admin Username</label>
-                        <input type="text" readonly="readonly" name="identityServerUserName" class="form-control identityServerUserName"/>
+                        <input type="text" name="identityServerUserName" id="identityServerUserName" class="form-control identityServerUserName"/>
                     </div>
                     <div class="form-group">
                         <label>Gateway Admin First Name</label>
-                        <input type="text" readonly="readonly" name="gatewayAdminFirstName" class="form-control gatewayAdminFirstName"/>
+                        <input type="text" name="gatewayAdminFirstName" id="gatewayAdminFirstName" class="form-control gatewayAdminFirstName"/>
                     </div>
+                    <div class="form-group">
+                        <label>Gateway Admin Last Name</label>
+                        <input type="text" name="gatewayAdminLastName" id="gatewayAdminLastName" class="form-control gatewayAdminLastName"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Admin Email ID</label>
+                        <input type="text" name="gatewayAdminEmail" id="gatewayAdminEmail" class="form-control emailAddress"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Gateway Public Abstract</label>
+                        <textarea name="gatewayPublicAbstract" id="gatewayPublicAbstract" class="form-control gatewayPublicAbstract"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Gateway Proposal Description</label>
+                        <textarea name="reviewProposalDescription" id="reviewProposalDescription" class="form-control reviewProposalDescription"></textarea>
+                    </div>
+
                     <div class="form-group">
                         <label>Oauth Client Id</label>
-                        <input type="text" name="oauthClientId" class="form-control oauthClientId"/>
+                        <input type="text" readonly="readonly" name="oauthClientId" class="form-control oauthClientId"/>
                     </div>
+
                     <div class="form-group">
                         <label>Oauth Client Secret</label>
-                        <input type="text" name="oauthClientSecret" class="form-control oauthClientSecret"/>
+                        <input type="text" readonly="readonly" name="oauthClientSecret" class="form-control oauthClientSecret"/>
                     </div>
                     <div class="form-group">
                         <label>SciGaP Admin Comments</label>
@@ -291,7 +311,7 @@
 
                     <div class="form-group">
                         <label>Status</label>
-                        <input type="text" name="gatewayApprovalStatus" class="form-control gatewayApprovalStatus" readonly="readonly" />
+                        <input type="text" readonly="readonly" name="gatewayApprovalStatus" class="form-control gatewayApprovalStatus"/>
                         <!--
                         <select name="gatewayApprovalStatus" class="form-control gatewayApprovalStatus">
                             @foreach( $gatewayApprovalStatuses as $val => $status) 
@@ -301,12 +321,15 @@
                         -->
                     </div>
                     <input type="hidden" class="gatewayid-for-approval" name="gateway_id">
+                    <input type="hidden" name="internal_gateway_id">
                 </div>
                 <div class="modal-footer submit-actions">
-                    <button type="submit" name="status" class="btn btn-primary notCreatedGateway update-gateway" value="createTenant">Create Tenant</button>
-                    <button type="submit" name="status" class="btn btn-danger notCreatedGateway update-gateway" value="denyRequest">Deny Request</button>
-                    <button type="submit" name="status" class="btn btn-primary createdGateway update-gateway" value="updateGateway">Update Gateway</button>
-                    <button type="submit" name="status" class="btn btn-danger createdGateway update-gateway" value="deactivateGateway">Deactivate Gateway</button>
+                    <button type="submit" name="status" class="btn btn-primary update-gateway notApprovedGateway" value="approveRequest" >Approve Request</button>
+                    <button type="submit" name="status" class="btn btn-danger update-gateway notApprovedGateway" value="denyRequest" >Deny Request</button>
+                    <button type="submit" name="status" class="btn btn-primary update-gateway approvedGateway" value="updateGateway" >Update Gateway</button>
+                    <button type="submit" name="status" class="btn btn-primary update-gateway approvedGateway" value="createTenant" >Create Tenant</button>
+                    <button type="submit" name="status" class="btn btn-primary update-gateway createdGateway" value="deployGateway" >Deploy Gateway</button>
+                    <button type="submit" name="status" class="btn btn-danger update-gateway createdGateway" value="deactivateGateway" >Deactivate Gateway</button>
                 </div>
             </form>
 
@@ -333,6 +356,7 @@
                     </div>
                 </div>
                 <input type="hidden" class="gatewayid-for-approval" name="gateway_id">
+                <input type="hidden" name="internal_gateway_id">
                 <div class="modal-footer">
                     <input type="submit" name="status" class="btn btn-danger" value="Deny"/>
                     <input type="cancel"  data-dismiss="modal"  class="btn btn-default" value="Cancel"/>
@@ -500,16 +524,16 @@
     });
 
 
-    $(".add-tenant").slideUp();
+    /*$(".add-tenant").slideUp();
 
     $(".toggle-add-tenant").click(function () {
         $('html, body').animate({
             scrollTop: $(".toggle-add-tenant").offset().top
         }, 500);
         $(".add-tenant").slideDown();
-    });
+    });*/
 
-    $("#add-tenant-form").submit(function (event) {
+    /*$("#add-tenant-form").submit(function (event) {
         event.preventDefault();
         event.stopPropagation();
         var formData = $("#add-tenant-form").serialize();
@@ -547,7 +571,7 @@
             $("#add-gateway-loading").modal("hide");
             $(".loading-gif").addClass("hide");
         });
-    });
+    });*/
 
     disableInputs( $(".super-admin-gateways-view"));
 
@@ -580,6 +604,7 @@
 
         $(".onTenantLoad").removeClass("hide");
         $(".gatewayid-for-approval").val( gatewayId).html(  gatewayId);
+        $("#approve-gateway").find("input[name=internal_gateway_id]").val( gatewayObject.airavataInternalGatewayId );
         $(".gatewayName").val( gatewayObject.gatewayName);
         $(".gatewayAcronym").val( gatewayObject.gatewayAcronym);
         //$(".domain").val( gatewayObject.domain);
@@ -599,24 +624,129 @@
         editableInputs( $("#update-gateway-request"), true);
 
         if( gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "REQUESTED"){
-            $(".createdGateway").each( function( i, thisButton){
-                if( $(thisButton).val() == "deactivateGateway"){
+            $(".approvedGateway").each(function (i, thisButton) {
+                if ($(thisButton).val() == "updateGateway") {
+                    $(thisButton).addClass("hide");
+                }
+                if ($(thisButton).val() == "createTenant") {
                     $(thisButton).addClass("hide");
                 }
             });
-            $(".notCreatedGateway").removeClass("hide");
+            $(".createdGateway").each(function (i, thisButton) {
+                if ($(thisButton).val() == "deployGateway") {
+                    $(thisButton).addClass("hide");
+                }
+                if ($(thisButton).val() == "deactivateGateway") {
+                    $(thisButton).addClass("hide");
+                }
+            });
+            $(".notApprovedGateway").removeClass("hide"); {
+                $('#emailAddress').attr('readonly', false);
+                $('#gatewayURL').attr('readonly', false);
+                $('#identityServerUserName').attr('readonly', false);
+                $('#gatewayAdminFirstName').attr('readonly', false);
+                $('#gatewayAdminLastName').attr('readonly', false);
+                $('#gatewayAdminEmail').attr('readonly', false);
+                $('#gatewayPublicAbstract').attr('readonly', false);
+                $('#reviewProposalDescription').attr('readonly', false);
+            }
+        }
+        else if( gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "APPROVED"){
+            $(".notApprovedGateway").each(function (i, thisButton) {
+                if ($(thisButton).val() == "approveRequest") {
+                    $(thisButton).addClass("hide");
+                }
+                if ($(thisButton).val() == "denyRequest") {
+                    $(thisButton).addClass("hide");
+                }
+            });
+            $(".createdGateway").each(function (i, thisButton) {
+                if ($(thisButton).val() == "deployGateway") {
+                    $(thisButton).addClass("hide");
+                }
+                if ($(thisButton).val() == "deactivateGateway") {
+                    $(thisButton).addClass("hide");
+                }
+            });
+            $(".approvedGateway").removeClass("hide"); {
+                $('#emailAddress').attr('readonly', false);
+                $('#gatewayURL').attr('readonly', false);
+                $('#identityServerUserName').attr('readonly', false);
+                $('#gatewayAdminFirstName').attr('readonly', false);
+                $('#gatewayAdminLastName').attr('readonly', false);
+                $('#gatewayAdminEmail').attr('readonly', false);
+                $('#gatewayPublicAbstract').attr('readonly', false);
+                $('#reviewProposalDescription').attr('readonly', false);
+            }
+        }
+        else if( gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "CREATED"){
+            $(".approvedGateway").each(function (i, thisButton) {
+                if ($(thisButton).val() == "updateGateway") {
+                    $(thisButton).addClass("hide");
+                }
+                if ($(thisButton).val() == "createTenant") {
+                    $(thisButton).addClass("hide");
+                }
+            });
+            $(".notApprovedGateway").each(function (i, thisButton) {
+                if ($(thisButton).val() == "approveRequest") {
+                    $(thisButton).addClass("hide");
+                }
+                if ($(thisButton).val() == "denyRequest") {
+                    $(thisButton).addClass("hide");
+                }
+            });
+            $(".createdGateway").removeClass("hide"); {
+                $('#emailAddress').attr('readonly', true);
+                $('#gatewayURL').attr('readonly', true);
+                $('#identityServerUserName').attr('readonly', true);
+                $('#gatewayAdminFirstName').attr('readonly', true);
+                $('#gatewayAdminLastName').attr('readonly', true);
+                $('#gatewayAdminEmail').attr('readonly', true);
+                $('#gatewayPublicAbstract').attr('readonly', true);
+                $('#reviewProposalDescription').attr('readonly', true);
+            }
+        }
+        else if( gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "DEPLOYED"){
+            $(".notApprovedGateway").each(function (i, thisButton) {
+                if ($(thisButton).val() == "approveRequest") {
+                    $(thisButton).addClass("hide");
+                }
+                if ($(thisButton).val() == "denyRequest") {
+                    $(thisButton).addClass("hide");
+                }
+            });
+            $(".approvedGateway").each(function (i, thisButton) {
+                if ($(thisButton).val() == "updateGateway") {
+                    $(thisButton).addClass("hide");
+                }
+                if ($(thisButton).val() == "createTenant") {
+                    $(thisButton).addClass("hide");
+                }
+            });
+            $(".createdGateway").each(function (i, thisButton) {
+                if ($(thisButton).val() == "deployGateway") {
+                    $(thisButton).addClass("hide");
+                }
+                if ($(thisButton).val() == "deactivateGateway") {
+                    $(thisButton).removeClass("hide");
+                }
+                $('#emailAddress').attr('readonly', true);
+                $('#gatewayURL').attr('readonly', true);
+                $('#identityServerUserName').attr('readonly', true);
+                $('#gatewayAdminFirstName').attr('readonly', true);
+                $('#gatewayAdminLastName').attr('readonly', true);
+                $('#gatewayAdminEmail').attr('readonly', true);
+                $('#gatewayPublicAbstract').attr('readonly', true);
+                $('#reviewProposalDescription').attr('readonly', true);
+            });
         }
         else if( gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "CANCELLED" ||
             gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "DENIED" ||
             gatewayApprovalStatuses[ gatewayObject.gatewayApprovalStatus] == "DEACTIVATED"){
-            
+
             editableInputs( $("#update-gateway-request"), false);
             $(".update-gateway-request-close-modal").removeAttr("disabled");
-        }
-        else
-        {
-            $(".createdGateway").removeClass("hide");
-            $(".notCreatedGateway").addClass("hide");
         }
         $("#approve-gateway").modal("show");
     });
@@ -648,23 +778,24 @@
             if( data == -1 ){
                 //errors only with -1
                 if( updateVal == "createTenant"){
-                $(".submit-actions").before("<div class='alert alert-danger fail-alert'>Tenant creation has failed as Tenant with the same Domain name- airavata." + $(".gatewayAcronym").val() + " already exists in Identity Server. Please change Gateway Acronym and try again.");
+                $(".submit-actions").before("<div class='alert alert-danger fail-alert'>All fields are required to create the gateway! Please make sure you've first updated all the Gateway details accurately and try again. Ask the Gateway Provider to set a Password token if they haven't set it yet.");
                 }
                 else{
                     $(".submit-actions").before("<div class='alert alert-danger fail-alert'>Error updating Gateway. Please try again.");
                 }
             }
             else{
-                if( updateVal == "createTenant"){
-                    $(".submit-actions").before("<div class='alert alert-success success-alert'>Tenant has been created with domain name- airavata." + $(".gatewayAcronym").val());
+                /*if( updateVal == "createTenant"){
+                    $(".submit-actions").before("<div class='alert alert-success success-alert'>Tenant has been created!");
                     $(".notCreatedGateway").addClass("hide");
 
                     $(".createdGateway").removeClass("hide");
-
                 }
                 else{
                     $(".submit-actions").before("<div class='alert alert-success success-alert'>Gateway has been updated successfully.");
-                }
+                }*/
+
+                window.location.reload();
 
                 //refresh data next time if same popup is opened.
                 var gatewayIdWithoutSpaces = dataObj['gateway_id'].replace(/\s+/g, '-');
@@ -696,6 +827,7 @@
 
     $(".deny-approval").click( function(){
         $(".gatewayid-for-approval").val( $(this).data("gatewayid")).html(  $(this).data("gatewayid"));
+        $("#deny-gateway").find("input[name=internal_gateway_id]").val( gatewayObject.airavataInternalGatewayId );
         $("#deny-gateway").modal("show");
     });
 

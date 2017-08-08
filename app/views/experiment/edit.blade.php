@@ -29,7 +29,7 @@
         <form action="{{URL::to('/')}}/experiment/edit" method="POST" role="form" enctype="multipart/form-data">
             <input type="hidden" name="expId" value="{{{ Input::get('expId') }}}"/>
 
-            @include('partials/experiment-inputs', array( "expInputs", $expInputs))
+            @include('partials/experiment-inputs', array( "expInputs" => $expInputs, "cpusPerNode"=>$cpusPerNode))
 
             @if( count( $expInputs['computeResources']) > 0)
             <div class="btn-toolbar">
@@ -101,6 +101,7 @@
     $("#compute-resource").change(function () {
         var crId = $(this).val();
         $(".loading-img ").removeClass("hide");
+        $(".queue-view ").addClass("hide");
         $.ajax({
             url: '../experiment/getQueueView',
             type: 'get',
@@ -108,6 +109,7 @@
             success: function (data) {
                 $(".queue-view").html(data);
                 $(".loading-img ").addClass("hide");
+                $(".queue-view ").removeClass("hide");
             }
         });
     });
