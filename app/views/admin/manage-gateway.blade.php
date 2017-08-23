@@ -144,7 +144,7 @@
                                         <td style="max-width: 400px; word-wrap: break-word;">{{ $gp->gatewayPublicAbstract}}</td>
                                         <td>{{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus] }}</td>
                                         <td>
-                                            <input type="button" class="btn btn-primary btn-xs start-approval" id="view-{{ preg_replace('/[\s]/', '-',$gp->gatewayId) }}" data-gatewayobject='{{htmlentities(json_encode( $gp))}}' value="View"/>
+                                            <input type="button" class="btn btn-primary btn-xs start-approval" id="view-{{ preg_replace('/[\s]/', '-',$gp->gatewayId) }}" data-gatewayobject="{{htmlentities(json_encode( $gp))}}" value="View"/>
                                         </td>
                                     </tr>
                                 @endforeach
