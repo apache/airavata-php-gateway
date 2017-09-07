@@ -189,24 +189,30 @@ class URPUtilities
                 $computeResource = CRUtilities::get_compute_resource($computeResourceId);
                 $hostname = $computeResource->hostName;
                 $userComputeResourcePreference = null;
-                if( array_key_exists($computeResourceId, $userComputeResourcePreferences)) {
-                    $userComputeResourcePreference = $userComputeResourcePreferences[$computeResourceId];
-                    $accountExists = true;
-                } else if ($sshAccountProvisioner->canCreateAccount) {
-                    $userComputeResourcePreference = URPUtilities::setup_ssh_account($gatewayId, $userId, $computeResourceId, $hostname);
-                    $accountExists = true;
-                } else if (Airavata::doesUserHaveSSHAccount(Session::get('authz-token'), $computeResourceId, $userId)) {
-                    $userComputeResourcePreference = URPUtilities::setup_ssh_account($gatewayId, $userId, $computeResourceId, $hostname);
-                    $accountExists = true;
-                } else {
-                    $accountExists = false;
+                $errorMessage = null;
+                $accountExists = false;
+                try {
+                    if( array_key_exists($computeResourceId, $userComputeResourcePreferences)) {
+                        $userComputeResourcePreference = $userComputeResourcePreferences[$computeResourceId];
+                        $accountExists = true;
+                    } else if ($sshAccountProvisioner->canCreateAccount) {
+                        $userComputeResourcePreference = URPUtilities::setup_ssh_account($gatewayId, $userId, $computeResourceId, $hostname);
+                        $accountExists = true;
+                    } else if (Airavata::doesUserHaveSSHAccount(Session::get('authz-token'), $computeResourceId, $userId)) {
+                        $userComputeResourcePreference = URPUtilities::setup_ssh_account($gatewayId, $userId, $computeResourceId, $hostname);
+                        $accountExists = true;
+                    }
+                } catch (Exception $ex) {
+                    Log::error("Failed to setup SSH Account for " . $userId . " on $hostname");
+                    Log::error($ex);
+                    $errorMessage = $ex->getMessage();
                 }
                 $results[] = array(
                     "hostname" => $hostname,
                     "userComputeResourcePreference" => $userComputeResourcePreference,
                     "accountExists" => $accountExists,
                     "additionalInfo" => $computeResourcePreference->sshAccountProvisionerAdditionalInfo,
-                    "errorMessage" => "TODO"
+                    "errorMessage" => $errorMessage
                 );
             }
         }
