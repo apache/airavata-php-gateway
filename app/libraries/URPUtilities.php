@@ -161,6 +161,77 @@ class URPUtilities
         $gatewayId = Session::get('gateway_id');
         Airavata::deleteUserResourceProfile(Session::get('authz-token'), $userId, $gatewayId);
     }
+
+    /**
+     * Returns an array with compute resource ids as the key and each entry is a 
+     * map with the following fields:
+     * * hostname: hostname of compute resource
+     * * userComputeResourcePreference: if UserComputeResourcePreference exists for compute resource or was able to be created
+     * * accountExists: (boolean) whether user account exists on cluster
+     * * additionalInfo: Additional info field from ComputeResourcePreference
+     * * errorMessage: Error message associated with trying to setup account
+     */
+    public static function setup_auto_provisioned_accounts()
+    {
+        $results = array();
+        $gatewayResourceProfile = CRUtilities::getGatewayResourceProfile();
+        $computeResourcePreferences = $gatewayResourceProfile->computeResourcePreferences;
+        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
+        $sshAccountProvisioners = URPUtilities::get_ssh_account_provisioners();
+        $userId = Session::get("username");
+        $gatewayId = Session::get("gateway_id");
+        foreach( $computeResourcePreferences as $computeResourcePreference)
+        {
+            if( !empty($computeResourcePreference->sshAccountProvisioner))
+            {
+                $sshAccountProvisioner = $sshAccountProvisioners[$computeResourcePreference->sshAccountProvisioner];
+                $computeResourceId = $computeResourcePreference->computeResourceId;
+                $computeResource = CRUtilities::get_compute_resource($computeResourceId);
+                $hostname = $computeResource->hostName;
+                $userComputeResourcePreference = null;
+                if( array_key_exists($computeResourceId, $userComputeResourcePreferences)) {
+                    $userComputeResourcePreference = $userComputeResourcePreferences[$computeResourceId];
+                    $accountExists = true;
+                } else if ($sshAccountProvisioner->canCreateAccount) {
+                    $userComputeResourcePreference = URPUtilities::setup_ssh_account($gatewayId, $userId, $computeResourceId, $hostname);
+                    $accountExists = true;
+                } else if (Airavata::doesUserHaveSSHAccount(Session::get('authz-token'), $computeResourceId, $userId)) {
+                    $userComputeResourcePreference = URPUtilities::setup_ssh_account($gatewayId, $userId, $computeResourceId, $hostname);
+                    $accountExists = true;
+                } else {
+                    $accountExists = false;
+                }
+                $results[] = array(
+                    "hostname" => $hostname,
+                    "userComputeResourcePreference" => $userComputeResourcePreference,
+                    "accountExists" => $accountExists,
+                    "additionalInfo" => "TODO",
+                    "errorMessage" => "TODO"
+                );
+            }
+        }
+
+        return $results;
+    }
+
+    private static function get_ssh_account_provisioners()
+    {
+        $sshAccountProvisionersByName = array();
+        $sshAccountProvisioners = Airavata::getSSHAccountProvisioners(Session::get('authz-token'));
+        foreach ($sshAccountProvisioners as $sshAccountProvisioner) {
+            $sshAccountProvisionersByName[$sshAccountProvisioner->name] = $sshAccountProvisioner;
+        }
+        return $sshAccountProvisionersByName;
+    }
+
+    private static function setup_ssh_account($gatewayId, $userId, $computeResourceId, $hostname)
+    {
+        $credentialStoreToken = AdminUtilities::create_ssh_token_for_user("SSH Key for " . $hostname);
+        // TODO: add error handling if setup fails
+        $userComputeResourcePreference = Airavata::setupUserComputeResourcePreferencesForSSH(Session::get('authz-token'), $computeResourceId, $userId, $credentialStoreToken);
+        $result = Airavata::addUserComputeResourcePreference(Session::get('authz-token'), $userId, $gatewayId, $computeResourceId, $userComputeResourcePreference);
+        return $userComputeResourcePreference;
+    }
 }
 
 ?>

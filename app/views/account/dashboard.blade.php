@@ -225,6 +225,9 @@
             <h1>Gateway: {{Session::get("gateway_id")}}</h1>
             <h3>Let's get started!</h3>
         </div>
+        @if (Session::has('auto_provisioned_accounts'))
+            @include('partials/auto-provisioned-accounts', array("auto_provisioned_accounts" => Session::get('auto_provisioned_accounts')))
+        @endif
         <div class="row text-center admin-options">
 
             <div class="row well">
