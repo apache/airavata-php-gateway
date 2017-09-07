@@ -205,7 +205,7 @@ class URPUtilities
                     "hostname" => $hostname,
                     "userComputeResourcePreference" => $userComputeResourcePreference,
                     "accountExists" => $accountExists,
-                    "additionalInfo" => "TODO",
+                    "additionalInfo" => $computeResourcePreference->sshAccountProvisionerAdditionalInfo,
                     "errorMessage" => "TODO"
                 );
             }
