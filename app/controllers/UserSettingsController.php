@@ -17,7 +17,7 @@ class UserSettingsController extends BaseController
         $userCredentialSummaries = URPUtilities::get_all_ssh_pub_keys_summary_for_user();
         $defaultCredentialToken = $userResourceProfile->credentialStoreToken;
         foreach ($userCredentialSummaries as $credentialSummary) {
-            $credentialSummary->canDelete = ($credentialSummary->token != $defaultCredentialToken);
+            $credentialSummary->canDelete = $this->canDeleteCredential($credentialSummary->token, $userResourceProfile);
         }
 
         return View::make("account/credential-store", array(
@@ -25,6 +25,26 @@ class UserSettingsController extends BaseController
             "credentialSummaries" => $userCredentialSummaries,
             "defaultCredentialToken" => $defaultCredentialToken
         ));
+    }
+
+    // Don't allow deleting credential if default credential or in use by a
+    // userComputeResourcePreference or a userStoragePreference
+    private function canDeleteCredential($token, $userResourceProfile) {
+        if ($token == $userResourceProfile->credentialStoreToken) {
+            return false;
+        } else {
+            foreach ($userResourceProfile->userComputeResourcePreferences as $userCompResPref) {
+                if ($userCompResPref->resourceSpecificCredentialStoreToken == $token) {
+                    return false;
+                }
+            }
+            foreach ($userResourceProfile->userStoragePreferences as $userStoragePreference) {
+                if ($userStoragePreference->resourceSpecificCredentialStoreToken == $token) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public function setDefaultCredential() {
