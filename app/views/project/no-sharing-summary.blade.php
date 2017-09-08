@@ -12,18 +12,18 @@
     ?>
     <h1>Project Summary
         @if( !isset($dashboard))
-        <small><a href="{{ URL::to('/') }}/project/summary?projId={{ $project->projectID }}"
+        <small><a href="{{ URL::to('/') }}/project/summary?projId={{ urlencode($project->projectID) }}"
                   title="Refresh"><span class="glyphicon glyphicon-refresh refresh-exp"></span></a></small>
         @endif
     </h1>
     <div>
         <div>
-            <h3>{{ $project->name }}
-                <a href="edit?projId={{ $project->projectID }}" title="Edit">
+            <h3>{{{ $project->name }}}
+                <a href="edit?projId={{ urlencode($project->projectID) }}" title="Edit">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
             </h3>
-            <p>{{ $project->description }}</p>
+            <p>{{{ $project->description }}}</p>
         </div>
         <div class="table-responsive">
             <table class="table">
@@ -62,27 +62,27 @@
                         </a>
                         <a href="{{URL::to('/')}}/experiment/edit?expId={{urlencode($experiment->experimentId)}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
                     </td>
-                    <td>{{ $experiment->userName }}</td>
+                    <td>{{{ $experiment->userName }}}</td>
                     <td>
                         @if( $applicationInterface != null )
-                            {{ $applicationInterface->applicationName }}
+                            {{{ $applicationInterface->applicationName }}}
                         @else
                             <span class='text-danger'>Removed</span>
                         @endif
                     </td>
 
-                    <td>{{ $resourceName }}</td>
-                    <td class="time" unix-time="{{$expValues["experimentTimeOfStateChange"]}}"></td>
+                    <td>{{{ $resourceName }}}</td>
+                    <td class="time" unix-time="{{{$expValues["experimentTimeOfStateChange"]}}}"></td>
                     <td>
-                        <div class="{{ExperimentUtilities::get_status_color_class( $expValues["experimentStatusString"])}}">
-                            {{ $expValues["experimentStatusString"] }}
+                        <div class="{{{ExperimentUtilities::get_status_color_class( $expValues["experimentStatusString"])}}}">
+                            {{{ $expValues["experimentStatusString"] }}}
                         </div>
                     </td>
 
                     <td>
                     @if (isset($expValues["jobState"]) )
-                        <div class="{{ ExperimentUtilities::get_status_color_class( $expValues["jobState"]) }}">
-                            {{ $expValues["jobState"] }}
+                        <div class="{{{ ExperimentUtilities::get_status_color_class( $expValues["jobState"]) }}}">
+                            {{{ $expValues["jobState"] }}}
                         </div>
                     @endif
                     </td>

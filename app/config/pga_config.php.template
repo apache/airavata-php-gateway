@@ -57,9 +57,31 @@ return array(
         'oauth-client-secret' => 'KNTf_LPLuGBDbRVZwkrP_fF5z2Ea',
 
         /**
+         * Authentication options
+         */
+        'auth-options' => [
+            // Example of password based login
+            [
+                'oauth-grant-type' => 'password',
+                'name' => 'Airavata PHP Gateway',
+            ],
+            // Example of external identity provider login
+            [
+                'oauth-grant-type' => 'authorization_code',
+                'name' => 'CILogon',
+                // Optional
+                // Note: kc_idp_hint is used to skip Keycloak login screen and redirect immediately to this identity provider
+                // http://www.keycloak.org/docs/2.5/server_admin/topics/identity-broker/suggested.html
+                'oauth-authorize-url-extra-params' => 'kc_idp_hint=oidc',
+                // Optional
+                'logo': '/assets/path_to_image.png'
+            ],
+        ],
+
+        /**
          * OAuth Grant Type (password or authorization_code)
          */
-        'oauth-grant-type' => 'authorization_code',
+        'oauth-grant-type' => 'password',
 
         /**
          * OAuth call back url (only if the grant type is authorization_code)
@@ -67,14 +89,14 @@ return array(
         'oauth-callback-url' => 'https://dev.seagrid.org/callback-url',
 
         /**
-         * Identity server domain
+         * For OIDC servers that support the discovery protocol.
          */
-        'server' => 'idp.scigap.org',
+        'openid-connect-discovery-url' => 'https://iam.scigap.org/auth/realms/_MY_REALM_/.well-known/openid-configuration',
 
         /**
          * Identity server url
          */
-        'service-url' => 'https://idp.scigap.org:9443/',
+        'service-url' => 'https://iam.scigap.org/auth',
 
         /**
          * Enable HTTPS server verification
@@ -84,12 +106,7 @@ return array(
         /**
          * Path to the server certificate file
          */
-        'cafile-path' => app_path() . '/resources/security/idp_scigap_org.pem',
-
-        /**
-         * Allow self signed server certificates
-         */
-        'allow-self-signed-cert' => false
+        'cafile-path' => app_path() . '/resources/security/incommon_rsa_server_ca.pem',
     ],
 
 
@@ -110,6 +127,17 @@ return array(
          * Airavata API server port
          */
         'airavata-port' => '8930',
+
+        /**
+         * Airavata Profile Service server location. Use tls:// as the protocol to
+         * connect over TLS
+         */
+        'airavata-profile-service-server' => 'gw56.iu.xsede.org',
+
+        /**
+         * Airavata Profile Service port
+         */
+        'airavata-profile-service-port' => '8962',
 
         /**
          * Airavata API server thrift communication timeout
@@ -218,6 +246,11 @@ return array(
          * SMTP server port on which the portal should connect
          */
         'portal-smtp-server-port' => '587',
+
+        /**
+         * Email verification code valid time interval in minutes
+         */
+         'email-verify-code-valid-time' => 360,
 
         /**
          * Set this to true if theme has set links to login

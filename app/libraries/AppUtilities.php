@@ -70,7 +70,7 @@ class AppUtilities
                     "applicationArgument" => $appInterfaceValues["applicationArgumentInput"][$index],
                     "standardInput" => $appInterfaceValues["standardInput"][$index],
                     "userFriendlyDescription" => $appInterfaceValues["userFriendlyDescription"][$index],
-                    "metaData" => $appInterfaceValues["metaData"][$index],
+//                    "metaData" => $appInterfaceValues["metaData"][$index],
                     "inputOrder" => intval($appInterfaceValues["inputOrder"][$index]),
                     "dataStaged" => intval($appInterfaceValues["dataStaged"][$index]),
                     "isRequired" => $appInterfaceValues["isRequiredInput"][$index],
@@ -89,10 +89,10 @@ class AppUtilities
                     "type" => $appInterfaceValues["outputType"][$index],
                     "applicationArgument" => $appInterfaceValues["applicationArgumentOutput"][$index],
                     "dataMovement" => intval($appInterfaceValues["dataMovement"][$index]),
-                    "location" => $appInterfaceValues["location"][$index],
+//                    "location" => $appInterfaceValues["location"][$index],
                     "isRequired" => $appInterfaceValues["isRequiredOutput"][$index],
                     "requiredToAddedToCommandLine" => $appInterfaceValues["requiredToAddedToCommandLineOutput"][$index],
-                    "searchQuery" => $appInterfaceValues["searchQuery"][$index]
+//                    "searchQuery" => $appInterfaceValues["searchQuery"][$index]
                 ));
                 $appInterface->applicationOutputs[] = $outputDataObjectType;
             }
@@ -136,14 +136,25 @@ class AppUtilities
         $appDeployments = Airavata::getAllApplicationDeployments(Session::get('authz-token'), Session::get("gateway_id"));
         //var_dump( $appDeployments); exit;
         $computeResources = Airavata::getAllComputeResourceNames(Session::get('authz-token'));
+        $computeResourceFullObjects = CRUtilities::getAllCRObjects();
+        $gatewayResourceProfile = Airavata::getGatewayResourceProfile(Session::get('authz-token'), Session::get("gateway_id"));
+        $computeResourcePreferences = $gatewayResourceProfile->computeResourcePreferences;
+        foreach ($computeResourcePreferences as $computeResourcePreference) {
+            $computeResourcePreference->crName = $computeResources[$computeResourcePreference->computeResourceId];
+        }
+        // Sort compute resource preferences by crName
+        usort($computeResourcePreferences, CommonUtilities::arrSortObjsByKey('crName', 'ASC'));
+
         $modules = AppUtilities::getAllModules();
+        usort($modules, CommonUtilities::arrSortObjsByKey('appModuleName', 'ASC'));
         $apt = new ApplicationParallelismType();
 
         return array(
             "appDeployments" => $appDeployments,
             "applicationParallelismTypes" => $apt::$__names,
-            "computeResources" => $computeResources,
-            "modules" => $modules
+            "computeResourcePreferences" => $computeResourcePreferences,
+            "modules" => $modules,
+            "computeResourceFullObjects" => $computeResourceFullObjects
         );
     }
 

@@ -12,6 +12,23 @@
     </ol>
     <div class="row well user-settings">
 
+        <h3>Profile</h3>
+
+        <a href="{{URL::to('/')}}/account/user-profile">
+            <div class=" col-md-12 well">
+                <div class="col-md-12">
+                    <span class="glyphicon glyphicon-user user-setting-icon"></span>
+                </div>
+                <div class="col-md-12">
+                    <h4>Your Profile</h4>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    @if( !Session::has("gateway-provider"))
+    <div class="row well user-settings">
+
         <h3>Manage Personal Computing and Storage Resources</h3>
         <p>Use these settings if you have your own compute and/or
         storage resource accounts that you would like to use.</p>
@@ -49,6 +66,7 @@
             </div>
         </a>
     </div>
+    @endif
 </div>
 
 @stop

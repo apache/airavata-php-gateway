@@ -534,7 +534,7 @@ class CRUtilities
     public static function getAllGateways()
     {
         if (Session::has("super-admin")){
-            $gateways = Airavata::getAllGateways(Session::get('authz-token'));
+            $gateways = TenantProfileService::getAllGateways(Session::get('authz-token'));
             //sort with creation time 
             usort($gateways, CommonUtilities::arrSortObjsByKey('requestCreationTime', 'ASC'));
         }
@@ -547,7 +547,7 @@ class CRUtilities
     public static function updateGatewayProfile( $data){
         $gatewayResourceProfile = Airavata::getGatewayResourceProfile( Session::get('authz-token'), $data["gateway_id"]);
         $gatewayResourceProfile->credentialStoreToken = $data["cst"];
-        return Airavata::updateGatewayResourceProfile( Session::get('authz-token'), $data["gateway_id"], $gatewayResourceProfile); 
+        return Airavata::updateGatewayResourceProfile( Session::get('authz-token'), $data["gateway_id"], $gatewayResourceProfile);
     }
 
     public static function add_or_update_CRP($inputs)

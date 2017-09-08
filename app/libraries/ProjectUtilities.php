@@ -122,7 +122,7 @@ class ProjectUtilities
                     $selected = '';
                 }
 
-                echo '<option value="' . $project->projectID . '" ' . $selected . '>' . $project->optionLabel . '</option>';
+                echo '<option value="' . htmlspecialchars($project->projectID) . '" ' . $selected . '>' . htmlspecialchars($project->optionLabel) . '</option>';
             }
         }
         echo '</select>';
@@ -144,11 +144,11 @@ class ProjectUtilities
             $projectId = Airavata::createProject(Session::get('authz-token'), Config::get('pga_config.airavata')['gateway-id'], $project);
 
             if ($projectId) {
-                CommonUtilities::print_success_message("<p>Project {$_POST['project-name']} created!</p>" .
+                CommonUtilities::print_success_message("<p>Project " . htmlspecialchars($_POST['project-name']) . " created!</p>" .
                     '<p>You will be redirected to the summary page shortly, or you can
-                    <a href="project/summary?projId=' . $projectId . '">go directly</a> to the project summary page.</p>');
+                    <a href="project/summary?projId=' . urlencode($projectId) . '">go directly</a> to the project summary page.</p>');
             } else {
-                CommonUtilities::print_error_message("Error creating project {$_POST['project-name']}!");
+                CommonUtilities::print_error_message("Error creating project ". htmlspecialchars($_POST['project-name']) . "!");
             }
         } catch (InvalidRequestException $ire) {
             CommonUtilities::print_error_message('InvalidRequestException!<br><br>' . $ire->getMessage());

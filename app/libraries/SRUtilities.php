@@ -238,35 +238,6 @@ class SRUtilities
             $gatewayProfileId = Airavata::registerGatewayResourceProfile(Session::get('authz-token'), $gatewayProfile);
     }
 
-    public static function getAllGatewayProfilesData()
-    {
-
-        if (Session::has("super-admin"))
-            $gateways = Airavata::getAllGateways(Session::get('authz-token'));
-        else {
-            $gateways[0] = Airavata::getGateway(Session::get('authz-token'), Session::get("gateway_id"));
-        }
-
-        $gatewayProfiles = Airavata::getAllGatewayResourceProfiles(Session::get('authz-token'));
-        //var_dump( $gatewayProfiles); exit;
-        //$gatewayProfileIds = array("GatewayTest3_57726e98-313f-4e7c-87a5-18e69928afb5", "GatewayTest4_4fd9fb28-4ced-4149-bdbd-1f276077dad8");
-        foreach ($gateways as $key => $gw) {
-            $gateways[$key]->profile = array();
-            foreach ((array)$gatewayProfiles as $index => $gp) {
-
-                if ($gw->gatewayId == $gp->gatewayID) {
-                    foreach ((array)$gp->computeResourcePreferences as $i => $crp) {
-                        $gatewayProfiles[$index]->computeResourcePreferences[$i]->crDetails = Airavata::getComputeResource(Session::get('authz-token'), $crp->computeResourceId);
-                    }
-                    $gateways[$key]->profile = $gatewayProfiles[$index];
-                }
-            }
-        }
-        //var_dump( $gatewayProfiles[0]->computeResourcePreferences[0]->crDetails); exit;
-
-        return $gateways;
-    }
-
     public static function updateGatewayProfile( $data){
         $gatewayResourceProfile = Airavata::getGatewayResourceProfile( Session::get('authz-token'), $data["gateway_id"]);
         $gatewayResourceProfile->credentialStoreToken = $data["cst"];

@@ -29,8 +29,8 @@
                         showCollectorDialog();
                     });
                 },fieldValues: {
-                    email : email !== 'undefined' ? email : "",
-                    fullname : fullName !== 'undefined' ? fullName : ""
+                    email : typeof email !== 'undefined' ? email : "",
+                    fullname : typeof fullName !== 'undefined' ? fullName : ""
                 }
             },
             "{{ Config::get('pga_config.portal')['jira-help']['request-feature-collector-id'] }}": {
@@ -41,8 +41,8 @@
                         showCollectorDialog();
                     });
                 },fieldValues: {
-                    email : email !== 'undefined' ? email : "",
-                    fullname : fullName !== 'undefined' ? fullName : ""
+                    email : typeof email !== 'undefined' ? email : "",
+                    fullname : typeof fullName !== 'undefined' ? fullName : ""
                 }
             }
         });

@@ -11,7 +11,7 @@ body{
 	background: #ecf0f1;
 }
 .form-group.required .control-label:after { 
-   content:"*";
+   content:" *";
    color:red;
 }
 
@@ -162,4 +162,34 @@ body{
 	font-size: 12px;
 	font-style: italic;
 	color: #737373;
+}
+
+#login-option-separator {
+	color: #999999;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+.horizontal-rule {
+	overflow: hidden;
+	text-align: center;
+}
+.horizontal-rule:before,
+.horizontal-rule:after {
+	background-color: currentColor;
+	content: "";
+	display: inline-block;
+	height: 1px;
+	position: relative;
+	vertical-align: middle;
+	width: 50%;
+	margin-top: -0.2em; /* fudge factor to make it more centered */
+}
+.horizontal-rule:before {
+	right: 0.5em;
+	margin-left: -50%;
+}
+.horizontal-rule:after {
+	left: 0.5em;
+	margin-right: -50%;
 }

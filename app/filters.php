@@ -20,11 +20,11 @@ App::before(function ($request) {
     if(Session::has('authz-token')){
         $currentTime = time();
         if($currentTime > Session::get('oauth-expiration-time')){
-            $response = WSIS::getRefreshedOAutheToken(Session::get('oauth-refresh-code'));
+            $response = Keycloak::getRefreshedOAuthToken(Session::get('oauth-refresh-code'));
             if(isset($response->access_token)){
                 $accessToken = $response->access_token;
                 $refreshToken = $response->refresh_token;
-                $expirationTime = time() + $response->expires_in - 300;
+                $expirationTime = time() + $response->expires_in - 300; // 5 minutes safe margin
                 $authzToken = Session::get('authz-token');
                 $authzToken->accessToken = $accessToken;
                 $authzToken->claimsMap['gatewayID'] = Config::get('pga_config.airavata')['gateway-id'];
@@ -137,7 +137,7 @@ Route::filter('verifyauthorizeduser', function () {
 
 Route::filter('verifyadmin', function () {
     if (CommonUtilities::verify_login()) {
-        if (!Session::has("admin") && !Session::has("admin-read-only")) {
+        if (!Session::has("admin") && !Session::has("admin-read-only") && !Session::has("gateway-provider")) {
             return Redirect::to("home")->with("admin-alert", true);
         }
     } else

@@ -184,7 +184,7 @@
                     </div>
                     @endif
 
-                    <br/>
+                    {{-- <br/>
                     <div>
                         <h3>Identity Server Configuration :</h3>
                     </div>
@@ -221,7 +221,7 @@
                                 </div>
                             </div>
                         </form>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="col-md-10">

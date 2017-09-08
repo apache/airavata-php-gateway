@@ -28,8 +28,8 @@ if( Session::get("theme") == "base"){?>
         </p>
         <p><a href="https://github.com/apache/airavata-php-gateway"
                 target="_blank">See the code <span class="glyphicon glyphicon-new-window"></span></a></p>
-        <p><a href="https://cwiki.apache.org/confluence/display/AIRAVATA/XSEDE+2016+Tutorials"
-            target="_blank">XSEDE 2016 tutorial documentation <span class="glyphicon glyphicon-new-window"></span></a>
+        <p><a href="https://cwiki.apache.org/confluence/display/AIRAVATA/PEARC+2017+Tutorials"
+            target="_blank">PEARC 2017 tutorial documentation <span class="glyphicon glyphicon-new-window"></span></a>
         </p>
     </div>
 </div>
@@ -83,7 +83,7 @@ if( Session::get("theme") == "base"){?>
 
         <div class="col-md-12">
     <div class="row">
-        <div class="col-md-10 col-md-offset-1 text-center breathing-spaces">
+        <div id="contact-scigap" class="col-md-10 col-md-offset-1 text-center breathing-spaces">
             <h3>Contact Us</h3>
             <div class="col-md-6">
                 <span class="glyphicon glyphicon-envelope" style="font-size:6em;"></span><br/>

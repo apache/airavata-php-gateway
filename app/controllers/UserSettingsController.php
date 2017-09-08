@@ -186,4 +186,103 @@ class UserSettingsController extends BaseController
             return Redirect::to("account/user-storage-resources")->with("message","Storage Resource Account Settings have been deleted.");
         }
     }
+
+    public function getUserProfile() {
+
+        $userProfile = UserProfileUtilities::get_user_profile(Session::get("username"));
+        return View::make("account/user-profile", array(
+            "userProfile" => $userProfile
+        ));
+    }
+
+    public function updateUserProfile() {
+
+        $username = Session::get('username');
+        $userProfile = UserProfileUtilities::get_user_profile($username);
+
+        // Copy data from form to $userProfile object and update
+        $userProfile->firstName = Input::get("firstName");
+        $userProfile->lastName = Input::get("lastName");
+        $userProfile->homeOrganization = Input::get("homeOrganization");
+        try {
+            UserProfileUtilities::update_user_profile($userProfile);
+            // Now update the UserProfile in the Session
+            $userProfile = UserProfileUtilities::get_user_profile($username);
+            Session::put("user-profile", $userProfile);
+            return Redirect::to("account/user-profile")->with("message", "Your profile has been updated.");
+        } catch (Exception $e) {
+            return View::make("account/user-profile", array(
+                "userProfile" => $userProfile,
+                "errorMessage" => "An error occurred while trying to update your profile: " . $e->getMessage()
+            ));
+        }
+
+    }
+
+    public function showUpdateEmailView() {
+        try {
+            $userProfile = UserProfileUtilities::get_user_profile(Session::get("username"));
+        } catch (Exception $e) {
+            Log::error("Failed to retrieve user profile. Error: " . $e->getMessage());
+            return View::make("account/user-profile-update-email", array(
+                "email" => null
+            ));
+        }
+        return View::make("account/user-profile-update-email", array(
+            "email" => $userProfile->emails[0]
+        ));
+    }
+
+    public function submitUpdateEmail() {
+
+        try {
+            $username = Session::get("username");
+            $newEmail = Input::get("newEmail");
+            $user_profile = UserProfileUtilities::get_user_profile($username);
+            EmailUtilities::sendVerifyUpdatedEmailAccount($username, $user_profile->firstName, $user_profile->lastName, $newEmail);
+            Session::put("UserSettingsController_newEmail", $newEmail);
+            return Redirect::to("account/user-profile")->with("message",
+                "Confirmation email has been sent to " . htmlspecialchars($newEmail)
+                . ". Please click on the confirmation link in the email once you receive it.");
+        } catch (Exception $e) {
+            return View::make("account/user-profile-update-email", array(
+                "email" => Input::get("newEmail"),
+                "errorMessage" => "An error occurred while trying to submit updated email address: " . $e->getMessage()
+            ));
+        }
+    }
+
+    public function confirmUpdateEmail() {
+
+        try {
+            $username = Input::get("username");
+            $code = Input::get("code");
+
+            $verified = EmailUtilities::verifyUpdatedEmailAccount($username, $code);
+            if ($verified) {
+                $newEmail = Session::get("UserSettingsController_newEmail");
+                if (empty($newEmail)) {
+                    throw new Exception("New email not found in session");
+                }
+                $user_profile = UserProfileUtilities::get_user_profile($username);
+                $user_profile->emails = array($newEmail);
+                $result = UserProfileUtilities::update_user_profile($user_profile);
+                if ($result) {
+                    return Redirect::to("account/user-profile")->with(
+                        "message", "Email address updated successfully");
+                } else {
+                    return Redirect::to("account/user-profile-update-email")->with(
+                        "errorMessage", "Failed to update email address, please try again.");
+                }
+            } else {
+                return Redirect::to("account/user-profile-update-email")->with(
+                    "errorMessage", "Failed to update email address, please try again. Reason: confirmation link was not verified successfully.");
+            }
+        } catch (Exception $e) {
+            Log::error("Failed to update email address", array(Input::all()));
+            Log::error($e);
+            return Redirect::to("account/user-profile-update-email")->with(
+                "errorMessage", "Failed to update email address, please try again. Reason: " . $e->getMessage());
+        }
+    }
 }

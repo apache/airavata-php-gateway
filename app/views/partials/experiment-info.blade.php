@@ -267,10 +267,6 @@
         @endforeach
     </table>
 
-    @if(strcmp($expVal["applicationInterface"]->applicationName, "OpenMM_Stampede") === 0)
-    @include('partials/streaming-data')
-    @endif
-
     @if( !isset( $dashboard))
 
     <form id="experiment-form" action="{{URL::to('/') }}/experiment/summary" method="post" role="form">

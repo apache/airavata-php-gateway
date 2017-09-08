@@ -63,10 +63,10 @@
         </label>
         -->
     </div>
-    <div class="form-group col-md-6">
-        <label class="control-label col-md-6">Is the Output required?</label>
+    <div class="form-group">
+        <label class="control-label col-md-3">Is the Output required?</label>
 
-        <div class="col-md-6">
+        <div class="col-md-9">
             <select class="form-control" name="isRequiredOutput[]" readonly>
                 <option value="0"
                 @if( isset( $appOutputs) ) @if( 0 == $appOutputs->isRequired) selected @endif @endif>False</option>
@@ -75,10 +75,10 @@
             </select>
         </div>
     </div>
-    <div class="form-group col-md-7">
-        <label class="control-label col-md-6">Required on command line?</label>
+    <div class="form-group">
+        <label class="control-label col-md-3">Required on command line?</label>
 
-        <div class="col-md-6">
+        <div class="col-md-9">
             <select class="form-control" name="requiredToAddedToCommandLineOutput[]" readonly>
                 <option value="0"
                 @if( isset( $appOutputs) ) @if( 0 == $appOutputs->requiredToAddedToCommandLine) selected @endif
@@ -89,7 +89,7 @@
             </select>
         </div>
     </div>
-    <div class="form-group">
+    {{-- <div class="form-group">
         <label class="control-label col-md-3">Location</label>
 
         <div class="col-md-9">
@@ -104,5 +104,5 @@
             <input type="text" readonly class="form-control" name="searchQuery[]"
                    value="@if( isset( $appOutputs) ){{$appOutputs->searchQuery}}@endif"/>
         </div>
-    </div>
+    </div> --}}
 </div>
