@@ -897,7 +897,7 @@ class ExperimentUtilities
                              <div class="file-upload-container">
                                 <input class="file-input" type="file" name="file-' . $input->sanitizedFormName .'" id="file-' . $input->sanitizedFormName . '" ' . $required . '>
                                 <input type="hidden" class="urlpath" id="' . $input->sanitizedFormName . '" name="' . $input->sanitizedFormName . '" "'. $required .'" value="">
-                                <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
+                                <!--<div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>-->
                              </div>
                             <p class="help-block">' . $input->userFriendlyDescription . '</p>
                             <div class="progress fadeIn animated" style="display:none">
@@ -921,7 +921,7 @@ class ExperimentUtilities
                 <label>Optional Input Files</label>
                 <div class="file-upload-container">
                     <input type="file" class="file-input" id="optInputFiles" name="optInputFiles[]" multiple onchange="javascript:updateList()" >
-                    <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
+                    <!--<div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>-->
                 </div>
                 <div id="optFileList"></div>
             </div>';

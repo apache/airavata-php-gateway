@@ -207,11 +207,9 @@
 @if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/out.dREG.tar.gz') )
                     <option value="out.dREG.tar.gz">Full results</option>  
 @endif
-                    <option value="out.dREG.HD.stringent.bed.gz">Stringent Bed regions</option>
-                    <option value="out.dREG.HD.relaxed.bed.gz">Relaxed Bed regions</option> 
-                    <option value="out.dREG.HD.imputedDnase.bw">Imputed DNase-I</option>
-                    <option value="out.dREG.peak.gz">dREG regions</option>         
-                    <option value="out.dREG.pred.gz">dREG scores</option>  
+                    <option value="out.dREG.infp.bed.gz">dREG informative sites</option>
+                    <option value="out.dREG.peak.full.bed.gz">dREG peaks </option> 
+                    <option value="out.dREG.peak.score.bed.gz">dREG peak(only with scores)</option>
                 </select> &nbsp;&nbsp;&nbsp;&nbsp;
 
    	       <a href="" target="_blank" id="retLinks">Download&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></a>

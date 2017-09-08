@@ -22,6 +22,8 @@
 Danko, C. G., Hyland, S. L., Core, L. J., Martins, A. L., Waters, C. T., Lee, H. W., ... & Siepel, A. (2015). Identification of active transcriptional regulatory elements from GRO-seq data. Nature methods, 12(5), 433-438. </A></p> 
 <p><b>Q: Do I have to create account before using this service?</b></p>
 <p>A: Yes, this system is supported by an NSF funded supercomputing resource known as <A title="XSEDE" href="http://www.xsede.org">XSEDE</A>, who regularly needs to report bulk usage statistics to NSF.  Nevertheless, data that you provide are completely safe.</p>
+<p><b>Q: How do I know the status of the computational nodes? </b></p>
+<p>A: Since we can't update this web site very often, the gateway status is updated <A target=_blank href="https://github.com/Danko-Lab/dREG/blob/master/gateway-update.md">here</A> on the dREG page based on the notifications of the XSEDE community. </p>
 <p><b>Q: Who do I thank for the computing power? </b></p>
 <p>A: This web-based tool is powered by <A title="SciGaP" href="http://www.scigap.org">SciGaP</A> and <A title="Apache Airavata"  href="http://airavata.apache.org/">Apache Airavata</A> and the GPU servers are supported by the <A title="XSEDE" href="http://www.xsede.org">XSEDE</A>.</p>
 <p><b>Q: I have another question that is not on this FAQ.  How can I contact you?</b></p>

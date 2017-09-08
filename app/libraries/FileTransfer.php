@@ -50,63 +50,64 @@ class FileTransfer {
             mode: "show",
             },'. "\n" ;
 
-        #$content = $content . '{
-        #    type:"bedgraph",
-        #    url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($folder_path . '/out.dREG.pred.gz').'",
-        #    name: "dREG informative pos.:",
-        #    mode: "show",
-        #    colorpositive:"#B30086",
-        #    colornegative:"#0000e5",
-        #    backgroundcolor:"#ffffe5",
-        #    height:40,
-        #    #fixedscale:{min:0, max:1},
-        #},'. "\n";
+        $content = $content . '{
+            type:"bedgraph",
+            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.infp.bed.gz').'",
+            name: "dREG Info. Sites:",
+            mode: "show",
+            colorpositive:"#B30086",
+            colornegative:"#0000e5",
+            backgroundcolor:"#ffffe5",
+            height:40,
+            fixedscale:{min:0, max:1},
+        },'. "\n";
 
         $content = $content . '{
             type:"bedgraph",
-            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.peak.gz').'",
+            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.peak.score.bed.gz').'",
             name: "dREG Peak Calling:",
             mode: "show",
             colorpositive:"#B30086",
             colornegative:"#0000e5",
             backgroundcolor:"#ffffe5",
             height:40,
-            fixedscale:{min:0, max:0.6},
+            fixedscale:{min:0.2, max:1.0},
         },'. "\n";
 
-        $content = $content . '{
-            type:"bigwig",
-            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
-            name: "imputed DNase-I signal:",
-            #fixedscale:{min:0,max:20},
-            summarymethod:"max",
-            colorpositive:"#00B306",
-            backgroundcolor:"#ffffe5",
-            height:100,
-            mode: "show",
-        },'. "\n";
 
-        $content = $content . '{
-            type:"bedgraph",
-            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.HD.relaxed.bed.gz').'",
-            name: "dREG.HD relaxed peaks:",
-            mode: "show",
-            colorpositive:"#0000e5/#B30086",
-            backgroundcolor:"#ffffe5",
-            height:40,
-            fixedscale:{min:0, max:1},
-        },'. "\n";
+        #$content = $content . '{
+        #    type:"bigwig",
+        #    url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.HD.imputedDnase.bw').'",
+        #    name: "imputed DNase-I signal:",
+        #    #fixedscale:{min:0,max:20},
+        #    summarymethod:"max",
+        #    colorpositive:"#00B306",
+        #    backgroundcolor:"#ffffe5",
+        #    height:100,
+        #    mode: "show",
+        #},'. "\n";
 
-        $content = $content . '{
-            type:"bedgraph",
-            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.HD.stringent.bed.gz').'",
-            name: "dREG.HD stringent peaks:",
-            mode: "show",
-            colorpositive:"#0000e5/#B30086",
-            backgroundcolor:"#ffffe5",
-            height:40,
-            fixedscale:{min:0, max:1},
-        },'. "\n";
+        #$content = $content . '{
+        #    type:"bedgraph",
+        #    url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.HD.relaxed.bed.gz').'",
+        #    name: "dREG.HD relaxed peaks:",
+        #    mode: "show",
+        #    colorpositive:"#0000e5/#B30086",
+        #    backgroundcolor:"#ffffe5",
+        #    height:40,
+        #    fixedscale:{min:0, max:1},
+        #},'. "\n";
+
+        #$content = $content . '{
+        #    type:"bedgraph",
+        #    url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.HD.stringent.bed.gz').'",
+        #    name: "dREG.HD stringent peaks:",
+        #    mode: "show",
+        #    colorpositive:"#0000e5/#B30086",
+        #    backgroundcolor:"#ffffe5",
+        #    height:40,
+        #    fixedscale:{min:0, max:1},
+        #},'. "\n";
 
         $content = $content . ']';
         return Response::make($content, 200)

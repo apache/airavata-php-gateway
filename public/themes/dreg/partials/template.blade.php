@@ -5,6 +5,9 @@
 	<p class="text-center" style="color:#cccccc;">
 	Find the location of enhancers and promoters using PRO-seq, GRO-seq, and ChRO-seq data.<br/>
 	</p>
+	<p class="text-center" style="color:#444444;">
+The gateway status and updates are <A target=_blank href="https://github.com/Danko-Lab/dREG/blob/master/gateway-update.md"><B>here!</b></A>
+</p>
 	<hr/>
 
 	<div class="col-md-5"  style="margin-left: 5%">

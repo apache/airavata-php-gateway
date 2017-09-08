@@ -115,26 +115,18 @@ dREG run generates a compressed file including the dREG and dREG.HD results as f
                     <th>Description</th>
               </tr>
               <tr>
-                    <td>out.dREG.pred.gz</td>
+                    <td>out.dREG.infp.bed.gz</td>
                     <td>Informative positions with the scores predicted by the dREG model</td>
               </tr>
               <tr>
-                    <td>out.dREG.peak.gz</td>
-                    <td>dREG peaks called using the threshold 0.8 </td>
+                    <td>out.dREG.peak.full.bed.gz</td>
+                    <td>dREG peaks calling results with score, probability and center position information. </td>
               </tr>
               <tr>
-                    <td>out.dREG.HD.imputedDnase.bw</td>
-                    <td>The imputed DNase-I signal called by dREG.HD.</td>
+                    <td>out.dREG.peak.score.bed.gz</td>
+                    <td>dREG peaks calling results only with score.</td>
               </tr>
-              <tr>
-                    <td>out.dREG.HD.relaxed.bed</td>
-                    <td>dREG.HD peaks called under relaxed condition (FDR=16%)</td>
-              </tr>
-              <tr>
-                    <td>out.dREG.HD.stringent.bed</td>
-                    <td>dREG.HD peaks called under stringent condition (FDR=10%)</td>
-              </tr>
-        </table>
+            </table>
 
         </div>
       </div>
