@@ -22,27 +22,29 @@
                 </thead>
                 <tbody>
                     @foreach ($auto_provisioned_accounts as $auto_provisioned_account)
-                        <td>
-                            @if ($auto_provisioned_account["errorMessage"] != null)
-                                <span class="glyphicon glyphicon-warning-sign" style="color: red;"></span> FAILED
-                                <p>
-                                    <small>See <strong>Error Message</strong> for more information and contact Gateway Admin for help.</small>
-                                </p>
-                            @elseif ($auto_provisioned_account["accountExists"] === false)
-                                <span class="glyphicon glyphicon-user" style="color: red;"></span> ACCOUNT MISSING
-                                <p>
-                                    <small>See <strong>Additional Info</strong> for more information on how to create your account on {{{ $auto_provisioned_account["hostname"]}}}.</small>
-                                </p>
-                            @elseif ($auto_provisioned_account["userComputeResourcePreference"] != null)
-                                <span class="glyphicon glyphicon-ok" style="color: green;"></span> OK
-                            @else
-                                <span class="glyphicon glyphicon-question-sign" style="color: grey;"></span> UNKNOWN
-                            @endif
-                        </td>
-                        <td>{{{ $auto_provisioned_account["hostname"] }}}</td>
-                        {{-- Not escaping HTML to allow Gateway Admin to put HTML into additionalInfo field --}}
-                        <td>{{ $auto_provisioned_account["additionalInfo"] }}</td>
-                        <td>{{{ $auto_provisioned_account["errorMessage"] }}}</td>
+                        <tr>
+                            <td>
+                                @if ($auto_provisioned_account["errorMessage"] != null)
+                                    <span class="glyphicon glyphicon-warning-sign" style="color: red;"></span> FAILED
+                                    <p>
+                                        <small>See <strong>Error Message</strong> for more information and contact Gateway Admin for help.</small>
+                                    </p>
+                                @elseif ($auto_provisioned_account["accountExists"] === false)
+                                    <span class="glyphicon glyphicon-user" style="color: red;"></span> ACCOUNT MISSING
+                                    <p>
+                                        <small>See <strong>Additional Info</strong> for more information on how to create your account on {{{ $auto_provisioned_account["hostname"]}}}.</small>
+                                    </p>
+                                @elseif ($auto_provisioned_account["userComputeResourcePreference"] != null)
+                                    <span class="glyphicon glyphicon-ok" style="color: green;"></span> OK
+                                @else
+                                    <span class="glyphicon glyphicon-question-sign" style="color: grey;"></span> UNKNOWN
+                                @endif
+                            </td>
+                            <td>{{{ $auto_provisioned_account["hostname"] }}}</td>
+                            {{-- Not escaping HTML to allow Gateway Admin to put HTML into additionalInfo field --}}
+                            <td>{{ $auto_provisioned_account["additionalInfo"] }}</td>
+                            <td>{{{ $auto_provisioned_account["errorMessage"] }}}</td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
