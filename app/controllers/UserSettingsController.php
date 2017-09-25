@@ -102,6 +102,12 @@ class UserSettingsController extends BaseController
     public function getComputeResources(){
 
         $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
+        $gatewayResourceProfile = CRUtilities::getGatewayResourceProfile();
+        $computeResourcePreferences = $gatewayResourceProfile->computeResourcePreferences;
+        $computeResourcePreferencesById = array();
+        foreach ($computeResourcePreferences as $computeResourcePreference) {
+            $computeResourcePreferencesById[$computeResourcePreference->computeResourceId] = $computeResourcePreference;
+        }
 
         $allCRs = CRUtilities::getAllCRObjects();
         foreach( $allCRs as $index => $crObject)
@@ -111,6 +117,12 @@ class UserSettingsController extends BaseController
         // Add crDetails to each UserComputeResourcePreference
         foreach ($userResourceProfile->userComputeResourcePreferences as $index => $userCompResPref) {
             $userCompResPref->crDetails = $allCRsById[$userCompResPref->computeResourceId];
+            // Disallow editing a UserComputeResourcePreference that was automatically setup by an sshAccountProvisioner
+            $userCompResPref->editable = true;
+            if (array_key_exists($userCompResPref->computeResourceId, $computeResourcePreferencesById)) {
+                $computeResourcePreference = $computeResourcePreferencesById[$userCompResPref->computeResourceId];
+                $userCompResPref->editable = $computeResourcePreference->sshAccountProvisioner == null;
+            }
             // To figure out the unselectedCRs, remove this compute resource from allCRsById
             unset($allCRsById[$userCompResPref->computeResourceId]);
         }
