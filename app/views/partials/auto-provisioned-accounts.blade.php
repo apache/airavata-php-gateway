@@ -29,12 +29,12 @@
                                     <p>
                                         <small>See <strong>Error Message</strong> for more information and contact Gateway Admin for help.</small>
                                     </p>
-                                @elseif ($auto_provisioned_account["accountExists"] === false)
+                                @elseif ($auto_provisioned_account["accountIsMissing"] === true)
                                     <span class="glyphicon glyphicon-user" style="color: red;"></span> ACCOUNT MISSING
                                     <p>
                                         <small>See <strong>Additional Info</strong> for more information on how to create your account on {{{ $auto_provisioned_account["hostname"]}}}.</small>
                                     </p>
-                                @elseif ($auto_provisioned_account["userComputeResourcePreference"] != null)
+                                @elseif ($auto_provisioned_account["userComputeResourcePreference"] != null && $auto_provisioned_account["userComputeResourcePreference"]->validated)
                                     <span class="glyphicon glyphicon-ok" style="color: green;"></span> OK
                                 @else
                                     <span class="glyphicon glyphicon-question-sign" style="color: grey;"></span> UNKNOWN

@@ -295,7 +295,7 @@ class AccountController extends BaseController
         }
 
         $auto_provisioned_accounts = URPUtilities::setup_auto_provisioned_accounts();
-        Log::debug("auto_provisioned_accounts", array($auto_provisioned_accounts));
+        // Log::debug("auto_provisioned_accounts", array($auto_provisioned_accounts));
 
         if(Session::has("admin") || Session::has("admin-read-only") || Session::has("gateway-provider")){
             return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
