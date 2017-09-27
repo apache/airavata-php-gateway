@@ -691,7 +691,7 @@ class ExperimentUtilities
             if ($experiment->userConfigurationData->useUserCRPref){
                 // Check if this user has a user CR preference for the compute
                 // resource, if not we want to switch this flag to false
-                $userComputeResourcePreferences = URPUtilities::get_all_validated_user_compute_resource_prefs();
+                $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
                 $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
                 $experiment->userConfigurationData->useUserCRPref = $userHasComputeResourcePreference;
             }
@@ -1243,14 +1243,36 @@ class ExperimentUtilities
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
                 if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId, ResourceType::EXPERIMENT)) {
                     $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
+                    $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
+
+                    foreach( $jobDetails as $index => $jobDetail){
+                        if(isset($jobDetail->jobStatuses)){
+                            $jobDetails[ $index]->jobStatuses[0]->jobStateName = JobState::$__names[$jobDetail->jobStatuses[0]->jobState];
+                        }else {
+                            $jobDetails[ $index]->jobStatuses = [new stdClass()];
+                            $jobDetails[ $index]->jobStatuses[0]->jobStateName = null;
+                        }
+                    }
+                    $expValue["jobDetails"] = $jobDetails
                     $expContainer[$expNum]['experiment'] = $experiment;
                     if ($expValue["experimentStatusString"] == "FAILED")
                         $expValue["editable"] = false;
                     $expContainer[$expNum]['expValue'] = $expValue;
                     $expNum++;
                 }
-            }else{
+            }else {
                 $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
+                $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
+
+                    foreach( $jobDetails as $index => $jobDetail){
+                        if(isset($jobDetail->jobStatuses)){
+                            $jobDetails[ $index]->jobStatuses[0]->jobStateName = JobState::$__names[$jobDetail->jobStatuses[0]->jobState];
+                        }else {
+                            $jobDetails[ $index]->jobStatuses = [new stdClass()];
+                            $jobDetails[ $index]->jobStatuses[0]->jobStateName = null;
+                        }
+                    }
+                $expValue["jobDetails"] = $jobDetails
                 $expContainer[$expNum]['experiment'] = $experiment;
                 if ($expValue["experimentStatusString"] == "FAILED")
                     $expValue["editable"] = false;
