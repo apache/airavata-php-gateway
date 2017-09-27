@@ -74,7 +74,7 @@ return array(
                 // http://www.keycloak.org/docs/2.5/server_admin/topics/identity-broker/suggested.html
                 'oauth-authorize-url-extra-params' => 'kc_idp_hint=oidc',
                 // Optional
-                'logo' => '/assets/path_to_image.png'
+                'logo': '/assets/path_to_image.png'
             ],
         ],
 
