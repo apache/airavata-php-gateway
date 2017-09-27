@@ -298,11 +298,19 @@ class AccountController extends BaseController
         // Log::debug("auto_provisioned_accounts", array($auto_provisioned_accounts));
 
         if(Session::has("admin") || Session::has("admin-read-only") || Session::has("gateway-provider")){
-            return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
-                . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime)->with("auto_provisioned_accounts", $auto_provisioned_accounts);
+            $response = Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
+                . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
+            if (!empty($auto_provisioned_accounts)) {
+                $response = $response->with("auto_provisioned_accounts", $auto_provisioned_accounts);
+            }
+            return $response;
         }else{
-            return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken ."&username=".$username
-                . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime)->with("auto_provisioned_accounts", $auto_provisioned_accounts);
+            $response = Redirect::to("account/dashboard". "?status=ok&code=".$accessToken ."&username=".$username
+                . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
+            if (!empty($auto_provisioned_accounts)) {
+                $response = $response->with("auto_provisioned_accounts", $auto_provisioned_accounts);
+            }
+            return $response;
         }
     }
 
