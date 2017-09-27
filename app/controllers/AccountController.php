@@ -180,6 +180,13 @@ class AccountController extends BaseController
 
     }
 
+    public function apiLoginSubmit() {
+        $username = strtolower(Input::get("username"));
+        $password = Input::get("password");
+        $response = Keycloak::authenticate($username, $password);
+        return Response::json($response);
+    }
+
     public function oauthCallback()
     {
         if (!isset($_GET["code"])) {
