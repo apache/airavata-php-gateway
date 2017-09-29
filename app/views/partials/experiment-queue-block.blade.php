@@ -123,6 +123,7 @@
 </div>
 
 <script>
+var experimentQueueBlockInit = function() {
     //To work with experiment edit (Not Ajax)
     $( document ).ready(function() {
         var selectedQueue = $("#select-queue").val();
@@ -178,15 +179,13 @@
         });
     });
     
-    //I commented this as I see this as repeated code!
-
-    //To work work with experiment create (Ajax)
-    // var selectedQueue = $("#select-queue").val();
-    // getQueueData(selectedQueue);
-    // $("#select-queue").change(function () {
-    //     var selectedQueue = $(this).val();
-    //     getQueueData(selectedQueue);
-    // });
+    // To work work with experiment create (Ajax)
+    var selectedQueue = $("#select-queue").val();
+    getQueueData(selectedQueue);
+    $("#select-queue").change(function () {
+        var selectedQueue = $(this).val();
+        getQueueData(selectedQueue);
+    });
 
     $("#enable-auto-scheduling").change(function () {
         var selectedQueue = $("#select-queue").val();
@@ -198,10 +197,10 @@
         var queueDefaults = $.parseJSON($("#queue-defaults-array").val());
         var appDefaults = $.parseJSON($("#app-deployment-defaults-array").val());
         //getting the html values we set to hidden fields above!
-        var nodeCount = parseInt($("#passed-nodeCount").val());
-        var cpuCount = parseInt($('#passed-cpuCount').val());
-        var wallTime = parseInt($('#passed-wallTime').val());
-        var physicalMemory = parseInt($('#passed-physicalmem').val());
+        var passedNodeCount = parseInt($("#passed-nodeCount").val());
+        var passedCpuCount = parseInt($('#passed-cpuCount').val());
+        var passedWallTime = parseInt($('#passed-wallTime').val());
+        var passedPhysicalMemory = parseInt($('#passed-physicalmem').val());
         var veryLargeValue = 9999999;
 
         console.log(queues);
@@ -229,8 +228,8 @@
                     $("#node-count").val(queueDefaults['nodeCount']);
                 }
                 // load previously set values on page load.
-                if(nodeCount!=0){
-                    $("#node-count").val(nodeCount);
+                if(passedNodeCount!=0){
+                    $("#node-count").val(passedNodeCount);
                 }
 
                 //core-count
@@ -255,8 +254,8 @@
                 }
 
                 // load previously set values on page load.
-                if(cpuCount!=0){
-                    $("#cpu-count").val(cpuCount);
+                if(passedCpuCount!=0){
+                    $("#cpu-count").val(passedCpuCount);
                 }
 
 
@@ -280,8 +279,8 @@
                 }
 
                 // load previously set values on page load.
-                if(wallTime!=0){
-                    $("#wall-time").val(wallTime);
+                if(passedWallTime!=0){
+                    $("#wall-time").val(passedWallTime);
                 }
 
                 //memory-count
@@ -304,8 +303,8 @@
                 }
 
                 // load previously set values on page load.
-                if(physicalMemory!=0){
-                    $("#memory-count").val(physicalMemory);
+                if(passedPhysicalMemory!=0){
+                    $("#memory-count").val(passedPhysicalMemory);
                 }
 
 
@@ -336,4 +335,12 @@
         }
         $(".queue-view").removeClass("hide");
     }
+}
+
+// On initial load jQuery isn't loaded until later so wait until DOMContentLoaded
+if (typeof $ === 'undefined') {
+    document.addEventListener("DOMContentLoaded", experimentQueueBlockInit);
+} else {
+    experimentQueueBlockInit();
+}
 </script>
