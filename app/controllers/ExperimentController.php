@@ -55,7 +55,6 @@ class ExperimentController extends BaseController
                 "wallTimeLimit" => $wallTimeLimit
             );
 
-
             $experimentInputs = array(
                 "disabled" => ' disabled',
                 "experimentName" => $_POST['experiment-name'],
@@ -94,7 +93,17 @@ class ExperimentController extends BaseController
 
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
             try {
-                $expId = ExperimentUtilities::create_experiment();
+                $computeResourceId = Input::get("crId");
+                //Validate entered queue details
+                $queueValues = array("queueName" => Input::get("queue-name"),
+                    "nodeCount" => Input::get("nodeCount"),
+                    "cpuCount" => Input::get("cpuCount"),
+                    "wallTimeLimit" => Input::get("wallTimeLimit")
+                );
+                if($this->validateQueueData($computeResourceId, $queueValues))
+                    $expId = ExperimentUtilities::create_experiment();
+                else
+                    Redirect::to("experiment/create")->with("error-message", "Validate the number f nodes, CPUs and the wall time limit");
             } catch (Exception $ex) {
                 Log::error("Failed to create experiment!");
                 Log::error($ex);
@@ -396,7 +405,17 @@ class ExperimentController extends BaseController
     {
         $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
         try {
-            $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
+            $computeResourceId = Input::get("crId");
+            //Validate entered queue details
+            $queueValues = array("queueName" => Input::get("queue-name"),
+                "nodeCount" => Input::get("nodeCount"),
+                "cpuCount" => Input::get("cpuCount"),
+                "wallTimeLimit" => Input::get("wallTimeLimit")
+            );
+            if($this->validateQueueData($computeResourceId, $queueValues))
+                $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
+            else
+                Redirect::to("experiment/create")->with("error-message", "Validate the number of nodes, CPUs and the wall time limit");
         } catch (Exception $ex) {
             $errMessage = "Failed to update experiment: " . $ex->getMessage();
             Log::error($errMessage);
@@ -589,6 +608,21 @@ class ExperimentController extends BaseController
             $allowedFileSize = $serverLimit;
         }
         return $allowedFileSize;
+    }
+
+    private function validateQueueData($computeResourceId, $queue)
+    {
+        $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
+        $queueName = $queue['queueName'];
+
+        foreach($queues as $aQueue){
+            if($aQueue->queueName == $queueName) {
+                if($queue['validateQueueData'] <= $aQueue->maxNodes && $queue['maxCPUCount'] <= $aQueue->maxProcessors && $queue['wallTimeLimit'] <= $aQueue->maxRunTime)
+                    return true;
+            }
+        }
+
+        return false;
     }
 }
 
