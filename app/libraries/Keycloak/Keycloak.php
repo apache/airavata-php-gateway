@@ -75,7 +75,9 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
 
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
@@ -127,7 +129,9 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
 
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
@@ -163,7 +167,9 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
             "Authorization: Bearer " . $token
         ));
@@ -207,7 +213,9 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
 
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
@@ -434,7 +442,9 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
 
         $result = curl_exec($r);
         if ($result == false) {
