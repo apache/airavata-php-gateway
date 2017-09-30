@@ -30,6 +30,7 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
             "Authorization: Bearer " . $access_token
         ));
