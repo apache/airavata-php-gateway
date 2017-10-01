@@ -1242,14 +1242,14 @@ class ExperimentUtilities
         foreach ($experiments as $experiment) {
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
                 if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId, ResourceType::EXPERIMENT)) {
-                    $expValue = ExperimentUtilities::get_experiment_values($experiment, true);                 
+                    $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
                     $expContainer[$expNum]['experiment'] = $experiment;
                     if ($expValue["experimentStatusString"] == "FAILED")
                         $expValue["editable"] = false;
                     $expContainer[$expNum]['expValue'] = $expValue;
                     $expNum++;
                 }
-            }else {
+            }else{
                 $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
                 $expContainer[$expNum]['experiment'] = $experiment;
                 if ($expValue["experimentStatusString"] == "FAILED")
