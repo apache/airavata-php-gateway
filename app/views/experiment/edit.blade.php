@@ -14,7 +14,6 @@
 //$appResources = array('Echo' => $echoResources, 'WRF' => $wrfResources);
 ?>
 
-
 <div class="container">
 
     @if (Session::has("error-message"))
