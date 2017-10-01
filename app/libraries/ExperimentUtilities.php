@@ -1242,18 +1242,7 @@ class ExperimentUtilities
         foreach ($experiments as $experiment) {
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
                 if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId, ResourceType::EXPERIMENT)) {
-                    $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
-                    $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
-
-                    foreach( $jobDetails as $index => $jobDetail){
-                        if(isset($jobDetail->jobStatuses)){
-                            $jobDetails[ $index]->jobStatuses[0]->jobStateName = JobState::$__names[$jobDetail->jobStatuses[0]->jobState];
-                        }else {
-                            $jobDetails[ $index]->jobStatuses = [new stdClass()];
-                            $jobDetails[ $index]->jobStatuses[0]->jobStateName = null;
-                        }
-                    }
-                    $expValue["jobDetails"] = $jobDetails
+                    $expValue = ExperimentUtilities::get_experiment_values($experiment, true);                 
                     $expContainer[$expNum]['experiment'] = $experiment;
                     if ($expValue["experimentStatusString"] == "FAILED")
                         $expValue["editable"] = false;
@@ -1262,17 +1251,6 @@ class ExperimentUtilities
                 }
             }else {
                 $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
-                $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
-
-                    foreach( $jobDetails as $index => $jobDetail){
-                        if(isset($jobDetail->jobStatuses)){
-                            $jobDetails[ $index]->jobStatuses[0]->jobStateName = JobState::$__names[$jobDetail->jobStatuses[0]->jobState];
-                        }else {
-                            $jobDetails[ $index]->jobStatuses = [new stdClass()];
-                            $jobDetails[ $index]->jobStatuses[0]->jobStateName = null;
-                        }
-                    }
-                $expValue["jobDetails"] = $jobDetails
                 $expContainer[$expNum]['experiment'] = $experiment;
                 if ($expValue["experimentStatusString"] == "FAILED")
                     $expValue["editable"] = false;
