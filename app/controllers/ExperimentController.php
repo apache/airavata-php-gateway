@@ -55,7 +55,6 @@ class ExperimentController extends BaseController
                 "wallTimeLimit" => $wallTimeLimit
             );
 
-
             $experimentInputs = array(
                 "disabled" => ' disabled',
                 "experimentName" => $_POST['experiment-name'],
@@ -94,7 +93,17 @@ class ExperimentController extends BaseController
 
         } else if (isset($_POST['save']) || isset($_POST['launch'])) {
             try {
-                $expId = ExperimentUtilities::create_experiment();
+                $computeResourceId = Input::get("compute-resource");
+                //Validate entered queue details
+                $queueValues = array("queueName" => Input::get("queue-name"),
+                    "nodeCount" => Input::get("node-count"),
+                    "cpuCount" => Input::get("cpu-count"),
+                    "wallTimeLimit" => Input::get("walltime-count")
+                );
+                if($this->validateQueueData($computeResourceId, $queueValues))
+                    $expId = ExperimentUtilities::create_experiment();
+                else
+                    return Redirect::to("experiment/create")->with("error-message", "Validate the number of nodes, CPUs and the wall time limit");
             } catch (Exception $ex) {
                 Log::error("Failed to create experiment!");
                 Log::error($ex);
@@ -320,6 +329,7 @@ class ExperimentController extends BaseController
 
         $userComputeResourcePreferences = URPUtilities::get_all_validated_user_compute_resource_prefs();
         $userHasComputeResourcePreference = array_key_exists($expVal['scheduling']->resourceHostId, $userComputeResourcePreferences);
+        $batchQueues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
 
         $experimentInputs = array(
             "disabled" => ' ',
@@ -338,7 +348,8 @@ class ExperimentController extends BaseController
             'project' => $experiment->projectId,
             'expVal' => $expVal,
             'cloning' => true,
-            'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"]
+            'advancedOptions' => Config::get('pga_config.airavata')["advanced-experiment-options"],
+            'batchQueues' => $batchQueues
         );
 
         if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
@@ -396,7 +407,19 @@ class ExperimentController extends BaseController
     {
         $experiment = ExperimentUtilities::get_experiment(Input::get('expId')); // update local experiment variable
         try {
-            $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
+            $computeResourceId = Input::get("compute-resource");
+            //Validate entered queue details
+            $queueValues = array("queueName" => Input::get("queue-name"),
+                "nodeCount" => Input::get("node-count"),
+                "cpuCount" => Input::get("cpu-count"),
+                "wallTimeLimit" => Input::get("walltime-count")
+            );
+            if($this->validateQueueData($computeResourceId, $queueValues)) {
+                $updatedExperiment = ExperimentUtilities::apply_changes_to_experiment($experiment, Input::all());
+            } else {
+                $errMessage = "Validate the number of nodes, CPUs and the wall time limit";
+                return Redirect::to("experiment/edit?expId=" . urlencode(Input::get('expId')))->with("error-message", $errMessage);
+            }
         } catch (Exception $ex) {
             $errMessage = "Failed to update experiment: " . $ex->getMessage();
             Log::error($errMessage);
@@ -589,6 +612,21 @@ class ExperimentController extends BaseController
             $allowedFileSize = $serverLimit;
         }
         return $allowedFileSize;
+    }
+
+    private function validateQueueData($computeResourceId, $queue)
+    {
+        $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
+        $queueName = $queue['queueName'];
+
+        foreach($queues as $aQueue){
+            if($aQueue->queueName == $queueName) {
+                if($queue['nodeCount'] <= $aQueue->maxNodes && $queue['cpuCount'] <= $aQueue->maxProcessors && $queue['wallTimeLimit'] <= $aQueue->maxRunTime)
+                    return true;
+            }
+        }
+
+        return false;
     }
 }
 

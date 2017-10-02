@@ -1422,7 +1422,25 @@ class ExperimentUtilities
     public static function getQueueDatafromResourceId($crId)
     {
         $resourceObject = Airavata::getComputeResource(Session::get('authz-token'), $crId);
-        return $resourceObject->batchQueues;
+        $queues =  $resourceObject->batchQueues;
+
+        //Defining maximum allowed value for queue resources
+        $maxNodeCount = Config::get('pga_config.airavata.max-node-count', null);
+        $maxCPUCount = Config::get('pga_config.airavata.max-total-cpu-count', null);
+        $maxWallTimeLimit = Config::get('pga_config.airavata.max-wall-time-limit', null);
+
+        foreach($queues as $aQueue){
+            if($maxNodeCount && $aQueue->maxNodes > $maxNodeCount){
+                $aQueue->maxNodes = $maxNodeCount;
+            }
+            if($maxCPUCount && $aQueue->maxProcessors > $maxCPUCount){
+                $aQueue->maxProcessors = $maxCPUCount;
+            }
+            if($maxWallTimeLimit && $aQueue->maxRunTime > $maxWallTimeLimit){
+                $aQueue->maxRunTime = $maxWallTimeLimit;
+            }
+        }
+        return $queues;
     }
 
     /**

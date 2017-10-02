@@ -180,6 +180,21 @@ return array(
         'wall-time-limit' => '30',
 
         /**
+         * Max node count
+         */
+        'max-node-count' => '4',
+
+        /**
+         * Max total core count
+         */
+        'max-total-cpu-count' => '96',
+
+        /**
+         * Max wall time limit
+         */
+        'max-wall-time-limit' => '120',
+
+        /**
          * Enable app-catalog cache
          */
         'enable-app-catalog-cache' => true,
