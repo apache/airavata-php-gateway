@@ -1425,18 +1425,18 @@ class ExperimentUtilities
         $queues =  $resourceObject->batchQueues;
 
         //Defining maximum allowed value for queue resources
-        $maxNodeCount = Config::get('pga_config.airavata')["max-node-count"];
-        $maxCPUCount = Config::get('pga_config.airavata')["max-total-cpu-count"];
-        $maxWallTimeLimit = Config::get('pga_config.airavata')["max-wall-time-limit"];
+        $maxNodeCount = Config::get('pga_config.airavata.max-node-count', null);
+        $maxCPUCount = Config::get('pga_config.airavata.max-total-cpu-count', null);
+        $maxWallTimeLimit = Config::get('pga_config.airavata.max-wall-time-limit', null);
 
         foreach($queues as $aQueue){
-            if($aQueue->maxNodes > $maxNodeCount){
+            if($maxNodeCount && $aQueue->maxNodes > $maxNodeCount){
                 $aQueue->maxNodes = $maxNodeCount;
             }
-            if($aQueue->maxProcessors > $maxCPUCount){
+            if($maxCPUCount && $aQueue->maxProcessors > $maxCPUCount){
                 $aQueue->maxProcessors = $maxCPUCount;
             }
-            if($aQueue->maxRunTime > $maxWallTimeLimit){
+            if($maxWallTimeLimit && $aQueue->maxRunTime > $maxWallTimeLimit){
                 $aQueue->maxRunTime = $maxWallTimeLimit;
             }
         }
