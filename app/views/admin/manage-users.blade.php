@@ -54,7 +54,11 @@
 
                 <table class="table table-striped table-condensed">
                     <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
                         <th>Username</th>
+                        <th>Email</th>
+
                         <th>
                             Role :
                             <select onchange="location = this.options[this.selectedIndex].value;">
@@ -77,10 +81,13 @@
                     </tr>
                     @foreach( (array)$users as $user)
                     <tr class="user-row">
-                        <td>{{ $user }}</td>
+                        <td>{{ $user->firstName }}</td>
+                        <td>{{ $user->lastName }}</td>
+                        <td>{{ $user->userName }}</td>
+                        <td>{{ $user->email }}</td>
                         <td>
                             <button class="button btn btn-default check-roles" type="button"
-                                    data-username="{{$user}}">Check All Roles
+                                    data-username="{{$user->userName}}">Check All Roles
                             </button>
                             <div class="user-roles"></div>
                         </td>
