@@ -173,6 +173,29 @@ class AdminController extends BaseController {
 
 	public function updateGateway(){
 
+        $rules = array(
+            "password" => "min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
+            "confirm_password" => "same:password",
+            "email" => "email",
+        );
+        $messages = array(
+            'password.regex' => 'Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$&*',
+        );
+        $checkValidation = array();
+        $checkValidation["password"] = Input::get("gatewayAdminPassword");
+        $checkValidation["confirm_password"] = Input::get("gatewayAdminPasswordConfirm");
+        $checkValidation["email"] = Input::get("gatewayAdminEmail");
+
+        $validator = Validator::make( $checkValidation, $rules, $messages);
+        if ($validator->fails()) {
+            if(Request::ajax()){
+                return json_encode(array("errors" => true, "validationMessages" => $validator->messages()));
+            } else {
+                Session::put("message", "An error has occurred while updating the Gateway: " + $validator->messages());
+                return Redirect::back();
+            }
+        }
+
 	    $gateway = TenantProfileService::getGateway( Session::get('authz-token'), Input::get("internal_gateway_id"));
 		$returnVal = AdminUtilities::update_gateway( Input::get("internal_gateway_id"), Input::except("oauthClientId","oauthClientSecret"));
 		if( Request::ajax()){
@@ -184,10 +207,10 @@ class AdminController extends BaseController {
                     Session::put("successMessages", "Tenant has been created successfully!");
                 else
                     Session::put("successMessages", "Gateway has been updated successfully!");
-                return json_encode(AdminUtilities::get_gateway(Input::get("internal_gateway_id")));
+                return json_encode(array("errors" => false, "gateway" => AdminUtilities::get_gateway(Input::get("internal_gateway_id"))));
             }
 			else {
-                return $returnVal; // anything other than positive update result
+                return json_encode(array("errors" => true)); // anything other than positive update result
             }
 		}
 		else{

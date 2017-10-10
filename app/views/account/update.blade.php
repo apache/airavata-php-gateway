@@ -65,36 +65,6 @@
                         </div>
 
                         <div class="form-group required">
-                            <label class="control-label">Gateway Admin Username</label>
-                            <input type="text" name="admin-username" value="{{ $gatewayData["adminUsername"] }}" class="form-control" required="required" />
-                        </div>
-
-                        <div class="form-group required">
-                            <label class="control-label">Gateway Admin Password</label>
-                            <input type="password" id="password" name="admin-password" class="form-control" required="required" title="" type="password" data-container="body" data-toggle="popover" data-placement="left" data-content="Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$*"/>
-                        </div>
-
-                        <div class="form-group required">
-                            <label class="control-label">Admin Password Confirmation</label>
-                            <input type="password" name="admin-password-confirm" class="form-control" required="required"/>
-                        </div>
-
-                        <div class="form-group required">
-                            <label class="control-label">Admin First Name</label>
-                            <input type="text" name="admin-firstname" class="form-control" required="required" value="{{ $gatewayData["adminFirstName"] }}"/>
-                        </div>
-
-                        <div class="form-group required">
-                            <label class="control-label">Admin Last Name</label>
-                            <input type="text" name="admin-lastname" class="form-control" required="required" value="{{ $gatewayData["adminLastName"] }}"/>
-                        </div>
-
-                        <div class="form-group required">
-                            <label class="control-label">Admin Email ID</label>
-                            <input type="text" name="admin-email" class="form-control" required="required" value="{{ $gatewayData["adminEmail"] }}"/>
-                        </div>
-
-                        <div class="form-group required">
                             <label class="control-label">Project Details</label>
                             <textarea type="text" name="project-details" maxlength="250" id="project-details" class="form-control" required="required"  data-container="body" data-toggle="popover" data-placement="left" data-content="This information will help us to understand and identify your gateway requirements, such as local or remote resources, user management, field of science and communities supported, applications and interfaces, license handling, allocation management, data management, etc... It will help us in serving you and providing you with the best option for you and your research community.">{{ $gatewayData["projectDetails"] }}</textarea>
                         </div>
@@ -117,10 +87,6 @@
 @section('scripts')
 @parent
 <script>
-
-    $("#password").popover({
-    'trigger':'focus'
-    });
 
     $("#gateway-url").popover({
     'trigger':'focus'
