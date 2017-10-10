@@ -181,11 +181,10 @@ class AdminController extends BaseController {
         $messages = array(
             'password.regex' => 'Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$&*',
         );
-		$inputs = Input::all();
         $checkValidation = array();
-        $checkValidation["password"] = $inputs["gatewayAdminPassword"];
-        $checkValidation["confirm_password"] = $inputs["gatewayAdminPasswordConfirm"];
-        $checkValidation["email"] = $inputs["gatewayAdminEmail"];
+        $checkValidation["password"] = Input::get("gatewayAdminPassword");
+        $checkValidation["confirm_password"] = Input::get("gatewayAdminPasswordConfirm");
+        $checkValidation["email"] = Input::get("gatewayAdminEmail");
 
         $validator = Validator::make( $checkValidation, $rules, $messages);
         if ($validator->fails()) {
