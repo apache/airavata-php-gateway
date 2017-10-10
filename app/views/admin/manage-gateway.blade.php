@@ -276,7 +276,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label">Gateway Admin Password</label>
-                        <input type="password" id="password" name="gatewayAdminPassword" class="form-control identityServerPasswordToken" title="" type="password" data-container="body" data-toggle="popover" data-placement="left" data-content="Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$*"/>
+                        <input type="password" id="password" name="gatewayAdminPassword" class="form-control identityServerPasswordToken" title="" type="password" data-container="#approve-gateway" data-toggle="popover" data-placement="left" data-content="Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$*"/>
                     </div>
                     <div class="form-group">
                         <label class="control-label">Admin Password Confirmation</label>
