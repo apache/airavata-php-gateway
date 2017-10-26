@@ -75,7 +75,9 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
 
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
@@ -127,7 +129,9 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
 
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
@@ -163,7 +167,9 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
             "Authorization: Bearer " . $token
         ));
@@ -207,7 +213,9 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
 
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
@@ -251,7 +259,7 @@ class Keycloak {
         $users = $this->users->getUsers($this->realm);
         $usernames = [];
         foreach ($users as $user) {
-            $usernames[] = $user->username;
+            array_push($usernames, (object)["firstName"=>$user->firstName,"lastName"=>$user->lastName,"email"=>$user->email,"userName"=>$user->username]);
         }
         return $usernames;
     }
@@ -267,7 +275,7 @@ class Keycloak {
         $users = $this->users->searchUsers($this->realm, $phrase);
         $usernames = [];
         foreach ($users as $user) {
-            $usernames[] = $user->username;
+            array_push($usernames, (object)["firstName"=>$user->firstName,"lastName"=>$user->lastName,"email"=>$user->email,"userName"=>$user->username]);
         }
         return $usernames;
     }
@@ -434,7 +442,9 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
 
         $result = curl_exec($r);
         if ($result == false) {
@@ -447,3 +457,4 @@ class Keycloak {
         return $json;
     }
 }
+

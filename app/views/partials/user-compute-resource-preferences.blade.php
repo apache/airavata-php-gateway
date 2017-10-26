@@ -13,14 +13,15 @@
 
     <div class="col-md-9">
         <input type="text" name="loginUserName" class="form-control"
-               value="@if( isset( $preferences) ){{$preferences->loginUserName}}@endif"/>
+               value="@if( isset( $preferences) ){{$preferences->loginUserName}}@endif"
+               @if(isset($preferences) && !$preferences->editable) disabled @endif/>
     </div>
 </div>
 <div class="form-group">
     <label class="control-label col-md-3">Preferred Batch Queue</label>
 
     <div class="col-md-9">
-        <select name="preferredBatchQueue" class="form-control">
+        <select name="preferredBatchQueue" class="form-control" @if(isset($preferences) && !$preferences->editable) disabled @endif>
             <option value="">Select a Queue from list</option>
             @foreach( (array)$computeResource->batchQueues as $index => $queue)
             <option value="{{ $queue->queueName}}"
@@ -35,7 +36,8 @@
 
     <div class="col-md-9">
         <input type="text" name="scratchLocation" class="form-control"
-               value="@if( isset( $preferences) ){{$preferences->scratchLocation}}@endif"/>
+               value="@if( isset( $preferences) ){{$preferences->scratchLocation}}@endif"
+               @if(isset($preferences) && !$preferences->editable) disabled @endif/>
     </div>
 </div>
 
@@ -44,7 +46,8 @@
 
     <div class="col-md-9">
         <input type="text" name="allocationProjectNumber" class="form-control"
-               value="@if( isset( $preferences) ){{$preferences->allocationProjectNumber}}@endif"/>
+               value="@if( isset( $preferences) ){{$preferences->allocationProjectNumber}}@endif"
+               @if(isset($preferences) && !$preferences->editable) disabled @endif/>
     </div>
 </div>
 
@@ -52,7 +55,7 @@
     <label class="control-label col-md-3">Resource Specific SSH Key</label>
 
     <div class="col-md-9">
-        <select class="form-control" name="resourceSpecificCredentialStoreToken" >
+        <select class="form-control" name="resourceSpecificCredentialStoreToken" @if(isset($preferences) && !$preferences->editable) disabled @endif>
             <option value="" @if( isset( $preferences) && $preferences->resourceSpecificCredentialStoreToken == null) selected @endif>
                 No resource specific SSH key, just use the default one ({{{$defaultCredentialSummary->description}}})
             </option>
@@ -72,7 +75,8 @@
 
     <div class="col-md-9">
         <input type="text" name="qualityOfService" class="qualityOfService form-control"
-               value="@if( isset( $preferences) ){{$preferences->qualityOfService}}@endif" data-toggle="popover" data-placement="bottom" data-content="Format: <queue name1>=<qos1>,<queue name2>=<qos2>"/>
+               value="@if( isset( $preferences) ){{$preferences->qualityOfService}}@endif" data-toggle="popover" data-placement="bottom" data-content="Format: <queue name1>=<qos1>,<queue name2>=<qos2>"
+               @if(isset($preferences) && !$preferences->editable) disabled @endif/>
     </div>
 </div>
 
@@ -81,7 +85,8 @@
 
     <div class="col-md-9">
         <input type="text" name="reservation" class="form-control"
-               value="@if( isset( $preferences) ){{$preferences->reservation}}@endif"/>
+               value="@if( isset( $preferences) ){{$preferences->reservation}}@endif"
+               @if(isset($preferences) && !$preferences->editable) disabled @endif/>
     </div>
 </div>
 <?php
@@ -106,7 +111,8 @@ if( isset( $preferences) && $preferences->reservationEndTime != '') {
 
         <div class="input-group date datetimepicker1">
             <input type="text" name="reservationStartTime" class="form-control"
-                   value="{{$reservationStartTime}}"/>
+                   value="{{$reservationStartTime}}"
+                   @if(isset($preferences) && !$preferences->editable) disabled @endif/>
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>
@@ -118,7 +124,8 @@ if( isset( $preferences) && $preferences->reservationEndTime != '') {
 
         <div class="input-group date datetimepicker2">
             <input type="text" name="reservationEndTime" class="form-control"
-                   value="{{$reservationEndTime}}"/>
+                   value="{{$reservationEndTime}}"
+                   @if(isset($preferences) && !$preferences->editable) disabled @endif/>
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>
@@ -126,6 +133,7 @@ if( isset( $preferences) && $preferences->reservationEndTime != '') {
     </div>
 </div>
 
+@if(!isset($preferences) || $preferences->editable)
 <div class="row">
     <div class="form-group col-md-12 text-center">
         <input type="submit" class="btn btn-primary" value="Save"/>
@@ -138,5 +146,6 @@ if( isset( $preferences) && $preferences->reservationEndTime != '') {
         </button>
     </div>
 </div>
+@endif
 
 </div>

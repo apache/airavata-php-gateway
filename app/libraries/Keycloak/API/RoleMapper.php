@@ -30,6 +30,9 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
             "Authorization: Bearer " . $access_token
         ));
@@ -58,6 +61,9 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
 
         curl_setopt($r, CURLOPT_POST, true);
         $data = json_encode($role_representations);
@@ -91,6 +97,9 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
+        if($this->verify_peer){
+            curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
+        }
 
         curl_setopt($r, CURLOPT_CUSTOMREQUEST, "DELETE");
         curl_setopt($r, CURLOPT_POST, true);

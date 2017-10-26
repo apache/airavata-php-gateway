@@ -17,7 +17,7 @@ class UserSettingsController extends BaseController
         $userCredentialSummaries = URPUtilities::get_all_ssh_pub_keys_summary_for_user();
         $defaultCredentialToken = $userResourceProfile->credentialStoreToken;
         foreach ($userCredentialSummaries as $credentialSummary) {
-            $credentialSummary->canDelete = ($credentialSummary->token != $defaultCredentialToken);
+            $credentialSummary->canDelete = $this->canDeleteCredential($credentialSummary->token, $userResourceProfile);
         }
 
         return View::make("account/credential-store", array(
@@ -25,6 +25,26 @@ class UserSettingsController extends BaseController
             "credentialSummaries" => $userCredentialSummaries,
             "defaultCredentialToken" => $defaultCredentialToken
         ));
+    }
+
+    // Don't allow deleting credential if default credential or in use by a
+    // userComputeResourcePreference or a userStoragePreference
+    private function canDeleteCredential($token, $userResourceProfile) {
+        if ($token == $userResourceProfile->credentialStoreToken) {
+            return false;
+        } else {
+            foreach ($userResourceProfile->userComputeResourcePreferences as $userCompResPref) {
+                if ($userCompResPref->resourceSpecificCredentialStoreToken == $token) {
+                    return false;
+                }
+            }
+            foreach ($userResourceProfile->userStoragePreferences as $userStoragePreference) {
+                if ($userStoragePreference->resourceSpecificCredentialStoreToken == $token) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public function setDefaultCredential() {
@@ -82,6 +102,12 @@ class UserSettingsController extends BaseController
     public function getComputeResources(){
 
         $userResourceProfile = URPUtilities::get_or_create_user_resource_profile();
+        $gatewayResourceProfile = CRUtilities::getGatewayResourceProfile();
+        $computeResourcePreferences = $gatewayResourceProfile->computeResourcePreferences;
+        $computeResourcePreferencesById = array();
+        foreach ($computeResourcePreferences as $computeResourcePreference) {
+            $computeResourcePreferencesById[$computeResourcePreference->computeResourceId] = $computeResourcePreference;
+        }
 
         $allCRs = CRUtilities::getAllCRObjects();
         foreach( $allCRs as $index => $crObject)
@@ -91,6 +117,12 @@ class UserSettingsController extends BaseController
         // Add crDetails to each UserComputeResourcePreference
         foreach ($userResourceProfile->userComputeResourcePreferences as $index => $userCompResPref) {
             $userCompResPref->crDetails = $allCRsById[$userCompResPref->computeResourceId];
+            // Disallow editing a UserComputeResourcePreference that was automatically setup by an sshAccountProvisioner
+            $userCompResPref->editable = true;
+            if (array_key_exists($userCompResPref->computeResourceId, $computeResourcePreferencesById)) {
+                $computeResourcePreference = $computeResourcePreferencesById[$userCompResPref->computeResourceId];
+                $userCompResPref->editable = $computeResourcePreference->sshAccountProvisioner == null;
+            }
             // To figure out the unselectedCRs, remove this compute resource from allCRsById
             unset($allCRsById[$userCompResPref->computeResourceId]);
         }

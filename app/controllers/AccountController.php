@@ -180,6 +180,13 @@ class AccountController extends BaseController
 
     }
 
+    public function apiLoginSubmit() {
+        $username = strtolower(Input::get("username"));
+        $password = Input::get("password");
+        $response = Keycloak::authenticate($username, $password);
+        return Response::json($response);
+    }
+
     public function oauthCallback()
     {
         if (!isset($_GET["code"])) {
@@ -294,12 +301,25 @@ class AccountController extends BaseController
             umask($old_umask);
         }
 
+        // Must create the UserResourceProfile before we can add auto provisioned accounts to it
+        $user_resource_profile = URPUtilities::get_or_create_user_resource_profile();
+        $auto_provisioned_accounts = URPUtilities::setup_auto_provisioned_accounts();
+        // Log::debug("auto_provisioned_accounts", array($auto_provisioned_accounts));
+
         if(Session::has("admin") || Session::has("admin-read-only") || Session::has("gateway-provider")){
-            return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
+            $response = Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
                 . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
+            if (!empty($auto_provisioned_accounts)) {
+                $response = $response->with("auto_provisioned_accounts", $auto_provisioned_accounts);
+            }
+            return $response;
         }else{
-            return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken ."&username=".$username
+            $response = Redirect::to("account/dashboard". "?status=ok&code=".$accessToken ."&username=".$username
                 . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
+            if (!empty($auto_provisioned_accounts)) {
+                $response = $response->with("auto_provisioned_accounts", $auto_provisioned_accounts);
+            }
+            return $response;
         }
     }
 
