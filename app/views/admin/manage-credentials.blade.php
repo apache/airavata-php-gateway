@@ -27,19 +27,23 @@
 
                 <h1 class="text-center">SSH Keys</h1>
                 @if(Session::has("admin"))
-                <table class="table">
-                    <tr class="text-center table-condensed">
-                        <td>
-                            <button class="btn btn-default generate-ssh">Generate a new token</button>
-                        </td>
-                    </tr>
-                </table>
+                <div class="input-group" style="margin-top: 1.5%">
+                    <input required="required" name="description" type="text" class="form-control description" placeholder="Enter a description for token">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default generate-ssh">Generate a new token</button>
+                    </span>
+                </div>
+                <br/><div class="generate-message"></div><br/>
+
                 <div class="loading-img text-center hide">
                    <img src="../../assets/ajax-loader.gif"/>
                 </div>
                 @endif
                 <table class="table table-bordered table-condensed" style="word-wrap: break-word;">
                     <tr>
+                        <th class="text-center">
+                            Copy
+                        </th>
                         <th class="text-center">
                             Token
                         </th>
@@ -51,10 +55,20 @@
                     <tbody class="token-values-ssh">
                     @foreach( $tokens as $token => $publicKey)
                     <tr>
+                        <td>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default copy-credential"
+                                    data-clipboard-target="#credential-publickey-{{$token}}"
+                                    data-toggle="tooltip" data-placement="bottom"
+                                    data-title="Copied!" data-trigger="manual">
+                                    Copy
+                                </button>
+                            </span>
+                        </td>
                         <td class="">
                             {{ $token }}
                         </td>
-                        <td class="public-key">
+                        <td class="public-key" id="credential-publickey-{{$token}}">
                             {{ $publicKey }}
                         </td>
                         @if( Session::has("admin"))
@@ -217,31 +231,40 @@
 
 @section('scripts')
 @parent
+{{ HTML::script('js/clipboard.min.js') }}
 <script>
    $(".generate-ssh").click( function(){
-        $(".loading-img").removeClass("hide");
-        $.ajax({
-          type: "POST",
-          url: "{{URL::to('/')}}/admin/create-ssh-token"
-        }).success( function( data){
+        var description = $(".description").val();
+        if(description === ""){
+            $(".generate-message").html("<div class='alert alert-danger'>Description Field is required.</div>");
+            $(".description").focus();
+        }
+        else {
+            $(".loading-img").removeClass("hide");
+            $.ajax({
+              type: "POST",
+              data:{ "description" : description},
+              url: "{{URL::to('/')}}/admin/create-ssh-token"
+            }).success( function( data){
 
             var tokenJson = data;
 
             //$(".token-values").html("");
-            $(".generate-ssh").after("<div class='alert alert-success new-token-msg'>New Token has been generated.</div>");
+            $(".generate-message").html("<div class='alert alert-success new-token-msg'>New Token has been generated.</div>");
 
-            $(".token-values-ssh").prepend("<tr class='alert alert-success'><td>" + tokenJson.token + "</td><td class='public-key'>" + tokenJson.pubkey + "</td>" + "<td><a href=''><span data-token='"+tokenJson.token+"' class='glyphicon glyphicon-trash remove-token'></span></a></td></<tr>");
+            $(".token-values-ssh").prepend("<tr class='alert alert-success'><td><span class='input-group-btn'><button type='button' class='btn btn-default copy-credential' data-clipboard-target='#credential-publickey-"+tokenJson.token+"' data-toggle='tooltip' data-placement='bottom' data-title='Copied!'' data-trigger='manual'>Copy</button></span></td><td>" + tokenJson.description + "</td><td class='public-key' id='credential-publickey-"+tokenJson.token+"'>" + tokenJson.pubkey + "</td>" + "<td><a href=''><span data-token='"+tokenJson.token+"' class='glyphicon glyphicon-trash remove-token'></span></a></td></<tr>");
             $(".loading-img").addClass("hide");
             
             setInterval( function(){
                 $(".new-token-msg").fadeOut();
             }, 3000);
-        }).fail( function( data){
-        $(".loading-img").addClass("hide");
+            }).fail( function( data){
+            $(".loading-img").addClass("hide");
 
-            failureObject = $.parseJSON( data.responseText);
-            $(".generate-ssh").after("<div class='alert alert-danger'>" + failureObject.error.message + "</div>");
-        });
+                failureObject = $.parseJSON( data.responseText);
+                $(".generate-message").html("<div class='alert alert-danger'>" + failureObject.error.message + "</div>");
+            });
+        }
    });
 
    $(".remove-ssh-token").click( function(){
@@ -313,5 +336,14 @@
        });
 
    });
+
+    var clipboard = new Clipboard('.copy-credential');
+    clipboard.on('success', function(e){
+        // Show 'Copied!' tooltip for 2 seconds on successful copy
+        $(e.trigger).tooltip('show');
+        setTimeout(function(){
+            $(e.trigger).tooltip('hide');
+        }, 2000);
+    });
 </script>
 @stop
