@@ -445,7 +445,8 @@ class AdminController extends BaseController {
 
 	public function createPWD(){
 		AdminUtilities::create_pwd_token(Input::all());
-		return $this->credentialStoreView();
+        return Redirect::to("admin/dashboard/credential-store")->with("message", "Password Credential was successfully created");
+
 	}
 
 	public function removeSSH(){
@@ -459,10 +460,9 @@ class AdminController extends BaseController {
 	public function removePWD(){
 		$removeToken = Input::get("token");
 		if( AdminUtilities::remove_pwd_token( $removeToken) )
-			return 1;
+			return Redirect::to("admin/dashboard/credential-store")->with("message", "Password Credential was successfully deleted");
 		else
-			return 0;
-
+            return Redirect::to("admin/dashboard/credential-store")->with("error-message", "Unable to delete Password Credential");            
 	}
 
 

@@ -14,7 +14,6 @@
 
         <div class="container-fluid">
             <div class="col-md-12">
-                <h1 class="text-center">SSH Keys</h1>
                 @if( Session::has("message"))
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
@@ -33,6 +32,7 @@
                 {{ Session::forget("error-message") }}
                 @endif
 
+                <h1 class="text-center">SSH Keys</h1>
                 <div class="error-alert"></div>
 
                 @if(Session::has("admin"))
@@ -224,7 +224,7 @@
                 <div class="modal-body">
                     <input type="hidden" class="form-control" name="token"/>
 
-                    Do you really want to delete the "<span class="pwd-description"></span>" SSH public key?
+                    Do you really want to delete the "<span class="pwd-description"></span>" Password Credential?
                 </div>
                 <div class="modal-footer">
                     <div class="form-group">
