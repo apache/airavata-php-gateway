@@ -14,73 +14,80 @@
 
         <div class="container-fluid">
             <div class="col-md-12">
+                <h1 class="text-center">SSH Keys</h1>
                 @if( Session::has("message"))
-                <div class="row">
-                    <div class="alert alert-success alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
-                                class="sr-only">Close</span></button>
-                        {{ Session::get("message") }}
-                    </div>
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                            class="sr-only">Close</span></button>
+                    {{{ Session::get("message") }}}
                 </div>
                 {{ Session::forget("message") }}
                 @endif
 
-                <h1 class="text-center">SSH Keys</h1>
-                @if(Session::has("admin"))
-                <div class="input-group" style="margin-top: 1.5%">
-                    <input required="required" name="description" type="text" class="form-control description" placeholder="Enter a description for token">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default generate-ssh">Generate a new token</button>
-                    </span>
+                @if( Session::has("error-message"))
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
+                            class="sr-only">Close</span></button>
+                    {{{ Session::get("error-message") }}}
                 </div>
-                <br/><div class="generate-message"></div><br/>
+                {{ Session::forget("error-message") }}
+                @endif
 
-                <div class="loading-img text-center hide">
-                   <img src="../../assets/ajax-loader.gif"/>
+                <div class="error-alert"></div>
+
+                @if(Session::has("admin"))
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Generate New SSH Key</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form id="new-ssh-form-submit" class="form-inline" action="{{URL::to('/')}}/admin/create-ssh-token" method="post">
+                            <div id="credential-description-form-group" class="form-group">
+                                <label for="description" class="sr-only">Description for new SSH key</label>
+                                <input type="text" id="credential-description" name="description" class="form-control" placeholder="Description" required/>
+                            </div>
+                            <button type="submit" class="btn btn-default">Generate</button>
+                        </form>
+                    </div>
                 </div>
                 @endif
-                <table class="table table-bordered table-condensed" style="word-wrap: break-word;">
-                    <tr>
-                        <th class="text-center">
-                            Copy
-                        </th>
-                        <th class="text-center">
-                            Token
-                        </th>
-                        <th class="text-center">Public Key</th>
-                        @if( Session::has("admin"))
-                        <th>Delete</th>
-                        @endif
-                    </tr>
-                    <tbody class="token-values-ssh">
-                    @foreach( $tokens as $token => $publicKey)
-                    <tr>
-                        <td>
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-default copy-credential"
-                                    data-clipboard-target="#credential-publickey-{{$token}}"
-                                    data-toggle="tooltip" data-placement="bottom"
-                                    data-title="Copied!" data-trigger="manual">
-                                    Copy
-                                </button>
-                            </span>
-                        </td>
-                        <td class="">
-                            {{ $token }}
-                        </td>
-                        <td class="public-key" id="credential-publickey-{{$token}}">
-                            {{ $publicKey }}
-                        </td>
-                        @if( Session::has("admin"))
-                        <td>
-                            <span data-token="{{$token}}" class="glyphicon glyphicon-trash remove-ssh-token"></span>
-                        </td>
-                        @endif
-                    </tr>
+
+                <ul class="list-group">
+                    @foreach ($tokens as $val)
+                    <li class="list-group-item credential-item">
+                        <div class="row row_desc">
+                            <div class="col-md-12 ssh_description">
+                                @if($val->description!=null)
+                                <p><strong>{{{ $val->description }}}</strong></p>
+                                @else
+                                <p style="color:red"><strong>NO DESCRIPTION!</strong></p>
+                                @endif
+                            </div>
+                        </div><!-- .row -->
+                        <div class="row row_details">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control public-key" readonly
+                                        id="credential-publickey-{{$val->token}}"
+                                        value="{{ $val->publicKey }}">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default copy-credential"
+                                            data-clipboard-target="#credential-publickey-{{$val->token}}"
+                                            data-toggle="tooltip" data-placement="bottom"
+                                            data-title="Copied!" data-trigger="manual">
+                                            Copy
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <button data-token="{{$val->token}}"class="btn btn-danger delete-credential"
+                                    @if(!Session::has("admin") || $val->description=="Default SSH Key") disabled @endif>Delete</button>
+                            </div><br/>
+                        </div><!-- .row -->
+                    </li>
                     @endforeach
-                    </tbody>
-                </table>
-                
+                </ul>                
 
                 <!--
                 @if(Session::has("admin"))
@@ -127,34 +134,38 @@
                             <img src="../../assets/ajax-loader.gif"/>
                         </div>
                     @endif
-                    <table class="table table-bordered table-condensed" style="word-wrap: break-word;">
-                        <tr>
-                            <th class="text-center">
-                                Token
-                            </th>
-                            <th class="text-center">Description</th>
-                            @if( Session::has("admin"))
-                                <th>Delete</th>
-                            @endif
-                        </tr>
-                        <tbody class="token-values">
-                        @foreach( $pwdTokens as $token => $publicKey)
-                            <tr>
-                                <td class="">
-                                    {{ $token }}
-                                </td>
-                                <td class="description">
-                                    {{ $publicKey }}
-                                </td>
-                                @if( Session::has("admin"))
-                                    <td>
-                                        <span data-token="{{$token}}" class="glyphicon glyphicon-trash remove-pwd-token"></span>
-                                    </td>
-                                @endif
-                            </tr>
+                    <ul class="list-group">
+                        @foreach ($pwdTokens as $token => $publicKey)
+                        <li class="list-group-item credential-item">
+                            <div class="row row_desc">
+                                <div class="col-md-12 pwd_description">
+                                    <p><strong>{{{ $publicKey }}}</strong></p>
+                                </div>
+                            </div><!-- .row -->
+                            <div class="row row_details">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control public-key" readonly
+                                            id="credential-publickey-{{$token}}"
+                                            value="{{ $token }}">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default copy-credential"
+                                                data-clipboard-target="#credential-publickey-{{$token}}"
+                                                data-toggle="tooltip" data-placement="bottom"
+                                                data-title="Copied!" data-trigger="manual">
+                                                Copy
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <button data-token="{{$token}}"class="btn btn-danger remove-pwd-token"
+                                        @if(!Session::has("admin") || $publicKey=="Keycloak admin password for realm default") disabled @endif>Delete</button>
+                                </div><br/>
+                            </div><!-- .row -->
+                        </li>
                         @endforeach
-                        </tbody>
-                    </table>
+                    </ul>           
 
                 {{--<h1 class="text-center">Amazon Credentials</h1>--}}
 
@@ -173,6 +184,56 @@
                 {{--</table>--}}
             </div>
         </div>
+    </div>
+</div>
+
+<div class="modal fade" id="delete-credential-modal" tabindex="-1" role="dialog" aria-labelledby="delete-credential-modal-title"
+     aria-hidden="true">
+    <div class="modal-dialog">
+
+        <form action="{{URL::to('/')}}/admin/remove-ssh-token" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-center" id="delete-credential-modal-title">Delete SSH Public Key</h3>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" class="form-control" name="token"/>
+
+                    Do you really want to delete the "<span class="credential-description"></span>" SSH public key?
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-danger" value="Delete"/>
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="delete-pwd-modal" tabindex="-1" role="dialog" aria-labelledby="delete-pwd-modal-title"
+     aria-hidden="true">
+    <div class="modal-dialog">
+
+        <form action="{{URL::to('/')}}/admin/remove-pwd-token" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-center" id="delete-pwd-modal-title">Delete Password Credential</h3>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" class="form-control" name="token"/>
+
+                    Do you really want to delete the "<span class="pwd-description"></span>" SSH public key?
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-danger" value="Delete"/>
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -233,108 +294,65 @@
 @parent
 {{ HTML::script('js/clipboard.min.js') }}
 <script>
-   $(".generate-ssh").click( function(){
-        var description = $(".description").val();
-        if(description === ""){
-            $(".generate-message").html("<div class='alert alert-danger'>Description Field is required.</div>");
-            $(".description").focus();
+    $('.delete-credential').on('click', function(e){
+
+        var removeSpan = $(this);
+        var par = removeSpan.closest("li");
+        var credentialStoreToken = removeSpan.data("token");
+        var credentialDescription = $.trim(par.find('.ssh_description').text());
+
+        if(credentialDescription != "Default SSH Key"){
+            $("#delete-credential-modal input[name=token]").val(credentialStoreToken);
+            $("#delete-credential-modal .credential-description").text(credentialDescription);
+            $("#delete-credential-modal").modal("show");
         }
         else {
-            $(".loading-img").removeClass("hide");
-            $.ajax({
-              type: "POST",
-              data:{ "description" : description},
-              url: "{{URL::to('/')}}/admin/create-ssh-token"
-            }).success( function( data){
-
-            var tokenJson = data;
-
-            //$(".token-values").html("");
-            $(".generate-message").html("<div class='alert alert-success new-token-msg'>New Token has been generated.</div>");
-
-            $(".token-values-ssh").prepend("<tr class='alert alert-success'><td><span class='input-group-btn'><button type='button' class='btn btn-default copy-credential' data-clipboard-target='#credential-publickey-"+tokenJson.token+"' data-toggle='tooltip' data-placement='bottom' data-title='Copied!'' data-trigger='manual'>Copy</button></span></td><td>" + tokenJson.description + "</td><td class='public-key' id='credential-publickey-"+tokenJson.token+"'>" + tokenJson.pubkey + "</td>" + "<td><a href=''><span data-token='"+tokenJson.token+"' class='glyphicon glyphicon-trash remove-token'></span></a></td></<tr>");
-            $(".loading-img").addClass("hide");
-            
-            setInterval( function(){
-                $(".new-token-msg").fadeOut();
-            }, 3000);
-            }).fail( function( data){
-            $(".loading-img").addClass("hide");
-
-                failureObject = $.parseJSON( data.responseText);
-                $(".generate-message").html("<div class='alert alert-danger'>" + failureObject.error.message + "</div>");
-            });
+            $("#delete-credential-modal").modal("hide");
         }
+    });
+
+    $('#credential-description').on('invalid', function(event){
+        this.setCustomValidity("Please provide a description");
+        $('#credential-description-form-group').addClass('has-error');
+    });
+    $('#credential-description').on('keyup input change', function(event){
+        if (this.checkValidity) {
+            // Reset custom error message. If it isn't empty string it is considered invalid.
+            this.setCustomValidity("");
+            // checkValidity will cause invalid event to be dispatched. See invalid
+            // event handler above which will set the custom error message.
+            var valid = this.checkValidity();
+            $('#credential-description-form-group').toggleClass('has-error', !valid);
+        }
+    });
+
+   $("#new-ssh-form-submit").submit( function(){
+        var description = $("#credential-description").val();
+        var items = $('.ssh_description').map(function () { return $.trim($(this).text()); }).get();
+        for(var i=0;i<items.length;++i){
+            if(description === $.trim(items[i])){
+                $('.error-alert').html("<div class='alert alert-danger' role='alert'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>Description should be unique for each key.</div>");
+                return false;
+            }
+        }
+        return true;
    });
 
-   $(".remove-ssh-token").click( function(){
-        var removeSpan = $(this);
-        var tr = removeSpan.parent().parent();
-        var tokenToRemove = removeSpan.data("token");
-        var publicKey = tr.children(".public-key").html();
-        tr.children(".public-key").html("<div class='alert alert-danger'>Do you really want to remove the token? This action cannot be undone.<br/>" +
-                                                                    "<span class='btn-group'>"+
-                                                                    "<input type='button' class='btn btn-default remove-token-confirmation' value='Yes'/>" +
-                                                                    "<input type='button' class='btn btn-default remove-token-cancel' value='Cancel'/>"+
-                                                                    "</span></div>");
-
-        
-        tr.find( ".remove-token-confirmation").click( function(){
-            $(".loading-img").removeClass("hide");
-            $.ajax({
-              type: "POST",
-              data:{ "token" : tokenToRemove},
-              url: "{{URL::to('/')}}/admin/remove-ssh-token"
-              }).success( function( data){
-                if( data.responseText == 1)
-                    tr.addClass("alert").addClass("alert-danger");
-                        tr.fadeOut(1000);
-            }).fail( function( data){
-                tr.after("<tr class='alert alert-danger'><td></td><td>Error occurred : " + $.parseJSON( data.responseText).error.message + "</td><td></td></tr>");
-            }).complete( function(){
-                $(".loading-img").addClass("hide");
-
-            });
-        });
-        tr.find( ".remove-token-cancel").click( function(){
-            tr.children(".public-key").html( publicKey);
-        });
-        
-   });
 
    $(".remove-pwd-token").click( function(){
-       var removeSpan = $(this);
-       var tr = removeSpan.parent().parent();
-       var tokenToRemove = removeSpan.data("token");
-       var description = tr.children(".description").html();
-       tr.children(".description").html("<div class='alert alert-danger'>Do you really want to remove the token? This action cannot be undone.<br/>" +
-               "<span class='btn-group'>"+
-               "<input type='button' class='btn btn-default remove-token-confirmation' value='Yes'/>" +
-               "<input type='button' class='btn btn-default remove-token-cancel' value='Cancel'/>"+
-               "</span></div>");
-
-
-       tr.find( ".remove-token-confirmation").click( function(){
-           $(".loading-img-pwd").removeClass("hide");
-           $.ajax({
-               type: "POST",
-               data:{ "token" : tokenToRemove},
-               url: "{{URL::to('/')}}/admin/remove-pwd-token"
-           }).success( function( data){
-               if( data.responseText == 1)
-                   tr.addClass("alert").addClass("alert-danger");
-               tr.fadeOut(1000);
-           }).fail( function( data){
-               tr.after("<tr class='alert alert-danger'><td></td><td>Error occurred : " + $.parseJSON( data.responseText).error.message + "</td><td></td></tr>");
-           }).complete( function(){
-               $(".loading-img-pwd").addClass("hide");
-
-           });
-       });
-       tr.find( ".remove-token-cancel").click( function(){
-           tr.children(".description").html( description);
-       });
-
+        var removeSpan = $(this);
+        var par = removeSpan.closest("li");
+        var credentialStoreToken = removeSpan.data("token");
+        var credentialDescription = $.trim(par.find('.pwd_description').text());
+        if(credentialDescription != "Keycloak admin password for realm default"){
+            $("#delete-pwd-modal input[name=token]").val(credentialStoreToken);
+            $("#delete-pwd-modal .pwd-description").text(credentialDescription);
+            $("#delete-pwd-modal").modal("show");
+        }
+        else {
+            alert("it is not unique");
+            $("#delete-pwd-modal").modal("hide");
+        }
    });
 
     var clipboard = new Clipboard('.copy-credential');
