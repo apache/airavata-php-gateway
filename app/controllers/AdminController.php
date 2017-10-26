@@ -121,7 +121,7 @@ class AdminController extends BaseController {
 		$gatewaysInfo = CRUtilities::getAllGatewayProfilesData();
 		$gateways = $gatewaysInfo["gateways"];
 		usort($gateways, array($this, "cmp"));
-		$tokens = AdminUtilities::get_all_ssh_tokens();
+		$tokens = AdminUtilities::get_all_ssh_tokens_with_description();
 		$pwdTokens = AdminUtilities::get_all_pwd_tokens();
 		$srData = SRUtilities::getEditSRData();
 		$crData = CRUtilities::getEditCRData();
@@ -358,6 +358,7 @@ class AdminController extends BaseController {
             $pubkey = AdminUtilities::get_pubkey_from_token($newToken);
             $tokens = AdminUtilities::get_all_ssh_tokens_with_description();  
         } 
+        //End of Auto-generating the Default SSH Key.
 		$pwdTokens = AdminUtilities::get_all_pwd_tokens();
         // var_dump( $pwdTokens); exit;
 		return View::make("admin/manage-credentials", array("tokens" => $tokens , "pwdTokens" => $pwdTokens) );

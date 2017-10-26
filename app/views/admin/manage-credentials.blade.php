@@ -43,7 +43,7 @@
                     <div class="panel-body">
                         <form id="new-ssh-form-submit" class="form-inline" action="{{URL::to('/')}}/admin/create-ssh-token" method="post">
                             <div id="credential-description-form-group" class="form-group">
-                                <label for="description" class="sr-only">Description for new SSH key</label>
+                                <label for="credential-description" class="sr-only">Description for new SSH key</label>
                                 <input type="text" id="credential-description" name="description" class="form-control" placeholder="Description" required/>
                             </div>
                             <button type="submit" class="btn btn-default">Generate</button>
@@ -336,6 +336,20 @@
             }
         }
         return true;
+   });
+
+   $("#register-pwd-form").submit( function() {
+        var pcred_description = $("#description").val();
+        var items = $('.pwd_description').map(function() { return $.trim($(this).text()); }).get();
+        for(var i=0;i<items.length;++i){
+            if(pcred_description === $.trim(items[i])){
+                $("#pwd-cred-form").modal("hide");
+                $('.error-alert').html("<div class='alert alert-danger' role='alert'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button>Description should be unique for each key.</div>");
+                return false;
+            }
+        }
+        return true;
+
    });
 
 
