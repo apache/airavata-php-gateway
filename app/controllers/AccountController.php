@@ -79,6 +79,7 @@ class AccountController extends BaseController
         $auth_password_option = CommonUtilities::getAuthPasswordOption();
         // Support for many external identity providers (authorization code auth flow)
         $auth_code_options = CommonUtilities::getAuthCodeOptions();
+        $has_auth_code_and_password_options = $auth_password_option != null && count($auth_code_options) > 0;
 
         // If no username/password option and only one external identity
         // provider, just redirect immediately
@@ -88,6 +89,7 @@ class AccountController extends BaseController
             return View::make('account/login', array(
                 "auth_password_option" => $auth_password_option,
                 "auth_code_options" => $auth_code_options,
+                "has_auth_code_and_password_options" => $has_auth_code_and_password_options,
             ));
         }
     }
@@ -98,6 +100,7 @@ class AccountController extends BaseController
         $auth_password_option = CommonUtilities::getAuthPasswordOption();
         // Support for many external identity providers (authorization code auth flow)
         $auth_code_options = CommonUtilities::getAuthCodeOptions();
+        $has_auth_code_and_password_options = $auth_password_option != null && count($auth_code_options) > 0;
 
         // If no username/password option and only one external identity
         // provider, just redirect immediately
@@ -107,6 +110,7 @@ class AccountController extends BaseController
             return View::make('account/login-desktop', array(
                 "auth_password_option" => $auth_password_option,
                 "auth_code_options" => $auth_code_options,
+                "has_auth_code_and_password_options" => $has_auth_code_and_password_options,
             ));
         }
     }
