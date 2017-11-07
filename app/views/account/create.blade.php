@@ -6,8 +6,25 @@
 
 @section('content')
 
+@if (!empty($auth_code_options))
+    <div class="col-md-offset-1 col-md-4 center-column">
+        <div class="page-header">
+            <h3>Log in with your existing organizational login</h3>
+        </div>
+        @foreach ($auth_code_options as $auth_code_option)
+            @include('partials/login-external', array("auth_code_option" => $auth_code_option))
+        @endforeach
+    </div>
+    <div class="col-md-2 center-column">
+        <h3 id="login-option-separator" class="horizontal-rule">OR</h3>
+    </div>
+@endif
+
+@if (!empty($auth_code_options))
+<div class="col-md-4 center-column">
+@else
 <div class="col-md-offset-4 col-md-4">
-    @if (!empty($auth_password_option))
+@endif
     <div class="page-header">
         <h3>Create New {{{ $auth_password_option["name"] }}} Account
             <small>
@@ -72,15 +89,6 @@
         <br/>
         <input name="Submit" type="submit" class="btn btn-primary btn-block" value="Create">
     </form>
-
-        @if (!empty($auth_code_options))
-            <h3 id="login-option-separator" class="horizontal-rule">OR</h4>
-        @endif
-    @endif {{-- @if (!empty($auth_password_option)) --}}
-
-    @if (!empty($auth_code_options))
-        @include('partials/login-external', array("auth_code_options" => $auth_code_options))
-    @endif
 
     <style media="screen" type="text/css">
         .form-group.required .control-label:after {

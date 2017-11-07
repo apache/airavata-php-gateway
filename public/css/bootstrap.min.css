@@ -193,3 +193,30 @@ body{
 	left: 0.5em;
 	margin-right: -50%;
 }
+
+/* vertically center a Bootstrap column. Must be applied to every column in the row. */
+.center-column {
+	display: inline-block;
+	vertical-align: middle;
+	float: none;
+	width: 100%;
+}
+
+.btn-external-login + .btn-external-login {
+	margin-top: 40px;
+}
+
+@media (min-width: 992px) {
+	.center-column.col-md-12 { width:100% }
+	.center-column.col-md-11 { width:91.66666667% }
+	.center-column.col-md-10 { width:83.33333333% }
+	.center-column.col-md-9 { width:75% }
+	.center-column.col-md-8 { width:66.66666667% }
+	.center-column.col-md-7 { width:58.33333333% }
+	.center-column.col-md-6 { width:50% }
+	.center-column.col-md-5 { width:41.66666667% }
+	.center-column.col-md-4 { width:33.33333333% }
+	.center-column.col-md-3 { width:25% }
+	.center-column.col-md-2 { width:16.66666667% }
+	.center-column.col-md-1 { width:8.33333333% }
+}
