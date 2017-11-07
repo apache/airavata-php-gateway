@@ -346,19 +346,6 @@ class AdminController extends BaseController {
 	public function credentialStoreView(){
         Session::put("admin-nav", "credential-store");
         $tokens = AdminUtilities::get_all_ssh_tokens_with_description();
-        //Auto-generating the Default SSH Key if there is no key with such description.
-        $count = 0;
-        foreach($tokens as $val){
-            if($val->description == "Default SSH Key"){
-                $count = 1;
-            }
-        }
-        if($count == 0){
-            $newToken = AdminUtilities::create_ssh_token_for_gateway("Default SSH Key");
-            $pubkey = AdminUtilities::get_pubkey_from_token($newToken);
-            $tokens = AdminUtilities::get_all_ssh_tokens_with_description();  
-        } 
-        //End of Auto-generating the Default SSH Key.
 		$pwdTokens = AdminUtilities::get_all_pwd_tokens();
         // var_dump( $pwdTokens); exit;
 		return View::make("admin/manage-credentials", array("tokens" => $tokens , "pwdTokens" => $pwdTokens) );
@@ -435,9 +422,6 @@ class AdminController extends BaseController {
 
 	public function createSSH(){
         $description = Input::get("description");
-        if($description == "Default SSH Key"){
-            return Redirect::to("admin/dashboard/credential-store")->with("error-message", "Cannot add another default key");
-        }
 		$newToken = AdminUtilities::create_ssh_token_for_gateway($description);
 		$pubkey = AdminUtilities::get_pubkey_from_token( $newToken);
 		return Redirect::to("admin/dashboard/credential-store")->with("message", "SSH Key was successfully created");

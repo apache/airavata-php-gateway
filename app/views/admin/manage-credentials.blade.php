@@ -82,7 +82,7 @@
                             </div>
                             <div class="col-md-6">
                                 <button data-token="{{$val->token}}"class="btn btn-danger delete-credential"
-                                    @if(!Session::has("admin") || $val->description=="Default SSH Key") disabled @endif>Delete</button>
+                                    @if(!Session::has("admin")) disabled @endif>Delete</button>
                             </div><br/>
                         </div><!-- .row -->
                     </li>
@@ -135,11 +135,11 @@
                         </div>
                     @endif
                     <ul class="list-group">
-                        @foreach ($pwdTokens as $token => $publicKey)
+                        @foreach ($pwdTokens as $token => $desc)
                         <li class="list-group-item credential-item">
                             <div class="row row_desc">
                                 <div class="col-md-12 pwd_description">
-                                    <p><strong>{{{ $publicKey }}}</strong></p>
+                                    <p><strong>{{{ $desc }}}</strong></p>
                                 </div>
                             </div><!-- .row -->
                             <div class="row row_details">
@@ -160,7 +160,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <button data-token="{{$token}}"class="btn btn-danger remove-pwd-token"
-                                        @if(!Session::has("admin") || $publicKey=="Keycloak admin password for realm default") disabled @endif>Delete</button>
+                                        @if(!Session::has("admin")) disabled @endif>Delete</button>
                                 </div><br/>
                             </div><!-- .row -->
                         </li>
