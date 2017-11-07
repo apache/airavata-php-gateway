@@ -8,9 +8,12 @@
 
 @if (!empty($auth_code_options))
     <div class="col-md-offset-1 col-md-4 center-column">
-    @foreach ($auth_code_options as $auth_code_option)
-        @include('partials/login-external', array("auth_code_option" => $auth_code_option))
-    @endforeach
+        <div class="page-header">
+            <h3>Log in with your existing organizational login</h3>
+        </div>
+        @foreach ($auth_code_options as $auth_code_option)
+            @include('partials/login-external', array("auth_code_option" => $auth_code_option))
+        @endforeach
     </div>
     <div class="col-md-2 center-column">
         <h3 id="login-option-separator" class="horizontal-rule">OR</h3>
