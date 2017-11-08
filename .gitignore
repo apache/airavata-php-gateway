@@ -10,3 +10,7 @@ pga_config.php
 
 /app/storage
 /themes
+
+.iws
+workspace.xml
+tasks.xml
