@@ -332,6 +332,10 @@ class AdminUtilities
         return Airavata::getAllGatewaySSHPubKeys( Session::get('authz-token'), Session::get("gateway_id") );
     }
 
+    public static function get_all_ssh_tokens_with_description(){
+        return Airavata::getAllCredentialSummaryForGateway( Session::get('authz-token'), "SSH", Session::get("gateway_id") );
+    }
+
     public static function get_all_pwd_tokens(){
         return Airavata::getAllGatewayPWDCredentials( Session::get('authz-token'), Session::get("gateway_id") );
     }
