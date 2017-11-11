@@ -11,6 +11,7 @@ pga_config.php
 /app/storage
 /themes
 
+.idea
 .iws
 workspace.xml
 tasks.xml
