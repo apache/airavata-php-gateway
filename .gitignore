@@ -6,6 +6,7 @@ composer.lock
 .env.php
 .DS_Store
 Thumbs.db
+pga_config.php
 
 /app/storage
 /themes
