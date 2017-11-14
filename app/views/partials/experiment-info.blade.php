@@ -4,6 +4,7 @@
     margin-bottom: 20px;
 }
 </style>
+
 <div class="container" style="max-width: 750px;">
     @if(isset( $invalidExperimentId ) )
     <div class="alert alert-danger">
@@ -40,21 +41,95 @@
         @endif
     </h1>
 
+	<div class="tags">
+		<label>
+			<input type="checkbox" class="experiment-id" checked />
+			Experiment ID
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-name" checked />
+			Name	
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-description" checked />
+			Description
+		</label>
+		<label>
+			<input type="checkbox" class="project-name" checked />
+			Project
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-user-name" checked />
+			Owner	
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-application-name" checked />
+			Application	
+		</label>
+		<label>
+			<input type="checkbox" class="compute-resource-host-name" checked />
+			Compute Resource	
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-status-string" checked />
+			Experiment Status	
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-creation-time" checked />
+			Creation Time	
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-last-modified-time" checked />
+			Last Modified Time	
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-wall-time-limit" checked />
+			Wall Time	
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-total-cpu-count" checked />
+			CPU Count
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-node-count" checked />
+			Node Count
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-queue-name" checked />
+			Queue
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-inputs" checked />
+			Inputs
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-outputs" checked />
+			Outputs
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-data-dir" checked />
+			Storage Directory
+		</label>
+		<label>
+			<input type="checkbox" class="experiment-errors" checked />
+			Errors
+		</label>
+	</div>	
 
     <table class="table table-bordered">
-        <tr>
+        <tr class="experiment-id">
             <td><strong>Experiment ID</strong></td>
             <td>{{{ $experiment->experimentId }}}</td>
         </tr>
-        <tr>
+        <tr class="experiment-name">
             <td><strong>Name</strong></td>
             <td>{{{ $experiment->experimentName }}}</td>
         </tr>
-        <tr>
+        <tr class="experiment-description">
             <td><strong>Description</strong></td>
             <td>{{{ $experiment->description }}}</td>
         </tr>
-        <tr>
+        <tr class="project-name">
             <td><strong>Project</strong></td>
             @if (isset($project))
             <td>{{{ $project->name }}}</td>
@@ -62,17 +137,17 @@
             <td><em>You don't have access to this project.</em></td>
             @endif
         </tr>
-        <tr>
+        <tr class="experiment-user-name">
             <td><strong>Owner</strong></td>
             <td>{{{ $experiment->userName }}}</td>
         </tr>
-        <tr>
+        <tr class="experiment-application-name">
             <td><strong>Application</strong></td>
             <td><?php if (!empty($expVal["applicationInterface"])) {
                     echo $expVal["applicationInterface"]->applicationName;
                 } ?></td>
         </tr>
-        <tr>
+        <tr class="compute-resource-host-name">
             <td><strong>Compute Resource</strong></td>
             <td><?php if (!empty($expVal["computeResource"])) {
                     echo $expVal["computeResource"]->hostName;
@@ -86,7 +161,7 @@
             </td>
         </tr>
         @endif
-        <tr>
+        <tr class="experiment-status-string">
             <td><strong>Experiment Status</strong></td>
             <td class="exp-status">{{{ $expVal["experimentStatusString"] }}}</td>
         </tr>
@@ -154,39 +229,39 @@
         </tr>
         @endif
 
-        <tr>
+        <tr class="experiment-creation-time">
             <td><strong>Creation Time</strong></td>
             <td class="time" unix-time="{{ $expVal["experimentCreationTime"] }}"></td>
         </tr>
-        <tr>
+        <tr class="experiment-last-modified-time">
             <td><strong>Last Modified Time</strong></td>
             <td class="time" unix-time="{{ $expVal["experimentTimeOfStateChange"] }}"></td>
         </tr>
-        <tr>
+        <tr class="experiment-wall-time-limit">
             <td><strong>Wall Time</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->wallTimeLimit }}</td>
         </tr>
-        <tr>
+        <tr class="experiment-total-cpu-count">
             <td><strong>CPU Count</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->totalCPUCount }}</td>
         </tr>
-        <tr>
+        <tr class="experiment-node-count">
             <td><strong>Node Count</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->nodeCount }}</td>
         </tr>
-        <tr>
+        <tr class="experiment-queue-name">
             <td><strong>Queue</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->queueName }}</td>
         </tr>
-        <tr>
+        <tr class="experiment-inputs">
             <td><strong>Inputs</strong></td>
             <td>{{ ExperimentUtilities::list_input_files($experiment->experimentInputs) }}</td>
         </tr>
-        <tr>
+        <tr class="experiment-outputs">
             <td><strong>Outputs</strong></td>
             <td>{{ ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus[0]->state, false) }}</td>
         </tr>
-        <tr>
+        <tr class="experiment-data-dir">
             <td><strong>Storage Directory</strong></td>
             <?php
                 if(0 === strpos($experiment->userConfigurationData->experimentDataDir, Config::get("pga_config.airavata")['experiment-data-absolute-path'])){
@@ -199,7 +274,7 @@
         </tr>
         <!-- an experiment is editable only when it has not failed. otherwise, show errors. -->
 {{--        @if( $expVal["editable"] == false)--}}
-        <tr>
+        <tr class="experiment-errors">
             <td><strong>Errors</strong></td>
             <td>
             @if( $experiment->errors != null)
@@ -430,6 +505,38 @@
 </script>
 
 <script>
+    function loadExpSummaryTable() {
+        loadExpSummaryTableRow('experiment-id');
+        loadExpSummaryTableRow('experiment-name');
+        loadExpSummaryTableRow('experiment-description');
+        loadExpSummaryTableRow('project-name');
+        loadExpSummaryTableRow('experiment-user-name');
+        loadExpSummaryTableRow('experiment-application-name');
+        loadExpSummaryTableRow('compute-resource-host-name');
+        loadExpSummaryTableRow('experiment-status-string');
+        loadExpSummaryTableRow('experiment-creation-time');
+        loadExpSummaryTableRow('experiment-last-modified-time');
+        loadExpSummaryTableRow('experiment-wall-time-limit');
+        loadExpSummaryTableRow('experiment-total-cpu-count');
+        loadExpSummaryTableRow('experiment-node-count');
+        loadExpSummaryTableRow('experiment-queue-name');
+        loadExpSummaryTableRow('experiment-inputs');
+        loadExpSummaryTableRow('experiment-outputs');
+        loadExpSummaryTableRow('experiment-data-dir');
+        loadExpSummaryTableRow('experiment-errors');
+    }
+
+    function loadExpSummaryTableRow(className) {
+        var inputClass, trClass;
+
+        inputClass = 'input.' + className;
+        trClass = 'tr.' + className;
+        if (localStorage.getItem(inputClass) === null)  (localStorage.setItem(inputClass, 'true'));
+        var checked = JSON.parse(localStorage.getItem(inputClass));
+        $(inputClass).prop('checked', checked);
+        if (checked)    $(trClass).show();
+        else    $(trClass).hide();
+    }
 
     $('#clone-button').on('click', function(e){
 
@@ -445,7 +552,23 @@
             $("#clone-experiment-modal form").submit();
         }
         return false;
+	});
+
+    $('input:checked').on('change', function(){
+        var className = $(this).attr('class');
+        var inputClass = 'input.' + className;
+        var trClass = 'tr.' + className;
+
+        if ($(this).is(':checked')) {
+            $(trClass).show();
+            localStorage.setItem(inputClass, 'true');
+        } else {
+            $(trClass).hide();
+            localStorage.setItem(inputClass, 'false');
+        }
     });
+
+	loadExpSummaryTable();
 </script>
 
 
