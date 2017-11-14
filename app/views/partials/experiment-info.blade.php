@@ -4,6 +4,7 @@
     margin-bottom: 20px;
 }
 </style>
+
 <div class="container" style="max-width: 750px;">
     @if(isset( $invalidExperimentId ) )
     <div class="alert alert-danger">
@@ -504,6 +505,38 @@
 </script>
 
 <script>
+    function loadExpSummaryTable() {
+        loadExpSummaryTableRow('experiment-id');
+        loadExpSummaryTableRow('experiment-name');
+        loadExpSummaryTableRow('experiment-description');
+        loadExpSummaryTableRow('project-name');
+        loadExpSummaryTableRow('experiment-user-name');
+        loadExpSummaryTableRow('experiment-application-name');
+        loadExpSummaryTableRow('compute-resource-host-name');
+        loadExpSummaryTableRow('experiment-status-string');
+        loadExpSummaryTableRow('experiment-creation-time');
+        loadExpSummaryTableRow('experiment-last-modified-time');
+        loadExpSummaryTableRow('experiment-wall-time-limit');
+        loadExpSummaryTableRow('experiment-total-cpu-count');
+        loadExpSummaryTableRow('experiment-node-count');
+        loadExpSummaryTableRow('experiment-queue-name');
+        loadExpSummaryTableRow('experiment-inputs');
+        loadExpSummaryTableRow('experiment-outputs');
+        loadExpSummaryTableRow('experiment-data-dir');
+        loadExpSummaryTableRow('experiment-errors');
+    }
+
+    function loadExpSummaryTableRow(className) {
+        var inputClass, trClass;
+
+        inputClass = 'input.' + className;
+        trClass = 'tr.' + className;
+        if (localStorage.getItem(inputClass) === null)  (localStorage.setItem(inputClass, 'true'));
+        var checked = JSON.parse(localStorage.getItem(inputClass));
+        $(inputClass).prop('checked', checked);
+        if (checked)    $(trClass).show();
+        else    $(trClass).hide();
+    }
 
     $('#clone-button').on('click', function(e){
 
@@ -520,13 +553,22 @@
         }
         return false;
 	});
-	$('input:checked').on('change', function(){
-		if ($(this).is(':checked')) {
-			$('tr.' + $(this).attr('class')).show();	
-		} else {
-			$('tr.' + $(this).attr('class')).hide();	
-		}
-	});
+
+    $('input:checked').on('change', function(){
+        var className = $(this).attr('class');
+        var inputClass = 'input.' + className;
+        var trClass = 'tr.' + className;
+
+        if ($(this).is(':checked')) {
+            $(trClass).show();
+            localStorage.setItem(inputClass, 'true');
+        } else {
+            $(trClass).hide();
+            localStorage.setItem(inputClass, 'false');
+        }
+    });
+
+	loadExpSummaryTable();
 </script>
 
 
