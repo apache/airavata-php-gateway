@@ -30,6 +30,7 @@ class AccountController extends BaseController
             "password" => self::PASSWORD_VALIDATION,
             "confirm_password" => "required|same:password",
             "email" => "required|email",
+            "confirm_email" => "required|same:email",
         );
 
         $messages = array(
@@ -40,7 +41,7 @@ class AccountController extends BaseController
         $validator = Validator::make(Input::all(), $rules, $messages);
         if ($validator->fails()) {
             return Redirect::to("create")
-                ->withInput(Input::except('password', 'password_confirm'))
+                ->withInput(Input::except('password', 'confirm_password', 'email', 'confirm_email'))
                 ->withErrors($validator);
         }
 
@@ -52,7 +53,7 @@ class AccountController extends BaseController
 
         if (Keycloak::usernameExists($username)) {
             return Redirect::to("create")
-                ->withInput(Input::except('password', 'password_confirm'))
+                ->withInput(Input::except('password', 'confirm_password', 'email', 'confirm_email'))
                 ->with("username_exists", true);
         } else {
 
