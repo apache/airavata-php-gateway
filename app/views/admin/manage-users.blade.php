@@ -58,6 +58,7 @@
                         <th>Last Name</th>
                         <th>Username</th>
                         <th>Email</th>
+                        <th>Email Verified</th>
 
                         <th>
                             Role :
@@ -85,6 +86,11 @@
                         <td>{{ $user->lastName }}</td>
                         <td>{{ $user->userName }}</td>
                         <td>{{ $user->email }}</td>
+                        @if($user->emailVerified)
+                            <td class="text-success"><span class="glyphicon glyphicon-ok"></span></td>
+                        @else
+                            <td class="text-danger"><span class="glyphicon glyphicon-remove"></span></td>
+                        @endif
                         <td>
                             <button class="button btn btn-default check-roles" type="button"
                                     data-username="{{$user->userName}}">Check All Roles
