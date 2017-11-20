@@ -259,7 +259,7 @@ class Keycloak {
         $users = $this->users->getUsers($this->realm);
         $usernames = [];
         foreach ($users as $user) {
-            array_push($usernames, (object)["firstName"=>$user->firstName,"lastName"=>$user->lastName,"email"=>$user->email,"userName"=>$user->username]);
+            array_push($usernames, (object)["firstName"=>$user->firstName,"lastName"=>$user->lastName,"email"=>$user->email,"emailVerified"=>$user->emailVerified,"userName"=>$user->username]);
         }
         return $usernames;
     }
