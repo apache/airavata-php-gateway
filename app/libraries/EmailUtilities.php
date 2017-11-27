@@ -19,6 +19,7 @@ class EmailUtilities
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$validTime", $validTime, $body);
 
+        $recipient = array();
         $recipient['firstName'] = $firstName;
         $recipient['lastName'] = $lastName;
         $recipient['email'] = $email;
@@ -51,6 +52,7 @@ class EmailUtilities
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$validTime", $validTime, $body);
 
+        $recipient = array();
         $recipient['firstName'] = $firstName;
         $recipient['lastName'] = $lastName;
         $recipient['email'] = $email;
@@ -84,6 +86,7 @@ class EmailUtilities
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$validTime", $validTime, $body);
 
+        $recipient = array();
         $recipient['firstName'] = $firstName;
         $recipient['lastName'] = $lastName;
         $recipient['email'] = $email;
@@ -133,6 +136,7 @@ class EmailUtilities
         $body = str_replace("\$url", URL::to('/') . '/admin/dashboard', $body);
         $body = str_replace("\$gatewayId", $gatewayId, $body);
 
+        $recipient = array();
         $recipient['email'] = $email;
 
         EmailUtilities::sendEmail($subject, [$recipient], $body);

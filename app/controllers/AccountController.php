@@ -53,7 +53,7 @@ class AccountController extends BaseController
 
         if (Keycloak::usernameExists($username)) {
             return Redirect::to("create")
-                ->withInput(Input::except('password', 'confirm_password', 'email', 'confirm_email'))
+                ->withInput(Input::except('password', 'confirm_password'))
                 ->with("username_exists", true);
         } else {
 
