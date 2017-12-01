@@ -72,8 +72,14 @@
 
             <div><input class="form-control" id="email" name="email" placeholder="email@example.com"
                         required="required" title="" type="email" value="{{Input::old('email') }}"
-                         data-toggle="popover" data-placement="left" data-content="Please make sure that you enter a correct email address as a verification mail will be sent to this addresss."/></div>
+                         data-toggle="popover" data-placement="left" data-content="Please make sure that you enter a correct email address as a verification mail will be sent to this address."/></div>
         </div>
+        <div class="form-group required"><label class="control-label">E-mail (again)</label>
+
+                <div><input class="form-control" id="confirm_email" name="confirm_email" placeholder="email@example.com (again)"
+                            required="required" title="" type="email" value="{{Input::old('confirm_email') }}"
+                            data-toggle="popover" data-placement="left" data-content="Please make sure that you enter the same email address as above as a verification mail will be sent to this address."/></div>
+            </div>
         <div class="form-group required"><label class="control-label">First Name</label>
 
             <div><input class="form-control" id="first_name" maxlength="30" name="first_name"

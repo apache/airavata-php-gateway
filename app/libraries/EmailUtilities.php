@@ -19,7 +19,12 @@ class EmailUtilities
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$validTime", $validTime, $body);
 
-        EmailUtilities::sendEmail($subject, [$email], $body);
+        $recipient = array();
+        $recipient['firstName'] = $firstName;
+        $recipient['lastName'] = $lastName;
+        $recipient['email'] = $email;
+
+        EmailUtilities::sendEmail($subject, [$recipient], $body);
     }
 
     public static function verifyEmailVerification($username, $code){
@@ -47,7 +52,12 @@ class EmailUtilities
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$validTime", $validTime, $body);
 
-        EmailUtilities::sendEmail($subject, [$email], $body);
+        $recipient = array();
+        $recipient['firstName'] = $firstName;
+        $recipient['lastName'] = $lastName;
+        $recipient['email'] = $email;
+
+        EmailUtilities::sendEmail($subject, [$recipient], $body);
     }
 
     public static function verifyUpdatedEmailAccount($username, $code){
@@ -76,7 +86,12 @@ class EmailUtilities
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$validTime", $validTime, $body);
 
-        EmailUtilities::sendEmail($subject, [$email], $body);
+        $recipient = array();
+        $recipient['firstName'] = $firstName;
+        $recipient['lastName'] = $lastName;
+        $recipient['email'] = $email;
+
+        EmailUtilities::sendEmail($subject, [$recipient], $body);
     }
 
     public static function verifyPasswordResetCode($username, $code){
@@ -90,7 +105,7 @@ class EmailUtilities
     }
 
     //PGA sends email to Admin about new request
-    public static function gatewayRequestMail($firstName, $lastName, $email, $gatewayName){
+    public static function gatewayRequestMail($firstName, $lastName, $emails, $gatewayName){
 
         $emailTemplates = json_decode(File::get(app_path() . '/config/email_templates.json'));
         $subject = $emailTemplates->gateway_request->subject;
@@ -101,7 +116,13 @@ class EmailUtilities
         $body = str_replace("\$lastName", $lastName, $body);
         $body = str_replace("\$gatewayName", $gatewayName, $body);
 
-        EmailUtilities::sendEmail($subject, $email, $body);
+        $recipients = array();
+        foreach($emails as $email) {
+            $recipient['email'] = $email;
+            array_push($recipients, $recipient);
+        }
+
+        EmailUtilities::sendEmail($subject, $recipients, $body);
 
     }
 
@@ -115,13 +136,15 @@ class EmailUtilities
         $body = str_replace("\$url", URL::to('/') . '/admin/dashboard', $body);
         $body = str_replace("\$gatewayId", $gatewayId, $body);
 
+        $recipient = array();
+        $recipient['email'] = $email;
 
-        EmailUtilities::sendEmail($subject, [$email], $body);
+        EmailUtilities::sendEmail($subject, [$recipient], $body);
 
     }
 
     //PGA sends email to Admin when Gateway is UPDATED
-    public static function gatewayUpdateMailToAdmin($email, $gatewayId){
+    public static function gatewayUpdateMailToAdmin($emails, $gatewayId){
 
         $emailTemplates = json_decode(File::get(app_path() . '/config/email_templates.json'));
         $subject = $emailTemplates->update_to_admin->subject;
@@ -130,7 +153,13 @@ class EmailUtilities
         $body = str_replace("\$url", URL::to('/') . '/admin/dashboard/gateway', $body);
         $body = str_replace("\$gatewayId", $gatewayId, $body);
 
-        EmailUtilities::sendEmail($subject, $email, $body);
+        $recipients = array();
+        foreach($emails as $email) {
+            $recipient['email'] = $email;
+            array_push($recipients, $recipient);
+        }
+
+        EmailUtilities::sendEmail($subject, $recipients, $body);
 
     }
 
@@ -159,7 +188,12 @@ class EmailUtilities
         $mail->ContentType = 'text/html; charset=utf-8\r\n';
 
         foreach($recipients as $recipient){
-            $mail->addAddress($recipient);
+            if (array_key_exists('firstName', $recipient) && array_key_exists('lastName', $recipient)) {
+                $mail->addAddress($recipient['email'], $recipient['firstName'] . " " . $recipient['lastName']);
+            }
+            else {
+                $mail->addAddress($recipient['email']);
+            }
         }
 
         $mail->Subject = $subject;
