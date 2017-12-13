@@ -30,11 +30,23 @@
                                         <option value="">Select a Credential Token from Store</option>
                                         @if( isset( $gp->profile->credentialStoreToken) )
                                         @foreach( $tokens as $val)
-                                            <option value="{{$val->token}}" @if( $val->token == $gp->profile->credentialStoreToken) selected @endif>{{$val->description}}</option>
+                                            <option value="{{$val->token}}" @if( $val->token == $gp->profile->credentialStoreToken) selected @endif>
+                                                @if($val->description)
+                                                    {{{$val->description}}}
+                                                @else
+                                                    NO DESCRIPTION: ({{{$val->token}}})
+                                                @endif
+                                            </option>
                                         @endforeach
                                         @else
                                         @foreach( $tokens as $val)
-                                            <option value="{{$val->token}}">{{$val->description}}</option>
+                                            <option value="{{$val->token}}">
+                                                @if($val->description)
+                                                    {{{$val->description}}}
+                                                @else
+                                                    NO DESCRIPTION: ({{{$val->token}}})
+                                                @endif
+                                            </option>
                                         @endforeach
                                         @endif
                                         <option value="">DO-NO-SET</option>

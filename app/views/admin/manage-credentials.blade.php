@@ -60,7 +60,7 @@
                                 @if($val->description!=null)
                                 <p><strong>{{{ $val->description }}}</strong></p>
                                 @else
-                                <p style="color:red"><strong>NO DESCRIPTION!</strong></p>
+                                <p style="color:red"><strong>NO DESCRIPTION! ({{{ $val->token }}})</strong></p>
                                 @endif
                             </div>
                         </div><!-- .row -->

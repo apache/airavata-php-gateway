@@ -421,7 +421,6 @@ class AdminController extends BaseController {
     }
 
 	public function createSSH(){
-		$newToken = AdminUtilities::create_ssh_token_for_gateway(null);
         $description = Input::get("description");
         $newToken = AdminUtilities::create_ssh_token_for_gateway($description);
         $pubkey = AdminUtilities::get_pubkey_from_token( $newToken);
