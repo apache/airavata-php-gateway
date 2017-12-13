@@ -259,7 +259,8 @@ class Keycloak {
         $users = $this->users->getUsers($this->realm);
         $usernames = [];
         foreach ($users as $user) {
-            array_push($usernames, (object)["firstName"=>$user->firstName,"lastName"=>$user->lastName,"email"=>$user->email,"emailVerified"=>$user->emailVerified,"userName"=>$user->username]);
+            Log::debug("user", array($user));
+            array_push($usernames, (object)["firstName"=>$user->firstName,"lastName"=>$user->lastName,"email"=>$user->email,"userEnabled"=>$user->enabled,"userName"=>$user->username]);
         }
         return $usernames;
     }
@@ -275,7 +276,7 @@ class Keycloak {
         $users = $this->users->searchUsers($this->realm, $phrase);
         $usernames = [];
         foreach ($users as $user) {
-            array_push($usernames, (object)["firstName"=>$user->firstName,"lastName"=>$user->lastName,"email"=>$user->email,"userName"=>$user->username]);
+            array_push($usernames, (object)["firstName"=>$user->firstName,"lastName"=>$user->lastName,"email"=>$user->email,"userEnabled"=>$user->enabled,"userName"=>$user->username]);
         }
         return $usernames;
     }
@@ -374,6 +375,7 @@ class Keycloak {
             $result["email"] = $user->email;
             $result["firstname"] = $user->firstName;
             $result["lastname"] = $user->lastName;
+            $result["userEnabled"] = $user->enabled;
             return $result;
         }else{
             return [];
