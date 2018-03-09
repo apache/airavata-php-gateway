@@ -407,6 +407,9 @@ class ExperimentUtilities
                             . $file['name'] . "'. File upload error code is " . $file['error'] . ".");
                     }
 
+                    //FIX - AIRAVATA - 2674
+                    //Replaced spaces with Underscore
+                    $file['name'] = str_replace(' ', '_', $file['name']);
                     //
                     // move file to experiment data directory
                     //
@@ -789,7 +792,7 @@ class ExperimentUtilities
             array_multisort($order, SORT_ASC, $inputs);
         }
 
-        //var_dump( $inputs); exit;
+        // var_dump( $inputs); exit;
         foreach ($inputs as $input) {
             $disabled = "";
             if($input->isReadOnly)
@@ -1371,8 +1374,10 @@ class ExperimentUtilities
         $applicationInputs = AppUtilities::get_application_inputs($experiment->executionId);
 
         $experimentInputs = $experiment->experimentInputs; // get current inputs
-        $experimentInputs = ExperimentUtilities::process_inputs( $experiment->userConfigurationData->experimentDataDir, $applicationInputs, $experimentInputs); // get new inputs
 
+        $experimentInputs = ExperimentUtilities::process_inputs( $experiment->userConfigurationData->experimentDataDir, $applicationInputs, $experimentInputs); // get new inputs
+        // var_dump($experimentInputs);
+        // exit;
         if (isset($_POST["enableEmailNotification"])) {
             $experiment->enableEmailNotification = intval($_POST["enableEmailNotification"]);
             $experiment->emailAddresses = array_unique(array_filter($_POST["emailAddresses"], "trim"));
