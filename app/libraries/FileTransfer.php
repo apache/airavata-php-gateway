@@ -24,15 +24,16 @@ class FileTransfer {
         $filelist = explode("\n", RBase64::decode( $filelist ) );
         $folder_path=$filelist[0]. "ARCHIVE" ;
         $content = "[ \n";
+        $out_prefix = $filelist[3];
 
         $content = $content . ' {
             type:"bigwig",
-            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($filelist[2]). '",
+            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($filelist[0].'/'.$filelist[1]). '",
             name: "'. $filelist[1] .'",
             #fixedscale:{min:0,max:20},
             summarymethod:"max",
-            colorpositive:"#B30086",
-            colornegative:"#0000e5",
+            colorpositive:"#C5000B",
+            colornegative:"#0084D1",
             height:100,
             mode: "show",
             },'. "\n" ;
@@ -40,19 +41,19 @@ class FileTransfer {
 
        $content = $content . ' {
             type:"bigwig",
-            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($filelist[4]). '",
+            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode($filelist[0].'/'.$filelist[2]). '",
             name: "'. $filelist[3] .'",
             #fixedscale:{min:0,max:20},
             summarymethod:"min",
-            colorpositive:"#B30086",
-            colornegative:"#0000e5",
+            colorpositive:"#C5000B",
+            colornegative:"#0084D1",
             height:100,
             mode: "show",
             },'. "\n" ;
 
         $content = $content . '{
-            type:"bedgraph",
-            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.infp.bed.gz').'",
+            type:"bigwig",
+            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/'. $out_prefix .'.dREG.infp.bw').'",
             name: "dREG Info. Sites:",
             mode: "show",
             colorpositive:"#B30086",
@@ -63,8 +64,8 @@ class FileTransfer {
         },'. "\n";
 
         $content = $content . '{
-            type:"bedgraph",
-            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.peak.score.bed.gz').'",
+            type:"bigwig",
+            url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/'. $out_prefix .'.dREG.peak.score.bw').'",
             name: "dREG Peak Calling:",
             mode: "show",
             colorpositive:"#B30086",
@@ -73,6 +74,31 @@ class FileTransfer {
             height:40,
             fixedscale:{min:0.2, max:1.0},
         },'. "\n";
+
+
+        #$content = $content . '{
+        #    type:"bedgraph",
+        #    url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.infp.bed.gz').'",
+        #    name: "dREG Info. Sites:",
+        #    mode: "show",
+        #    colorpositive:"#B30086",
+        #    colornegative:"#0000e5",
+        #    backgroundcolor:"#ffffe5",
+        #    height:40,
+        #    fixedscale:{min:0, max:1},
+        #},'. "\n";
+
+        #$content = $content . '{
+        #    type:"bedgraph",
+        #    url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/out.dREG.peak.score.bed.gz').'",
+        #    name: "dREG Peak Calling:",
+        #    mode: "show",
+        #    colorpositive:"#B30086",
+        #    colornegative:"#0000e5",
+        #    backgroundcolor:"#ffffe5",
+        #    height:40,
+        #    fixedscale:{min:0.2, max:1.0},
+        #},'. "\n";
 
 
         #$content = $content . '{

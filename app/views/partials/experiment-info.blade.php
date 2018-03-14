@@ -200,16 +200,32 @@
     }
 
     $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+
+
+    $param_prefix = "out";
+    if( count( $experiment->experimentInputs) > 0 ) 
+       foreach( $experiment->experimentInputs as $input)
+       {
+          if ($input->applicationArgument == "prefix") {
+              $param_prefix = $input->value;
+          }
+       } 
 ?>
             <td>
                 <select id="download">
                     <option value=''>Select results</option>
-@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/out.dREG.tar.gz') )
-                    <option value="out.dREG.tar.gz">Full results</option>  
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.tar.gz') )
+                    <option value=<?php echo $param_prefix.".tar.gz" ?>>Full results</option>  
 @endif
-                    <option value="out.dREG.infp.bed.gz">dREG informative sites</option>
-                    <option value="out.dREG.peak.full.bed.gz">dREG peaks </option> 
-                    <option value="out.dREG.peak.score.bed.gz">dREG peak(only with scores)</option>
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dREG.infp.bed.gz') )
+                    <option value=<?php echo $param_prefix.".dREG.infp.bed.gz"?>>dREG informative sites</option>
+@endif
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dREG.peak.full.bed.gz') )
+                    <option value=<?php echo $param_prefix.".dREG.peak.full.bed.gz"?>>dREG peaks </option> 
+@endif
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dREG.peak.score.bed.gz') )
+                    <option value=<?php echo $param_prefix.".dREG.peak.score.bed.gz"?>>dREG peak(only with scores)</option>
+@endif
                 </select> &nbsp;&nbsp;&nbsp;&nbsp;
 
    	       <a href="" target="_blank" id="retLinks">Download&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></a>
@@ -497,12 +513,18 @@
                         $currentOutputPath = $rp->filePath;
                       break;
                     }
-                   
-                    $path = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
-                    $filelist = $filelist . $input->name . "\n". $path. "\n";
+                    $path = str_replace($dataRoot.$expDataDir, "", parse_url($currentOutputPath, PHP_URL_PATH));
+                    $filelist = $filelist . $path. "\n";
+                }
+                else
+                {
+                    $filelist = $filelist . $input->value. "\n";
                 }
 
     $filelist = $expDataDir ."\n". $filelist;
+    // in case no prefix label for output file in the interface, put "out" at the end
+    $filelist =  $filelist . "out\n";
+
     $protocol = 'http';
     if ( isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') 
         $protocol = 'https';
