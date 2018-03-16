@@ -174,7 +174,7 @@ class AdminController extends BaseController {
 	public function updateGateway(){
 
         $rules = array(
-            "password" => "min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
+            "password" => "min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*&]).*$/",
             "confirm_password" => "same:password",
             "email" => "email",
         );
@@ -463,7 +463,7 @@ class AdminController extends BaseController {
 		$inputs = Input::all();
 
 		$rules = array(
-            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
+            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*&]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
         );
@@ -547,7 +547,7 @@ class AdminController extends BaseController {
 		
 		$rules = array(
             "username" => "required",
-            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
+            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*&]).*$/",
             "confirm_password" => "required|same:password",
             "email" => "required|email",
         );
