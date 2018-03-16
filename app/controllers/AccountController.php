@@ -2,7 +2,7 @@
 
 class AccountController extends BaseController
 {
-    const PASSWORD_VALIDATION = "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/";
+    const PASSWORD_VALIDATION = "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*&]).*$/";
     const PASSWORD_VALIDATION_MESSAGE = "Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$&*";
 
     public function __construct()
