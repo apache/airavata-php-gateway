@@ -57,15 +57,14 @@
                     @if ($credentialSummary->token != $defaultCredentialToken)
                     <form style="display: inline" action="{{ URL::to('/') }}/account/set-default-credential" method="post">
                         <input type="hidden" name="defaultToken" value="{{$credentialSummary->token}}"/>
-                        <button type="submit" class="btn btn-default">Make Default</button>
+                        <button type="submit" class="btn btn-default" title="Test">Make Default</button>
                     </form>
-                    @else
-                    <small>This is the default SSH public key that the gateway will use to authenticate to your compute and storage accounts.</small>
-                    @endif
-                    @if ($credentialSummary->canDelete)
                     <button data-token="{{$credentialSummary->token}}"
                         data-description="{{$credentialSummary->description}}"
-                        class="btn btn-danger delete-credential">Delete</button>
+                        class="btn btn-danger delete-credential"
+                        @if(!$credentialSummary->canDelete) disabled @endif>Delete</button>
+                    @else
+                    <small>This is the default SSH public key that the gateway will use to authenticate to your compute and storage accounts.</small>
                     @endif
                 </div>
             </div><!-- .row -->

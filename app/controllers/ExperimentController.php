@@ -327,7 +327,7 @@ class ExperimentController extends BaseController
 
         $computeResources = CRUtilities::create_compute_resources_select($experiment->executionId, $expVal['scheduling']->resourceHostId);
 
-        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
+        $userComputeResourcePreferences = URPUtilities::get_all_validated_user_compute_resource_prefs();
         $userHasComputeResourcePreference = array_key_exists($expVal['scheduling']->resourceHostId, $userComputeResourcePreferences);
         $batchQueues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
 
@@ -482,7 +482,7 @@ class ExperimentController extends BaseController
         );
 
         $queues = ExperimentUtilities::getQueueDatafromResourceId($computeResourceId);
-        $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
+        $userComputeResourcePreferences = URPUtilities::get_all_validated_user_compute_resource_prefs();
         $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
         if ($userHasComputeResourcePreference)
         {

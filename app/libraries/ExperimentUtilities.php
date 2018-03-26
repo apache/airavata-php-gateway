@@ -694,7 +694,7 @@ class ExperimentUtilities
             if ($experiment->userConfigurationData->useUserCRPref){
                 // Check if this user has a user CR preference for the compute
                 // resource, if not we want to switch this flag to false
-                $userComputeResourcePreferences = URPUtilities::get_all_user_compute_resource_prefs();
+                $userComputeResourcePreferences = URPUtilities::get_all_validated_user_compute_resource_prefs();
                 $userHasComputeResourcePreference = array_key_exists($computeResourceId, $userComputeResourcePreferences);
                 $experiment->userConfigurationData->useUserCRPref = $userHasComputeResourcePreference;
             }
