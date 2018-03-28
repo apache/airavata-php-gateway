@@ -41,8 +41,13 @@
                                 @endif
                             </td>
                             <td>{{{ $auto_provisioned_account["hostname"] }}}</td>
-                            {{-- Not escaping HTML to allow Gateway Admin to put HTML into additionalInfo field --}}
-                            <td>{{ $auto_provisioned_account["additionalInfo"] }}</td>
+                            <td>
+                            {{-- Only display additional info if account isn't completely setup --}}
+                            @if ($auto_provisioned_account["userComputeResourcePreference"] == null || !$auto_provisioned_account["userComputeResourcePreference"]->validated)
+                                {{-- Not escaping HTML to allow Gateway Admin to put HTML into additionalInfo field --}}
+                                {{ $auto_provisioned_account["additionalInfo"] }}
+                            @endif
+                            </td>
                             <td>{{{ $auto_provisioned_account["errorMessage"] }}}</td>
                         </tr>
                     @endforeach
