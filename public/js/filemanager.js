@@ -94,10 +94,10 @@ function show_table(files){
         var icon_class, name_link;
         if (f.folder) {
             icon_class = 'glyphicon glyphicon-folder-open';
-            name_link = '<a href="#" onclick=dir_click("' + f.link + '")>&nbsp;' + f.name + "</a>";
+            name_link = '<a href="#" onclick=dir_click(' + JSON.stringify(f.link) + ')>&nbsp;' + f.name + "</a>";
         } else {
             icon_class = 'glyphicon glyphicon-save-file';
-            name_link = '<a href="../download?path=' + f.link + '">&nbsp;' + f.name + '</a>';
+            name_link = '<a href="../download?path=' + encodeURIComponent(f.link) + '">&nbsp;' + f.name + '</a>';
         }
 
         html += '<tr>'
