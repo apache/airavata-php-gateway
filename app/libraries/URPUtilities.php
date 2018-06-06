@@ -11,11 +11,13 @@ class URPUtilities
 
     public static function get_or_create_user_resource_profile()
     {
-        $userResourceProfile = URPUtilities::get_user_resource_profile();
-        // Check if user has UserResourceProfile by checking isNull flag
-        if ($userResourceProfile->isNull)
+        if (!URPUtilities::is_user_resource_profile_exists())
         {
             $userResourceProfile = URPUtilities::create_user_resource_profile();
+        }
+        else
+        {
+            $userResourceProfile = URPUtilities::get_user_resource_profile();
         }
         return $userResourceProfile;
     }
@@ -25,6 +27,13 @@ class URPUtilities
         $userId = Session::get('username');
         $gatewayId = Session::get('gateway_id');
         return Airavata::getUserResourceProfile(Session::get('authz-token'), $userId, $gatewayId);
+    }
+
+    public static function is_user_resource_profile_exists()
+    {
+        $userId = Session::get('username');
+        $gatewayId = Session::get('gateway_id');
+        return Airavata::isUserResourceProfileExists(Session::get('authz-token'), $userId, $gatewayId);
     }
 
     public static function create_user_resource_profile()
@@ -123,9 +132,9 @@ class URPUtilities
     {
 
         $userComputeResourcePreferencesById = array();
-        $userResourceProfile = URPUtilities::get_user_resource_profile();
-        if (!$userResourceProfile->isNull)
+        if (URPUtilities::is_user_resource_profile_exists())
         {
+            $userResourceProfile = URPUtilities::get_user_resource_profile();
             $userComputeResourcePreferences = $userResourceProfile->userComputeResourcePreferences;
             // Put $userComputeResourcePreferences in a map keyed by computeResourceId
             foreach( $userComputeResourcePreferences as $userComputeResourcePreference )
