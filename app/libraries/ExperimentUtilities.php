@@ -27,6 +27,7 @@ use Airavata\Model\Group\ResourcePermissionType;
 
 class ExperimentUtilities
 {
+    const FILE_UNAVAILABLE_ICON_TOOLTIP = ' <span class="glyphicon glyphicon-warning-sign" data-toggle="tooltip" data-placement="right" title="File is not available for download."></span></p>';
     private static $experimentPath;
 
     private static $relativeExperimentDataDir;
@@ -104,7 +105,7 @@ class ExperimentUtilities
                         echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?id='
                             . $input->value . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                     } else {
-                        echo '<p>' . $input->name . ':&nbsp;' . $fileName . '</p>';
+                        echo '<p>' . $input->name . ':&nbsp;' . $fileName . self::FILE_UNAVAILABLE_ICON_TOOLTIP;
                     }
 
                 }else if($input->type == DataType::URI_COLLECTION) {
@@ -131,7 +132,7 @@ class ExperimentUtilities
                             $optFilesHtml = $optFilesHtml . '<a target="_blank" href="' . URL::to("/") . '/download/?id='
                                 . $uri . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a>&nbsp;';
                         } else {
-                            $optFilesHtml = $optFilesHtml . $fileName . ' &nbsp;';
+                            $optFilesHtml = $optFilesHtml . $fileName . self::FILE_UNAVAILABLE_ICON_TOOLTIP;
                         }
 
                     }
@@ -981,7 +982,7 @@ class ExperimentUtilities
                                 . '/download/?id=' . urlencode($output->value) . '">' . $fileName
                                 . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                         } else {
-                            echo '<p>' . $output->name . ':&nbsp;' . $fileName . ' </p>';
+                            echo '<p>' . $output->name . ':&nbsp;' . $fileName . self::FILE_UNAVAILABLE_ICON_TOOLTIP . ' </p>';
                         }
                     }else {
                         $fileName = basename($output->value);
@@ -990,7 +991,7 @@ class ExperimentUtilities
                                 . '/download/?id=' . urlencode($output->value) . '">' . $fileName
                                 . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                         } else {
-                            echo '<p>' . $output->name . ':&nbsp;' . $fileName . ' </p>';
+                            echo '<p>' . $output->name . ':&nbsp;' . $fileName . self::FILE_UNAVAILABLE_ICON_TOOLTIP . ' </p>';
                         }
                     }
                 }
