@@ -99,8 +99,13 @@ class ExperimentUtilities
                         $fileName = basename($input->value);
                     }
 
-                    echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?id='
-                        . $input->value . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                    $path = parse_url($currentInputPath)['path'];
+                    if(file_exists($path)){
+                        echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?id='
+                            . $input->value . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                    } else {
+                        echo '<p>' . $input->name . ':&nbsp;' . $fileName . '</p>';
+                    }
 
                 }else if($input->type == DataType::URI_COLLECTION) {
                     $uriList = $input->value;
@@ -121,8 +126,13 @@ class ExperimentUtilities
                             $fileName = basename($input->value);
                         }
 
-                        $optFilesHtml = $optFilesHtml . '<a target="_blank" href="' . URL::to("/") . '/download/?id='
-                            . $uri . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a>&nbsp;';
+                        $path = parse_url($currentInputPath)['path'];
+                        if(file_exists($path)){
+                            $optFilesHtml = $optFilesHtml . '<a target="_blank" href="' . URL::to("/") . '/download/?id='
+                                . $uri . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a>&nbsp;';
+                        } else {
+                            $optFilesHtml = $optFilesHtml . $fileName . ' &nbsp;';
+                        }
 
                     }
 
@@ -965,17 +975,23 @@ class ExperimentUtilities
                             }
                         }
                         $path = parse_url($currentOutputPath)['path'];
+                        $fileName = basename($currentOutputPath);
                         if(file_exists($path)){
-                            $fileName = basename($currentOutputPath);
                             echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
                                 . '/download/?id=' . urlencode($output->value) . '">' . $fileName
                                 . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        } else {
+                            echo '<p>' . $output->name . ':&nbsp;' . $fileName . ' </p>';
                         }
                     }else {
                         $fileName = basename($output->value);
-                        echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
-                            . '/download/?id=' . urlencode($output->value) . '">' . $fileName
-                            . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        if(file_exists($path)){
+                            echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
+                                . '/download/?id=' . urlencode($output->value) . '">' . $fileName
+                                . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        } else {
+                            echo '<p>' . $output->name . ':&nbsp;' . $fileName . ' </p>';
+                        }
                     }
                 }
             } elseif ($output->type == DataType::STRING) {
