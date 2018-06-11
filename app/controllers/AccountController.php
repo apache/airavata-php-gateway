@@ -388,24 +388,29 @@ class AccountController extends BaseController
             return View::make("home");
         }else{
             try{
-                $verified = EmailUtilities::verifyEmailVerification($username, $code);
-                if (!$verified){
-                    $user_profile = Keycloak::getUserProfile($username);
-                    EmailUtilities::sendVerifyEmailAccount($username,
-                        $user_profile["firstname"], $user_profile["lastname"], $user_profile["email"]);
-                    CommonUtilities::print_error_message("Account confirmation "
-                        . "failed! We're sending another confirmation email. "
-                        . "Please click the link in the confirmation email that "
-                        . "you should be receiving soon.");
-                    return View::make("home");
-                }
-                $result = IamAdminServicesUtilities::enableUser($username);
-                if($result){
-                    $this->sendAccountCreationNotification2Admin($username);
-                    return Redirect::to("login")->with("account-created-success", "Your account has been successfully created. Please log in now.");
-                }else{
-                    CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
-                    return View::make("home");
+                $enabled = IamAdminServicesUtilities::isUserEnabled($username);
+                if ($enabled) {
+                    return Redirect::to("login")->with("account-created-success", "Your account has already been successfully created. Please log in now.");
+                } else {
+                    $verified = EmailUtilities::verifyEmailVerification($username, $code);
+                    if (!$verified){
+                        $user_profile = Keycloak::getUserProfile($username);
+                        EmailUtilities::sendVerifyEmailAccount($username,
+                            $user_profile["firstname"], $user_profile["lastname"], $user_profile["email"]);
+                        CommonUtilities::print_error_message("Account confirmation "
+                            . "failed! We're sending another confirmation email. "
+                            . "Please click the link in the confirmation email that "
+                            . "you should be receiving soon.");
+                        return View::make("home");
+                    }
+                    $result = IamAdminServicesUtilities::enableUser($username);
+                    if($result){
+                        $this->sendAccountCreationNotification2Admin($username);
+                        return Redirect::to("login")->with("account-created-success", "Your account has been successfully created. Please log in now.");
+                    }else{
+                        CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
+                        return View::make("home");
+                    }
                 }
             }catch (Exception $e){
                 CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
