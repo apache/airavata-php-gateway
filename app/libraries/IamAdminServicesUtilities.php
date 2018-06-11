@@ -22,6 +22,11 @@ class IamAdminServicesUtilities {
         return IamAdminServices::enableUser($admin_authz_token, $username);
     }
 
+    public static function isUserEnabled($username) {
+        $admin_authz_token = IamAdminServicesUtilities::getAdminAuthzToken();
+        return IamAdminServices::isUserEnabled($admin_authz_token, $username);
+    }
+
     public static function resetUserPassword($username, $new_password) {
 
         $admin_authz_token = IamAdminServicesUtilities::getAdminAuthzToken();
