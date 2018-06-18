@@ -8,6 +8,10 @@
 
 <p><b>Q: How should I prepare bigWig files for use with the dREG gateway?</b></p>
 <p>A: Information about how to prepare files can be found  <A href="https://github.com/Danko-Lab/tutorials/blob/master/PRO-seq.md#read-mapping"> here </A>.</p>
+
+<p><b>Q: How should I do when I meet the computational failure in the dREG gateway?</b></p>
+<p>A: There are two types of error you may have, we explain how to identify your error and how to handle it <A href="https://dreg.dnasequence.org/pages/doc#failure"> here</A>.</p>
+
 <p><b>Q: What types of enhancers and promoters can be identified using the dREG gateway?</b></p>
 <p>A: As a general rule of thumb, high-quality datasets provide very similar groups of enhancers and promoters as ChIP-seq for H3K27ac.  This suggests that dREG identifies the location of all of the so-called ‘active’ class of enhancers and promoters.  </p>
 <p><b>Q: Will the dREG gateway work with my data type?</b></p>
@@ -18,8 +22,12 @@
 <p>A: Sensitivity is reasonable at ~40 million mapped reads and saturates at ~100 million mapped reads.  See our analysis here: <A href="http://www.nature.com/nmeth/journal/v12/n5/fig_tab/nmeth.3329_SF3.html">supplementary figure 3 in dREG paper</A>.</p>
 <p><b>Q: How to I cite the dREG gateway?</b></p>
 <p>A: Please cite one of our papers if you use dREG results in your publication:<BR/>
-<A href="http://www.nature.com/nmeth/journal/v12/n5/full/nmeth.3329.html">
-Danko, C. G., Hyland, S. L., Core, L. J., Martins, A. L., Waters, C. T., Lee, H. W., ... & Siepel, A. (2015). Identification of active transcriptional regulatory elements from GRO-seq data. Nature methods, 12(5), 433-438. </A></p> 
+<A target="_blank" href="http://www.nature.com/nmeth/journal/v12/n5/full/nmeth.3329.html">
+(1) Danko, C. G., Hyland, S. L., Core, L. J., Martins, A. L., Waters, C. T., Lee, H. W., ... & Siepel, A. (2015). Identification of active transcriptional regulatory elements from GRO-seq data. Nature methods, 12(5), 433-438. </A></p> 
+<A target="_blank" href="https://www.biorxiv.org/content/early/2018/05/14/321539.abstract">
+(2) Wang, Z., Chu, T., Choate, L. A., & Danko, C. G. (2018). Identification of regulatory elements from nascent transcription using dREG. bioRxiv, 321539. </A></P>
+
+
 <p><b>Q: Do I have to create account before using this service?</b></p>
 <p>A: Yes, this system is supported by an NSF funded supercomputing resource known as <A title="XSEDE" href="http://www.xsede.org">XSEDE</A>, who regularly needs to report bulk usage statistics to NSF.  Nevertheless, data that you provide are completely safe.</p>
 <p><b>Q: How do I know the status of the computational nodes? </b></p>

@@ -71,6 +71,45 @@ the user can click <b>'Open Folder'</b> link in the experiment summary page to c
 
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment summary" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.exp.folder.png"></img></div>
 
+<a name="failure"></a> 
+         <p class="description" style="padding:16px">
+         10)&nbsp;&nbsp;<b>When you meet failure</b><br>
+
+Currently when you run the dREG jobs, there are two types of errors you may have. One error may come from the system, called a system error, such as no computing time on specific GPU nodes or an internal errors in Apache Airavata. The other type of error is caused by the users' bigwig, called bigwig error, which can occur when read counts are normalized, each read is mapped to a region, or read counts in minus strand are positive values. The following figures show how to identify the error and how to handle it. </p>
+
+
+         <p class="description" style="padding:16px">
+         a)&nbsp;&nbsp;<b>System error</b><br>
+When users submit the experiment, the failure will be shown in the experiment summary page soon as figure 10-S1 or 10-S2. The <b>experiment status</b> is "Failed" and many java errors are shown in the <b>"Errors"</b> item. Users can't solve this problem and should report this error the web master.</p>
+
+<div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="System error(1)" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/failure1.png"></img></div>
+<div style="clear:both;text-align:center;"><center>Figure 10-S1</center></div>
+
+<br>
+
+<div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="System error(2)" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/failure2.png"></img></div>
+<div style="clear:both;text-align:center;"><center>Figure 10-S2</center></div>
+
+<br>
+         <p class="description" style="padding:16px">
+         b)&nbsp;&nbsp;<b>Bigwig error</b><br>
+After the experiment is complete, no results can be downloaded and job status shows a failure (see Figure 10-S3). Users can find the dREG log file or task log file to identify the problem. Enter into <b>"storage directory"</b> by clicking the <b>"open"</b> link. The users can find <b>"ARCHIVE"</b> folder where Apache Airavata copy back all files from the computing node. Check the dREG log file (<b>out.dREG.log</b>) to see the bigwig problem or check the task log file ("slurm-tasknoxxx.out") and find the reason why the task is aborted. Figure 10-S4 and 10-S5 give a two examples for this kind of error. If the bigwig has problems, please refer to this <A href="https://github.com/Danko-Lab/tutorials/blob/master/PRO-seq.md#read-mapping">link</a> to solve the problems.</p>
+
+<div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="Bigwig error" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/failure3.png"></img></div>
+<div style="clear:both;text-align:center;"><center>Figure 10-S3</center></div>
+<BR>
+
+<p>This figure shows the bigWig problems in the dREG log file.</p>
+
+<div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="Bigwig error(1)" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/failure3-reason.png"></img></div>
+<div style="clear:both;text-align:center;"><center>Figure 10-S4</center></div>
+<BR>
+
+<p>This figure shows the task log file in which explains the task was killed due to time limit.</p>
+
+<div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="Bigwig error(2)" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/failure4-reason.png"></img></div>
+<div style="clear:both;text-align:center;"><center>Figure 10-S5</center></div>
+<BR>
 
         </div>
       </div>
