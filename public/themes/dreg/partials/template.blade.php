@@ -54,7 +54,7 @@ Registered users need only upload experimental data in the required format and p
 
 </p>
 <p style="font-size:14px; margin-top:5px;text-align:justify">
-<img src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/webdev-bullet-icon.png" style="height:20px"></img>See our <A href="https://osboxes/pages/faq">FAQ</A> for additional questions.
+<img src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/webdev-bullet-icon.png" style="height:20px"></img>See our <A href="{{ URL::to('/') }}/pages/faq">FAQ</A> for additional questions.
 </p>
 <img id="myImg2" alt="dREG model" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dREG-model.png" style="width:100%"></img>
 <p class="text-center"><small>Click the figure to enlarge it</small></p>
