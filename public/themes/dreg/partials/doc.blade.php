@@ -54,14 +54,14 @@ The user can check the status of their 'experiment' by clicking the menu 'Saved 
 
           <p class="description" style="padding:16px">
          7)&nbsp;&nbsp;<b>Check the results</b><br>
-Once a job is completed, the user can click <B>'Download All Results'</B> link in the experiment summary page to download a compressed file described in the <a href="#output" role="tab" data-toggle="tab">'output'</A> sheet in this page, or the user can download any single file from the drop-down list. 
+Once a job is completed, the user can select 'Full results' in the drop-down list and then click <B>'Download'</B> link in the experiment summary page to download a compressed file described in the <a href="#output" role="tab" data-toggle="tab">'output'</A> sheet in this page, or the user can download any single file from the drop-down list. The downloaded file with the 'tar.gz' extension can be decompressed by the 'tar' command, the file with the 'gz' extension can be decompressed by the 'gunzip' command in Linux.  
           
 </p>
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment summary" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.exp.summary.png"></img></div>
 
          <p class="description" style="padding:16px">
          8)&nbsp;&nbsp;<b>Switch to Genome Browser</b><br>
-The convenient tool ptovided by the gateway is the user can check the results in the Genome Browser by clicking <b>'Genome Browser'</B> link. </p>
+The convenient tool ptovided by the gateway is the user can check the results in the Genome Browser by clicking <b>'Switch to genome browser'</B> link. </p>
 
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment summary" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.gbview.png"></img></div>
 
@@ -154,17 +154,21 @@ dREG run generates a compressed file including the dREG and dREG.HD results as f
                     <th>Description</th>
               </tr>
               <tr>
-                    <td>out.dREG.infp.bed.gz</td>
-                    <td>Informative positions with the scores predicted by the dREG model</td>
+                    <td>$PREFIX.dREG.infp.bed.gz</td>
+                    <td>Informative positions with the scores predicted by the dREG model. <BR>Decompress it with 'gunzip' in Linux.</td>
               </tr>
               <tr>
-                    <td>out.dREG.peak.full.bed.gz</td>
-                    <td>dREG peaks calling results with score, probability and center position information. </td>
+                    <td>$PREFIX.dREG.peak.full.bed.gz</td>
+                    <td>dREG peaks calling results with score, probability and center position information. <BR>Decompress it with 'gunzip' in Linux.</td>
               </tr>
               <tr>
-                    <td>out.dREG.peak.score.bed.gz</td>
-                    <td>dREG peaks calling results only with score.</td>
+                    <td>$PREFIX.dREG.peak.score.bed.gz</td>
+                    <td>dREG peaks calling results only with score. <BR>Decompress it with 'gunzip' in Linux.</td>
               </tr>
+              <tr>
+                    <td>$PREFIX.tar.gz</td>
+                    <td>Including above 3 files, can be decompressed by 'tar -xvzf' in Linux.</td>
+             </tr>
             </table>
 
         </div>

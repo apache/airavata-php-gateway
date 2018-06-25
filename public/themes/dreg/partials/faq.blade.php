@@ -5,6 +5,8 @@
 <div class="post-entry">
 <p>dREG Gateway is online service that supports Web-based science through the execution of online computational experiments and the management of data. The items below are trying to  answer qustions from the users</p>
 
+<p><b>Q: Which browser works well with the dREG gateway?</b></p>
+<p>A: We have tested in the Firefox and Google Chrome so far. In IE (version 10 or 11) or Safari, WashU geneome browser doesn't work.</p>
 
 <p><b>Q: How should I prepare bigWig files for use with the dREG gateway?</b></p>
 <p>A: Information about how to prepare files can be found  <A href="https://github.com/Danko-Lab/tutorials/blob/master/PRO-seq.md#read-mapping"> here </A>.</p>
@@ -20,6 +22,8 @@
 <p>A: Models are currently available only in mammalian organisms.  The length and density of genes, which vary considerably between highly divergent species, affects the way that a transcribed promoter or enhancer looks.  For this reason, models can only be used in species .  We are working to create models in widely-used model organisms, including drosophila and C. elegans. </p> 
 <p><b>Q: How deeply do I need to sequence PRO-seq libraries?</b></p>
 <p>A: Sensitivity is reasonable at ~40 million mapped reads and saturates at ~100 million mapped reads.  See our analysis here: <A href="http://www.nature.com/nmeth/journal/v12/n5/fig_tab/nmeth.3329_SF3.html">supplementary figure 3 in dREG paper</A>.</p>
+<p><b>Q: How long do my data and results keep in the dREG gateway?</b></p>
+<p>A: One month.</p>
 <p><b>Q: How to I cite the dREG gateway?</b></p>
 <p>A: Please cite one of our papers if you use dREG results in your publication:<BR/>
 <A target="_blank" href="http://www.nature.com/nmeth/journal/v12/n5/full/nmeth.3329.html">
