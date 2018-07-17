@@ -979,7 +979,9 @@ class ExperimentUtilities
                     }
                 }
             } elseif ($output->type == DataType::STRING) {
-                echo '<p>' . $output->value . '</p>';
+                if (strpos($output->value, "parsed-out: ") === 0) {
+                    echo '<p>' . $output->name . $output->value . '</p>';
+                }
             } else
                 echo 'output : ' . $output;
         }
