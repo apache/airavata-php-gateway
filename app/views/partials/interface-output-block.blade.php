@@ -44,6 +44,14 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="control-label col-md-3">Search Query</label>
+
+        <div class="col-md-9">
+            <input type="text" readonly class="form-control" name="searchQuery[]"
+                   value="@if( isset( $appOutputs) ){{$appOutputs->searchQuery }}@endif"/>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="control-label col-md-3">Data Movement</label>
 
         <div class="col-md-9">
