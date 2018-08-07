@@ -20,6 +20,7 @@ use Airavata\Model\Data\Movement\SCPDataMovement;
 use Airavata\Model\Data\Movement\SecurityProtocol;
 use Airavata\Model\AppCatalog\ComputeResource\SSHJobSubmission;
 use Airavata\Model\Data\Movement\UnicoreDataMovement;
+use Airavata\Model\Data\Movement\WebDAVDataMovement;
 use Airavata\Model\AppCatalog\ComputeResource\UnicoreJobSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\CloudJobSubmission;
 use Airavata\Model\AppCatalog\ComputeResource\ProviderName;
@@ -353,6 +354,18 @@ class CRUtilities
                 $unicoredmp = Airavata::updateUnicoreDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $unicoreDataMovement);
             else
                 $unicoredmp = Airavata::addUnicoreDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, DMType::COMPUTE_RESOURCE, 0, $unicoreDataMovement);
+        } else if ($inputs["dataMovementProtocol"] == DataMovementProtocol::WebDAV) /* WebDAV */ {
+            //var_dump( $inputs); exit;
+            $davDataMovement = new WebDAVDataMovement(array(
+                    "securityProtocol" => intval($inputs["securityProtocol"]),
+                    "webDavHostName" => $inputs["webDavHostName"],
+                    "port" => intval($inputs["port"])
+                )
+            );
+            if ($update)
+                $davdmp = Airavata::updateWebDAVDataMovementDetails(Session::get('authz-token'), $inputs["dmiId"], $davDataMovement);
+            else
+                $davdmp = Airavata::addWebDAVDataMovementDetails(Session::get('authz-token'), $computeResource->computeResourceId, DMType::COMPUTE_RESOURCE, 0, $davDataMovement);
         } else /* other data movement protocols */ {
             print_r("Whoops! We haven't coded for this Data Movement Protocol yet. Still working on it. Please click <a href='" . URL::to('/') . "/cr/edit'>here</a> to go back to edit page for compute resource.");
         }
@@ -408,6 +421,8 @@ class CRUtilities
             return Airavata::getGridFTPDataMovement(Session::get('authz-token'), $dataMovementInterfaceId);
         else if ($dmi == DataMovementProtocol::UNICORE_STORAGE_SERVICE)
             return Airavata::getUnicoreDataMovement(Session::get('authz-token'), $dataMovementInterfaceId);
+        else if ($dmi == DataMovementProtocol::WebDAV)
+            return Airavata::getWebDAVDataMovement(Session::get('authz-token'), $dataMovementInterfaceId);
         /*
         else if( $dmi == JobSubmissionProtocol::CLOUD)
             return $airavataclient->getCloudJobSubmission( $dataMovementInterfaceId);

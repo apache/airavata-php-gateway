@@ -169,6 +169,29 @@
                     <div class="form-group">
                         <button type="submit" class="btn">Update</button>
                     </div>
+                    @elseif( $selectedDMIIndex == $dataMovementProtocolsObject::WebDAV)
+                    <div class="form-group">
+                        <label class="control-label">Select Security Protocol</label>
+                        <select name="securityProtocol">
+                            @foreach( $securityProtocols as $index => $sp)
+                            <option value="{{ $index }}"
+                                    @if( $DMI->securityProtocol == $index ) selected @endif>{{ $sp }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">WebDAV Host Name</label>
+                        <input class='form-control' name='webDavHostName'
+                               value="{{ $DMI->webDavHostName }}"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Port</label>
+                        <input class='form-control' name='port' value="{{ $DMI->port }}"/>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn">Update</button>
+                    </div>
                     @endif
                 </form>
             </div>
@@ -271,6 +294,14 @@
     <div class="form-group addedScpValue hide">
         <label class="control-label">SSH Port</label>
         <input class='form-control' name='sshPort'/>
+    </div>
+    <div class="form-group addedWebDavValue hide">
+        <label class="control-label">WebDAV Host Name</label>
+        <input class='form-control' name='webDavHostName'/>
+    </div>
+    <div class="form-group addedWebDavValue hide">
+        <label class="control-label">Port</label>
+        <input class='form-control' name='port'/>
     </div>
 </div>
 
