@@ -431,7 +431,9 @@ class AccountController extends BaseController
         $mail->Port = intval(Config::get('pga_config.portal')['portal-smtp-server-port']);
 
         $mail->From = Config::get('pga_config.portal')['portal-email-username'];
-        $mail->FromName = "Airavata PHP Gateway";
+        $gatewayURL = $_SERVER['SERVER_NAME'];
+        $portalTitle = Config::get('pga_config.portal')['portal-title'];
+        $mail->FromName = "$portalTitle ($gatewayURL)";
 
         $recipients = Config::get('pga_config.portal')['admin-emails'];
         foreach($recipients as $recipient){
