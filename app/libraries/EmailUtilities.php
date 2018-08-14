@@ -14,10 +14,15 @@ class EmailUtilities
         $subject = $emailTemplates->account_verification->subject;
         $body = trim(implode($emailTemplates->account_verification->body));
 
-        $body = str_replace("\$url", URL::to('/') . '/confirm-user-registration?username=' . $username . '&code=' . $code, $body);
-        $body = str_replace("\$firstName", $firstName, $body);
-        $body = str_replace("\$lastName", $lastName, $body);
-        $body = str_replace("\$validTime", $validTime, $body);
+        $vars = [
+            "url" => URL::to('/') . '/confirm-user-registration?username=' . $username . '&code=' . $code,
+            "firstName" => $firstName,
+            "lastName" => $lastName,
+            "validTime" => $validTime,
+            "username" => $username,
+        ];
+        $subject = EmailUtilities::replaceAll($vars, $subject);
+        $body = EmailUtilities::replaceAll($vars, $body);
 
         $recipient = array();
         $recipient['firstName'] = $firstName;
@@ -47,10 +52,15 @@ class EmailUtilities
         $subject = $emailTemplates->email_update_verification->subject;
         $body = trim(implode($emailTemplates->email_update_verification->body));
 
-        $body = str_replace("\$url", URL::to('/') . '/user-profile-confirm-email?username=' . $username . '&code=' . $code, $body);
-        $body = str_replace("\$firstName", $firstName, $body);
-        $body = str_replace("\$lastName", $lastName, $body);
-        $body = str_replace("\$validTime", $validTime, $body);
+        $vars = [
+            "url" => URL::to('/') . '/user-profile-confirm-email?username=' . $username . '&code=' . $code,
+            "firstName" => $firstName,
+            "lastName" => $lastName,
+            "validTime" => $validTime,
+            "username" => $username,
+        ];
+        $subject = EmailUtilities::replaceAll($vars, $subject);
+        $body = EmailUtilities::replaceAll($vars, $body);
 
         $recipient = array();
         $recipient['firstName'] = $firstName;
@@ -81,10 +91,15 @@ class EmailUtilities
         $subject = $emailTemplates->password_reset->subject;
         $body = trim(implode($emailTemplates->password_reset->body));
 
-        $body = str_replace("\$url", URL::to('/'). '/reset-password?username=' . urlencode($username) . '&code='.urlencode($code), $body);
-        $body = str_replace("\$firstName", $firstName, $body);
-        $body = str_replace("\$lastName", $lastName, $body);
-        $body = str_replace("\$validTime", $validTime, $body);
+        $vars = [
+            "url" => URL::to('/'). '/reset-password?username=' . urlencode($username) . '&code='.urlencode($code),
+            "firstName" => $firstName,
+            "lastName" => $lastName,
+            "validTime" => $validTime,
+            "username" => $username,
+        ];
+        $subject = EmailUtilities::replaceAll($vars, $subject);
+        $body = EmailUtilities::replaceAll($vars, $body);
 
         $recipient = array();
         $recipient['firstName'] = $firstName;
@@ -111,10 +126,14 @@ class EmailUtilities
         $subject = $emailTemplates->gateway_request->subject;
         $body = trim(implode($emailTemplates->gateway_request->body));
 
-        $body = str_replace("\$url", URL::to('/') . '/admin/dashboard/gateway', $body);
-        $body = str_replace("\$firstName", $firstName, $body);
-        $body = str_replace("\$lastName", $lastName, $body);
-        $body = str_replace("\$gatewayName", $gatewayName, $body);
+        $vars = [
+            "url" => URL::to('/') . '/admin/dashboard/gateway',
+            "firstName" => $firstName,
+            "lastName" => $lastName,
+            "gatewayName" => $gatewayName,
+        ];
+        $subject = EmailUtilities::replaceAll($vars, $subject);
+        $body = EmailUtilities::replaceAll($vars, $body);
 
         $recipients = array();
         foreach($emails as $email) {
@@ -133,8 +152,12 @@ class EmailUtilities
         $subject = $emailTemplates->update_to_user->subject;
         $body = trim(implode($emailTemplates->update_to_user->body));
 
-        $body = str_replace("\$url", URL::to('/') . '/admin/dashboard', $body);
-        $body = str_replace("\$gatewayId", $gatewayId, $body);
+        $vars = [
+            "url" => URL::to('/') . '/admin/dashboard',
+            "gatewayId" => $gatewayId,
+        ];
+        $subject = EmailUtilities::replaceAll($vars, $subject);
+        $body = EmailUtilities::replaceAll($vars, $body);
 
         $recipient = array();
         $recipient['email'] = $email;
@@ -150,8 +173,12 @@ class EmailUtilities
         $subject = $emailTemplates->update_to_admin->subject;
         $body = trim(implode($emailTemplates->update_to_admin->body));
 
-        $body = str_replace("\$url", URL::to('/') . '/admin/dashboard/gateway', $body);
-        $body = str_replace("\$gatewayId", $gatewayId, $body);
+        $vars = [
+            "url" => URL::to('/') . '/admin/dashboard/gateway',
+            "gatewayId" => $gatewayId,
+        ];
+        $subject = EmailUtilities::replaceAll($vars, $subject);
+        $body = EmailUtilities::replaceAll($vars, $body);
 
         $recipients = array();
         foreach($emails as $email) {
@@ -182,7 +209,9 @@ class EmailUtilities
         $mail->Port = intval(Config::get('pga_config.portal')['portal-smtp-server-port']);
 
         $mail->From = Config::get('pga_config.portal')['portal-email-username'];
-        $mail->FromName = "Airavata PHP Gateway";
+        $gatewayURL = $_SERVER['SERVER_NAME'];
+        $portalTitle = Config::get('pga_config.portal')['portal-title'];
+        $mail->FromName = "$portalTitle ($gatewayURL)";
 
         $mail->Encoding    = '8bit';
         $mail->ContentType = 'text/html; charset=utf-8\r\n';
@@ -199,5 +228,22 @@ class EmailUtilities
         $mail->Subject = $subject;
         $mail->Body = html_entity_decode($body);
         $mail->send();
+    }
+
+    /**
+     * Replace all vars in the given string. Default vars available are
+     * "$gatewayURL" and "$portalTitle".
+     */
+    private static function replaceAll($vars, $string) {
+        $default_vars = [
+            "gatewayURL" => $_SERVER['SERVER_NAME'],
+            "portalTitle" => Config::get('pga_config.portal')['portal-title'],
+        ];
+        $final_vars = array_merge($default_vars, $vars);
+        $result = $string;
+        foreach($final_vars as $var_key => $var_value) {
+            $result = str_replace("\$" . $var_key, $var_value, $result);
+        }
+        return $result;
     }
 }

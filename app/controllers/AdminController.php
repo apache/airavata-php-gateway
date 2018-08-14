@@ -368,7 +368,9 @@ class AdminController extends BaseController {
 		$mail->Port = intval(Config::get('pga_config.portal')['portal-smtp-server-port']);
 
 		$mail->From = Config::get('pga_config.portal')['portal-email-username'];
-		$mail->FromName = "Gateway Portal: " . $_SERVER['SERVER_NAME'];
+        $gatewayURL = $_SERVER['SERVER_NAME'];
+        $portalTitle = Config::get('pga_config.portal')['portal-title'];
+        $mail->FromName = "$portalTitle ($gatewayURL)";
 
 		foreach($recipients as $recipient){
 			$mail->addAddress($recipient);
