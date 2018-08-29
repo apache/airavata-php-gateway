@@ -50,7 +50,7 @@ span.onclick = function() {
 	<p style="font-size:14px; margin-top:20px;text-align:justify">
 Registered users need only upload experimental data in the required format and push the start button. Once the job is finished, the user will be notified by e-mail. Results can be downloaded to the user’s local machine, or viewed in the Genome Browser via the handy trackhub link. </p>
 <p style="font-size:14px; margin-top:5px;text-align:justify">
-<img src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/webdev-bullet-icon.png" style="height:20px"></img>Click <A href="https://github.com/Danko-Lab/tutorials/blob/master/PRO-seq.md#read-mapping"> this link </A> to check <B>how to prepare your PRO-seq, GRO-seq, or ChRO-seq data in bigWig format</B>.
+<img src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/webdev-bullet-icon.png" style="height:20px"></img>Click <A href="https://github.com/Danko-Lab/proseq2.0"> this link </A> to check <B>how to prepare your PRO-seq, GRO-seq, or ChRO-seq data in bigWig format</B>.
 
 </p>
 <p style="font-size:14px; margin-top:5px;text-align:justify">
