@@ -67,7 +67,7 @@ class URPUtilities
         $userId = Session::get('username');
         $gatewayId = Session::get('gateway_id');
 
-        $all_ssh_pub_key_summaries = Airavata::getAllCredentialSummaryForUsersInGateway(Session::get('authz-token'), SummaryType::SSH, $gatewayId, $userId);
+        $all_ssh_pub_key_summaries = Airavata::getAllCredentialSummaries(Session::get('authz-token'), SummaryType::SSH);
         foreach ($all_ssh_pub_key_summaries as $ssh_pub_key_summary) {
             # strip whitespace from public key: there can't be trailing
             # whitespace in a public key entry in the authorized_keys file

@@ -425,7 +425,6 @@ class AdminController extends BaseController {
 	public function createSSH(){
         $description = Input::get("description");
         $newToken = AdminUtilities::create_ssh_token_for_gateway($description);
-        $pubkey = AdminUtilities::get_pubkey_from_token( $newToken);
         return Redirect::to("admin/dashboard/credential-store")->with("message", "SSH Key was successfully created");
 	}
 
