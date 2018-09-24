@@ -54,20 +54,22 @@ The user can check the status of their 'experiment' by clicking the menu 'Saved 
 
           <p class="description" style="padding:16px">
          7)&nbsp;&nbsp;<b>Check the results</b><br>
-Once a job is completed, the user can select 'Full results' in the drop-down list and then click <B>'Download'</B> link in the experiment summary page to download a compressed file described in the <a href="#output" role="tab" data-toggle="tab">'output'</A> sheet in this page, or the user can download any single file from the drop-down list. The downloaded file with the 'tar.gz' extension can be decompressed by the 'tar' command, the file with the 'gz' extension can be decompressed by the 'gunzip' command in Linux.  
-          
-</p>
+Once a job is completed, the user can select 'Full results' in the drop-down list and then LEFT-click <B>'Download'</B> link in the experiment summary page to download a compressed file described in the <a href="#output" role="tab" data-toggle="tab">'output'</A> sheet in this page, or the user can download any single file from the drop-down list. The downloaded file with the 'tar.gz' extension can be decompressed by the 'tar' command, the file with the 'gz' extension can be decompressed by the 'gunzip' command in Linux. Please <font color="red">don't use RIGHT-click </font>  to open a tab for downloading.</br>
+</br>
+In <font color="RED">Safari</font>, it could be problematic because Safari tries to unzip the compressed results automatically using a non-compatible compress method. Please check <A href="https://octet.oberlin.edu/does-your-mac-unzip-zip-files-automatically/"> this link </A> to disable this feature.</p>
+
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment summary" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.exp.summary.png"></img></div>
 
          <p class="description" style="padding:16px">
          8)&nbsp;&nbsp;<b>Switch to Genome Browser</b><br>
-The convenient tool ptovided by the gateway is the user can check the results in the Genome Browser by clicking <b>'Switch to genome browser'</B> link. </p>
+The convenient tool provided by the gateway is the user can check the results in the Genome Browser by clicking <b>'Switch to genome browser'</B> link. The genome identifier must be specified by two ways, 1) select from the drop-down list or 2) fill the identifier in the textbox. Please use LEFT-click to open a genome browser window.</p>
 
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment summary" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.gbview.png"></img></div>
 
           <p class="description" style="padding:16px">
          9)&nbsp;&nbsp;<b>Check the storage</b><br>
-the user can click <b>'Open Folder'</b> link in the experiment summary page to check the storage for the current job or click the menu 'Storage' under the dREG logo to check the folders and files for all jobs(experiments). The following figure shows the data files in the job's folder, including two bigWig files, one result in bedgraph format, two outputs of job scheduler on GPU nodes.</p>
+The user can LEFT-click <b>'Open Folder'</b> link in the experiment summary page to check the storage for the current job or click the menu 'Storage' under the dREG logo to check the folders and files for all jobs(experiments). 
+The following figure shows the data files in the job's folder, including two bigWig files, one result in bedgraph format, two outputs of job scheduler on GPU nodes.</p>
 
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment summary" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.exp.folder.png"></img></div>
 
@@ -144,7 +146,7 @@ Airavata PHP Gateway provides an API to build web sites which interact with high
         <div class="col-sm-offset-1 col-sm-10 col-xs-12">
 
           <p class="description">
-dREG run generates a compressed file including the dREG and dREG.HD results as follows:
+1) dREG run generates a compressed file including the <font color="green"> dREG results </font> as follows:
           </p>
 <p class="description">&nbsp;</p>
 
@@ -155,23 +157,75 @@ dREG run generates a compressed file including the dREG and dREG.HD results as f
               </tr>
               <tr>
                     <td>$PREFIX.dREG.infp.bed.gz</td>
-                    <td>Informative positions with the scores predicted by the dREG model. <BR>Decompress it with 'gunzip' in Linux.</td>
+                    <td>Informative positions with dREG scores predicted by the dREG model. Decompress it with 'gunzip' in Linux.</td>
               </tr>
               <tr>
                     <td>$PREFIX.dREG.peak.full.bed.gz</td>
-                    <td>dREG peaks calling results with score, probability and center position information. <BR>Decompress it with 'gunzip' in Linux.</td>
+                    <td>Significant peaks (FDR < 0.05) with dREG scores, p-values and center positions where the maximum dREG scores are located. Decompress it with 'gunzip' in Linux.</td>
               </tr>
               <tr>
                     <td>$PREFIX.dREG.peak.score.bed.gz</td>
-                    <td>dREG peaks calling results only with score. <BR>Decompress it with 'gunzip' in Linux.</td>
+                    <td>Significant peaks (FDR < 0.05) only with dREG scores. Decompress it with 'gunzip' in Linux.</td>
               </tr>
+
+              <tr>
+                    <td>$PREFIX.dREG.peak.prob.bed.gz</td>
+                    <td>Significant peaks (FDR < 0.05) only with p-values. Decompress it with 'gunzip' in Linux.</td>
+              </tr>
+
+              <tr>
+                    <td>$PREFIX.dREG.raw.peak.bed.gz</td>
+                    <td>All raw peaks generated by dREG peak calling, including dREG scores, uncorrected p-values, center positions where the maximum are located in smoothed curves, center positions where the maximim are lcoated in original curve, centroid. Only available in the Web storage.</td>
+              </tr>
+
               <tr>
                     <td>$PREFIX.tar.gz</td>
-                    <td>Including above 3 files, can be decompressed by 'tar -xvzf' in Linux.</td>
+                    <td>Including above 5 files, can be decompressed by 'tar -xvzf' in Linux.</td>
              </tr>
             </table>
+ <p class="description">
+2) In the Web storage folder there are <font color="green">some files required by the WashU</font> genome browser:
+</p>
+<p class="description">&nbsp;</p>
+          <table class="table">
+              <tr>
+                    <th>File name</th>                    <th>Description</th>              </tr>
+              <tr>
+                    <td>$PREFIX.dREG.infp.bw</td>
+                    <td>The bigWig file converted from the bed file of informative positions ($PREFIX.dREG.infp.bed.gz).</td>
+              </tr>
+              <tr>
+                    <td>$PREFIX.dREG.peak.score.bw</td>
+                    <td>The bigWig file converted from the significant peaks (FDR < 0.05) with dREG scores ($PREFIX.dREG.peak.score.bed.gz).</td>
+              </tr>
+              <tr>
+                    <td>$PREFIX.dREG.peak.prob.bw</td>
+                    <td>The bigWig file converted from the significant peaks (FDR < 0.05) with p-values ($PREFIX.dREG.peak.prob.bed.gz).   </td>
+              </tr>
 
-        </div>
+              <tr>
+                    <td>*.bed.gz.tbi</td>
+                    <td> The index files generated from the corresponding bed files. Please ignore them if you download the results.</td>
+              </tr>
+         </table>
+
+ <p class="description">
+3) There are <font color="green">two log files </font> in the Web storage folder:</p>
+<p class="description">&nbsp;</p>
+        <table class="table">
+              <tr>
+                    <th>File name</th>                    <th>Description</th>              </tr>
+              <tr>
+                    <td>$PREFIX.dREG.log</td>
+                    <td>Print the summary information after peak calling. If the bigWigs don't meet the requirements of dREG, the warning information will be outputted in this file.
+                    </td>
+              </tr>
+              <tr>
+                    <td>slurm-??????.out</td>
+                    <td>The verbose logging output of dREG package.</td>
+             </tr>
+         </table>
+         </div>
       </div>
     </div>
 
