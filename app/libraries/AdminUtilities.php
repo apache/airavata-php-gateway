@@ -334,7 +334,7 @@ class AdminUtilities
         $credential_summaries = Airavata::getAllCredentialSummaries(Session::get('authz-token'), SummaryType::PASSWD);
         $result = [];
         foreach ($credential_summaries as $credential_summary) {
-            $result[$credential_summary->tokenId] = $credential_summary->description;
+            $result[$credential_summary->token] = $credential_summary->description;
         }
         return $result;
     }
