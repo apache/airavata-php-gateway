@@ -259,7 +259,7 @@ class URPUtilities
     private static function is_ssh_account_setup_complete($computeResourceId, $userComputeResourcePreference)
     {
         return Airavata::isSSHSetupCompleteForUserComputeResourcePreference(
-            Sesssion::get('authz-token'),
+            Session::get('authz-token'),
             $computeResourceId,
             $userComputeResourcePreference->resourceSpecificCredentialStoreToken
         );
