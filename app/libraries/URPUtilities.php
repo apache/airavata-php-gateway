@@ -216,7 +216,9 @@ class URPUtilities
                         // If a $userComputeResourcePreference exists but isn't
                         // validated some error must have occurred the last time
                         // it was attempted to be setup. We'll try to set it up again.
-                        if (!$userComputeResourcePreference->validated) {
+                        // Also, the setup may be incomplete in which case we
+                        // should also try to setup it up again.
+                        if (!$userComputeResourcePreference->validated || !URPUtilities::is_ssh_account_setup_complete($user_id, $computeResourceId, $userComputeResourcePreference)) {
                             $userComputeResourcePreference = URPUtilities::setup_ssh_account($gatewayId, $userId, $computeResourceId, $hostname, $userComputeResourcePreference);
                         }
                     } else if ($sshAccountProvisioner->canCreateAccount) {
@@ -252,6 +254,15 @@ class URPUtilities
             $sshAccountProvisionersByName[$sshAccountProvisioner->name] = $sshAccountProvisioner;
         }
         return $sshAccountProvisionersByName;
+    }
+
+    private static function is_ssh_account_setup_complete($userId, $computeResourceId, $userComputeResourcePreference)
+    {
+        return Airavata::isSSHSetupCompleteForUserComputeResourcePreference(
+            Sesssion::get('authz-token'),
+            $computeResourceId,
+            $userComputeResourcePreference->resourceSpecificCredentialStoreToken
+        );
     }
 
     private static function setup_ssh_account($gatewayId, $userId, $computeResourceId, $hostname, $userComputeResourcePreference=null)
