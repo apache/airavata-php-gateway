@@ -226,9 +226,10 @@
 @if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dREG.peak.score.bed.gz') )
                     <option value=<?php echo $param_prefix.".dREG.peak.score.bed.gz"?>>dREG peak(only with scores)</option>
 @endif
-                </select> &nbsp;&nbsp;&nbsp;&nbsp;
+                </select> &nbsp;&nbsp;
 
-   	       <a href="" target="_blank" id="retLinks">Download&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></a>
+<!--   	       <a href="" target="_blank" id="retLinks">Download&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></a> -->
+<button id="retLinks" style="color: #fff; background-color: #3e5a43; border-color: #46b8da; border: 1px solid transparent;" >Download&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></button>
             </td>
         </tr>
         <tr>
@@ -241,8 +242,9 @@
                     <option value="mm10">mm10</option>
                 </select> 
                 &nbsp;or input&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="text" id="customeGB" style="width:40px"/> 
-  	        <a href="#1" target="_blank" id="gbLinks">Switch to genome browser&nbsp;<span class="glyphicon glyphicon-new-window"  style="width:20px"></span></a>
+                <input type="text" id="customeGB" style="width:40px"/> &nbsp;&nbsp; 
+<!--  	        <a href="#1" target="_blank" id="gbLinks">Switch to genome browser&nbsp;<span class="glyphicon glyphicon-new-window"  style="width:20px"></span></a> -->
+<button id="gbLinks" style="color: #fff; background-color: #3e5a43; border-color: #46b8da; border: 1px solid transparent;">Switch to genome browser&nbsp;<span class="glyphicon glyphicon-new-window" style="width:20px"></span></button>
             </td>
         </tr>
 {{-- dREG --}}
