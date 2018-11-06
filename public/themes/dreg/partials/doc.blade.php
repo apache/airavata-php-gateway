@@ -1,12 +1,13 @@
 <div class="container">
   <div class="content">
     <div class="text-center">
-      <h2 class="title top-space">Documents</h2>            
+      <h2 class="title top-space">Documentation</h2>            
     </div>
 
     <ul class="nav nav-tabs nav-justified" role="tablist">
       <li role="presentation" class="active"><a href="#instructure" role="tab" data-toggle="tab">Instructions</a></li>
       <li role="presentation"><a href="#sp" role="tab" data-toggle="tab">Software/Package</a></li>
+      <li role="presentation"><a href="#input" role="tab" data-toggle="tab">Input</a></li>
       <li role="presentation"><a href="#output" role="tab" data-toggle="tab">Output</a></li>
     </ul>
 
@@ -118,28 +119,80 @@ After the experiment is complete, no results can be downloaded and job status sh
 
     </div>
 
+<!---- SOFTWARE PANEL -->
       <div role="tabpanel" class="tab-pane" id="sp">
       <div class="row">
         <div class="col-sm-offset-1 col-sm-10 col-xs-12">
           <p class="description">The <B>dREG gateway</B> is web service built on the Apache Airavata software framework and the XSEDE platform using the following software packages:</p>
 
           <p class="description">[1] <B>dREG package</B>: <A href="https://github.com/Danko-Lab/dREG">https://github.com/Danko-Lab/dREG</A>.</p>
-          <p class="description"> 
+          <p class="description">
 The dREG package is developed to detect the divergently oriented RNA polymerase in GRO-seq, PRO-seq, or ChRO-seq data using support vector machines (e1070 or Rgtsvm package).</p>
           <p class="description">[2] <B>dREG.HD package</B>: <A href="https://github.com/Danko-Lab/dREG.HD">https://github.com/Danko-Lab/dREG.HD</A>.</p>
-          <p class="description">The dREG.HD package refines the location of TREs obtained using dREG by imputing DNAse-I hypersensitivity.</p>
+          <p class="description">The dREG.HD pa/ckage refines the location of TREs obtained using dREG by imputing DNAse-I hypersensitivity.</p>
           <p class="description">[3] <B>Rgtsvm package</B>: <A href="https://github.com/Danko-Lab/Rgtsvm">https://github.com/Danko-Lab/Rgtsvm</A>.</p>
           <p class="description">
 Rgtsvm implements support vector classification and support vector regression on a GPU to accelerate the computational speed of training and predicting large-scale models. </p>
-          
-          <p class="description">[4] <B>Airavata PHP Gateway</B>: <A href="https://github.com/apache/airavata-php-gateway.git">https://github.com/apache/airavata-php-gateway.git</A>.</p>
-          <p class="description">
+
+          <p class="description">[4] <B>Airavata PHP Gateway</B>: <A href="https://github.com/apache/airavata-php-gateway.git">https://github.com/apache/airavata-php-gateway.git</A>.</p>          <p class="description">
 Airavata PHP Gateway provides an API to build web sites which interact with high performance computers that are part of XSEDE.
 </p>
 
         </div>
       </div>
     </div>
+
+<!---- INPUT PANEL -->
+
+      <div role="tabpanel" class="tab-pane" id="input">
+      <div class="row">
+        <div class="col-sm-offset-1 col-sm-10 col-xs-12">
+
+<p class="description" align="justify">The input to dREG consists of two bigWig files which represent the position of RNA polymerase on the positive and negative strands. The sequence alignment and processing steps to make the input bigWig files are a major factor influencing how accurately dREG predicts TIRs. dREG makes several assumptions about data processing that are critical for success. </p>
+
+<p class="description" align="justify">Critical elements of a bioinformatics pipeline that is compatible with dREG will include:</p>
+<ul> 
+<li class="description" style="align:justify"><b>Representing RNA polymerase location using a single base.</b><br/>
+<p class="description" align="justify">PRO-seq measures the location of the RNA polymerase active site, in many cases at nearly single nucleotide resolution. Therefore, it is logical to represent the coordinate of RNA polymerase using the genomic position that best represents the polymerase location, rather than representing the entire read. dREG assumes that each read is represented in the bigWig file by a single base. We have noted poor performance when reads are extended. It is critical that users pass in bigWig files that represent RNA polymerase using a single nucleotide.</p>
+</li>
+
+<li class="description"><b>Include a copy of the Pol I transcription unit in the reference genome. </b><br/>
+<p class="description" align="justify">PRO-seq data resolves the location of all four RNA polymerases found in Metazoan cells (Pol I, II, III, and Mt). DNA encoding the Pol I transcription unit is highly repetitive, and is not included in most mammalian reference genomes. Nevertheless, the Pol I transcription unit is a substantial source of reads in a typical PRO-seq experiment (10-30%). Many of these reads will align spuriously to retrotransposed and non-functional copies of the Pol I transcription unit, which can create mapping artifacts. To solve this issue, we include a single copy of the repeating DNA that encodes the Pol I transcription unit in the reference genome used to map reads. We use <A target=_blank href="https://www.ncbi.nlm.nih.gov/nuccore/U13369.1?report=fasta"><span style="background-color: #FFFF00">GenBank ID# U13369.1</span></A>. Including a copy of this transcription unit provides an alternative place for Pol I reads to map, preventing reads from accumulating in Pol I repeats.</p>
+</li>
+
+<li class="description"><b>Trim 3' adapters, but leave the fragments. </b><br/>
+<p class="description" align="justify">Much of the signal for dREG comes from paused RNA polymerase. RNA polymerase pauses 30-60 bp downstream of the transcription start site. Due to this short RNA fragment length, paused reads in most PRO-seq libraries will sequence a substantial amount of adapter. This leads to poor mapping rates in full-length reads. Therefore, it is crucial to remove contaminating 3' adapters so that paused fragments will map to the reference genome properly.</p>
+</li>
+
+<li class="description"><b>Data represents unnormalized raw counts. </b><br/>
+<p class="description" align="justify">dREG assumes that data represents the number of individual sequence tags that are located at each genomic position. For this reason, it is critical that input data is not normalized. The dREG server checks to ensure that input data is expressed as integers, and will return an error if this is not the case.</p>
+</li>
+</ul>
+ 
+<p class="description"> Users can also use scripts generated in the Danko lab to create compatible bigWig files. Options for scripts at different starting points in the analysis are given below: </p>
+
+<ul>
+<li class="description"><b>Convert raw fastq files into bigWig</b>.<br/> 
+<p class="description" align="justify">Our pipeline produces bigWig files that are compatible with dREG, and can be found at the following URL: <A target=_blank href="https://github.com/Danko-Lab/proseq_2.0">https://github.com/Danko-Lab/proseq_2.0</A>. Our PRO-seq pipeline takes single-end or pair-ended sequencing reads (fastq format) as input. The pipeline automates routine pre-processing and alignment steps, including pre-processing reads to remove the adapter sequences and trim based on base quality, and deduplicate the reads if UMI barcodes are used. Sequencing reads are mapped to a reference genome using BWA. Aligned BAM files are converted into bigWig format in which each read is represented by a single base.</p>
+</li>
+
+<li><b>Convert mapped reads in BAM files into bigWigs</b>.<br/>
+<p class="description" align="justify">We provide a tool that converts mapped reads from a BAM file into bigWig files that are compatible with dREG. This tool is available here: <A target=_blank href="https://github.com/Danko-Lab/RunOnBamToBigWig">https://github.com/Danko-Lab/RunOnBamToBigWig</A>.</p> 
+</li>
+</ul>
+ 
+<p class="description">Other considerations:</p> 
+<ul>
+<p class="description" style="justify"> The quality and quantity of the experimental data are major factors in determining how sensitive dREG will be in detecting TREs. We have found that dREG has a reasonable statistical power for discovering TREs with as few as ~40M uniquely mappable reads, and saturates detection of TREs in well-studied ENCODE cell lines with >80M reads. To increase the number of reads available for TRE discovery, we encourage users to merge biological replicates in order to improve statistical power prior to running dREG.</p> 
+
+<p class="description" style="justify">We have found that visualizing aligned data in a genome browser prior (e.g., IGV or UCSC) to downstream analysis is a useful way to catch any data quality or alignment issues.</p>
+
+</ul>
+        </div>
+      </div>
+    </div>
+
+<!---- OUTPUT PANEL -->
 
       <div role="tabpanel" class="tab-pane" id="output">
       <div class="row">
@@ -183,7 +236,33 @@ Airavata PHP Gateway provides an API to build web sites which interact with high
                     <td>Including above 5 files, can be decompressed by 'tar -xvzf' in Linux.</td>
              </tr>
             </table>
- <p class="description">
+ 
+<div style="padding:20px;
+border-style: solid;
+border-width: 5;
+border-color: #dadada;" data-expandable-box-container="true">
+<figcaption>
+<div style="padding-bottom:15px" id="Sec2">Box 1:<b> Brief description of key terms</b></div>
+</figcaption>
+
+<div class="suppress-bottom-margin add-top-margin">
+<p><b>Informative position:</b>
+Loci denoted as "informative positions" meet the following criteria: contain more than 3 reads in 100 bp interval on either strand, or more than 1 read in 1Kbp interval on both strands. Informative positions are used to predict the dREG scores for TRE (Transcription Regulatory Element) identification. </p>
+
+<p><b>dREG score:</b>
+Training and prediction is done using a Support Vector Regression model where a label of 1 indicates RNA polymerase II initialization or transciption through the informative position. The predicted values from the pre-trained model are called dREG scores. A dREG score close to 1 indicates that a position likely a TRE. 
+</p>
+
+<p><b>Peak p-value:</b>
+We test 5 dREG scores around each candidate peak center using the NULL hypothesis that each point within this peak is drawn from the non-TRE distribution. This test estimates the statistical confidence of each candidate dREG peak. In the final result, FDR is applied to do multiple correction and only the peaks with adjusted p-value < 0.05 are reported.   
+</p>
+
+
+</div></div>
+
+<br/>
+
+<p class="description">
 2) In the Web storage folder there are <font color="green">some files required by the WashU</font> genome browser:
 </p>
 <p class="description">&nbsp;</p>

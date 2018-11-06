@@ -22,7 +22,7 @@ color:blue;
 
             <li><a class="scroll" @if( $_SERVER['REQUEST_URI'] === "/" ) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/">Home</a></li>
             <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/about") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/about">About</a></li>
-            <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/doc") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/doc">Documents</a></li>
+            <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/doc") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/doc">Documentation</a></li>
             <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/faq") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/faq">FAQ</a></li>
             <!--
             @if(! Session::has('loggedin'))

@@ -49,12 +49,15 @@ span.onclick = function() {
 	<H2> How is it used?</H2>
 	<p style="font-size:14px; margin-top:20px;text-align:justify">
 Registered users need only upload experimental data in the required format and push the start button. Once the job is finished, the user will be notified by e-mail. Results can be downloaded to the user’s local machine, or viewed in the Genome Browser via the handy trackhub link. </p>
-<p style="font-size:14px; margin-top:5px;text-align:justify">
-<img src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/webdev-bullet-icon.png" style="height:20px"></img>Click <A href="https://github.com/Danko-Lab/proseq2.0"> this link </A> to check <B>how to prepare your PRO-seq, GRO-seq, or ChRO-seq data in bigWig format</B>.
 
-</p>
 <p style="font-size:14px; margin-top:5px;text-align:justify">
-<img src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/webdev-bullet-icon.png" style="height:20px"></img>See our <A href="{{ URL::to('/') }}/pages/faq">FAQ</A> or <A href="{{ URL::to('/') }}/pages/doc">document</a> for additional questions.
+<img src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/webdev-bullet-icon.png" style="height:20px"></img>
+Use the Danko lab's <b>mapping pipeline</b> (<A target=_blank href="https://github.com/Danko-Lab/proseq2.0">here</A>) to prepare bigWig files from fastq files or <b>convert BAM files</b> of mapped reads to bigWig (<A target=_blank href="https://github.com/Danko-Lab/RunOnBamToBigWig">here</A>).
+</p>
+
+<p style="font-size:14px; margin-top:5px;text-align:justify">
+<img src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/webdev-bullet-icon.png" style="height:20px"></img>
+See our <A href="{{ URL::to('/') }}/pages/faq">FAQ</A>, <A href="{{ URL::to('/') }}/pages/doc">documentation</a> or <A target=_blank href="https://www.dropbox.com/s/jzlamnd0mej0z76/Chu.dREG_protocol.pdf?dl=0">dREG protocol manuscript</A>  for additional questions.
 </p>
 <img id="myImg2" alt="dREG model" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dREG-model.png" style="width:100%"></img>
 <p class="text-center"><small>Click the figure to enlarge it</small></p>
@@ -93,12 +96,23 @@ span.onclick = function() {
 <div style="width: 92%; margin-left: 5%; padding-left:15px">
 <table>
 <tr>
-<td width="100px"><img id="myImg2" alt="dREG model" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dREG.Preprint.png" style="width:100%"></img></td>
+<td width="50px"><img id="myImg2" alt="dREG model" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/n1.png" style="width:100%"></img></td>
 <td>
-<p  class="text-left" style="margin-left: 25px"><A href="http://www.nature.com/nmeth/journal/v12/n5/full/nmeth.3329.html">
-Danko, C. G., Hyland, S. L., Core, L. J., Martins, A. L., Waters, C. T., Lee, H. W., ... & Siepel, A. (2015). Identification of active transcriptional regulatory elements from GRO-seq data. Nature methods, 12(5), 433-438.</A></p>
+<p  class="text-left" style="margin-left: 5px; margin-top:10px;">
+Danko, C. G., Hyland, S. L., Core, L. J., Martins, A. L., Waters, C. T., Lee, H. W., ... & Siepel, A. (2015). <A target=_blank href="http://www.nature.com/nmeth/journal/v12/n5/full/nmeth.3329.html">Identification of active transcriptional regulatory elements from GRO-seq data.</A> Nature methods, 12(5), 433-438.</p>
 </td>
 </tr>
+
+<tr>
+<td width="50px"><img id="myImg2" alt="dREG model" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/n2.png" style="width:100%"></img></td>
+<td>
+<p  class="text-left" style="margin-left: 5px; margin-top:10px;">
+Wang, Z., Chu, T., Choate, L. A., & Danko, C. G. (2018). <A target=_blank href="https://www.biorxiv.org/content/early/2018/05/14/321539.abstract">Identification of regulatory elements from nascent transcription using dREG.</A> bioRxiv, 321539.
+</p>
+</td>
+</tr>
+
+
 </table>
 </div>
 

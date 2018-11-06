@@ -88,13 +88,21 @@
         @endif
         <tr>
             <td><strong>Experiment Status</strong></td>
-            <td class="exp-status">{{{ $expVal["experimentStatusString"] }}}</td>
+            <td class="exp-status">  
+{{{ $expVal["experimentStatusString"] }}} <br/>
+@if( $expVal["experimentStatusString"]!="COMPLETED" && $expVal["experimentStatusString"]!="COMPLETE") 
+ If the job is failed, please refer <A href="https://dreg.dnasequence.org/pages/doc#failure">here</A> to find the reasons.<br/>
+@endif
+</td>
         </tr>
 
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
             <tr>
                 <th>Job</th>
                 <td>
+@if( $jobDetail->jobStatuses[0]->jobStateName == "FAILED" )
+If the job is failed, please refer <A href="https://dreg.dnasequence.org/pages/doc#failure">here</A> to find the reasons. <br/>
+@endif
                     <table class="table table-bordered">
                         <tr>
                             <td>Name</td>
