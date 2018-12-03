@@ -1,7 +1,7 @@
 <div class="container">
   <div class="content">
     <div class="text-center">
-      <h2 class="title top-space">dREG Documentation</h2>            
+      <h2 class="title top-space">dTOX Documentation</h2>            
     </div>
 
     <ul class="nav nav-tabs nav-justified" role="tablist">
@@ -16,31 +16,31 @@
       <div class="row">
         <div class="col-sm-offset-1 col-sm-10 col-xs-12">
           <p class="description" style="padding:16px">
-         1)&nbsp;&nbsp;<b>Login</b>:<br>
+         1)&nbsp;&nbsp;<b>Login</b>:(same as dREG)<br>
 The user needs to log in by clicking 'login' link at the top-right corner of the page. Having an account provides a number of benefits, and is free and easy. 
           </p>
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG login" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.login.png" ></img></div>
 
 
           <p class="description" style="padding:16px">
-         2)&nbsp;&nbsp;<b>Create a new project (optional)</b><br>
-Optionally, users can choose to make a new 'project' in the dREG gateway to archive a collection of dREG data from related experiments.  This will allow a collection of experiments to be stored in close proximity to each other.</p>
+         2)&nbsp;&nbsp;<b>Create a new project (optional, same as dREG)</b><br>
+Optionally, users can choose to make a new 'project' in the dREG/dTOX gateway to archive a collection of sequencing data from related experiments.  This will allow a collection of experiments to be stored in close proximity to each other.</p>
 <div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG project" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.create.project.png" ></img></div>
 
     
 
       <p class="description" style="padding:16px">
-         3)&nbsp;&nbsp;<b>Start new dREG</b><br>
-Select the menu 'Start dREG' below the dREG logo to create an data analysis for your data, as the following screenshot.
+         3)&nbsp;&nbsp;<b>Start new dTOX</b><br>
+Select the menu 'Start dREG/dTOX' below the dREG logo to create an data analysis for your data, as the following screenshot. Please notice to select the "dTOX prediction" Application. 
 </p>
-<div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.create.exp.png" ></img></div>
+<div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dtox.create.exp.png" ></img></div>
 
           <p class="description" style="padding:16px">
-         4)&nbsp;&nbsp;<b>Select bigWig files</b><br>
-Select bigWig files representing PRO-seq, GRO-seq, or ChRO-seq signal on the plus and minus strand. Please notice that two GPU resources are available now, currently it is easier to get the computation resources on <A href="http://comet.sdsc.xsede.org/">Comet.sdsc.xsede.org</A> than <A href="https://www.psc.edu/index.php/bridges">Bridges.psc.edu</A>. 
+         4)&nbsp;&nbsp;<b>Fill experiment form</b><br>
+Select bigWig files representing PRO-seq, ATAC-seq, or dNase-I-seq signal on the plus and minus strand. Please notice that two GPU resources are available now, currently it is easier to get the computation resources on <A href="http://comet.sdsc.xsede.org/">Comet.sdsc.xsede.org</A> than <A href="https://www.psc.edu/index.php/bridges">Bridges.psc.edu</A>. 
           </p>
 
-<div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment create" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dreg.create.exp2.png" ></img></div>
+<div style=" display: flex;justify-content: center"><img style="align-self: center;width:70%" alt="dREG experiment create" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dtox.create.exp2.png" ></img></div>
 
           <p class="description" style="padding:16px">
          5)&nbsp;&nbsp;<b>Submit the job</b><br>
@@ -119,7 +119,6 @@ After the experiment is complete, no results can be downloaded and job status sh
 
     </div>
 
-
 <!---- INPUT PANEL -->
 
       <div role="tabpanel" class="tab-pane" id="input">
@@ -187,26 +186,17 @@ After the experiment is complete, no results can be downloaded and job status sh
                     <th>Description</th>
               </tr>
               <tr>
-                    <td>$PREFIX.dREG.infp.bed.gz</td>
-                    <td>Informative positions with dREG scores predicted by the dREG model. Decompress it with 'gunzip' in Linux.</td>
+                    <td>$PREFIX.dTOX.full.bed.gz</td>
+                    <td>TFBS regions with full information including chromosome, start, ending, MOTIF ID, RTFBSDB score, strand, Transcription factor, dTOX score, bound status. Decompress it with 'gunzip' in Linux.</td>
               </tr>
               <tr>
-                    <td>$PREFIX.dREG.peak.full.bed.gz</td>
-                    <td>Significant peaks (FDR < 0.05) with dREG scores, p-values and center positions where the maximum dREG scores are located. Decompress it with 'gunzip' in Linux.</td>
-              </tr>
-              <tr>
-                    <td>$PREFIX.dREG.peak.score.bed.gz</td>
-                    <td>Significant peaks (FDR < 0.05) only with dREG scores. Decompress it with 'gunzip' in Linux.</td>
+                    <td>$PREFIX.dTOX.bound.bed.gz</td>
+                    <td>TFBS regions only with bound status. Decompress it with 'gunzip' in Linux.</td>
               </tr>
 
               <tr>
-                    <td>$PREFIX.dREG.peak.prob.bed.gz</td>
-                    <td>Significant peaks (FDR < 0.05) only with p-values. Decompress it with 'gunzip' in Linux.</td>
-              </tr>
-
-              <tr>
-                    <td>$PREFIX.dREG.raw.peak.bed.gz</td>
-                    <td>All raw peaks generated by dREG peak calling, including dREG scores, uncorrected p-values, center positions where the maximum are located in smoothed curves, center positions where the maximim are lcoated in original curve, centroid. Only available in the Web storage.</td>
+                    <td>$PREFIX.dTOX.rtfbsdb.bed.gz</td>
+                    <td>>TFBS regions only with RTFBSDB score. Decompress it with 'gunzip' in Linux.</td>
               </tr>
 
               <tr>
@@ -227,11 +217,11 @@ border-color: #dadada;" data-expandable-box-container="true">
 <p><b>Informative position:</b>
 Loci denoted as "informative positions" meet the following criteria: contain more than 3 reads in 100 bp interval on either strand, or more than 1 read in 1Kbp interval on both strands. Informative positions are used to predict the dREG scores for TRE (Transcription Regulatory Element) identification. </p>
 
-<p><b>dREG score:</b>
+<p><b>dTOX score:</b>
 Training and prediction is done using a Support Vector Regression model where a label of 1 indicates RNA polymerase II initialization or transciption through the informative position. The predicted values from the pre-trained model are called dREG scores. A dREG score close to 1 indicates that a position likely a TRE. 
 </p>
 
-<p><b>Peak p-value:</b>
+<p><b>RTFBSDB score:</b>
 We test 5 dREG scores around each candidate peak center using the NULL hypothesis that each point within this peak is drawn from the non-TRE distribution. This test estimates the statistical confidence of each candidate dREG peak. In the final result, FDR is applied to do multiple correction and only the peaks with adjusted p-value < 0.05 are reported.   
 </p>
 
@@ -248,19 +238,11 @@ We test 5 dREG scores around each candidate peak center using the NULL hypothesi
               <tr>
                     <th>File name</th>                    <th>Description</th>              </tr>
               <tr>
-                    <td>$PREFIX.dREG.infp.bw</td>
-                    <td>The bigWig file converted from the bed file of informative positions ($PREFIX.dREG.infp.bed.gz).</td>
-              </tr>
               <tr>
-                    <td>$PREFIX.dREG.peak.score.bw</td>
+                    <td>$PREFIX.dTOX.bound.bw</td>
                     <td>The bigWig file converted from the significant peaks (FDR < 0.05) with dREG scores ($PREFIX.dREG.peak.score.bed.gz).</td>
               </tr>
-              <tr>
-                    <td>$PREFIX.dREG.peak.prob.bw</td>
-                    <td>The bigWig file converted from the significant peaks (FDR < 0.05) with p-values ($PREFIX.dREG.peak.prob.bed.gz).   </td>
-              </tr>
-
-              <tr>
+              <tr>      
                     <td>*.bed.gz.tbi</td>
                     <td> The index files generated from the corresponding bed files. Please ignore them if you download the results.</td>
               </tr>
@@ -273,7 +255,7 @@ We test 5 dREG scores around each candidate peak center using the NULL hypothesi
               <tr>
                     <th>File name</th>                    <th>Description</th>              </tr>
               <tr>
-                    <td>$PREFIX.dREG.log</td>
+                    <td>$PREFIX.dTOX.log</td>
                     <td>Print the summary information after peak calling. If the bigWigs don't meet the requirements of dREG, the warning information will be outputted in this file.
                     </td>
               </tr>

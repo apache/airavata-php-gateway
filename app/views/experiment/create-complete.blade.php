@@ -11,7 +11,7 @@
 {{-- Commented by dREG
     <h1>Create a new experiment</h1>
 --}}
-    <h1>Create a new dREG experiment</h1>
+    <h1>Create a new dREG or dTOX experiment</h1>
 
     <!-- <form action="{{URL::to('/')}}/experiment/create" method="POST" role="form" enctype="multipart/form-data"> -->
     <form action="{{URL::to('/')}}/experiment/create" method="POST" role="form" >

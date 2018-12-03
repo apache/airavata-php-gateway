@@ -178,7 +178,12 @@ Route::get("files/get","FilemanagerController@get");
 
 // Added by dREG 
 Route::get("gbrowser/{filelist}", function($filelist){
-    return FileTransfer::gbrowser($filelist);
+    return FileTransfer::gbrowser_dREG($filelist);
+});
+
+//Added by dTOX
+Route::get("gbrowser1/{filelist}", function($filelist){
+    return FileTransfer::gbrowser_dTOX($filelist);
 });
 
 Route::get("gbfile/{file}", function($file){

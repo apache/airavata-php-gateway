@@ -250,7 +250,7 @@
                             <span class="glyphicon glyphicon-plus-sign console-icon"></span>
                         </div>
                         <div class="col-md-12">
-                            <h4>Start dREG</h4>
+                            <h4>Start dREG/dTOX</h4>
                         </div>
                     </div>
                 </a>

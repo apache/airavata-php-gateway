@@ -829,6 +829,7 @@ class ExperimentUtilities
                             echo '<option value="'.$vals[$i].'">'.$vals[$i] .'</option>';
                         }
                         echo '</select>';
+                        echo '</div>';
                     }else{
                         echo '<input '.$disabled . ' value="' . $input->value . '" type="text" class="form-control" name="' . $input->sanitizedFormName .
                             '" id="' . $input->sanitizedFormName .

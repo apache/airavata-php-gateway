@@ -220,6 +220,8 @@ If the job is failed, please refer <A href="https://dreg.dnasequence.org/pages/d
        } 
 ?>
             <td>
+
+@if(  $expVal["applicationInterface"]->applicationName !== "dTOX prediction"  ) 
                 <select id="download">
                     <option value=''>Select results</option>
 @if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.tar.gz') )
@@ -235,20 +237,46 @@ If the job is failed, please refer <A href="https://dreg.dnasequence.org/pages/d
                     <option value=<?php echo $param_prefix.".dREG.peak.score.bed.gz"?>>dREG peak(only with scores)</option>
 @endif
                 </select> &nbsp;&nbsp;
+@else
+                <select id="download">
+                    <option value=''>Select results</option>
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.tar.gz') )
+                    <option value=<?php echo $param_prefix.".tar.gz" ?>>Full results</option>
+@endif
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dTOX.full.bed.gz') )
+                    <option value=<?php echo $param_prefix.".dTOX.full.bed.gz"?>>all dTOX regions</option>
+@endif
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dTox.bound.bed.gz') )
+                    <option value=<?php echo $param_prefix.".dTOX.bound.bed.gz"?>>dTOX bound regions </option>
+@endif
+                </select> &nbsp;&nbsp;
 
-<!--   	       <a href="" target="_blank" id="retLinks">Download&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></a> -->
+
+@endif
+
+
 <button id="retLinks" style="color: #fff; background-color: #3e5a43; border-color: #46b8da; border: 1px solid transparent;" >Download&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></button>
             </td>
         </tr>
         <tr>
             <td><strong>Genome Browser</strong></td>
             <td>
+
+@if(  $expVal["applicationInterface"]->applicationName !== "dTOX prediction"  )
                 <select id="genomebuilder">
                     <option value="">Select genome </option>
                     <option value="hg19">hg19</option>
                     <option value="hg38">hg38</option>  
                     <option value="mm10">mm10</option>
-                </select> 
+                </select>
+@else
+                <select id="genomebuilder">
+                    <option value="">Select genome </option>
+                    <option value="hg19">hg19</option>
+                    <option value="mm10">mm10</option>
+                </select>
+@endif
+ 
                 &nbsp;or input&nbsp;&nbsp;&nbsp;&nbsp;
                 <input type="text" id="customeGB" style="width:40px"/> &nbsp;&nbsp; 
 <!--  	        <a href="#1" target="_blank" id="gbLinks">Switch to genome browser&nbsp;<span class="glyphicon glyphicon-new-window"  style="width:20px"></span></a> -->
@@ -547,7 +575,11 @@ If the job is failed, please refer <A href="https://dreg.dnasequence.org/pages/d
         if (gb == '') 
             return false;
 
+@if(  $expVal["applicationInterface"]->applicationName !== "dTOX prediction"  ) 
         var gbUrl = "http://epigenomegateway.wustl.edu/browser/?datahub={{ $protocol .'://'. $_SERVER['HTTP_HOST']. '/gbrowser/'. RBase64::encode( $filelist ) }}&genome=";
+@else
+        var gbUrl = "http://epigenomegateway.wustl.edu/browser/?datahub={{ $protocol .'://'. $_SERVER['HTTP_HOST']. '/gbrowser1/'. RBase64::encode( $filelist ) }}&genome=";
+@endif
         window.open(gbUrl + gb);
         return false; 
     });

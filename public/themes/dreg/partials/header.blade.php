@@ -19,11 +19,12 @@ color:blue;
         <div class="collapse navbar-collapse" >
           <ul class="nav navbar-nav navbar-right">
             <li><a class="scroll hidden" href="#home"></a></li>
-
             <li><a class="scroll" @if( $_SERVER['REQUEST_URI'] === "/" ) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/">Home</a></li>
+            <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/doc") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/doc">dREG Documentation</a></li>
+            <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/dtox-doc") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/dtox-doc">dTOX dcumentation</a></li>
+            <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/software") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/software">Software/Package</a></li>
             <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/about") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/about">About</a></li>
-            <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/doc") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/doc">Documentation</a></li>
-            <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/faq") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/faq">FAQ</a></li>
+
             <!--
             @if(! Session::has('loggedin'))
             <li><a class="scroll" href="{{ URL::to('/') }}/create">Create Account</a></li>
