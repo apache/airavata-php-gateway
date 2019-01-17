@@ -243,10 +243,7 @@ If the job is failed, please refer <A href="https://dreg.dnasequence.org/pages/d
 @if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.tar.gz') )
                     <option value=<?php echo $param_prefix.".tar.gz" ?>>Full results</option>
 @endif
-@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dTOX.full.bed.gz') )
-                    <option value=<?php echo $param_prefix.".dTOX.full.bed.gz"?>>all dTOX regions</option>
-@endif
-@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dTox.bound.bed.gz') )
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dTOX.bound.bed.gz') )
                     <option value=<?php echo $param_prefix.".dTOX.bound.bed.gz"?>>dTOX bound regions </option>
 @endif
                 </select> &nbsp;&nbsp;

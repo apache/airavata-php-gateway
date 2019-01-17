@@ -1,4 +1,8 @@
 <title>dREG Gateway</title>
+<link rel="icon" 
+      type="image/png" 
+      href="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/dregicon.png">
+
 <div id="navbar" class="navbar navbar-inverse">
       <div class="container-fluid" style="background:white;">
         <div class="navbar-header" style="background:white;">
@@ -21,7 +25,7 @@ color:blue;
             <li><a class="scroll hidden" href="#home"></a></li>
             <li><a class="scroll" @if( $_SERVER['REQUEST_URI'] === "/" ) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/">Home</a></li>
             <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/doc") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/doc">dREG Documentation</a></li>
-            <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/dtox-doc") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/dtox-doc">dTOX dcumentation</a></li>
+            <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/dtox-doc") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/dtox-doc">dTOX documentation</a></li>
             <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/software") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/software">Software/Package</a></li>
             <li><a class="scroll" @if(strpos($_SERVER['REQUEST_URI'], "pages/about") !== false) style="color:blue" @else style="color:black" @endif href="{{ URL::to('/') }}/pages/about">About</a></li>
 

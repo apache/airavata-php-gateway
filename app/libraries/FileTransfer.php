@@ -120,7 +120,7 @@ class FileTransfer {
             },'. "\n" ;
 
         $content = $content . '{
-            type:"bigwig",
+            type:"bedgraph",
             url:"'.$protocol.'://'. $_SERVER['HTTP_HOST'] .'/gbfile/'.RBase64::encode( $folder_path . '/'. $out_prefix .'.dTOX.bound.bed.gz').'",
             name: "dTOX bound status:",
             mode: "show",

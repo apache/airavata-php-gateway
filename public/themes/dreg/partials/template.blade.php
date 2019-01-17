@@ -3,7 +3,7 @@
 <div class="col-md-offset-2 col-md-8 breathing-space scigap-info" >
         <h1 class="text-center">Welcome to dREG and dTOX gateway!</h1>
         <p class="text-center" style="color:#cccccc;">
-        Find the location of enhancers and promoters using PRO-seq, GRO-seq, and ChRO-seq data.<br/>
+        Find the location of transcriptional regulatory elements and transcription factoring binding using genomic data.<br/>
         </p>
         <p class="text-center" style="color:#444444;">
         The gateway status and updates are <A target=_blank href="https://github.com/Danko-Lab/dREG/blob/master/gateway-update.md"><B>here!</b></A>
@@ -13,7 +13,7 @@
 <div class="col-md-offset-1 col-md-5" style="margin-left: 5%" >
     <H2> How is dREG used?</H2>
     <p style="font-size:14px; margin-top:10px; text-align:justify">
-    The dREG model in the gateway predicts the location of enhancers and promoters using PRO-seq, GRO-seq, or ChRO-seq data.  The server takes as input bigWig files provided by the user, which represent PRO-seq signal on the plus and minus strand.  The gateway uses pre-trained dREG model to identify divergent transcript start sites and impute the predicted DNase-1 hypersensitivity signal across the genome. The current dREG model works in any mammalian organism.</p>
+    The dREG model in the gateway predicts the location of enhancers and promoters using PRO-seq, GRO-seq, or ChRO-seq data.  The server takes as input bigWig files provided by the user, which represent PRO-seq signal on the plus and minus strand.  The gateway uses a pre-trained dREG model to identify divergent transcript start sites and impute the predicted DNase-I hypersensitivity signal across the genome. The current dREG model works in any mammalian organism.</p>
     <p style="font-size:14px; margin-top:10px;text-align:justify">
 Registered users need only upload experimental data in the required format and push the start button. Once the job is finished, the user will be notified by e-mail. Results can be downloaded to the user’s local machine, or viewed in the Genome Browser via the handy trackhub link. </p>
 
@@ -38,11 +38,17 @@ Registered users need only upload experimental data in the required format and p
 
 <div class="col-md-offset-1 col-md-5" style="margin-left: 5%">
     <H2> How is dTOX used? </H2>
-    <p color="red">Under construction, please ignore this section! </p>
     <p style="font-size:14px; margin-top:10px;text-align:justify"> 
-The dTOX models in the gateway predict the binding status of transcription factor binding sites using PRO-seq, ATAC-seq, or DNase-1-seq data. The server takes as input bigWig files provided by the user, which represent the PRO-seq, ATAC-seq, or DNase-1-seq signal on the plus and minus strand. Once the user selects the transcription factors to predict on, the gateway uses a pre-trained dTOX model to identify transcription factor binding patterns. The current dTOX models work in any mammalian organism and on any motif that has an associated position-weight matrix. </p>    
+The dTOX models in the gateway predict the binding status of transcription factor binding sites using PRO-seq, ATAC-seq, or DNase-I-seq data. The server takes as input bigWig files provided by the user, which represent the PRO-seq, ATAC-seq, or DNase-1-seq signal on the plus and minus strand. The gateway uses two pre-trained dTOX models to identify transcription factor binding patterns genome-wide. The current dTOX models work in any mammalian organism and on any motif that has an associated position-weight matrix. To run the dTOX models on genomes other than hg19 and mm10, download the R package (<A target=_blank href="https://github.com/Danko-Lab/dTOX">here</A>). </p>    
     <p style="font-size:14px; margin-top:10px;text-align:justify">
 The web operations are same as the dREG model. Users need to login -> upload data -> run data. Results can be downloaded or viewed in the WashU Genome browser.</p>
+    <p style="font-size:14px; margin-top:5px;text-align:justify">
+    <img src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/webdev-bullet-icon.png" style="height:20px"></img>
+    Use the Danko lab's pipeline to <b>convert BAM files</b> of mapped reads to bigWig (<A ta
+rget=_blank href="https://github.com/Danko-Lab/RunOnBamToBigWig">here for PRO-seq</A>), (<A ta
+rget=_blank href="https://github.com/Danko-Lab/utils/dnase/BamToBigWig">here for DNase-I-seq</A>), and (<A ta
+rget=_blank href="https://github.com/Danko-Lab/utils/atacseq/BamToBigWig">here for ATAC-seq</A>).
+    </p>
 
     <p style="font-size:14px; margin-top:5px;text-align:justify">
    <img src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/webdev-bullet-icon.png" style="height:20px"></img>
