@@ -143,11 +143,13 @@ Currently, this gateway hosts two bioinformatics services for functional analysi
 <h1 class="text-center">Publications</h1>
 <div style="width: 92%; margin-left: 5%; padding-left:15px">
 <table>
+
 <tr>
 <td width="50px"><img id="myImg2" alt="dREG model" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/n1.png" style="width:100%"></img></td>
 <td>
 <p  class="text-left" style="margin-left: 5px; margin-top:10px;">
-Danko, C. G., Hyland, S. L., Core, L. J., Martins, A. L., Waters, C. T., Lee, H. W., ... & Siepel, A. (2015). <A target=_blank href="http://www.nature.com/nmeth/journal/v12/n5/full/nmeth.3329.html">Identification of active transcriptional regulatory elements from GRO-seq data.</A> Nature methods, 12(5), 433-438.</p>
+Wang, Z., Chu, T., Choate, L. A., & Danko, C. G. (2019). <A target=_blank href="https://genome.cshlp.org/content/29/2/293.short">Identification of regulatory elements from nascent transcription using dREG.</A> Genome research, 29(2), 293-303.
+</p>
 </td>
 </tr>
 
@@ -155,10 +157,10 @@ Danko, C. G., Hyland, S. L., Core, L. J., Martins, A. L., Waters, C. T., Lee, H.
 <td width="50px"><img id="myImg2" alt="dREG model" src="{{ URL::to('/') }}/themes/{{Session::get('theme')}}/assets/img/n2.png" style="width:100%"></img></td>
 <td>
 <p  class="text-left" style="margin-left: 5px; margin-top:10px;">
-Wang, Z., Chu, T., Choate, L. A., & Danko, C. G. (2018). <A target=_blank href="https://www.biorxiv.org/content/early/2018/05/14/321539.abstract">Identification of regulatory elements from nascent transcription using dREG.</A> bioRxiv, 321539.
-</p>
+Danko, C. G., Hyland, S. L., Core, L. J., Martins, A. L., Waters, C. T., Lee, H. W., ... & Siepel, A. (2015). <A target=_blank href="http://www.nature.com/nmeth/journal/v12/n5/full/nmeth.3329.html">Identification of active transcriptional regulatory elements from GRO-seq data.</A> Nature methods, 12(5), 433-438.</p>
 </td>
 </tr>
+
 
 
 </table>

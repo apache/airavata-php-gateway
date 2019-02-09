@@ -327,10 +327,11 @@ Secondly, when you click the genome browser link, please use the Left-Click, don
 
 <p><b>Q: How to I cite the dREG gateway?</b></p>
 <p>A: Please cite one of our papers if you use dREG results in your publication:<BR/>
+<p>A: Please cite one of our papers if you use dREG results in your publication:<BR/>
+<A target="_blank" href="https://genome.cshlp.org/content/29/2/293.short">
+(1) Wang, Z., Chu, T., Choate, L. A., & Danko, C. G. (2019). Identification of regulatory elements from nascent transcription using dREG. Genome research, 29(2), 293-303. </A></P>
 <A target="_blank" href="http://www.nature.com/nmeth/journal/v12/n5/full/nmeth.3329.html">
-(1) Danko, C. G., Hyland, S. L., Core, L. J., Martins, A. L., Waters, C. T., Lee, H. W., ... & Siepel, A. (2015). Identification of active transcriptional regulatory elements from GRO-seq data. Nature methods, 12(5), 433-438. </A></p>
-<A target="_blank" href="https://www.biorxiv.org/content/early/2018/05/14/321539.abstract">
-(2) Wang, Z., Chu, T., Choate, L. A., & Danko, C. G. (2018). Identification of regulatory elements from nascent transcription using dREG. bioRxiv, 321539. </A></P>
+(2) Danko, C. G., Hyland, S. L., Core, L. J., Martins, A. L., Waters, C. T., Lee, H. W., ... & Siepel, A. (2015). Identification of active transcriptional regulatory elements from GRO-seq data. Nature methods, 12(5), 433-438. </A></p>
 
 
 <p><b>Q: Do I have to create account before using this service?</b></p>
