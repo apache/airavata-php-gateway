@@ -86,6 +86,10 @@ class ExperimentUtilities
                 $matchingAppInput = null;
                 if ($input->type == DataType::URI) {
 
+                    // Skip inputs that have no value
+                    if ($input->value === null) {
+                        continue;
+                    }
                     if (strpos($input->value, "airavata-dp") === 0) {
                         $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
                         $currentInputPath = "";
