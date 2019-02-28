@@ -679,25 +679,30 @@ class ExperimentUtilities
                     if(parse_url($currentInputPath)){
                         $currentInputPath = parse_url($currentInputPath, PHP_URL_PATH);
                     }
-                    copy($currentInputPath, $newInputPath);
+                    if (file_exists($currentInputPath)) {
+                        copy($currentInputPath, $newInputPath);
+                        $dataProductModel = new DataProductModel();
+                        $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
+                        $dataProductModel->ownerName = Session::get("username");
+                        $dataProductModel->productName = basename($newInputPath);
+                        $dataProductModel->dataProductType = DataProductType::FILE;
 
-                    $dataProductModel = new DataProductModel();
-                    $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
-                    $dataProductModel->ownerName = Session::get("username");
-                    $dataProductModel->productName = basename($newInputPath);
-                    $dataProductModel->dataProductType = DataProductType::FILE;
+                        $dataReplicationModel = new DataReplicaLocationModel();
+                        $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
+                        $dataReplicationModel->replicaName = basename($newInputPath) . " gateway data store copy";
+                        $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
+                        $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
+                        $hostName = $_SERVER['SERVER_NAME'];
+                        $dataReplicationModel->filePath = "file://" . $hostName . ":" . $newInputPath;
 
-                    $dataReplicationModel = new DataReplicaLocationModel();
-                    $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
-                    $dataReplicationModel->replicaName = basename($newInputPath) . " gateway data store copy";
-                    $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
-                    $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
-                    $hostName = $_SERVER['SERVER_NAME'];
-                    $dataReplicationModel->filePath = "file://" . $hostName . ":" . $newInputPath;
+                        $dataProductModel->replicaLocations[] = $dataReplicationModel;
+                        $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
+                        $experimentInput->value = $uri;
+                    } else {
+                        Log::warning("Input file no longer available at " . $currentInputPath);
+                        $experimentInput->value = null;
+                    }
 
-                    $dataProductModel->replicaLocations[] = $dataReplicationModel;
-                    $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
-                    $experimentInput->value = $uri;
                 }
             }
             $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
