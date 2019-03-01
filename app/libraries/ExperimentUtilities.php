@@ -830,7 +830,7 @@ class ExperimentUtilities
                         for($i=1; $i<count(explode(",", $input->value)); $i++){
                             echo '<option value="'.$vals[$i].'">'.$vals[$i] .'</option>';
                         }
-                        echo '</select>';
+                        echo '</select></div>';
                     }else{
                         echo '<input '.$disabled . ' value="' . $input->value . '" type="text" class="form-control" name="' . $input->sanitizedFormName .
                             '" id="' . $input->sanitizedFormName .
