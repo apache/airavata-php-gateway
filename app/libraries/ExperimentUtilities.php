@@ -90,15 +90,8 @@ class ExperimentUtilities
                     if ($input->value === null) {
                         continue;
                     }
-                    if (strpos($input->value, "airavata-dp") === 0) {
-                        $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
-                        $currentInputPath = "";
-                        foreach ($dataProductModel->replicaLocations as $rp) {
-                            if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
-                                $currentInputPath = $rp->filePath;
-                                break;
-                            }
-                        }
+                    $currentInputPath = ExperimentUtilities::get_data_product_path($input);
+                    if ($currentInputPath) {
                         $fileName = basename($currentInputPath);
                     } else {
                         $fileName = basename($input->value);
@@ -793,15 +786,16 @@ class ExperimentUtilities
     /**
      * Create form inputs to accept the inputs to the given application
      * @param $id
-     * @param $isRequired
+     * @param $experimentInputs
      * @param $allowedFileSize maximum file size in megabytes
      * @internal param $required
      */
-    public static function create_inputs($id, $isRequired, $allowedFileSize)
+    public static function create_inputs($id, $experimentInputs, $allowedFileSize)
     {
         $inputs = AppUtilities::get_application_inputs($id);
 
-        $required = $isRequired ? ' required' : '';
+        // require if existing input has no value (check $experimentInputs) or file doesn't exist
+        $required = ' required';
 
         //var_dump( $inputs);  echo "<br/>after sort<br/>";
         //arranging inputs in ascending order.
@@ -818,6 +812,21 @@ class ExperimentUtilities
             if($input->isReadOnly)
                 $disabled = "disabled";
 
+            if ($experimentInputs !== null) {
+
+                foreach ($experimentInputs as $experimentInput) {
+                    if ($input->name === $experimentInput->name && $experimentInput->value !== null) {
+
+                        if ($experimentInput->type === DataType::URI) {
+                            $path = ExperimentUtilities::get_data_product_path($experimentInput);
+                            // Don't require the input file if there is already an existing value
+                            if ($path !== null && file_exists($path)) {
+                                $required = '';
+                            }
+                        }
+                    }
+                }
+            }
             switch ($input->type) {
                 case DataType::STRING:
                     echo '<div class="form-group">
@@ -1541,5 +1550,28 @@ class ExperimentUtilities
 
         GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $radd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
+    }
+
+    private static function get_data_product_path($input) {
+
+        if ($input->value === null) {
+            return null;
+        }
+        $currentInputPath = "";
+        if (strpos($input->value, "airavata-dp") === 0) {
+            $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
+            foreach ($dataProductModel->replicaLocations as $rp) {
+                if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
+                    $currentInputPath = $rp->filePath;
+                    break;
+                }
+            }
+        }
+
+        if ($currentInputPath !== "") {
+            return parse_url($currentInputPath)['path'];
+        } else {
+            return null;
+        }
     }
 }
