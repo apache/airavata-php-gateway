@@ -176,7 +176,7 @@ class ExperimentController extends BaseController
         $jobDetails = ExperimentUtilities::get_job_details($experiment->experimentId);
 //            var_dump( $jobDetails); exit;
         foreach( $jobDetails as $index => $jobDetail){
-            if(isset($jobDetail->jobStatuses)){
+            if(isset($jobDetail->jobStatuses) and !empty($jobDetail->jobStatuses)){
                   $jobDetails[ $index]->jobStatuses[0]->jobStateName = JobState::$__names[$jobDetail->jobStatuses[0]->jobState];
             }
             else{
