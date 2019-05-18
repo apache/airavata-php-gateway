@@ -407,24 +407,26 @@ class ExperimentUtilities
                     }
                 }
             } elseif ($applicationInput->type == DataType::URI) {
-                if ($_FILES[$applicationInput->sanitizedFormName]['name']) {
 
-                    $file = $_FILES[$applicationInput->sanitizedFormName];
-                    if ($file['error'] != 0) {
-                        throw new Exception("Failure occurred while uploading file '"
-                            . $file['name'] . "'. File upload error code is " . $file['error'] . ".");
-                    }
+                if (isset($_POST[$applicationInput->sanitizedFormName]) && (trim($_POST[$applicationInput->sanitizedFormName]) != '')) {
 
-                    //FIX - AIRAVATA - 2674
-                    //Replaced spaces with Underscore
-                    $file['name'] = str_replace(' ', '_', $file['name']);
-                    //
+                    $tus_data_dir = "/data/gateway-user-data/tus-temp-dir/";
+                    $tus_download_url = trim($_POST[$applicationInput->sanitizedFormName]);
+                    $file_uuid = explode("/", $tus_download_url)[4];
+                    $tus_bin_file = $tus_data_dir . $file_uuid . ".bin";
+                    $tus_info_file = $tus_data_dir . $file_uuid . ".info";
+                    $tus_info_file_as_str = file_get_contents($tus_info_file);
+                    $tus_info_file_as_arr = json_decode($tus_info_file_as_str, true);
+                    $file_name = $tus_info_file_as_arr["MetaData"]["filename"];
+                    $file_name = str_replace(' ', '_', $file_name);
+
                     // move file to experiment data directory
                     //
+                    $filePath = "";
                     if (!empty($applicationInput->value)) {
                         $filePath = $experimentFilePath . $applicationInput->value;
                     } else {
-                        $filePath = $experimentFilePath . $file['name'];
+                        $filePath = $experimentFilePath . $file_name;
                     }
 
                     // check if file already exists
@@ -434,10 +436,9 @@ class ExperimentUtilities
                         CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
                     }
 
-                    $moveFile = move_uploaded_file($file['tmp_name'], $filePath);
-
+                    $moveFile = copy($tus_bin_file, $filePath);
                     if (!$moveFile) {
-                        CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file['name'] . '!
+                        CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file_name . '!
                         Please try again later or report a bug using the link in the Help menu.</p>');
                         $experimentAssemblySuccessful = false;
                     }
@@ -552,7 +553,7 @@ class ExperimentUtilities
             $experimentName = preg_replace('/[^a-zA-Z0-9]+/', '_', $experimentName);
 
             ExperimentUtilities::$relativeExperimentDataDir = "/" . Session::get('username') . "/" . $projectId . "/"
-                        . $experimentName . time() . '/';
+                . $experimentName . time() . '/';
             ExperimentUtilities::$experimentPath = Config::get('pga_config.airavata')['experiment-data-absolute-path'] .
                 ExperimentUtilities::$relativeExperimentDataDir;
         } while (is_dir(ExperimentUtilities::$experimentPath)); // if dir already exists, try again
@@ -891,12 +892,12 @@ class ExperimentUtilities
                         echo '<div class="form-group">
                             <label for="experiment-input">' . $input->name . '</label>
                             <input class="form-control" type="text" name="' . $input->sanitizedFormName .
-                                    '" id="' . $input->sanitizedFormName . '" ' . $required . '>
+                            '" id="' . $input->sanitizedFormName . '" ' . $required . '>
                             <p class="help-block">' . $input->userFriendlyDescription . '</p>
                             </div>';
                         break;
                     }else{
-                        echo '<div class="form-group">
+                        /*echo '<div class="form-group">
                             <label for="experiment-input">' . $input->name . '</label>
                             <div data-file-id="' . $input->sanitizedFormName . '" class="readBytesButtons btn btn-default btn-xs"
                              data-toggle="modal" style="float: right">view file</div>
@@ -906,7 +907,31 @@ class ExperimentUtilities
                                     <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
                              </div>
                             <p class="help-block">' . $input->userFriendlyDescription . '</p>
-                            </div>';
+                            </div>';*/
+                        echo '
+                             <label for="experiment-input">' . $input->name . '</label>
+                             <div class="grid">
+                                <div class="column-full">
+                                    <input type="hidden" name="' . $input->sanitizedFormName . '" id="' . $input->sanitizedFormName . '"/>
+                                    <div class="UppyInput" id="input-' . $input->sanitizedFormName . '"></div>
+                                    <div class="UppyInput-Progress" id="progress-'. $input->sanitizedFormName .'"></div>
+                                </div>
+                              </div>';
+                        echo '<script>
+                                var uppy = Uppy.Core({debug: true, autoProceed: true})
+                                    .use(Uppy.FileInput, { target: "#input-' . $input->sanitizedFormName . '", pretty: false })
+                                    .use(Uppy.StatusBar, {
+                                        target: "#progress-' . $input->sanitizedFormName . '",
+                                        hideUploadButton: true,
+                                        hideAfterFinish: false
+                                    })
+                                    .use(Uppy.Tus, {endpoint: "https://tus.airavata.org/files/"})
+                  
+                                uppy.on("complete", (result) => {
+                                    console.log("Upload complete! We’ve uploaded these files:", result.successful)
+                                    document.getElementById("'. $input->sanitizedFormName .'").value = result.successful[0].response.uploadURL;
+                                })    
+                             </script>';
                         break;
                     }
 
