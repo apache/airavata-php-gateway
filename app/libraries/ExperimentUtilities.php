@@ -925,7 +925,7 @@ class ExperimentUtilities
                                         hideUploadButton: true,
                                         hideAfterFinish: false
                                     })
-                                    .use(Uppy.Tus, {endpoint: "https://tus.airavata.org/files/"})
+                                    .use(Uppy.Tus, {endpoint: "https://tus.scigap.org/files/"})
                   
                                 uppy.on("complete", (result) => {
                                     console.log("Upload complete! We’ve uploaded these files:", result.successful)
