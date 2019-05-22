@@ -410,6 +410,8 @@ class ExperimentUtilities
 
                 if (isset($_POST[$applicationInput->sanitizedFormName]) && (trim($_POST[$applicationInput->sanitizedFormName]) != '')) {
 
+                    Log::info('Processing input ' . $applicationInput->sanitizedFormName);
+
                     $tus_data_dir = "/data/gateway-user-data/tus-temp-dir/";
                     $tus_download_url = trim($_POST[$applicationInput->sanitizedFormName]);
                     $file_uuid = explode("/", $tus_download_url)[4];
@@ -436,7 +438,21 @@ class ExperimentUtilities
                         CommonUtilities::print_warning_message('Uploaded file already exists! Overwriting...');
                     }
 
-                    $moveFile = copy($tus_bin_file, $filePath);
+                    Log::info('Starting the file movement from ' . $tus_bin_file . ' to ' . $filePath);
+
+                    $bin_file_size = filesize($tus_bin_file) / (1000 * 1000 * 1000);
+                    Log::info('File size ' . $bin_file_size);
+
+                    if ($bin_file_size > 1) {
+                        Log::info("Creating sym link as the file size is too large");
+                        $moveFile = symlink($tus_bin_file, $filePath);
+                    } else {
+                        Log::info("Copying the file ...");
+                        $moveFile = copy($tus_bin_file, $filePath);
+                    }
+
+                    Log::info('File moved to storage ' . $filePath);
+
                     if (!$moveFile) {
                         CommonUtilities::print_error_message('<p>Error moving uploaded file ' . $file_name . '!
                         Please try again later or report a bug using the link in the Help menu.</p>');
