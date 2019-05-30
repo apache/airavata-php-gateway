@@ -446,6 +446,7 @@
         }
         return false;
     });
+    $('[data-toggle="tooltip"]').tooltip();
 </script>
 
 

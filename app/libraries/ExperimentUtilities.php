@@ -27,6 +27,7 @@ use Airavata\Model\Group\ResourcePermissionType;
 
 class ExperimentUtilities
 {
+    const FILE_UNAVAILABLE_ICON_TOOLTIP = ' <span class="glyphicon glyphicon-warning-sign" data-toggle="tooltip" data-placement="right" title="File is not available for download."></span></p>';
     private static $experimentPath;
 
     private static $relativeExperimentDataDir;
@@ -85,22 +86,24 @@ class ExperimentUtilities
                 $matchingAppInput = null;
                 if ($input->type == DataType::URI) {
 
-                    if (strpos($input->value, "airavata-dp") === 0) {
-                        $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
-                        $currentInputPath = "";
-                        foreach ($dataProductModel->replicaLocations as $rp) {
-                            if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
-                                $currentInputPath = $rp->filePath;
-                                break;
-                            }
-                        }
+                    // Skip inputs that have no value
+                    if ($input->value === null) {
+                        continue;
+                    }
+                    $currentInputPath = ExperimentUtilities::get_data_product_path($input);
+                    if ($currentInputPath) {
                         $fileName = basename($currentInputPath);
                     } else {
                         $fileName = basename($input->value);
                     }
 
-                    echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?id='
-                        . $input->value . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                    $path = parse_url($currentInputPath)['path'];
+                    if(file_exists($path)){
+                        echo '<p>' . $input->name . ':&nbsp;<a target="_blank" href="' . URL::to("/") . '/download/?id='
+                            . $input->value . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                    } else {
+                        echo '<p>' . $input->name . ':&nbsp;' . $fileName . self::FILE_UNAVAILABLE_ICON_TOOLTIP;
+                    }
 
                 }else if($input->type == DataType::URI_COLLECTION) {
                     $uriList = $input->value;
@@ -121,8 +124,13 @@ class ExperimentUtilities
                             $fileName = basename($input->value);
                         }
 
-                        $optFilesHtml = $optFilesHtml . '<a target="_blank" href="' . URL::to("/") . '/download/?id='
-                            . $uri . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a>&nbsp;';
+                        $path = parse_url($currentInputPath)['path'];
+                        if(file_exists($path)){
+                            $optFilesHtml = $optFilesHtml . '<a target="_blank" href="' . URL::to("/") . '/download/?id='
+                                . $uri . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a>&nbsp;';
+                        } else {
+                            $optFilesHtml = $optFilesHtml . $fileName . self::FILE_UNAVAILABLE_ICON_TOOLTIP;
+                        }
 
                     }
 
@@ -668,25 +676,30 @@ class ExperimentUtilities
                     if(parse_url($currentInputPath)){
                         $currentInputPath = parse_url($currentInputPath, PHP_URL_PATH);
                     }
-                    copy($currentInputPath, $newInputPath);
+                    if (file_exists($currentInputPath)) {
+                        copy($currentInputPath, $newInputPath);
+                        $dataProductModel = new DataProductModel();
+                        $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
+                        $dataProductModel->ownerName = Session::get("username");
+                        $dataProductModel->productName = basename($newInputPath);
+                        $dataProductModel->dataProductType = DataProductType::FILE;
 
-                    $dataProductModel = new DataProductModel();
-                    $dataProductModel->gatewayId = Config::get("pga_config.airavata")["gateway-id"];
-                    $dataProductModel->ownerName = Session::get("username");
-                    $dataProductModel->productName = basename($newInputPath);
-                    $dataProductModel->dataProductType = DataProductType::FILE;
+                        $dataReplicationModel = new DataReplicaLocationModel();
+                        $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
+                        $dataReplicationModel->replicaName = basename($newInputPath) . " gateway data store copy";
+                        $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
+                        $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
+                        $hostName = $_SERVER['SERVER_NAME'];
+                        $dataReplicationModel->filePath = "file://" . $hostName . ":" . $newInputPath;
 
-                    $dataReplicationModel = new DataReplicaLocationModel();
-                    $dataReplicationModel->storageResourceId = Config::get("pga_config.airavata")["gateway-data-store-resource-id"];
-                    $dataReplicationModel->replicaName = basename($newInputPath) . " gateway data store copy";
-                    $dataReplicationModel->replicaLocationCategory = ReplicaLocationCategory::GATEWAY_DATA_STORE;
-                    $dataReplicationModel->replicaPersistentType = ReplicaPersistentType::TRANSIENT;
-                    $hostName = $_SERVER['SERVER_NAME'];
-                    $dataReplicationModel->filePath = "file://" . $hostName . ":" . $newInputPath;
+                        $dataProductModel->replicaLocations[] = $dataReplicationModel;
+                        $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
+                        $experimentInput->value = $uri;
+                    } else {
+                        Log::warning("Input file no longer available at " . $currentInputPath);
+                        $experimentInput->value = null;
+                    }
 
-                    $dataProductModel->replicaLocations[] = $dataReplicationModel;
-                    $uri = Airavata::registerDataProduct(Session::get('authz-token'), $dataProductModel);
-                    $experimentInput->value = $uri;
                 }
             }
             $experiment->userConfigurationData->experimentDataDir = ExperimentUtilities::$experimentPath;
@@ -773,15 +786,16 @@ class ExperimentUtilities
     /**
      * Create form inputs to accept the inputs to the given application
      * @param $id
-     * @param $isRequired
+     * @param $experimentInputs
      * @param $allowedFileSize maximum file size in megabytes
      * @internal param $required
      */
-    public static function create_inputs($id, $isRequired, $allowedFileSize)
+    public static function create_inputs($id, $experimentInputs, $allowedFileSize)
     {
         $inputs = AppUtilities::get_application_inputs($id);
 
-        $required = $isRequired ? ' required' : '';
+        // require if existing input has no value (check $experimentInputs) or file doesn't exist
+        $required = ' required';
 
         //var_dump( $inputs);  echo "<br/>after sort<br/>";
         //arranging inputs in ascending order.
@@ -798,6 +812,21 @@ class ExperimentUtilities
             if($input->isReadOnly)
                 $disabled = "disabled";
 
+            if ($experimentInputs !== null) {
+
+                foreach ($experimentInputs as $experimentInput) {
+                    if ($input->name === $experimentInput->name && $experimentInput->value !== null) {
+
+                        if ($experimentInput->type === DataType::URI) {
+                            $path = ExperimentUtilities::get_data_product_path($experimentInput);
+                            // Don't require the input file if there is already an existing value
+                            if ($path !== null && file_exists($path)) {
+                                $required = '';
+                            }
+                        }
+                    }
+                }
+            }
             switch ($input->type) {
                 case DataType::STRING:
                     echo '<div class="form-group">
@@ -810,7 +839,7 @@ class ExperimentUtilities
                         for($i=1; $i<count(explode(",", $input->value)); $i++){
                             echo '<option value="'.$vals[$i].'">'.$vals[$i] .'</option>';
                         }
-                        echo '</select>';
+                        echo '</select></div>';
                     }else{
                         echo '<input '.$disabled . ' value="' . $input->value . '" type="text" class="form-control" name="' . $input->sanitizedFormName .
                             '" id="' . $input->sanitizedFormName .
@@ -965,17 +994,23 @@ class ExperimentUtilities
                             }
                         }
                         $path = parse_url($currentOutputPath)['path'];
+                        $fileName = basename($currentOutputPath);
                         if(file_exists($path)){
-                            $fileName = basename($currentOutputPath);
                             echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
                                 . '/download/?id=' . urlencode($output->value) . '">' . $fileName
                                 . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        } else {
+                            echo '<p>' . $output->name . ':&nbsp;' . $fileName . self::FILE_UNAVAILABLE_ICON_TOOLTIP . ' </p>';
                         }
                     }else {
                         $fileName = basename($output->value);
-                        echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
-                            . '/download/?id=' . urlencode($output->value) . '">' . $fileName
-                            . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        if(file_exists($path)){
+                            echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
+                                . '/download/?id=' . urlencode($output->value) . '">' . $fileName
+                                . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
+                        } else {
+                            echo '<p>' . $output->name . ':&nbsp;' . $fileName . self::FILE_UNAVAILABLE_ICON_TOOLTIP . ' </p>';
+                        }
                     }
                 }
             } elseif ($output->type == DataType::STRING) {
@@ -1515,5 +1550,28 @@ class ExperimentUtilities
 
         GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $radd);
         GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
+    }
+
+    private static function get_data_product_path($input) {
+
+        if ($input->value === null) {
+            return null;
+        }
+        $currentInputPath = "";
+        if (strpos($input->value, "airavata-dp") === 0) {
+            $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $input->value);
+            foreach ($dataProductModel->replicaLocations as $rp) {
+                if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
+                    $currentInputPath = $rp->filePath;
+                    break;
+                }
+            }
+        }
+
+        if ($currentInputPath !== "") {
+            return parse_url($currentInputPath)['path'];
+        } else {
+            return null;
+        }
     }
 }
