@@ -88,13 +88,21 @@
         @endif
         <tr>
             <td><strong>Experiment Status</strong></td>
-            <td class="exp-status">{{{ $expVal["experimentStatusString"] }}}</td>
+            <td class="exp-status">  
+{{{ $expVal["experimentStatusString"] }}} <br/>
+@if( $expVal["experimentStatusString"]!="COMPLETED" && $expVal["experimentStatusString"]!="COMPLETE") 
+ If the job is failed, please refer <A href="https://dreg.dnasequence.org/pages/doc#failure">here</A> to find the reasons.<br/>
+@endif
+</td>
         </tr>
 
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
             <tr>
                 <th>Job</th>
                 <td>
+@if( $jobDetail->jobStatuses[0]->jobStateName == "FAILED" )
+If the job is failed, please refer <A href="https://dreg.dnasequence.org/pages/doc#failure">here</A> to find the reasons. <br/>
+@endif
                     <table class="table table-bordered">
                         <tr>
                             <td>Name</td>
@@ -200,33 +208,76 @@
     }
 
     $dataRoot = Config::get("pga_config.airavata")["experiment-data-absolute-path"];
+
+
+    $param_prefix = "out";
+    if( count( $experiment->experimentInputs) > 0 ) 
+       foreach( $experiment->experimentInputs as $input)
+       {
+          if ($input->applicationArgument == "prefix") {
+              $param_prefix = $input->value;
+          }
+       } 
 ?>
             <td>
+
+@if(  $expVal["applicationInterface"]->applicationName !== "dTOX prediction"  ) 
                 <select id="download">
                     <option value=''>Select results</option>
-@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/out.dREG.tar.gz') )
-                    <option value="out.dREG.tar.gz">Full results</option>  
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.tar.gz') )
+                    <option value=<?php echo $param_prefix.".tar.gz" ?>>Full results</option>  
 @endif
-                    <option value="out.dREG.infp.bed.gz">dREG informative sites</option>
-                    <option value="out.dREG.peak.full.bed.gz">dREG peaks </option> 
-                    <option value="out.dREG.peak.score.bed.gz">dREG peak(only with scores)</option>
-                </select> &nbsp;&nbsp;&nbsp;&nbsp;
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dREG.infp.bed.gz') )
+                    <option value=<?php echo $param_prefix.".dREG.infp.bed.gz"?>>dREG informative sites</option>
+@endif
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dREG.peak.full.bed.gz') )
+                    <option value=<?php echo $param_prefix.".dREG.peak.full.bed.gz"?>>dREG peaks </option> 
+@endif
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dREG.peak.score.bed.gz') )
+                    <option value=<?php echo $param_prefix.".dREG.peak.score.bed.gz"?>>dREG peak(only with scores)</option>
+@endif
+                </select> &nbsp;&nbsp;
+@else
+                <select id="download">
+                    <option value=''>Select results</option>
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.tar.gz') )
+                    <option value=<?php echo $param_prefix.".tar.gz" ?>>Full results</option>
+@endif
+@if(file_exists($dataRoot . '/' . $expDataDir. '/ARCHIVE/'.$param_prefix.'.dTOX.bound.bed.gz') )
+                    <option value=<?php echo $param_prefix.".dTOX.bound.bed.gz"?>>dTOX bound regions </option>
+@endif
+                </select> &nbsp;&nbsp;
 
-   	       <a href="" target="_blank" id="retLinks">Download&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></a>
+
+@endif
+
+
+<button id="retLinks" style="color: #fff; background-color: #3e5a43; border-color: #46b8da; border: 1px solid transparent;" >Download&nbsp;<span class="glyphicon glyphicon-save"  style="width:20px"></span></button>
             </td>
         </tr>
         <tr>
             <td><strong>Genome Browser</strong></td>
             <td>
+
+@if(  $expVal["applicationInterface"]->applicationName !== "dTOX prediction"  )
                 <select id="genomebuilder">
                     <option value="">Select genome </option>
                     <option value="hg19">hg19</option>
                     <option value="hg38">hg38</option>  
                     <option value="mm10">mm10</option>
-                </select> 
+                </select>
+@else
+                <select id="genomebuilder">
+                    <option value="">Select genome </option>
+                    <option value="hg19">hg19</option>
+                    <option value="mm10">mm10</option>
+                </select>
+@endif
+ 
                 &nbsp;or input&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="text" id="customeGB" style="width:40px"/> 
-  	        <a href="#1" target="_blank" id="gbLinks">Switch to genome browser&nbsp;<span class="glyphicon glyphicon-new-window"  style="width:20px"></span></a>
+                <input type="text" id="customeGB" style="width:40px"/> &nbsp;&nbsp; 
+<!--  	        <a href="#1" target="_blank" id="gbLinks">Switch to genome browser&nbsp;<span class="glyphicon glyphicon-new-window"  style="width:20px"></span></a> -->
+<button id="gbLinks" style="color: #fff; background-color: #3e5a43; border-color: #46b8da; border: 1px solid transparent;">Switch to genome browser&nbsp;<span class="glyphicon glyphicon-new-window" style="width:20px"></span></button>
             </td>
         </tr>
 {{-- dREG --}}
@@ -497,12 +548,18 @@
                         $currentOutputPath = $rp->filePath;
                       break;
                     }
-                   
-                    $path = str_replace($dataRoot, "", parse_url($currentOutputPath, PHP_URL_PATH));
-                    $filelist = $filelist . $input->name . "\n". $path. "\n";
+                    $path = str_replace($dataRoot.$expDataDir, "", parse_url($currentOutputPath, PHP_URL_PATH));
+                    $filelist = $filelist . $path. "\n";
+                }
+                else
+                {
+                    $filelist = $filelist . $input->value. "\n";
                 }
 
     $filelist = $expDataDir ."\n". $filelist;
+    // in case no prefix label for output file in the interface, put "out" at the end
+    $filelist =  $filelist . "out\n";
+
     $protocol = 'http';
     if ( isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') 
         $protocol = 'https';
@@ -515,7 +572,11 @@
         if (gb == '') 
             return false;
 
+@if(  $expVal["applicationInterface"]->applicationName !== "dTOX prediction"  ) 
         var gbUrl = "http://epigenomegateway.wustl.edu/browser/?datahub={{ $protocol .'://'. $_SERVER['HTTP_HOST']. '/gbrowser/'. RBase64::encode( $filelist ) }}&genome=";
+@else
+        var gbUrl = "http://epigenomegateway.wustl.edu/browser/?datahub={{ $protocol .'://'. $_SERVER['HTTP_HOST']. '/gbrowser1/'. RBase64::encode( $filelist ) }}&genome=";
+@endif
         window.open(gbUrl + gb);
         return false; 
     });

@@ -199,7 +199,7 @@ class CommonUtilities
                 || Session::has('admin-read-only'))){
             if( Session::get("nav-active") == "experiment" && $_SERVER['REQUEST_URI']== "/xperiment/create")
                 $active = "active";
-            $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/experiment/create"><span class="glyphicon glyphicon-plus-sign"></span> Start dREG</a></li>';
+            $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/experiment/create"><span class="glyphicon glyphicon-plus-sign"></span> Start dREG/dTOX</a></li>';
         }
 
         $active = "";
@@ -207,7 +207,7 @@ class CommonUtilities
                 || Session::has('admin-read-only'))){
             if( Session::get("nav-active") == "experiment" && $_SERVER['REQUEST_URI']== "/experiment/browse")
                 $active = "active";
-            $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/experiment/browse"><span class="glyphicon glyphicon-list"></span> Saved dREG runs</a></li>';
+            $navbar .= '<li class="' . $active . '"><a href="' . URL::to("/") . '/experiment/browse"><span class="glyphicon glyphicon-list"></span> Saved runs</a></li>';
         }
         // <<- dREG
 
