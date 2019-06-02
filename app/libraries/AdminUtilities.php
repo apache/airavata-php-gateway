@@ -127,16 +127,6 @@ class AdminUtilities
         $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
         $gateway->emailAddress = $gatewayData["email-address"];
         $gateway->gatewayURL = $gatewayData["gateway-url"];
-        $gateway->identityServerUserName = $gatewayData["admin-username"];
-        $token = AdminUtilities::create_pwd_token([
-            "username" => $gatewayData["admin-username"],
-            "password" => $gatewayData["admin-password"],
-            "description" => "Admin user password for Gateway " . $gatewayId
-        ]);
-        $gateway->identityServerPasswordToken  = $token;
-        $gateway->gatewayAdminFirstName = $gatewayData["admin-firstname"];
-        $gateway->gatewayAdminLastName = $gatewayData["admin-lastname"];
-        $gateway->gatewayAdminEmail = $gatewayData["admin-email"];
         $gateway->reviewProposalDescription = $gatewayData["project-details"];
         $gateway->gatewayPublicAbstract = $gatewayData["public-project-description"];
         if( TenantProfileService::updateGateway( Session::get('authz-token'), $gateway) ){
@@ -163,10 +153,15 @@ class AdminUtilities
             $gatewayData["declinedReason"] = " ";
             if ($gateway->identityServerPasswordToken == null)
             {
-                Session::put("errorMessages", "Error: Please ask the Gateway Provider to submit a password.");
+                Session::flash("errorMessages", "Error: Please provide an admin password.");
                 return -1;
             }
-            foreach ($gatewayData as $data) {
+            foreach ($gatewayData as $key => $data) {
+                // Don't check these fields, see related check above
+                // where we make sure that password is provided
+                if ($key == "gatewayAdminPassword" || $key == "gatewayAdminPasswordConfirm") {
+                    continue;
+                }
                 if ($data == null) {
                     return -1;
                 }
@@ -181,6 +176,14 @@ class AdminUtilities
             $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
             $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
             $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
+            if (!empty($gatewayData["gatewayAdminPassword"])) {
+                $token = AdminUtilities::create_pwd_token([
+                    "username" => $gatewayData["identityServerUserName"],
+                    "password" => $gatewayData["gatewayAdminPassword"],
+                    "description" => "Admin user password for Gateway " . $gateway->gatewayName
+                ]);
+                $gateway->identityServerPasswordToken = $token;
+            }
             $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
             $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
@@ -195,6 +198,14 @@ class AdminUtilities
             $gateway->gatewayAdminLastName = $gatewayData["gatewayAdminLastName"];
             $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
             $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
+            if (!empty($gatewayData["gatewayAdminPassword"])) {
+                $token = AdminUtilities::create_pwd_token([
+                    "username" => $gatewayData["identityServerUserName"],
+                    "password" => $gatewayData["gatewayAdminPassword"],
+                    "description" => "Admin user password for Gateway " . $gateway->gatewayName
+                ]);
+                $gateway->identityServerPasswordToken = $token;
+            }
             $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
             $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;

@@ -491,10 +491,14 @@ class CommonUtilities
     public static function getAuthPasswordOption() {
 
         $auth_options = Config::get('pga_config.wsis')['auth-options'];
-        $auth_password_option_array = array_filter($auth_options, function($auth_option) {
-            return $auth_option["oauth-grant-type"] == "password";
-        });
-        return count($auth_password_option_array) > 0 ? $auth_password_option_array[0] : null;
+        $auth_password_option = null;
+        foreach ($auth_options as $key => $auth_option) {
+            if ($auth_option["oauth-grant-type"] == "password") {
+                $auth_password_option = $auth_option;
+                break;
+            }
+        }
+        return $auth_password_option;
     }
 
     public static function getAuthCodeOptions() {

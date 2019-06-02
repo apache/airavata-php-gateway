@@ -10,6 +10,35 @@
 <input type="hidden" id="queue-array" value="{{ htmlentities( json_encode( $queues ) ) }}"/>
 <input type="hidden" id="app-deployment-defaults-array" value="{{ htmlentities( json_encode( $appDeploymentDefaults ) ) }}"/>
 <input type="hidden" id="queue-defaults-array" value="{{ htmlentities( json_encode( $queueDefaults ) ) }}"/>
+
+<!-- Setting the node count we got from previous page to a hidden field for jquery -->
+@if(isset($expVal['scheduling']->nodeCount))
+<input type="hidden" id="passed-nodeCount" value="{{ $expVal['scheduling']->nodeCount }}"/>
+@else
+<input type="hidden" id="passed-nodeCount" value="0"/>
+@endif
+
+<!-- Setting the cpu count we got from previous page to a hidden field for jquery -->
+@if(isset($expVal['scheduling']->totalCPUCount))
+<input type="hidden" id="passed-cpuCount" value="{{ $expVal['scheduling']->totalCPUCount }}"/>
+@else
+<input type="hidden" id="passed-cpuCount" value="0"/>
+@endif
+
+<!-- Setting the wall time limit we got from previous page to a hidden field for jquery -->
+@if(isset($expVal['scheduling']->wallTimeLimit))
+<input type="hidden" id="passed-wallTime" value="{{ $expVal['scheduling']->wallTimeLimit }}"/>
+@else
+<input type="hidden" id="passed-wallTime" value="0"/>
+@endif
+
+<!-- Setting the physical memory we got from previous page to a hidden field for jquery -->
+@if(isset($expVal['scheduling']->totalPhysicalMemory))
+<input type="hidden" id="passed-physicalmem" value="{{ $expVal['scheduling']->totalPhysicalMemory }}"/>
+@else
+<input type="hidden" id="passed-physicalmem" value="0"/>
+@endif
+
 <div class="form-group required">
     @if( count( $queues) > 0 )
     <label class="control-label" for="node-count">Select a Queue</label>
@@ -94,6 +123,7 @@
 </div>
 
 <script>
+var experimentQueueBlockInit = function() {
     //To work with experiment edit (Not Ajax)
     $( document ).ready(function() {
         var selectedQueue = $("#select-queue").val();
@@ -148,8 +178,8 @@
             readBlob(startByte, endByte, fileId);
         });
     });
-
-    //To work work with experiment create (Ajax)
+    
+    // To work work with experiment create (Ajax)
     var selectedQueue = $("#select-queue").val();
     getQueueData(selectedQueue);
     $("#select-queue").change(function () {
@@ -166,8 +196,13 @@
         var queues = $.parseJSON($("#queue-array").val());
         var queueDefaults = $.parseJSON($("#queue-defaults-array").val());
         var appDefaults = $.parseJSON($("#app-deployment-defaults-array").val());
-
+        //getting the html values we set to hidden fields above!
+        var passedNodeCount = parseInt($("#passed-nodeCount").val());
+        var passedCpuCount = parseInt($('#passed-cpuCount').val());
+        var passedWallTime = parseInt($('#passed-wallTime').val());
+        var passedPhysicalMemory = parseInt($('#passed-physicalmem').val());
         var veryLargeValue = 9999999;
+
         console.log(queues);
         $(".queue-view").addClass("hide");
         for (var i = 0; i < queues.length; i++) {
@@ -192,6 +227,10 @@
                 }else{
                     $("#node-count").val(queueDefaults['nodeCount']);
                 }
+                // load previously set values on page load.
+                if(passedNodeCount!=0){
+                    $("#node-count").val(passedNodeCount);
+                }
 
                 //core-count
                 if (queues[i]['maxProcessors'] != 0 && queues[i]['maxProcessors'] != null) {
@@ -214,6 +253,11 @@
                     $("#cpu-count").val(queueDefaults['cpuCount']);
                 }
 
+                // load previously set values on page load.
+                if(passedCpuCount!=0){
+                    $("#cpu-count").val(passedCpuCount);
+                }
+
 
                 //walltime-count
                 if (queues[i]['maxRunTime'] != null && queues[i]['maxRunTime'] != 0) {
@@ -234,6 +278,11 @@
                     $("#wall-time").val(queueDefaults['wallTimeLimit']);
                 }
 
+                // load previously set values on page load.
+                if(passedWallTime!=0){
+                    $("#wall-time").val(passedWallTime);
+                }
+
                 //memory-count
                 if (queues[i]['maxMemory'] != 0 && queues[i]['maxMemory'] != null) {
                     if($('#enable-auto-scheduling').prop('checked')){
@@ -252,6 +301,12 @@
                 }else{
                     var cpusPerNode = queueDefaults['cpusPerNode'];
                 }
+
+                // load previously set values on page load.
+                if(passedPhysicalMemory!=0){
+                    $("#memory-count").val(passedPhysicalMemory);
+                }
+
 
                 var nodeCount=$("#node-count");
                 var cpuCount=$("#cpu-count");
@@ -280,4 +335,12 @@
         }
         $(".queue-view").removeClass("hide");
     }
+}
+
+// On initial load jQuery isn't loaded until later so wait until DOMContentLoaded
+if (typeof $ === 'undefined') {
+    document.addEventListener("DOMContentLoaded", experimentQueueBlockInit);
+} else {
+    experimentQueueBlockInit();
+}
 </script>

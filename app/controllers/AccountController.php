@@ -2,7 +2,7 @@
 
 class AccountController extends BaseController
 {
-    const PASSWORD_VALIDATION = "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/";
+    const PASSWORD_VALIDATION = "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*&]).*$/";
     const PASSWORD_VALIDATION_MESSAGE = "Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$&*";
 
     public function __construct()
@@ -30,6 +30,7 @@ class AccountController extends BaseController
             "password" => self::PASSWORD_VALIDATION,
             "confirm_password" => "required|same:password",
             "email" => "required|email",
+            "confirm_email" => "required|same:email",
         );
 
         $messages = array(
@@ -40,7 +41,7 @@ class AccountController extends BaseController
         $validator = Validator::make(Input::all(), $rules, $messages);
         if ($validator->fails()) {
             return Redirect::to("create")
-                ->withInput(Input::except('password', 'password_confirm'))
+                ->withInput(Input::except('password', 'confirm_password', 'email', 'confirm_email'))
                 ->withErrors($validator);
         }
 
@@ -52,7 +53,7 @@ class AccountController extends BaseController
 
         if (Keycloak::usernameExists($username)) {
             return Redirect::to("create")
-                ->withInput(Input::except('password', 'password_confirm'))
+                ->withInput(Input::except('password', 'confirm_password'))
                 ->with("username_exists", true);
         } else {
 
@@ -79,6 +80,7 @@ class AccountController extends BaseController
         $auth_password_option = CommonUtilities::getAuthPasswordOption();
         // Support for many external identity providers (authorization code auth flow)
         $auth_code_options = CommonUtilities::getAuthCodeOptions();
+        $has_auth_code_and_password_options = $auth_password_option != null && count($auth_code_options) > 0;
 
         // If no username/password option and only one external identity
         // provider, just redirect immediately
@@ -88,6 +90,7 @@ class AccountController extends BaseController
             return View::make('account/login', array(
                 "auth_password_option" => $auth_password_option,
                 "auth_code_options" => $auth_code_options,
+                "has_auth_code_and_password_options" => $has_auth_code_and_password_options,
             ));
         }
     }
@@ -98,6 +101,7 @@ class AccountController extends BaseController
         $auth_password_option = CommonUtilities::getAuthPasswordOption();
         // Support for many external identity providers (authorization code auth flow)
         $auth_code_options = CommonUtilities::getAuthCodeOptions();
+        $has_auth_code_and_password_options = $auth_password_option != null && count($auth_code_options) > 0;
 
         // If no username/password option and only one external identity
         // provider, just redirect immediately
@@ -107,6 +111,7 @@ class AccountController extends BaseController
             return View::make('account/login-desktop', array(
                 "auth_password_option" => $auth_password_option,
                 "auth_code_options" => $auth_code_options,
+                "has_auth_code_and_password_options" => $has_auth_code_and_password_options,
             ));
         }
     }
@@ -294,12 +299,25 @@ class AccountController extends BaseController
             umask($old_umask);
         }
 
+        // Must create the UserResourceProfile before we can add auto provisioned accounts to it
+        $user_resource_profile = URPUtilities::get_or_create_user_resource_profile();
+        $auto_provisioned_accounts = URPUtilities::setup_auto_provisioned_accounts();
+        // Log::debug("auto_provisioned_accounts", array($auto_provisioned_accounts));
+
         if(Session::has("admin") || Session::has("admin-read-only") || Session::has("gateway-provider")){
-            return Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
+            $response = Redirect::to("admin/dashboard". "?status=ok&code=".$accessToken . "&username=".$username
                 . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
+            if (!empty($auto_provisioned_accounts)) {
+                $response = $response->with("auto_provisioned_accounts", $auto_provisioned_accounts);
+            }
+            return $response;
         }else{
-            return Redirect::to("account/dashboard". "?status=ok&code=".$accessToken ."&username=".$username
+            $response = Redirect::to("account/dashboard". "?status=ok&code=".$accessToken ."&username=".$username
                 . "&refresh_code=" . $refreshToken . "&valid_time=" . $validTime);
+            if (!empty($auto_provisioned_accounts)) {
+                $response = $response->with("auto_provisioned_accounts", $auto_provisioned_accounts);
+            }
+            return $response;
         }
     }
 
@@ -363,24 +381,29 @@ class AccountController extends BaseController
             return View::make("home");
         }else{
             try{
-                $verified = EmailUtilities::verifyEmailVerification($username, $code);
-                if (!$verified){
-                    $user_profile = Keycloak::getUserProfile($username);
-                    EmailUtilities::sendVerifyEmailAccount($username,
-                        $user_profile["firstname"], $user_profile["lastname"], $user_profile["email"]);
-                    CommonUtilities::print_error_message("Account confirmation "
-                        . "failed! We're sending another confirmation email. "
-                        . "Please click the link in the confirmation email that "
-                        . "you should be receiving soon.");
-                    return View::make("home");
-                }
-                $result = IamAdminServicesUtilities::enableUser($username);
-                if($result){
-                    $this->sendAccountCreationNotification2Admin($username);
-                    return Redirect::to("login")->with("account-created-success", "Your account has been successfully created. Please log in now.");
-                }else{
-                    CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
-                    return View::make("home");
+                $enabled = IamAdminServicesUtilities::isUserEnabled($username);
+                if ($enabled) {
+                    return Redirect::to("login")->with("account-created-success", "Your account has already been successfully created. Please log in now.");
+                } else {
+                    $verified = EmailUtilities::verifyEmailVerification($username, $code);
+                    if (!$verified){
+                        $user_profile = Keycloak::getUserProfile($username);
+                        EmailUtilities::sendVerifyEmailAccount($username,
+                            $user_profile["firstname"], $user_profile["lastname"], $user_profile["email"]);
+                        CommonUtilities::print_error_message("Account confirmation "
+                            . "failed! We're sending another confirmation email. "
+                            . "Please click the link in the confirmation email that "
+                            . "you should be receiving soon.");
+                        return View::make("home");
+                    }
+                    $result = IamAdminServicesUtilities::enableUser($username);
+                    if($result){
+                        $this->sendAccountCreationNotification2Admin($username);
+                        return Redirect::to("login")->with("account-created-success", "Your account has been successfully created. Please log in now.");
+                    }else{
+                        CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
+                        return View::make("home");
+                    }
                 }
             }catch (Exception $e){
                 CommonUtilities::print_error_message("Account confirmation failed! Please contact the Gateway Admin");
@@ -408,7 +431,9 @@ class AccountController extends BaseController
         $mail->Port = intval(Config::get('pga_config.portal')['portal-smtp-server-port']);
 
         $mail->From = Config::get('pga_config.portal')['portal-email-username'];
-        $mail->FromName = "Airavata PHP Gateway";
+        $gatewayURL = $_SERVER['SERVER_NAME'];
+        $portalTitle = Config::get('pga_config.portal')['portal-title'];
+        $mail->FromName = "$portalTitle ($gatewayURL)";
 
         $recipients = Config::get('pga_config.portal')['admin-emails'];
         foreach($recipients as $recipient){

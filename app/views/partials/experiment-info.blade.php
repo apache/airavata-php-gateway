@@ -72,7 +72,7 @@
                     echo $expVal["applicationInterface"]->applicationName;
                 } ?></td>
         </tr>
-        <tr>
+        <tr class="compute-resource-summary-page">
             <td><strong>Compute Resource</strong></td>
             <td><?php if (!empty($expVal["computeResource"])) {
                     echo $expVal["computeResource"]->hostName;
@@ -163,19 +163,19 @@
             <td><strong>Last Modified Time</strong></td>
             <td class="time" unix-time="{{ $expVal["experimentTimeOfStateChange"] }}"></td>
         </tr>
-        <tr>
+        <tr class="wall-time-summary-page">
             <td><strong>Wall Time</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->wallTimeLimit }}</td>
         </tr>
-        <tr>
+        <tr class="cpu-count-summary-page">
             <td><strong>CPU Count</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->totalCPUCount }}</td>
         </tr>
-        <tr>
+        <tr class="node-count-summary-page">
             <td><strong>Node Count</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->nodeCount }}</td>
         </tr>
-        <tr>
+        <tr class="queue-summary-page">
             <td><strong>Queue</strong></td>
             <td>{{ $experiment->userConfigurationData->computationalResourceScheduling->queueName }}</td>
         </tr>
@@ -537,6 +537,7 @@
         }
         return false;
     });
+    $('[data-toggle="tooltip"]').tooltip();
 </script>
 
 

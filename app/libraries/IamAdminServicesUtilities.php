@@ -1,4 +1,5 @@
 <?php
+use Airavata\Model\User\Status;
 
 class IamAdminServicesUtilities {
 
@@ -21,6 +22,11 @@ class IamAdminServicesUtilities {
         return IamAdminServices::enableUser($admin_authz_token, $username);
     }
 
+    public static function isUserEnabled($username) {
+        $admin_authz_token = IamAdminServicesUtilities::getAdminAuthzToken();
+        return IamAdminServices::isUserEnabled($admin_authz_token, $username);
+    }
+
     public static function resetUserPassword($username, $new_password) {
 
         $admin_authz_token = IamAdminServicesUtilities::getAdminAuthzToken();
@@ -33,7 +39,7 @@ class IamAdminServicesUtilities {
         $user_profiles = IamAdminServices::getUsersWithRole($authz_token, $role_name);
         $users = [];
         foreach ($user_profiles as $user_profile) {
-            $users[] = $user_profile->userId;
+            array_push($users, (object)["firstName"=>$user_profile->firstName,"lastName"=>$user_profile->lastName,"email"=>implode(",",$user_profile->emails),"userName"=>$user_profile->userId, "userEnabled"=>$user_profile->State == Status::CONFIRMED]);
         }
         return $users;
     }

@@ -27,26 +27,18 @@ class GatewayRequestUpdateController extends BaseController
 
         $inputs = Input::all();
         $rules = array(
-            "password" => "required|min:6|max:48|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@!$#*]).*$/",
-            "confirm_password" => "required|same:password",
             "email" => "required|email",
         );
 
-        $messages = array(
-            'password.regex' => 'Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$&*',
-        );
+        $messages = array();
 
         $checkValidation = array();
-        $checkValidation["password"] = $inputs["admin-password"];
-        $checkValidation["confirm_password"] = $inputs["admin-password-confirm"];
-        $checkValidation["email"] = $inputs["admin-email"];
+        $checkValidation["email"] = $inputs["email-address"];
 
         $validator = Validator::make( $checkValidation, $rules, $messages);
         if ($validator->fails()) {
             Session::put("validationMessages", $validator->messages() );
-            return Redirect::back()
-                ->withInput(Input::except('password', 'password_confirm'))
-                ->withErrors($validator);
+            return Redirect::back()->withErrors($validator);
         }
         else {
             $returnVal = AdminUtilities::user_update_gateway(Input::get("internal-gateway-id"), Input::all());

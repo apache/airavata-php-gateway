@@ -74,7 +74,7 @@ return array(
                 // http://www.keycloak.org/docs/2.5/server_admin/topics/identity-broker/suggested.html
                 'oauth-authorize-url-extra-params' => 'kc_idp_hint=oidc',
                 // Optional
-                'logo': '/assets/path_to_image.png'
+                'logo' => '/assets/path_to_image.png'
             ],
         ],
 
@@ -178,6 +178,21 @@ return array(
          * Default wall time limit
          */
         'wall-time-limit' => '30',
+
+        /**
+         * Max node count
+         */
+        'max-node-count' => '4',
+
+        /**
+         * Max total core count
+         */
+        'max-total-cpu-count' => '96',
+
+        /**
+         * Max wall time limit
+         */
+        'max-wall-time-limit' => '120',
 
         /**
          * Enable app-catalog cache

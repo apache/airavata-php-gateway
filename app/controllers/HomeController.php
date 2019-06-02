@@ -17,7 +17,17 @@ class HomeController extends BaseController {
 
 	public function getIndex()
 	{
-        Session::put("nav-active", "home");
+		Session::put("nav-active", "home");
+		// If not logged in and theme has a landing page, display the landing page
+		if (!CommonUtilities::id_in_session()){
+			try {
+				$theme = Theme::uses( Session::get("theme") );
+				// FIXME: can't figure out how to pass variables to the landingpage template
+				return View::make($theme->scope('landingpage')->location());
+			}catch (Exception $ex){
+				Log::debug("Theme has no landingpage view, will render standard home page", array($ex->getMessage()));
+			}
+		}
 		return View::make('home');
 	}
 

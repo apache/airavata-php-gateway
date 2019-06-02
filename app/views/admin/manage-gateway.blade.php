@@ -144,7 +144,7 @@
                                         <td style="max-width: 400px; word-wrap: break-word;">{{ $gp->gatewayPublicAbstract}}</td>
                                         <td>{{$gatewayApprovalStatuses[$gp->gatewayApprovalStatus] }}</td>
                                         <td>
-                                            <input type="button" class="btn btn-primary btn-xs start-approval" id="view-{{ preg_replace('/[\s]/', '-',$gp->gatewayId) }}" data-gatewayobject='{{htmlentities(json_encode( $gp))}}' value="View"/>
+                                            <input type="button" class="btn btn-primary btn-xs start-approval" id="view-{{ preg_replace('/[\s]/', '-',$gp->gatewayId) }}" data-gatewayobject="{{htmlentities(json_encode( $gp))}}" value="View"/>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -273,6 +273,14 @@
                     <div class="form-group">
                         <label>Gateway Admin Username</label>
                         <input type="text" name="identityServerUserName" id="identityServerUserName" class="form-control identityServerUserName"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Gateway Admin Password</label>
+                        <input type="password" id="password" name="gatewayAdminPassword" class="form-control identityServerPasswordToken" title="" type="password" data-container="#approve-gateway" data-toggle="popover" data-placement="left" data-content="Password needs to contain at least (a) One lower case letter (b) One Upper case letter and (c) One number (d) One of the following special characters - !@#$*"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Admin Password Confirmation</label>
+                        <input type="password" name="gatewayAdminPasswordConfirm" class="form-control"/>
                     </div>
                     <div class="form-group">
                         <label>Gateway Admin First Name</label>
@@ -613,6 +621,9 @@
         $(".reviewProposalDescription").val( gatewayObject.reviewProposalDescription);
         $(".gatewayAdminFirstName").val( gatewayObject.gatewayAdminFirstName);
         $(".gatewayAdminLastName").val( gatewayObject.gatewayAdminLastName);
+        if (gatewayObject.identityServerPasswordToken) {
+            $(".identityServerPasswordToken").attr("placeholder", "Current token: " + gatewayObject.identityServerPasswordToken);
+        }
         $(".emailAddress").val( gatewayObject.emailAddress);
         $(".identityServerUserName").val( gatewayObject.identityServerUserName);
         $(".oauthClientId").val( gatewayObject.oauthClientId);
@@ -668,6 +679,8 @@
                     $(thisButton).addClass("hide");
                 }
             });
+            // Disallow creating tenant until password is set
+            $("button[value=createTenant]").prop("disabled", !gatewayObject.identityServerPasswordToken);
             $(".approvedGateway").removeClass("hide"); {
                 $('#emailAddress').attr('readonly', false);
                 $('#gatewayURL').attr('readonly', false);
@@ -772,16 +785,29 @@
         $.ajax({
             url: "{{URL::to('/')}}/admin/update-gateway-request",
             method: "GET",
-            data: updateGatewayData
+            data: updateGatewayData,
+            dataType: 'json'
         }).done( function( data){
             $(".loading-gif").remove();
-            if( data == -1 ){
-                //errors only with -1
+            if( data.errors ){
+                var messages = data.validationMessages;
+                var errorMessages = [];
+                for (var field in data.validationMessages) {
+                    Array.prototype.push.apply(errorMessages, data.validationMessages[field]);
+                }
+                var errorMessagesList = $("<ul></ul>");
+                errorMessages.forEach((errorMessage) => {
+                    $("<li></li>").text(errorMessage).appendTo(errorMessagesList);
+                });
                 if( updateVal == "createTenant"){
-                $(".submit-actions").before("<div class='alert alert-danger fail-alert'>All fields are required to create the gateway! Please make sure you've first updated all the Gateway details accurately and try again. Ask the Gateway Provider to set a Password token if they haven't set it yet.");
+                    $(".submit-actions")
+                        .before("<div class='alert alert-danger fail-alert'>All fields are required to create the gateway! Please make sure you've first updated all the Gateway details accurately and try again.</div>")
+                        .append(errorMessagesList);
                 }
                 else{
-                    $(".submit-actions").before("<div class='alert alert-danger fail-alert'>Error updating Gateway. Please try again.");
+                    $("<div class='alert alert-danger fail-alert'>Error updating Gateway.</div>")
+                        .insertBefore(".submit-actions")
+                        .append(errorMessagesList);
                 }
             }
             else{
@@ -799,7 +825,7 @@
 
                 //refresh data next time if same popup is opened.
                 var gatewayIdWithoutSpaces = dataObj['gateway_id'].replace(/\s+/g, '-');
-                $("#view-" +  gatewayIdWithoutSpaces).data("gatewayobject", data);
+                $("#view-" +  gatewayIdWithoutSpaces).data("gatewayobject", data.gateway);
                 $("#view-" + gatewayIdWithoutSpaces ).parent().parent().find(".form-gatewayName").html( dataObj['gatewayName']);
                 $("#view-" + gatewayIdWithoutSpaces ).parent().parent().find(".form-gatewayURL").html( dataObj['gatewayURL']);
             }
@@ -860,8 +886,8 @@
     });
 
 
-    $(".qualityOfService").popover({
-        'trigger':'focus'
+    $("[data-toggle=popover]").popover({
+        'trigger': 'focus'
     });
 
     function editableInputs( elem, yes){
