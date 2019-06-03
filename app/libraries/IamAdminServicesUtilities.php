@@ -39,7 +39,7 @@ class IamAdminServicesUtilities {
         $user_profiles = IamAdminServices::getUsersWithRole($authz_token, $role_name);
         $users = [];
         foreach ($user_profiles as $user_profile) {
-            array_push($users, (object)["firstName"=>$user_profile->firstName,"lastName"=>$user_profile->lastName,"email"=>implode(",",$user_profile->emails),"userName"=>$user_profile->userId, "userEnabled"=>$user_profile->State == Status::CONFIRMED]);
+            array_push($users, (object)["firstName"=>$user_profile->firstName,"lastName"=>$user_profile->lastName,"email"=>implode(",",$user_profile->emails),"userName"=>$user_profile->userId, "userEnabled"=>$user_profile->State == Status::ACTIVE]);
         }
         return $users;
     }
