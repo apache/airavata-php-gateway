@@ -427,7 +427,7 @@ class ExperimentUtilities
 
                     //FIX - AIRAVATA - 2674
                     //Replaced spaces with Underscore
-                    $file['name'] = str_replace(' ', '_', $file['name']);
+                    //$file['name'] = str_replace(' ', '_', $file['name']);
                     //
                     // move file to experiment data directory
                     //
