@@ -335,6 +335,9 @@ class ExperimentUtilities
             $userConfigData->userDN = $_POST["userDN"];
         }
         $userConfigData->useUserCRPref = isset($_POST['use-user-cr-pref']) ? true : false;
+        if (isset(Config::get('pga_config.airavata')['group-resource-profile-id'])) {
+            $userConfigData->groupResourceProfileId = Config::get('pga_config.airavata')['group-resource-profile-id'];
+        }
         ExperimentUtilities::create_experiment_folder_path($_POST['project'], $_POST['experiment-name']);
         $userConfigData->experimentDataDir = ExperimentUtilities::$experimentPath;
         $applicationInputs = AppUtilities::get_application_inputs($_POST['application']);
@@ -721,6 +724,9 @@ class ExperimentUtilities
             // In case the gateway-data-store-resource-id has changed since the
             // original experiment was created, update in this experiment
             $experiment->userConfigurationData->storageId = Config::get('pga_config.airavata')['gateway-data-store-resource-id'];
+            if (isset(Config::get('pga_config.airavata')['group-resource-profile-id'])) {
+                $userConfigData->groupResourceProfileId = Config::get('pga_config.airavata')['group-resource-profile-id'];
+            }
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
             $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
@@ -1396,6 +1402,9 @@ class ExperimentUtilities
             $userConfigDataUpdated->userDN = $input["userDN"];
         }
         $userConfigDataUpdated->useUserCRPref = isset($_POST['use-user-cr-pref']) ? true : false;
+        if (isset(Config::get('pga_config.airavata')['group-resource-profile-id'])) {
+            $userConfigData->groupResourceProfileId = Config::get('pga_config.airavata')['group-resource-profile-id'];
+        }
 
         $experiment->userConfigurationData = $userConfigDataUpdated;
 

@@ -212,7 +212,12 @@ return array(
          /**
           * Data Sharing enabled
           */
-          'data-sharing-enabled' => false
+          'data-sharing-enabled' => false,
+
+        /**
+         * Group Resource Profile ID to use when submitting experiments
+         */
+        'group-resource-profile-id' => '',
     ],
 
     /**
