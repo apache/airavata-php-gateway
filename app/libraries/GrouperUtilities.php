@@ -1,6 +1,5 @@
 <?php
 
-use Airavata\Model\Group\ResourceType;
 use Airavata\Model\Group\ResourcePermissionType;
 
 class GrouperUtilities
@@ -16,10 +15,9 @@ class GrouperUtilities
 
     /**
      * @param $resourceId           Experiment or Project ID
-     * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
      * @param $userPermissionMap    A map of map<username,Airavata\Model\Group\ResourcePermissionType>
      */
-    public static function shareResourceWithUsers($resourceId, $dataResourceType, $userPermissionMap)
+    public static function shareResourceWithUsers($resourceId, $userPermissionMap)
     {
         $newUserPermissionsMap = [];
         foreach($userPermissionMap as $key=> $value){
@@ -31,10 +29,9 @@ class GrouperUtilities
 
     /**
      * @param $resourceId           Experiment or Project ID
-     * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
      * @param $userPermissionMap    A map of map<username,Airavata\Model\Group\ResourcePermissionType>
      */
-    public static function revokeSharingOfResourceFromUsers($resourceId, $dataResourceType, $userPermissionMap)
+    public static function revokeSharingOfResourceFromUsers($resourceId, $userPermissionMap)
     {
         $newUserPermissionsMap = [];
         foreach($userPermissionMap as $key=> $value){
@@ -46,13 +43,12 @@ class GrouperUtilities
 
     /**
      * @param $resourceId        Experiment or Project ID
-     * @param $dataResourceType  e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
      * @param $permissionType    e.g Airavata\Model\Group\ResourcePermissionType::READ, Airavata\Model\Group\ResourcePermissionType::WRITE
      * @return array             array of usernames
      */
-    public static function getAllAccessibleUsers($resourceId, $dataResourceType, $permissionType)
+    public static function getAllAccessibleUsers($resourceId, $permissionType)
     {
-        $temp = Airavata::getAllAccessibleUsers(Session::get('authz-token'), $resourceId, $dataResourceType, $permissionType);
+        $temp = Airavata::getAllAccessibleUsers(Session::get('authz-token'), $resourceId, $permissionType);
         $userList = [];
         foreach ($temp as $key => $u) {
             if (strpos($u, '@') !== false) {

@@ -22,7 +22,6 @@ use Airavata\Model\Data\Replica\DataReplicaLocationModel;
 use Airavata\Model\Data\Replica\ReplicaLocationCategory;
 use Airavata\Model\Data\Replica\ReplicaPersistentType;
 use Airavata\Model\Application\Io\InputDataObjectType;
-use Airavata\Model\Group\ResourceType;
 use Airavata\Model\Group\ResourcePermissionType;
 
 class ExperimentUtilities
@@ -729,7 +728,7 @@ class ExperimentUtilities
             }
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
-            $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
+            $share = SharingUtilities::getAllUserPermissions($expId);
             $share[Session::get('username')] = ["read" => true, "write" => true];
             ExperimentUtilities::share_experiment($cloneId, json_decode(json_encode($share)));
 
@@ -1097,7 +1096,7 @@ class ExperimentUtilities
         $expVal["taskTypes"] = TaskTypes::$__names;
 
         if(Config::get('pga_config.airavata')["data-sharing-enabled"]) {
-            $can_write = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
+            $can_write = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId);
         } else {
             $can_write = true;
         }
@@ -1278,7 +1277,7 @@ class ExperimentUtilities
         $expNum = 0;
         foreach ($experiments as $experiment) {
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-                if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId, ResourceType::EXPERIMENT)) {
+                if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId)) {
                     $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
                     $expContainer[$expNum]['experiment'] = $experiment;
                     if ($expValue["experimentStatusString"] == "FAILED")
@@ -1545,10 +1544,10 @@ class ExperimentUtilities
             }
         }
 
-        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $wadd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $wrevoke);
+        GrouperUtilities::shareResourceWithUsers($expId, $wadd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, $wrevoke);
 
-        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $radd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
+        GrouperUtilities::shareResourceWithUsers($expId, $radd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, $rrevoke);
     }
 }
