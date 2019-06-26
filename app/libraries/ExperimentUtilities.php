@@ -22,7 +22,6 @@ use Airavata\Model\Data\Replica\DataReplicaLocationModel;
 use Airavata\Model\Data\Replica\ReplicaLocationCategory;
 use Airavata\Model\Data\Replica\ReplicaPersistentType;
 use Airavata\Model\Application\Io\InputDataObjectType;
-use Airavata\Model\Group\ResourceType;
 use Airavata\Model\Group\ResourcePermissionType;
 
 class ExperimentUtilities
@@ -328,6 +327,9 @@ class ExperimentUtilities
             $userConfigData->userDN = $_POST["userDN"];
         }
         $userConfigData->useUserCRPref = isset($_POST['use-user-cr-pref']) ? true : false;
+        if (isset(Config::get('pga_config.airavata')['group-resource-profile-id'])) {
+            $userConfigData->groupResourceProfileId = Config::get('pga_config.airavata')['group-resource-profile-id'];
+        }
         ExperimentUtilities::create_experiment_folder_path($_POST['project'], $_POST['experiment-name']);
         $userConfigData->experimentDataDir = ExperimentUtilities::$experimentPath;
         $applicationInputs = AppUtilities::get_application_inputs($_POST['application']);
@@ -714,9 +716,12 @@ class ExperimentUtilities
             // In case the gateway-data-store-resource-id has changed since the
             // original experiment was created, update in this experiment
             $experiment->userConfigurationData->storageId = Config::get('pga_config.airavata')['gateway-data-store-resource-id'];
+            if (isset(Config::get('pga_config.airavata')['group-resource-profile-id'])) {
+                $userConfigData->groupResourceProfileId = Config::get('pga_config.airavata')['group-resource-profile-id'];
+            }
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 
-            $share = SharingUtilities::getAllUserPermissions($expId, ResourceType::EXPERIMENT);
+            $share = SharingUtilities::getAllUserPermissions($expId);
             $share[Session::get('username')] = ["read" => true, "write" => true];
             ExperimentUtilities::share_experiment($cloneId, json_decode(json_encode($share)));
 
@@ -1100,7 +1105,7 @@ class ExperimentUtilities
         $expVal["taskTypes"] = TaskTypes::$__names;
 
         if(Config::get('pga_config.airavata')["data-sharing-enabled"]) {
-            $can_write = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT);
+            $can_write = SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId);
         } else {
             $can_write = true;
         }
@@ -1281,7 +1286,7 @@ class ExperimentUtilities
         $expNum = 0;
         foreach ($experiments as $experiment) {
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-                if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId, ResourceType::EXPERIMENT)) {
+                if (SharingUtilities::userCanRead(Session::get('username'), $experiment->experimentId)) {
                     $expValue = ExperimentUtilities::get_experiment_values($experiment, true);
                     $expContainer[$expNum]['experiment'] = $experiment;
                     if ($expValue["experimentStatusString"] == "FAILED")
@@ -1405,6 +1410,9 @@ class ExperimentUtilities
             $userConfigDataUpdated->userDN = $input["userDN"];
         }
         $userConfigDataUpdated->useUserCRPref = isset($_POST['use-user-cr-pref']) ? true : false;
+        if (isset(Config::get('pga_config.airavata')['group-resource-profile-id'])) {
+            $userConfigData->groupResourceProfileId = Config::get('pga_config.airavata')['group-resource-profile-id'];
+        }
 
         $experiment->userConfigurationData = $userConfigDataUpdated;
 
@@ -1545,11 +1553,11 @@ class ExperimentUtilities
             }
         }
 
-        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $wadd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $wrevoke);
+        GrouperUtilities::shareResourceWithUsers($expId, $wadd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, $wrevoke);
 
-        GrouperUtilities::shareResourceWithUsers($expId, ResourceType::EXPERIMENT, $radd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, ResourceType::EXPERIMENT, $rrevoke);
+        GrouperUtilities::shareResourceWithUsers($expId, $radd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($expId, $rrevoke);
     }
 
     private static function get_data_product_path($input) {

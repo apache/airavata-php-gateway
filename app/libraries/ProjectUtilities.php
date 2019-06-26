@@ -5,7 +5,6 @@ use Airavata\API\Error\AiravataSystemException;
 use Airavata\API\Error\InvalidRequestException;
 use Airavata\Facades\Airavata;
 use Airavata\Model\Workspace\Project;
-use Airavata\Model\Group\ResourceType;
 use Airavata\Model\Group\ResourcePermissionType;
 
 class ProjectUtilities
@@ -63,7 +62,7 @@ class ProjectUtilities
         $userProjects = ProjectUtilities::get_all_user_projects($gatewayId, $username);
         if (Config::get('pga_config.airavata')["data-sharing-enabled"]){
             foreach($userProjects as $project) {
-                if (SharingUtilities::userCanWrite($username, $project->projectID, ResourceType::PROJECT)) {
+                if (SharingUtilities::userCanWrite($username, $project->projectID)) {
                     $writeableProjects[] = $project;
                 }
             }
@@ -223,7 +222,7 @@ class ProjectUtilities
         }
 
         for($i = 0; $i < count($experiments); $i++) {
-            if (!SharingUtilities::userCanRead(Session::get("username"), $experiments[$i]->experimentId, ResourceType::EXPERIMENT)) {
+            if (!SharingUtilities::userCanRead(Session::get("username"), $experiments[$i]->experimentId)) {
                 array_splice($experiments, $i, 1);
             }
         }
@@ -347,10 +346,10 @@ class ProjectUtilities
             }
         }
 
-        GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $wadd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::PROJECT, $wrevoke);
+        GrouperUtilities::shareResourceWithUsers($projectId, $wadd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, $wrevoke);
 
-        GrouperUtilities::shareResourceWithUsers($projectId, ResourceType::PROJECT, $radd);
-        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, ResourceType::PROJECT, $rrevoke);
+        GrouperUtilities::shareResourceWithUsers($projectId, $radd);
+        GrouperUtilities::revokeSharingOfResourceFromUsers($projectId, $rrevoke);
     }
 }

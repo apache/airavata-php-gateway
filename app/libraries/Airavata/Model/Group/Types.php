@@ -21,12 +21,18 @@ final class ResourceType {
   const PROJECT = 0;
   const EXPERIMENT = 1;
   const DATA = 2;
-  const OTHER = 3;
+  const APPLICATION_DEPLOYMENT = 3;
+  const GROUP_RESOURCE_PROFILE = 4;
+  const CREDENTIAL_TOKEN = 5;
+  const OTHER = 6;
   static public $__names = array(
     0 => 'PROJECT',
     1 => 'EXPERIMENT',
     2 => 'DATA',
-    3 => 'OTHER',
+    3 => 'APPLICATION_DEPLOYMENT',
+    4 => 'GROUP_RESOURCE_PROFILE',
+    5 => 'CREDENTIAL_TOKEN',
+    6 => 'OTHER',
   );
 }
 
