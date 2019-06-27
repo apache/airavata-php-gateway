@@ -1112,7 +1112,7 @@ class ExperimentUtilities
 
 
         if( is_array( $experiment->experimentStatus ) )
-            $experimentStatusString = $expVal["experimentStates"][$experiment->experimentStatus[0]->state];
+            $experimentStatusString = $expVal["experimentStates"][ExperimentUtilities::latestStatus($experiment->experimentStatus)->state];
         else {
             $experimentStatusString = $experiment->experimentStatus;
         }
@@ -1122,7 +1122,7 @@ class ExperimentUtilities
             $experimentStatus = $experiment->experimentStatus;
 
             if( is_array( $experiment->experimentStatus ) )
-                $expVal["experimentTimeOfStateChange"] = $experimentStatus[0]->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
+                $expVal["experimentTimeOfStateChange"] = ExperimentUtilities::latestStatus($experimentStatus)->timeOfStateChange / 1000; // divide by 1000 since timeOfStateChange is in ms
             $expVal["experimentCreationTime"] = $experiment->creationTime / 1000; // divide by 1000 since creationTime is in ms
         }
 
@@ -1193,7 +1193,7 @@ class ExperimentUtilities
             }
         }*/
         if (isset($jobStatus) && count($jobStatus) > 0) {
-            $jobState = JobState::$__names[array_values($jobStatus)[0]->jobState];
+            $jobState = JobState::$__names[ExperimentUtilities::latestStatus(array_values($jobStatus))->jobState];
         } else {
             $jobState = null;
         }
@@ -1519,6 +1519,10 @@ class ExperimentUtilities
 
     public static function update_experiment_sharing($expId, $users) {
         ExperimentUtilities::share_experiment($expId, $users);
+    }
+
+    public static function latestStatus($statusArray) {
+        return $statusArray ? $statusArray[count($statusArray) - 1] : null;
     }
 
     /**
