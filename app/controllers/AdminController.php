@@ -8,6 +8,11 @@ class AdminController extends BaseController {
 		Session::put("nav-active", "user-console");
 	}
 
+	public function reRoute(){
+		$data["djangoURL"] = Config::get('pga_config.portal')['airavata-django-url'];
+		return View::make("admin/redirect-django", $data);
+	}
+
 	public function dashboard(){
         $userInfo = array();
         $data = array();
