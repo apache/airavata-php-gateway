@@ -153,22 +153,35 @@ class AccountController extends BaseController
             Session::put('oauth-expiration-time',$expirationTime);
 
             Session::put("roles", $userRoles);
-            if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
+            // AIRAVATA-3086: get gateway groups and get the groups this user is a member of
+            $gatewayGroups = Airavata::getGatewayGroups($authzToken);
+            $groupMemberships = GroupManagerService::getAllGroupsUserBelongs(
+                $authzToken, $username . "@" . Config::get('pga_config.airavata')['gateway-id']);
+            $get_group_id = function($group) {
+                return $group->id;
+            };
+            $userGroupIds = array_map($get_group_id, $groupMemberships);
+            // AIRAVATA-3086: check if user is in Admins group
+            if (in_array($gatewayGroups->adminsGroupId, $userGroupIds)) {
                 Session::put("admin", true);
             }
-            if (in_array(Config::get('pga_config.wsis')['read-only-admin-role-name'], $userRoles)) {
+            // AIRAVATA-3086: check if user is in Read Only Admins group
+            if (in_array($gatewayGroups->readOnlyAdminsGroupId, $userGroupIds)) {
                 Session::put("authorized-user", true);
                 Session::put("admin-read-only", true);
             }
-            if (in_array(Config::get('pga_config.wsis')['user-role-name'], $userRoles)) {
+            // AIRAVATA-3086: check if user is in default Gateway Users group
+            if (in_array($gatewayGroups->defaultGatewayUsersGroupId, $userGroupIds)) {
                 Session::put("authorized-user", true);
             }
+            // AIRAVATA-3086: leave this for scigap/super-admin portal
             //gateway-provider-code
             if (in_array("gateway-provider", $userRoles)) {
                 Session::put("gateway-provider", true);
             }
+            // AIRAVATA-3086: for scigap/super-admin portal, keep same role-based rules
             //only for super admin
-            if(  Config::get('pga_config.portal')['super-admin-portal'] == true && Session::has("admin")){
+            if(  Config::get('pga_config.portal')['super-admin-portal'] == true && in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
                 Session::put("super-admin", true);
             }
             CommonUtilities::store_id_in_session($username);
@@ -237,21 +250,35 @@ class AccountController extends BaseController
         Session::put('oauth-expiration-time',$expirationTime);
 
         Session::put("roles", $userRoles);
-        if (in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
+        // AIRAVATA-3086: get gateway groups and get the groups this user is a member of
+        $gatewayGroups = Airavata::getGatewayGroups($authzToken);
+        $groupMemberships = GroupManagerService::getAllGroupsUserBelongs(
+            $authzToken, $username . "@" . Config::get('pga_config.airavata')['gateway-id']);
+        $get_group_id = function($group) {
+            return $group->id;
+        };
+        $userGroupIds = array_map($get_group_id, $groupMemberships);
+        // AIRAVATA-3086: check if user is in Admins group
+        if (in_array($gatewayGroups->adminsGroupId, $userGroupIds)) {
             Session::put("admin", true);
         }
-        if (in_array(Config::get('pga_config.wsis')['read-only-admin-role-name'], $userRoles)) {
+        // AIRAVATA-3086: check if user is in Read Only Admins group
+        if (in_array($gatewayGroups->readOnlyAdminsGroupId, $userGroupIds)) {
+            Session::put("authorized-user", true);
             Session::put("admin-read-only", true);
         }
-        if (in_array(Config::get('pga_config.wsis')['user-role-name'], $userRoles)) {
+        // AIRAVATA-3086: check if user is in default Gateway Users group
+        if (in_array($gatewayGroups->defaultGatewayUsersGroupId, $userGroupIds)) {
             Session::put("authorized-user", true);
         }
+        // AIRAVATA-3086: leave this for scigap/super-admin portal
         //gateway-provider-code
         if (in_array("gateway-provider", $userRoles)) {
             Session::put("gateway-provider", true);
         }
+        // AIRAVATA-3086: for scigap/super-admin portal, keep same role-based rules
         //only for super admin
-        if(  Config::get('pga_config.portal')['super-admin-portal'] == true && Session::has("admin")){
+        if(  Config::get('pga_config.portal')['super-admin-portal'] == true && in_array(Config::get('pga_config.wsis')['admin-role-name'], $userRoles)) {
             Session::put("super-admin", true);
         }
 
@@ -359,7 +386,6 @@ class AccountController extends BaseController
             return Redirect::to("login");
         }
 
-        $userRoles = Session::get("roles");
         if (Session::has("user-profile")) {
             $userEmail = Session::get("user-profile")->emails[0];
         } else {
