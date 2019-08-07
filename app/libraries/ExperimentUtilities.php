@@ -717,7 +717,7 @@ class ExperimentUtilities
             // original experiment was created, update in this experiment
             $experiment->userConfigurationData->storageId = Config::get('pga_config.airavata')['gateway-data-store-resource-id'];
             if (isset(Config::get('pga_config.airavata')['group-resource-profile-id'])) {
-                $userConfigData->groupResourceProfileId = Config::get('pga_config.airavata')['group-resource-profile-id'];
+                $experiment->userConfigurationData->groupResourceProfileId = Config::get('pga_config.airavata')['group-resource-profile-id'];
             }
             Airavata::updateExperiment(Session::get('authz-token'), $cloneId, $experiment);
 

@@ -397,6 +397,7 @@ class ExperimentController extends BaseController
             $cloneId = ExperimentUtilities::clone_experiment(Input::get('expId'), Input::get('projectId'));
             return Redirect::to('experiment/edit?expId=' . urlencode($cloneId));
         }catch (Exception $ex){
+            Log::error($ex);
             return Redirect::to("experiment/summary?expId=" . urlencode(Input::get('expId')))
                 ->with("cloning-error", "Failed to clone experiment: " . $ex->getMessage());
         }
