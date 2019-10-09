@@ -1411,7 +1411,7 @@ class ExperimentUtilities
         }
         $userConfigDataUpdated->useUserCRPref = isset($_POST['use-user-cr-pref']) ? true : false;
         if (isset(Config::get('pga_config.airavata')['group-resource-profile-id'])) {
-            $userConfigData->groupResourceProfileId = Config::get('pga_config.airavata')['group-resource-profile-id'];
+            $userConfigDataUpdated->groupResourceProfileId = Config::get('pga_config.airavata')['group-resource-profile-id'];
         }
 
         $experiment->userConfigurationData = $userConfigDataUpdated;
