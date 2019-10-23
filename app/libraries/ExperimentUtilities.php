@@ -105,33 +105,7 @@ class ExperimentUtilities
                     }
 
                 }else if($input->type == DataType::URI_COLLECTION) {
-                    $uriList = $input->value;
-                    $uriList = preg_split('/,/', $uriList);
-
-                    foreach($uriList as $uri){
-                        if (strpos($uri, "airavata-dp") === 0) {
-                            $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $uri);
-                            $currentInputPath = "";
-                            foreach ($dataProductModel->replicaLocations as $rp) {
-                                if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
-                                    $currentInputPath = $rp->filePath;
-                                    break;
-                                }
-                            }
-                            $fileName = basename($currentInputPath);
-                        } else {
-                            $fileName = basename($input->value);
-                        }
-
-                        $path = parse_url($currentInputPath)['path'];
-                        if(file_exists($path)){
-                            $optFilesHtml = $optFilesHtml . '<a target="_blank" href="' . URL::to("/") . '/download/?id='
-                                . $uri . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a>&nbsp;';
-                        } else {
-                            $optFilesHtml = $optFilesHtml . $fileName . self::FILE_UNAVAILABLE_ICON_TOOLTIP;
-                        }
-
-                    }
+                    $optFilesHtml = $optFilesHtml . ExperimentUtilities::get_uri_collection_value_display($input->value);
 
                 } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                     || $input->type == DataType::FLOAT) {
@@ -142,6 +116,38 @@ class ExperimentUtilities
             if(strlen($optFilesHtml) > 0)
                 echo '<p> Optional File Inputs:&nbsp;' . $optFilesHtml;
         }
+    }
+
+    private static function get_uri_collection_value_display($value) {
+
+        $displayHtml = "";
+        $uriList = $value;
+        $uriList = preg_split('/,/', $uriList);
+
+        foreach($uriList as $uri){
+            $currentInputPath = "";
+            if (strpos($uri, "airavata-dp") === 0) {
+                $dataProductModel = Airavata::getDataProduct(Session::get('authz-token'), $uri);
+                foreach ($dataProductModel->replicaLocations as $rp) {
+                    if ($rp->replicaLocationCategory == ReplicaLocationCategory::GATEWAY_DATA_STORE) {
+                        $currentInputPath = $rp->filePath;
+                        break;
+                    }
+                }
+                $fileName = basename($currentInputPath);
+            } else {
+                $fileName = basename($value);
+            }
+
+            $path = parse_url($currentInputPath)['path'];
+            if(file_exists($path)){
+                $displayHtml = $displayHtml . '<a target="_blank" href="' . URL::to("/") . '/download/?id='
+                    . $uri . '">' . $fileName . ' <span class="glyphicon glyphicon-new-window"></span></a>&nbsp;';
+            } else {
+                $displayHtml = $displayHtml . $fileName . self::FILE_UNAVAILABLE_ICON_TOOLTIP;
+            }
+        }
+        return $displayHtml;
     }
 
     /**
@@ -193,8 +199,9 @@ class ExperimentUtilities
                     echo '<p>' . $output->name . ':&nbsp;<a target="_blank" href="' . URL::to("/")
                         . '/download/?path=' . $filePath . '">' . basename($filePath) . ' <span class="glyphicon glyphicon-new-window"></span></a></p>';
                 }
-            }
-            elseif ($output->type == DataType::STRING) {
+            } elseif ($output->type == DataType::URI_COLLECTION) {
+                echo '<p>' . $output->name . ': ' . ExperimentUtilities::get_uri_collection_value_display($output->value) . ' </p>';
+            } elseif ($output->type == DataType::STRING) {
                 echo '<p>' . $output->value . '</p>';
             }
             else
@@ -1022,6 +1029,8 @@ class ExperimentUtilities
                 if (strpos($output->value, "parsed-out: ") === 0) {
                     echo '<p>' . $output->name . ': ' . substr($output->value, 12) . '</p>';
                 }
+            } elseif ($output->type == DataType::URI_COLLECTION) {
+                echo '<p>' . $output->name . ': ' . ExperimentUtilities::get_uri_collection_value_display($output->value) . ' </p>';
             } else
                 echo 'output : ' . $output;
         }
