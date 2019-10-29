@@ -187,6 +187,7 @@ class AccountController extends BaseController
             CommonUtilities::store_id_in_session($username);
             Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
+            UserProfileUtilities::initialize_user_profile();
             if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user") || Session::has("gateway-provider")){
                 return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken,
                     $refreshToken, $expirationTime);
@@ -285,6 +286,7 @@ class AccountController extends BaseController
         CommonUtilities::store_id_in_session($username);
         Session::put("gateway_id", Config::get('pga_config.airavata')['gateway-id']);
 
+        UserProfileUtilities::initialize_user_profile();
         if(Session::has("admin") || Session::has("admin-read-only") || Session::has("authorized-user") || Session::has("gateway-provider")){
             return $this->initializeWithAiravata($username, $userEmail, $firstName, $lastName, $accessToken, $refreshToken, $expirationTime);
         }
@@ -312,10 +314,6 @@ class AccountController extends BaseController
             return Redirect::to("home")->with("airavata-down", true);
         }
 
-        // Create basic user profile if it doesn't exist
-        if (!UserProfileUtilities::does_user_profile_exist($username)) {
-            UserProfileUtilities::create_basic_user_profile($username, $userEmail, $firstName, $lastName);
-        }
         $userProfile = UserProfileUtilities::get_user_profile($username);
         Session::put('user-profile', $userProfile);
 
