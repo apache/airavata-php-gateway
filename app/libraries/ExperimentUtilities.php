@@ -105,7 +105,9 @@ class ExperimentUtilities
                     }
 
                 }else if($input->type == DataType::URI_COLLECTION) {
-                    $optFilesHtml = $optFilesHtml . ExperimentUtilities::get_uri_collection_value_display($input->value);
+                    if ($input->value) {
+                        $optFilesHtml = $optFilesHtml . ExperimentUtilities::get_uri_collection_value_display($input->value);
+                    }
 
                 } elseif ($input->type == DataType::STRING || $input->type == DataType::INTEGER
                     || $input->type == DataType::FLOAT) {
