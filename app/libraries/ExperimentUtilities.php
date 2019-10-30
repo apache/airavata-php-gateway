@@ -922,7 +922,9 @@ class ExperimentUtilities
                             </div>';
                         break;
                     }
-
+                case DataType::URI_COLLECTION:
+                    // Support for URI_COLLECTION is not implemented in PGA, just ignore
+                    break;
                 default:
                     CommonUtilities::print_error_message('Input data type not supported!
                     Please file a bug report using the link in the Help menu.');
