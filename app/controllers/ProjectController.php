@@ -1,6 +1,5 @@
 <?php
 
-use Airavata\Model\Group\ResourceType;
 
 class ProjectController extends BaseController
 {
@@ -52,7 +51,7 @@ class ProjectController extends BaseController
             $experiments = ProjectUtilities::get_experiments_in_project(Input::get("projId"));
 
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-                $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'), ResourceType::PROJECT);
+                $users = SharingUtilities::getProfilesForSharedUsers(Input::get('projId'));
 
                 $owner = array();
                 if (strcmp(Session::get("username"), $project->owner) !== 0) {
@@ -62,7 +61,7 @@ class ProjectController extends BaseController
 
                 $experiment_can_write = array();
                 foreach($experiments as $experiment) {
-                    if (SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId, ResourceType::EXPERIMENT)) {
+                    if (SharingUtilities::userCanWrite(Session::get("username"), $experiment->experimentId)) {
                         $experiment_can_write[$experiment->experimentId] = true;
                     }
                     else {
@@ -75,7 +74,7 @@ class ProjectController extends BaseController
                         "experiments" => $experiments,
                         "users" => json_encode($users),
                         "owner" => json_encode($owner),
-                        "project_can_write" => SharingUtilities::userCanWrite(Session::get("username"), Input::get("projId"), ResourceType::PROJECT),
+                        "project_can_write" => SharingUtilities::userCanWrite(Session::get("username"), Input::get("projId")),
                         "experiment_can_write" => $experiment_can_write
                     ));
             }else{
@@ -108,7 +107,7 @@ class ProjectController extends BaseController
         $projectDetails->description = Input::get("project-description");
 
         if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-            if (isset($_POST['save']) && SharingUtilities::userCanWrite(Session::get("username"), Input::get("projectId"), ResourceType::PROJECT)) {
+            if (isset($_POST['save']) && SharingUtilities::userCanWrite(Session::get("username"), Input::get("projectId"))) {
 
                 try {
                     ProjectUtilities::update_project(Input::get("projectId"), $projectDetails);
@@ -137,7 +136,7 @@ class ProjectController extends BaseController
     private function createEditView($projectId, $projectDetails, $shareSettings)
     {
         if (Config::get('pga_config.airavata')["data-sharing-enabled"]) {
-            if (SharingUtilities::userCanWrite(Session::get("username"), $projectId, ResourceType::PROJECT)) {
+            if (SharingUtilities::userCanWrite(Session::get("username"), $projectId)) {
                 if ($shareSettings) {
 
                     $profiles = SharingUtilities::getUserProfiles(array_keys($shareSettings));
@@ -148,7 +147,7 @@ class ProjectController extends BaseController
                     }
                     $users = $profiles;
                 } else {
-                    $users = SharingUtilities::getProfilesForSharedUsers($projectId, ResourceType::PROJECT);
+                    $users = SharingUtilities::getProfilesForSharedUsers($projectId);
                 }
                 $owner = array();
                 if (strcmp(Session::get("username"), $projectDetails->owner) !== 0) {
@@ -201,7 +200,7 @@ class ProjectController extends BaseController
         $user = Session::get("username");
         foreach($projects as $project) {
             if(Config::get('pga_config.airavata')["data-sharing-enabled"]){
-                $can_write[$project->projectID] = SharingUtilities::userCanWrite($user, $project->projectID, ResourceType::PROJECT);
+                $can_write[$project->projectID] = SharingUtilities::userCanWrite($user, $project->projectID);
             } else {
                 $can_write[$project->projectID] = true;
             }
@@ -225,7 +224,7 @@ class ProjectController extends BaseController
     public function sharedUsers()
     {
         if (Session::has("authz-token") && array_key_exists('resourceId', $_GET)) {
-            return Response::json(SharingUtilities::getProfilesForSharedUsers($_GET['resourceId'], ResourceType::PROJECT));
+            return Response::json(SharingUtilities::getProfilesForSharedUsers($_GET['resourceId']));
         }
         else {
             return Response::json(array("error" => "Error: No project specified"));
@@ -235,7 +234,7 @@ class ProjectController extends BaseController
     public function unsharedUsers()
     {
         if (Session::has("authz-token") && array_key_exists('resourceId', $_GET)) {
-            return Response::json(SharingUtilities::getProfilesForUnsharedUsers($_GET['resourceId'], ResourceType::PROJECT));
+            return Response::json(SharingUtilities::getProfilesForUnsharedUsers($_GET['resourceId']));
         }
         else {
             return Response::json(array("error" => "Error: No project specified"));

@@ -25,6 +25,10 @@ class UserProfileUtilities
         return UserProfileUtilities::add_user_profile($userProfileData);
     }
 
+    public static function initialize_user_profile() {
+        return UserProfileService::initializeUserProfile(Session::get('authz-token'));
+    }
+
     public static function add_user_profile($userProfileData) {
 
         $userProfile = new UserProfile($userProfileData);

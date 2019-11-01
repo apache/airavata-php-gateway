@@ -1,5 +1,4 @@
 <?php
-use Airavata\Model\Group\ResourceType;
 use Airavata\Model\Group\ResourcePermissionType;
 
 class SharingUtilities {
@@ -8,11 +7,10 @@ class SharingUtilities {
      * Determine if the resource has been shared with any users.
      *
      * @param $resourceId           Experiment or Project ID
-     * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
      * @return True if the resource has been shared, false otherwise.
      */
-    public static function resourceIsShared($resourceId, $dataResourceType) {
-        $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
+    public static function resourceIsShared($resourceId) {
+        $read = GrouperUtilities::getAllAccessibleUsers($resourceId, ResourcePermissionType::READ);
         return (count($read) > 0 ? true : false);
     }
 
@@ -21,22 +19,11 @@ class SharingUtilities {
      *
      * @param $uid                  The user to check
      * @param $resourceId           Experiment or Project ID
-     * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
      * @return True if the user has read permission, false otherwise.
      */
-    public static function userCanRead($uid, $resourceId, $dataResourceType) {
-        // If the user is the owner, then it is implied they can read the resource
-        $owner = SharingUtilities::getSharedResourceOwner($resourceId, $dataResourceType);
-        if ($uid == $owner) {
-            return true;
-        }
-        $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
-        foreach($read as $user) {
-            if (strcmp($uid, $user) === 0) {
-                return true;
-            }
-        }
-        return false;
+    public static function userCanRead($uid, $resourceId) {
+
+        return Airavata::userHasAccess(Session::get('authz-token'), $resourceId, ResourcePermissionType::READ);
     }
 
     /**
@@ -44,37 +31,25 @@ class SharingUtilities {
      *
      * @param $uid                  The user to check
      * @param $resourceId           Experiment or Project ID
-     * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
      * @return True if the user has write permission, false otherwise.
      */
-    public static function userCanWrite($uid, $resourceId, $dataResourceType) {
-        // If the user is the owner, then it is implied they can write to the resource
-        $owner = SharingUtilities::getSharedResourceOwner($resourceId, $dataResourceType);
-        if ($uid == $owner) {
-            return true;
-        }
-        $write = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::WRITE);
-        foreach($write as $user) {
-            if (strcmp($uid, $user) === 0) {
-                return true;
-            }
-        }
-        return false;
+    public static function userCanWrite($uid, $resourceId) {
+
+        return Airavata::userHasAccess(Session::get('authz-token'), $resourceId, ResourcePermissionType::WRITE);
     }
 
     /**
      * Get the permissions settings for the specified resource.
      *
      * @param $resourceId           Experiment or Project ID
-     * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
      * @return An array [$uid => [read => bool, write => bool, owner => bool]]
      */
-    public static function getAllUserPermissions($resourceId, $dataResourceType) {
+    public static function getAllUserPermissions($resourceId) {
         $users = array();
 
-        $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
-        $write = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::WRITE);
-        $owner = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::OWNER);
+        $read = GrouperUtilities::getAllAccessibleUsers($resourceId, ResourcePermissionType::READ);
+        $write = GrouperUtilities::getAllAccessibleUsers($resourceId, ResourcePermissionType::WRITE);
+        $owner = GrouperUtilities::getAllAccessibleUsers($resourceId, ResourcePermissionType::OWNER);
 
         foreach($read as $uid) {
             if ($uid !== Session::get('username') && UserProfileUtilities::does_user_profile_exist($uid)) {
@@ -135,11 +110,10 @@ class SharingUtilities {
      * Retrieve profile and permissions information for users with access to the given resource.
      *
      * @param $resourceId           Experiment or Project ID
-     * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
      * @return An array [uid => [firstname => string, lastname => string, email => string, access => [read => bool, write => bool]]]
      */
-    public static function getProfilesForSharedUsers($resourceId, $dataResourceType) {
-        $perms = SharingUtilities::getAllUserPermissions($resourceId, $dataResourceType);
+    public static function getProfilesForSharedUsers($resourceId) {
+        $perms = SharingUtilities::getAllUserPermissions($resourceId);
         $profs = SharingUtilities::getUserProfiles(array_keys($perms));
 
         foreach ($profs as $uid => $prof) {
@@ -154,12 +128,11 @@ class SharingUtilities {
      * Retrieve profile and permissions information for users without access to the given resource.
      *
      * @param $resourceId           Experiment or Project ID
-     * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
      * @return An array [uid => [firstname => string, lastname => string, email => string]] of all users without access
      */
-    public static function getProfilesForUnsharedUsers($resourceId, $dataResourceType) {
+    public static function getProfilesForUnsharedUsers($resourceId) {
         $users = GrouperUtilities::getAllGatewayUsers();
-        $read = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::READ);
+        $read = GrouperUtilities::getAllAccessibleUsers($resourceId, ResourcePermissionType::READ);
 
         $unshared = array_diff($users, $read);
 
@@ -171,14 +144,13 @@ class SharingUtilities {
      *
      *
      * @param $resourceId           Experiment or Project ID
-     * @param $dataResourceType     e.g Airavata\Model\Group\ResourceType:PROJECT,Airavata\Model\Group\ResourceType:EXPERIMENT
      * @return An array [uid => [firstname => string, lastname => string, email => string, access => [read => bool, write => bool, owner => bool]]]
      *         with access only defined for users with permissions.
      */
-    public static function getAllUserProfiles($resourceId=null, $dataResourceType=null) {
+    public static function getAllUserProfiles($resourceId=null) {
         $profs = SharingUtilities::getUserProfiles(GrouperUtilities::getAllGatewayUsers());
         if ($resourceId) {
-            $perms = SharingUtilities::getAllUserPermissions($resourceId, $dataResourceType);
+            $perms = SharingUtilities::getAllUserPermissions($resourceId);
 
             foreach ($perms as $uid => $access) {
                 $profs[$uid]['access'] = $access;
@@ -188,8 +160,8 @@ class SharingUtilities {
     }
 
     public static function mixProjectPermissionsWithExperiment($projectId, $expId) {
-        $proj = SharingUtilities::getProfilesForSharedUsers($projectId, ResourceType::PROJECT);
-        $exp = SharingUtilities::getProfilesForSharedUsers($expId, ResourceType::EXPERIMENT);
+        $proj = SharingUtilities::getProfilesForSharedUsers($projectId);
+        $exp = SharingUtilities::getProfilesForSharedUsers($expId);
 
         foreach ($proj as $uid => $prof) {
             if (!array_key_exists($uid, $exp)) {
@@ -210,11 +182,11 @@ class SharingUtilities {
         return $users;
     }
 
-    public static function getSharedResourceOwner($resourceId, $dataResourceType) {
-        $owners = GrouperUtilities::getAllAccessibleUsers($resourceId, $dataResourceType, ResourcePermissionType::OWNER);
+    public static function getSharedResourceOwner($resourceId) {
+        $owners = GrouperUtilities::getAllAccessibleUsers($resourceId, ResourcePermissionType::OWNER);
         if (count($owners) != 1) {
-            Log::error("Got more than one shared resource owner!", array($resourceId, $dataResourceType, $owners));
-            throw new Exception("Expected exactly 1 owner for $resourceId of type $dataResourceType!");
+            Log::error("Got more than one shared resource owner!", array($resourceId, $owners));
+            throw new Exception("Expected exactly 1 owner for $resourceId!");
         } else {
             return $owners[0];
         }

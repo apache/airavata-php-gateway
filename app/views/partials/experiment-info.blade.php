@@ -105,7 +105,7 @@
                         <tr>
                             <td>{{$jobDetail->jobName}}</td>
                             <td>{{ $jobDetail->jobId}}</td>
-                            <td>{{$jobDetail->jobStatuses[0]->jobStateName }}</td>
+                            <td>{{ ExperimentUtilities::latestStatus($jobDetail->jobStatuses)->jobStateName }}</td>
                             <td class="time" unix-time="{{$jobDetail->creationTime}}"></td>
                         </tr>
                     </table>
@@ -184,7 +184,7 @@
         </tr>
         <tr>
             <td><strong>Outputs</strong></td>
-            <td>{{ ExperimentUtilities::list_output_files($experiment->experimentOutputs, $experiment->experimentStatus[0]->state, false) }}</td>
+            <td>{{ ExperimentUtilities::list_output_files($experiment->experimentOutputs, ExperimentUtilities::latestStatus($experiment->experimentStatus)->state, false) }}</td>
         </tr>
         <tr>
             <td><strong>Storage Directory</strong></td>
@@ -211,8 +211,8 @@
         </tr>
         {{--@endif--}}
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
-            @if($experiment->experimentStatus[0]->state == \Airavata\Model\Status\ExperimentState::FAILED
-                    || $jobDetail->jobStatuses[0]->jobStateName == "FAILED")
+            @if(ExperimentUtilities::latestStatus($experiment->experimentStatus)->state == \Airavata\Model\Status\ExperimentState::FAILED
+                    || ExperimentUtilities::latestStatus($jobDetail->jobStatuses)->jobStateName == "FAILED")
             <tr>
                 <th>Job Submission Response</th>
                 <td>{{$jobDetail->stdOut . $jobDetail->stdErr}}</td>
@@ -352,9 +352,9 @@
                                     <dl class="well dl-horizontal">
                                         <dt>Task Id : </dt> <dd>{{ $task->taskId }}</dd>
                                         <dt>Task Type : </dt> <dd>{{ $expVal["taskTypes"][$task->taskType] }}</dd>
-                                        <dt>Task Status : </dt> <dd>{{ $expVal["taskStates"][$task->taskStatuses[0]->state] }}</dd>
-                                        <dt>Task Status Time : </dt> <dd class="time" unix-time="{{{ $task->taskStatuses[0]->timeOfStateChange}}}"></dd>
-                                        <dt>Task Status Reason : </dt> <dd>{{{ $task->taskStatuses[0]->reason }}}</dd>
+                                        <dt>Task Status : </dt> <dd>{{ $expVal["taskStates"][ExperimentUtilities::latestStatus($task->taskStatuses)->state] }}</dd>
+                                        <dt>Task Status Time : </dt> <dd class="time" unix-time="{{{ ExperimentUtilities::latestStatus($task->taskStatuses)->timeOfStateChange}}}"></dd>
+                                        <dt>Task Status Reason : </dt> <dd>{{{ ExperimentUtilities::latestStatus($task->taskStatuses)->reason }}}</dd>
                                     @if( is_object( $task->taskErrors))
                                         <dt>Task Error Id : </dt><dd>{{ $task->taskErrors[0]->errorId }}</dd>
                                         <dt>Task Error Msg : </dt><dd>{{ $task->taskErrors[0]->userFriendlyMessage }} <a tabindex="0" class="popover-taskinfo btn btn-sm btn-default" role="button" data-toggle="popover" data-html="true" title="Detailed Task Information" data-content="{{ str_replace( ',', '<br/><br/>', $task->taskError->actualErrorMessage ) }}">More Info</a></dd>
@@ -376,7 +376,7 @@
                         <li>
                             <span class="alert"><i class="icon-time"></i>
                                 <p>Outputs<hr/>
-                                {{ ExperimentUtilities::list_process_output_files( $process->processOutputs, $process->processStatuses[0]->state) }}</p>
+                                {{ ExperimentUtilities::list_process_output_files( $process->processOutputs, ExperimentUtilities::latestStatus($process->processStatuses)->state) }}</p>
                             </span>
                         </li>
                     </ul>
