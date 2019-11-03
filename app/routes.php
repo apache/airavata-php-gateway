@@ -34,6 +34,8 @@ Route::get("callback-url", "AccountController@oauthCallback");
 
 Route::get("logout", "AccountController@logout");
 
+Route::post("api-login", "AccountController@apiLoginSubmit");
+
 Route::get("forgot-password", "AccountController@forgotPassword");
 
 Route::get("reset-password", "AccountController@resetPassword");
@@ -300,8 +302,13 @@ Route::get("datacat/summary", "DataCatController@summary");
 
 
 //Management Dashboard
-
-Route::get("admin/dashboard", "AdminController@dashboard");
+//Added to reroute the admin page to the new django portal
+if(  Config::get('pga_config.portal')['super-admin-portal'] == false and  Config::get('pga_config.portal')['reroute-to-django'] == true){
+  Route::get("admin/dashboard", "AdminController@reRoute");
+}
+else{
+  Route::get("admin/dashboard", "AdminController@dashboard");
+}
 
 Route::get("admin/dashboard/gateway", "AdminController@gatewayView");
 

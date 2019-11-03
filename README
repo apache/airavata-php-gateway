@@ -1,0 +1,4 @@
+Apache Airavata PHP Gateway also known as PGA.
+
+PGA is the current reference implementation of Apache Airavata. There is an active development effort to replace the reference implementation using a Django based portal. 
+
