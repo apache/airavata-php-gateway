@@ -100,7 +100,7 @@
             <tr>
                 <th>Job</th>
                 <td>
-@if( $jobDetail->jobStatuses[0]->jobStateName == "FAILED" )
+@if( ExperimentUtilities::latestStatus($jobDetail->jobStatuses)->jobStateName == "FAILED" )
 If the job is failed, please refer <A href="https://dreg.dnasequence.org/pages/doc#failure">here</A> to find the reasons. <br/>
 @endif
                     <table class="table table-bordered">
