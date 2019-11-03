@@ -124,6 +124,7 @@ return array(
         // 'Wsis\WsisServiceProvider',
         'Keycloak\KeycloakServiceProvider',
         'Airavata\AiravataServiceProvider',
+        'Airavata\GroupManagerServiceProvider',
         'Airavata\IamAdminServiceProvider',
         'Airavata\UserProfileServiceProvider',
         'Airavata\TenantProfileServiceProvider',

@@ -25,7 +25,7 @@
         var currentJobStatuses = {};
 
         @foreach( $expVal["jobDetails"] as $index => $jobDetail)
-        currentJobStatuses["{{$jobDetail->jobId}}"] = "{{ $jobDetail->jobStatuses[0]->jobStateName}}";
+        currentJobStatuses["{{$jobDetail->jobId}}"] = "{{ ExperimentUtilities::latestStatus($jobDetail->jobStatuses)->jobStateName}}";
         @endforeach
 
         var isStatusChanged = function(experimentTimeOfStateChange, jobStatuses) {
@@ -68,8 +68,8 @@
                         for (var jobIndex in jobDetails){
                             if (jobDetails.hasOwnProperty(jobIndex)) {
                                 var jobDetail = jobDetails[jobIndex];
-                                // Assuming only one job status per job
-                                jobStatuses[jobDetail["jobId"]] = jobDetail["jobStatuses"]["0"]["jobStateName"];
+                                // last status is the most recent one
+                                jobStatuses[jobDetail["jobId"]] = jobDetail["jobStatuses"][jobDetail["jobStatuses"].length - 1]["jobStateName"];
                             }
                         }
 
