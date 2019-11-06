@@ -901,29 +901,18 @@ class ExperimentUtilities
                     }
                     break;
                 case DataType::URI:
-                    if(!empty($input->metaData) && json_decode($input->metaData)->location == "remote"){
-
-                        echo '<div class="form-group">
-                            <label for="experiment-input">' . $input->name . '</label>
-                            <input class="form-control" type="text" name="' . $input->sanitizedFormName .
+                    echo '<div class="form-group">
+                        <label for="experiment-input">' . $input->name . '</label>
+                        <div data-file-id="' . $input->sanitizedFormName . '" class="readBytesButtons btn btn-default btn-xs"
+                            data-toggle="modal" style="float: right">view file</div>
+                            <div class="file-upload-container">
+                            <input class="file-input" type="file" name="' . $input->sanitizedFormName .
                                     '" id="' . $input->sanitizedFormName . '" ' . $required . '>
-                            <p class="help-block">' . $input->userFriendlyDescription . '</p>
-                            </div>';
-                        break;
-                    }else{
-                        echo '<div class="form-group">
-                            <label for="experiment-input">' . $input->name . '</label>
-                            <div data-file-id="' . $input->sanitizedFormName . '" class="readBytesButtons btn btn-default btn-xs"
-                             data-toggle="modal" style="float: right">view file</div>
-                             <div class="file-upload-container">
-                                <input class="file-input" type="file" name="' . $input->sanitizedFormName .
-                                        '" id="' . $input->sanitizedFormName . '" ' . $required . '>
-                                    <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
-                             </div>
-                            <p class="help-block">' . $input->userFriendlyDescription . '</p>
-                            </div>';
-                        break;
-                    }
+                                <div class="file-upload-max-size">Max Upload Size: ' . $allowedFileSize .'M</div>
+                            </div>
+                        <p class="help-block">' . $input->userFriendlyDescription . '</p>
+                        </div>';
+                    break;
                 case DataType::URI_COLLECTION:
                     // Support for URI_COLLECTION is not implemented in PGA, just ignore
                     break;
