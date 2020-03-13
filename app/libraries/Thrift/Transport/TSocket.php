@@ -219,11 +219,28 @@ class TSocket extends TTransport {
                                    $errstr,
                                    $this->sendTimeoutSec_ + ($this->sendTimeoutUsec_ / 1000000));
     } else {
-      $this->handle_ = @fsockopen($this->host_,
-                                  $this->port_,
-                                  $errno,
-                                  $errstr,
-                                  $this->sendTimeoutSec_ + ($this->sendTimeoutUsec_ / 1000000));
+      // $this->handle_ = @fsockopen($this->host_,
+      //                             $this->port_,
+      //                             $errno,
+      //                             $errstr,
+      //                             $this->sendTimeoutSec_ + ($this->sendTimeoutUsec_ / 1000000));
+
+      // PHP 5.6 changed verify_peer default to TRUE, and verify_peer_name was
+      // added with a default of TRUE
+      // (https://www.php.net/manual/en/context.ssl.php). Create a context to
+      // set these both to false to get the old behavior.
+      $context = stream_context_create([
+          'ssl' => [
+              'verify_peer' => false,
+              'verify_peer_name' => false,
+          ],
+      ]);
+      $this->handle_ = stream_socket_client($this->host_.':'.$this->port_,
+                                            $errno,
+                                            $errstr,
+                                            $this->sendTimeoutSec_ + ($this->sendTimeoutUsec_ / 1000000),
+                                            STREAM_CLIENT_CONNECT,
+                                            $context);
     }
 
     // Connect failed?
