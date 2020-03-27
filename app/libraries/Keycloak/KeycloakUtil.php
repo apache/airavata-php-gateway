@@ -16,7 +16,7 @@ class KeycloakUtil {
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $verify_peer);
-        if($verify_peer){
+        if($verify_peer && $cafile_path){
             curl_setopt($r, CURLOPT_CAINFO, $cafile_path);
         }
 
