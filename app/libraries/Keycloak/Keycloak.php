@@ -75,7 +75,7 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        if($this->verify_peer){
+        if($this->verify_peer && $this->cafile_path){
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
 
@@ -129,7 +129,7 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        if($this->verify_peer){
+        if($this->verify_peer && $this->cafile_path){
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
 
@@ -167,7 +167,7 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        if($this->verify_peer){
+        if($this->verify_peer && $this->cafile_path){
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
@@ -213,7 +213,7 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        if($this->verify_peer){
+        if($this->verify_peer && $this->cafile_path){
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
 
@@ -444,7 +444,7 @@ class Keycloak {
         // Decode compressed responses.
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        if($this->verify_peer){
+        if($this->verify_peer && $this->cafile_path){
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
 
