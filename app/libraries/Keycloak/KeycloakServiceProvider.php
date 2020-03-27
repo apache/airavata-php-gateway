@@ -41,7 +41,7 @@ class KeycloakServiceProvider extends ServiceProvider {
                 $identityServerConfig['oauth-client-key'],
                 $identityServerConfig['oauth-client-secret'],
                 $identityServerConfig['oauth-callback-url'],
-                isset($identityServerConfig['cafile-path'] ? $identityServerConfig['cafile-path'] : null,
+                isset($identityServerConfig['cafile-path']) ? $identityServerConfig['cafile-path'] : null,
                 $identityServerConfig['verify-peer'],
                 $identityServerConfig['service-url'],
                 $identityServerConfig['admin-username'],
