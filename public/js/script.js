@@ -198,6 +198,13 @@ $(document).ready( function(){
                       + "<input class='form-control' name='unicoreEndPointURL'/>"
                       + "</div>" );
     }
+    else if( selectedVal == "webdav" )
+    {
+        $(this).after(  parentDataDiv
+            + $(".ssh-block").html()
+            + "</div>" );
+        $(this).parent().find(".addedWebDavValue").removeClass("hide");
+    }
     else{
       alert("Something went wrong. Please try again");
       $(".dmpSubmit").addClass("hide");
