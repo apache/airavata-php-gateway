@@ -24,6 +24,7 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
 
         // get access token for admin API
         $access_token = $this->getAPIAccessToken($realm);
+        Log::info("Access token from getAPIAccessToken ", array($access_token));
         $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users/' . rawurlencode($user_id) . '/role-mappings/realm';
         // Log::debug("getRealmRoleMappingsForUser url", array($url));
         $r = curl_init($url);

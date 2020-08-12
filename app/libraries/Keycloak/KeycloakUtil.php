@@ -1,22 +1,24 @@
 <?php
+
 namespace Keycloak;
 
-use Exception;
 use Log;
 
-class KeycloakUtil {
+class KeycloakUtil
+{
 
-    public static function getAPIAccessToken($base_endpoint_url, $realm, $admin_username, $admin_password, $verify_peer, $cafile_path) {
+    public static function getAPIAccessToken($base_endpoint_url, $realm, $admin_username, $admin_password, $verify_peer, $cafile_path, $client_id, $client_sec)
+    {
 
-        // http://www.keycloak.org/docs/2.5/server_development/topics/admin-rest-api.html
-        // curl -d client_id=admin-cli -d username=username \
-        //   -d "password=password" -d grant_type=password https://149.165.156.62:8443/auth/realms/master/protocol/openid-connect/token
+        $config = KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($base_endpoint_url,$client_id,$client_sec);
 
-        $r = curl_init($base_endpoint_url . '/realms/' . rawurlencode($realm) . '/protocol/openid-connect/token');
+        $token_endpoint = $config->token_endpoint;
+
+        $r = curl_init($token_endpoint);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $verify_peer);
-        if($verify_peer && $cafile_path){
+        if ($verify_peer && $cafile_path) {
             curl_setopt($r, CURLOPT_CAINFO, $cafile_path);
         }
 
@@ -34,7 +36,39 @@ class KeycloakUtil {
         }
 
         $result = json_decode($response);
-        // Log::debug("API Access Token result", array($result));
+
         return $result->access_token;
     }
+
+    public static function getOpenIDConnectDiscoveryConfiguration($openid_connect_discovery_url, $client_id, $client_secret)
+    {
+
+        $post_files = "?client_id=" . urlencode($client_id);
+        $url = $openid_connect_discovery_url . $post_files;
+
+        // TODO: cache the result of the request
+        $r = curl_init($url);
+
+        curl_setopt($r, CURLOPT_HTTPHEADER, array(
+            "Authorization: Basic " . base64_encode($client_id . ":" . $client_secret),
+        ));
+
+
+        curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
+        // Decode compressed responses.
+        curl_setopt($r, CURLOPT_ENCODING, 1);
+
+        $result = curl_exec($r);
+        if ($result == false) {
+            die("curl_exec() failed. Error: " . curl_error($r));
+        }
+
+        $json = json_decode($result);
+
+
+        // Log::debug("openid connect discovery configuration", array($json));
+        return $json;
+    }
+
+
 }
