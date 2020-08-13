@@ -24,7 +24,7 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
 
         // get access token for admin API
 
-        $url = $this->base_endpoint_url . 'user-management/v1.0.0/user';
+        $url = $this->base_endpoint_url . '/user-management/v1.0.0/user';
         $params = "?client_id=" . urlencode($this->client_id). "&user.username=".urlencode($user_id);
         $url = $url.$params;
 

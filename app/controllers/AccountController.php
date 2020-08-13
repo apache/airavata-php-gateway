@@ -147,6 +147,7 @@ class AccountController extends BaseController
             $authzToken->accessToken = $accessToken;
             $authzToken->claimsMap['gatewayID'] = Config::get('pga_config.airavata')['gateway-id'];
             $authzToken->claimsMap['userName'] = $username;
+            $authzToken->claimsMap['custosId'] = Config::get('pga_config.wsis')['oauth-client-key'];
 
             Session::put('authz-token',$authzToken);
             Session::put('oauth-refresh-code',$refreshToken);
@@ -156,7 +157,7 @@ class AccountController extends BaseController
             // AIRAVATA-3086: get gateway groups and get the groups this user is a member of
             $gatewayGroups = Airavata::getGatewayGroups($authzToken);
             $groupMemberships = GroupManagerService::getAllGroupsUserBelongs(
-                $authzToken, $username . "@" . Config::get('pga_config.airavata')['gateway-id']);
+                $authzToken, $username);
             $get_group_id = function($group) {
                 return $group->id;
             };

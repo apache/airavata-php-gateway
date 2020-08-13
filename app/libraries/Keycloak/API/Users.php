@@ -1,4 +1,5 @@
 <?php
+
 namespace Keycloak\API;
 
 use Log;
@@ -9,31 +10,35 @@ use Log;
  * This class provide an easy to use interface for
  * the Keycloak Users REST API.
  */
-class Users extends BaseKeycloakAPIEndpoint {
+class Users extends BaseKeycloakAPIEndpoint
+{
 
     /**
      * Get representations of all users
      * GET /admin/realms/{realm}/users
      * Returns Array of UserRepresentation
      */
-    public function getUsers($realm, $username = null){
+    public function getUsers($realm, $username = null)
+    {
 
         // get access token for admin API
-        $access_token = $this->getAPIAccessToken($realm);
-        $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users';
+        $url = $this->base_endpoint_url . '/user-management/v1.0.0/users';
+        $params = "?client_id=" . urlencode($this->client_id) . "&offset=" . urlencode(0) . "&limit=" . urlencode(100);
+
         if ($username) {
-            $url = $url . '?username=' . rawurlencode($username);
+            $params = $params . '&user.username=' . rawurlencode($username);
         }
+        $url = $url . $params;
         // Log::debug("getUsers url", array($url));
         $r = curl_init($url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        if($this->verify_peer && $this->cafile_path){
+        if ($this->verify_peer && $this->cafile_path) {
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Bearer " . $access_token
+            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
         ));
 
         $response = curl_exec($r);
@@ -45,7 +50,8 @@ class Users extends BaseKeycloakAPIEndpoint {
         return $result;
     }
 
-    public function getUserByUsername($realm, $username){
+    public function getUserByUsername($realm, $username)
+    {
 
         # getUsers returns all users that have a username containing $username
         # so we need to check the returned users for one that matches exactly
@@ -65,21 +71,23 @@ class Users extends BaseKeycloakAPIEndpoint {
      * last names, and email address
      * Returns Array of UserRepresentation
      */
-    public function searchUsers($realm, $keyword){
+    public function searchUsers($realm, $keyword)
+    {
 
         // get access token for admin API
-        $access_token = $this->getAPIAccessToken($realm);
-        $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users?search=' . rawurlencode($keyword);
+        $url = $this->base_endpoint_url . '/user-management/v1.0.0/users';
+        $params = "?client_id=" . urlencode($this->client_id) . "&offset=" . urlencode(0) . "&limit=" . urlencode(100) . "&keyword=" . urlencode($keyword);
         // Log::debug("getUsers url", array($url));
+        $url = $url . $params;
         $r = curl_init($url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        if($this->verify_peer && $this->cafile_path){
+        if ($this->verify_peer && $this->cafile_path) {
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Bearer " . $access_token
+            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
         ));
 
         $response = curl_exec($r);
@@ -96,21 +104,23 @@ class Users extends BaseKeycloakAPIEndpoint {
      * GET /admin/realms/{realm}/users/{id}
      * Returns a UserRepresentation
      */
-    public function getUser($realm, $user_id) {
+    public function getUser($realm, $user_id)
+    {
 
         // get access token for admin API
-        $access_token = $this->getAPIAccessToken($realm);
-        $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users/' . rawurlencode($user_id);
+        $url = $this->base_endpoint_url . '/user-management/v1.0.0/users';
+        $params = "?client_id=" . urlencode($this->client_id) . "&offset=" . urlencode(0) . "&limit=" . urlencode(100) . "&user.username=" . urlencode($user_id);
+        $url = $url . $params;
         // Log::debug("getUser url", array($url));
         $r = curl_init($url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
-        if($this->verify_peer && $this->cafile_path){
+        if ($this->verify_peer && $this->cafile_path) {
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Bearer " . $access_token
+            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
         ));
 
         $response = curl_exec($r);

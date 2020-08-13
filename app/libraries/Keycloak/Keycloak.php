@@ -209,7 +209,7 @@ class Keycloak
         $email = $userinfo->email;
 
         // get roles from Keycloak API
-        $role_mappings = $this->role_mapper->getRealmRoleMappingsForUser($userinfo->sub);
+        $role_mappings = $this->role_mapper->getRealmRoleMappingsForUser($username);
         $roles = [];
         foreach ($role_mappings as $role_mapping) {
             $roles[] = $role_mapping->name;
