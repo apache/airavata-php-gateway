@@ -10,7 +10,6 @@ use Keycloak\API\RoleMapper;
 use Keycloak\API\Roles;
 use Keycloak\API\Users;
 use Log;
-use Keycloak\KeycloakUtil;
 
 class Keycloak
 {
@@ -47,15 +46,15 @@ class Keycloak
         $this->callback_url = $callback_url;
         $this->cafile_path = $cafile_path;
         $this->verify_peer = $verify_peer;
-        $this->base_endpoint_url = $custos_credentials_uri;
+        $this->base_endpoint_url = $base_endpoint_url;
         $this->admin_username = $admin_username;
         $this->admin_password = $admin_password;
         $this->gateway_id = $gateway_id;
         $this->custos_credentials_uri = $custos_credentials_uri;
 
-        $this->role_mapper = new RoleMapper($base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret);
-        $this->roles = new Roles($base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret);
-        $this->users = new Users($base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret);
+        $this->role_mapper = new RoleMapper($openid_connect_discovery_url, $base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret);
+        $this->roles = new Roles($openid_connect_discovery_url, $base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret);
+        $this->users = new Users($openid_connect_discovery_url, $base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret);
     }
 
     /**
@@ -69,8 +68,8 @@ class Keycloak
     public function authenticate($username, $password)
     {
 
-
-        $config =  KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url,$this->client_id,$this->client_secret);
+        Log::info("Calling authenticate ", array($username));
+        $config = KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url, $this->client_id, $this->client_secret);
 
         $token_endpoint = $config->token_endpoint;
 
@@ -117,7 +116,8 @@ class Keycloak
 
     public function getOAuthRequestCodeUrl($extra_params = null)
     {
-        $config =  KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url,$this->client_id,$this->client_secret);
+        Log::info("Calling getOAuthRequestCodeUrl ", array($extra_params));
+        $config = KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url, $this->client_id, $this->client_secret);
         $authorization_endpoint = $config->authorization_endpoint;
 
         // TODO: add state variable to request and put into session
@@ -133,7 +133,8 @@ class Keycloak
     public function getOAuthToken($code)
     {
 
-        $config =  KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url,$this->client_id,$this->client_secret);
+        Log::info("Calling getOAuthToken ", array($code));
+        $config = KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url, $this->client_id, $this->client_secret);
         $token_endpoint = $config->token_endpoint;
 
         // Init cUrl.
@@ -177,9 +178,9 @@ class Keycloak
     public function getUserProfileFromOAuthToken($token)
     {
 
-        Log::info("Calling user info endpoint");
+        Log::info("Calling getUserProfileFromOAuthToken");
 
-        $config =  KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url,$this->client_id,$this->client_secret);
+        $config = KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url, $this->client_id, $this->client_secret);
         $userinfo_endpoint = $config->userinfo_endpoint;
 
         $r = curl_init($userinfo_endpoint);
@@ -208,7 +209,7 @@ class Keycloak
         $email = $userinfo->email;
 
         // get roles from Keycloak API
-        $role_mappings = $this->role_mapper->getRealmRoleMappingsForUser($this->realm, $userinfo->sub);
+        $role_mappings = $this->role_mapper->getRealmRoleMappingsForUser($userinfo->sub);
         $roles = [];
         foreach ($role_mappings as $role_mapping) {
             $roles[] = $role_mapping->name;
@@ -224,8 +225,8 @@ class Keycloak
      */
     public function getRefreshedOAuthToken($refresh_token)
     {
-
-        $config =  KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url,$this->client_id,$this->client_secret);
+        Log::info("Calling getRefreshedOAuthToken");
+        $config = KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url, $this->client_id, $this->client_secret);
         $token_endpoint = $config->token_endpoint;
 
         // Init cUrl.
@@ -238,9 +239,13 @@ class Keycloak
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
 
+        $auth_credentials = $this->getAuthCredentials();
+
+        $iam_secret = $auth_credentials->iam_client_secret;
+
         // Add client ID and client secret to the headers.
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
+            "Authorization: Basic " . base64_encode($this->client_id . ":" . $iam_secret),
         ));
 
         // Assemble POST parameters for the request.
@@ -267,7 +272,8 @@ class Keycloak
      */
     public function getOAuthLogoutUrl($redirect_uri)
     {
-        $config = KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url,$this->client_id,$this->client_secret);
+        Log::info("Calling getOAuthLogoutUrl");
+        $config = KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($this->openid_connect_discovery_url, $this->client_id, $this->client_secret);
         $logout_endpoint = $config->end_session_endpoint;
         return $logout_endpoint . '?redirect_uri=' . rawurlencode($redirect_uri);
     }
@@ -279,6 +285,7 @@ class Keycloak
      */
     public function listUsers()
     {
+        Log::info("Calling listUsers");
         $users = $this->users->getUsers($this->realm);
         $usernames = [];
         foreach ($users as $user) {
@@ -297,6 +304,7 @@ class Keycloak
      */
     public function searchUsers($phrase)
     {
+        Log::info("Calling searchUsers");
         $users = $this->users->searchUsers($this->realm, $phrase);
         $usernames = [];
         foreach ($users as $user) {
@@ -314,6 +322,7 @@ class Keycloak
     public function getAllRoles()
     {
         try {
+            Log::info("Calling getAllRoles");
             $roles = $this->roles->getRoles($this->realm);
             $role_names = [];
             foreach ($roles as $role) {
@@ -334,10 +343,11 @@ class Keycloak
     public function getUserRoles($username)
     {
         try {
+            Log::info("Calling getUserRoles");
             // get userid from username
             $user_id = $this->getUserId($username);
             // Get the user's realm roles, then convert to an array of just names
-            $roles = $this->role_mapper->getRealmRoleMappingsForUser($this->realm, $user_id);
+            $roles = $this->role_mapper->getRealmRoleMappingsForUser($user_id);
             $role_names = [];
             foreach ($roles as $role) {
                 $role_names[] = $role->name;
@@ -360,6 +370,7 @@ class Keycloak
     {
         // Log::debug("updateUserRoles", array($user_id, $roles));
         try {
+            Log::info("Calling updateUserRoles");
             // get userid from username
             $user_id = $this->getUserId($username);
             // Get all of the roles into an array keyed by role name
@@ -397,6 +408,7 @@ class Keycloak
      */
     public function getUserProfile($username)
     {
+        Log::info("Calling getUserProfile");
         $user = $this->users->getUserByUsername($this->realm, $username);
         if ($user != null) {
             $result = [];
@@ -419,6 +431,7 @@ class Keycloak
     public function usernameExists($username)
     {
         try {
+            Log::info("Calling usernameExists");
             $user = $this->users->getUserByUsername($this->realm, $username);
             return $user != null;
         } catch (Exception $ex) {
@@ -432,6 +445,7 @@ class Keycloak
     {
 
         try {
+            Log::info("Calling isUpdatePasswordRequired");
             $user = $this->users->getUserByUsername($this->realm, $username);
             if ($user != null) {
                 return in_array("UPDATE_PASSWORD", $user->requiredActions);
@@ -446,12 +460,13 @@ class Keycloak
 
     public function getAdminAuthzToken()
     {
-
-        $access_token = KeycloakUtil::getAPIAccessToken($this->base_endpoint_url, $this->realm, $this->admin_username, $this->admin_password, $this->verify_peer, $this->cafile_path);
+        Log::info("Calling getAdminAuthzToken");
+        $access_token = KeycloakUtil::getAPIAccessToken($this->openid_connect_discovery_url, $this->realm, $this->admin_username, $this->admin_password, $this->verify_peer, $this->cafile_path);
         $authzToken = new \Airavata\Model\Security\AuthzToken();
         $authzToken->accessToken = $access_token;
         $authzToken->claimsMap['gatewayID'] = $this->gateway_id;
         $authzToken->claimsMap['userName'] = $this->admin_username;
+        $authzToken->claimsMap['custosId'] = $this->client_id;
         return $authzToken;
     }
 
@@ -467,8 +482,6 @@ class Keycloak
             throw new Exception("No user found with username $username");
         }
     }
-
-
 
 
     private function getAuthCredentials()

@@ -18,14 +18,16 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
      *
      * Returns Array of RoleRepresentations
      */
-    public function getRealmRoleMappingsForUser($realm, $user_id){
+    public function getRealmRoleMappingsForUser($user_id){
 
         // curl -H "Authorization: bearer $access_token" https://149.165.156.62:8443/auth/admin/realms/airavata/users/2c9ad2c6-0212-4aef-a5fb-9df862578934/role-mappings/realm
 
         // get access token for admin API
-        $access_token = $this->getAPIAccessToken($realm);
-        Log::info("Access token from getAPIAccessToken ", array($access_token));
-        $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users/' . rawurlencode($user_id) . '/role-mappings/realm';
+
+        $url = $this->base_endpoint_url . 'user-management/v1.0.0/user';
+        $params = "?client_id=" . urlencode($this->client_id). "&user.username=".urlencode($user_id);
+        $url = $url.$params;
+
         // Log::debug("getRealmRoleMappingsForUser url", array($url));
         $r = curl_init($url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
@@ -35,9 +37,8 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Bearer " . $access_token
+            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
         ));
-
         $response = curl_exec($r);
         if ($response == false) {
             Log::error("Failed to retrieve realm role mappings for user");
@@ -45,7 +46,7 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
         }
         $result = json_decode($response);
         // Log::debug("getRealmRoleMappingsForUser result", array($result));
-        return $result;
+        return $result->realm_roles;
     }
 
     /**

@@ -7,10 +7,10 @@ use Log;
 class KeycloakUtil
 {
 
-    public static function getAPIAccessToken($base_endpoint_url, $realm, $admin_username, $admin_password, $verify_peer, $cafile_path, $client_id, $client_sec)
+    public static function getAPIAccessToken($openid_connect_discovery_url, $realm, $admin_username, $admin_password, $verify_peer, $cafile_path, $client_id, $client_sec)
     {
 
-        $config = KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($base_endpoint_url,$client_id,$client_sec);
+        $config = KeycloakUtil::getOpenIDConnectDiscoveryConfiguration($openid_connect_discovery_url,$client_id,$client_sec);
 
         $token_endpoint = $config->token_endpoint;
 
