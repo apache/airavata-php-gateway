@@ -47,7 +47,7 @@ class Users extends BaseKeycloakAPIEndpoint
         }
         $result = json_decode($response);
         // Log::debug("getUsers result", array($result));
-        return $result;
+        return $result->users;
     }
 
     public function getUserByUsername($realm, $username)
@@ -76,7 +76,7 @@ class Users extends BaseKeycloakAPIEndpoint
 
         // get access token for admin API
         $url = $this->base_endpoint_url . '/user-management/v1.0.0/users';
-        $params = "?client_id=" . urlencode($this->client_id) . "&offset=" . urlencode(0) . "&limit=" . urlencode(100) . "&keyword=" . urlencode($keyword);
+        $params = "?client_id=" . urlencode($this->client_id) . "&offset=" . urlencode(0) . "&limit=" . urlencode(100) . "&user.id=" . urlencode($keyword);
         // Log::debug("getUsers url", array($url));
         $url = $url . $params;
         $r = curl_init($url);
@@ -96,7 +96,7 @@ class Users extends BaseKeycloakAPIEndpoint
         }
         $result = json_decode($response);
         // Log::debug("getUsers result", array($result));
-        return $result;
+        return $result->users;
     }
 
     /**

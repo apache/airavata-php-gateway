@@ -56,9 +56,8 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
     public function addRealmRoleMappingsToUser($realm, $user_id, $role_representations) {
 
         // get access token for admin API
-        $access_token = $this->getAPIAccessToken($realm);
-        $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users/' . rawurlencode($user_id) . '/role-mappings/realm';
-        // Log::debug("addRealmRoleMappingsToUser", array($url, $role_representations));
+        $access_token = $this->getAPIAccessToken();
+        $url = $this->base_endpoint_url . 'user-management/v1.0.0/users/roles';
         $r = curl_init($url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
@@ -68,19 +67,33 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
         }
 
         curl_setopt($r, CURLOPT_POST, true);
-        $data = json_encode($role_representations);
-        // Log::debug("addRealmRoleMappingsToUser data=$data");
+
+        $roles = [];
+        foreach ($role_representations as $role) {
+                    $roles[] = $role->name;
+        }
+
+        $usernames = [];
+        $usernames[] = $user_id;
+        $client_level = false;
+
+        $json =   array("roles"=> $roles, "usernames"=> $usernames, "client_level" => $client_level);
+
+
+        $data = json_encode($json);
+         Log::debug("addRealmRoleMappingsToUser data=$data");
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Bearer " . $access_token,
+            "Authorization: Bearer " .$access_token,
             'Content-Type: application/json',
             'Content-Length: ' . strlen($data))
         );
         curl_setopt($r, CURLOPT_POSTFIELDS, $data);
 
         $response = curl_exec($r);
-        $info = curl_getinfo($r);
-        if ($info['http_code'] != 200 && $info['http_code'] != 204) {
-            throw new Exception("Failed to add realm role mapping to user");
+
+        if ($response == false || ! ($response->status)) {
+            Log::error("Failed to add realm role mappings for user");
+            die("curl_exec() failed. Error: " . curl_error($r));
         }
         return;
     }
@@ -92,8 +105,8 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
     public function deleteRealmRoleMappingsToUser($realm, $user_id, $role_representations) {
 
         // get access token for admin API
-        $access_token = $this->getAPIAccessToken($realm);
-        $url = $this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/users/' . rawurlencode($user_id) . '/role-mappings/realm';
+        $access_token = $this->getAPIAccessToken();
+        $url = $this->base_endpoint_url . 'user-management/v1.0.0/user/roles';
         // Log::debug("deleteRealmRoleMappingsToUser", array($url, $role_representations));
         $r = curl_init($url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
@@ -105,19 +118,28 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
 
         curl_setopt($r, CURLOPT_CUSTOMREQUEST, "DELETE");
         curl_setopt($r, CURLOPT_POST, true);
-        $data = json_encode($role_representations);
-        // Log::debug("deleteRealmRoleMappingsToUser data=$data");
+
+        $roles = [];
+        foreach ($role_representations as $role) {
+            $roles[] = $role->name;
+        }
+
+        $json =   array("roles"=> $roles, "username"=> $user_id);
+
+        $data = json_encode($json);
+         Log::debug("deleteRealmRoleMappingsToUser data=$data");
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Bearer " . $access_token,
+            "Authorization: Bearer " .$access_token,
             'Content-Type: application/json',
             'Content-Length: ' . strlen($data))
         );
         curl_setopt($r, CURLOPT_POSTFIELDS, $data);
 
         $response = curl_exec($r);
-        $info = curl_getinfo($r);
-        if ($info['http_code'] != 200 && $info['http_code'] != 204) {
-            throw new Exception("Failed to delete realm role mapping to user");
+
+        if ($response == false || ! ($response->status)) {
+            Log::error("Failed to add realm role mappings for user");
+            die("curl_exec() failed. Error: " . curl_error($r));
         }
         return;
     }

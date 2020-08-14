@@ -52,9 +52,9 @@ class Keycloak
         $this->gateway_id = $gateway_id;
         $this->custos_credentials_uri = $custos_credentials_uri;
 
-        $this->role_mapper = new RoleMapper($openid_connect_discovery_url, $base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret);
-        $this->roles = new Roles($openid_connect_discovery_url, $base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret);
-        $this->users = new Users($openid_connect_discovery_url, $base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret);
+        $this->role_mapper = new RoleMapper($openid_connect_discovery_url, $base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret, $this->custos_credentials_uri);
+        $this->roles = new Roles($openid_connect_discovery_url, $base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret, $this->custos_credentials_uri);
+        $this->users = new Users($openid_connect_discovery_url, $base_endpoint_url, $admin_username, $admin_password, $verify_peer, $this->cafile_path, $this->client_id, $this->client_secret, $this->custos_credentials_uri);
     }
 
     /**
@@ -83,7 +83,7 @@ class Keycloak
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
 
-        $auth_credentials = $this->getAuthCredentials();
+        $auth_credentials = KeycloakUtil::getAuthCredentials($this->custos_credentials_uri, $this->client_id, $this->client_secret);
 
         $iam_secret = $auth_credentials->iam_client_secret;
 
@@ -147,7 +147,8 @@ class Keycloak
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
 
-        $auth_credentials = $this->getAuthCredentials();
+        $auth_credentials = KeycloakUtil::getAuthCredentials($this->custos_credentials_uri, $this->client_id, $this->client_secret);
+
 
         $iam_secret = $auth_credentials->iam_client_secret;
 
@@ -212,7 +213,7 @@ class Keycloak
         $role_mappings = $this->role_mapper->getRealmRoleMappingsForUser($username);
         $roles = [];
         foreach ($role_mappings as $role_mapping) {
-            $roles[] = $role_mapping->name;
+            $roles[] = $role_mapping;
         }
         $roles = CommonUtilities::filterAiravataRoles($roles);
         return array('username' => $username, 'firstname' => $firstname, 'lastname' => $lastname, 'email' => $email, 'roles' => $roles);
@@ -239,7 +240,8 @@ class Keycloak
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
 
-        $auth_credentials = $this->getAuthCredentials();
+        $auth_credentials = KeycloakUtil::getAuthCredentials($this->custos_credentials_uri, $this->client_id, $this->client_secret);
+
 
         $iam_secret = $auth_credentials->iam_client_secret;
 
@@ -290,7 +292,7 @@ class Keycloak
         $usernames = [];
         foreach ($users as $user) {
             Log::debug("user", array($user));
-            array_push($usernames, (object)["firstName" => $user->firstName, "lastName" => $user->lastName, "email" => $user->email, "userEnabled" => $user->enabled, "userName" => $user->username]);
+            array_push($usernames, (object)["firstName" => $user->first_name, "lastName" => $user->last_name, "email" => $user->email, "userEnabled" => ($user->state === "ACTIVE"), "userName" => $user->username]);
         }
         return $usernames;
     }
@@ -308,7 +310,7 @@ class Keycloak
         $users = $this->users->searchUsers($this->realm, $phrase);
         $usernames = [];
         foreach ($users as $user) {
-            array_push($usernames, (object)["firstName" => $user->firstName, "lastName" => $user->lastName, "email" => $user->email, "userEnabled" => $user->enabled, "userName" => $user->username]);
+            array_push($usernames, (object)["firstName" => $user->first_name, "lastName" => $user->last_name, "email" => $user->email, "userEnabled" => ($user->state === "ACTIVE"), "userName" => $user->username]);
         }
         return $usernames;
     }
@@ -345,12 +347,11 @@ class Keycloak
         try {
             Log::info("Calling getUserRoles");
             // get userid from username
-            $user_id = $this->getUserId($username);
             // Get the user's realm roles, then convert to an array of just names
-            $roles = $this->role_mapper->getRealmRoleMappingsForUser($user_id);
+            $roles = $this->role_mapper->getRealmRoleMappingsForUser($username);
             $role_names = [];
             foreach ($roles as $role) {
-                $role_names[] = $role->name;
+                $role_names[] = $role;
             }
             return CommonUtilities::filterAiravataRoles($role_names);
         } catch (Exception $ex) {
@@ -372,7 +373,6 @@ class Keycloak
         try {
             Log::info("Calling updateUserRoles");
             // get userid from username
-            $user_id = $this->getUserId($username);
             // Get all of the roles into an array keyed by role name
             $all_roles = $this->roles->getRoles($this->realm);
             $roles_by_name = [];
@@ -385,7 +385,7 @@ class Keycloak
                 if (!is_array($roles["deleted"]))
                     $roles["deleted"] = array($roles["deleted"]);
                 foreach ($roles["deleted"] as $role) {
-                    $this->role_mapper->deleteRealmRoleMappingsToUser($this->realm, $user_id, array($roles_by_name[$role]));
+                    $this->role_mapper->deleteRealmRoleMappingsToUser($this->realm, $username, array($roles_by_name[$role]));
                 }
             }
 
@@ -394,7 +394,7 @@ class Keycloak
                 if (!is_array($roles["new"]))
                     $roles["new"] = array($roles["new"]);
                 foreach ($roles["new"] as $role) {
-                    $this->role_mapper->addRealmRoleMappingsToUser($this->realm, $user_id, array($roles_by_name[$role]));
+                    $this->role_mapper->addRealmRoleMappingsToUser($this->realm, $username, array($roles_by_name[$role]));
                 }
             }
         } catch (Exception $ex) {
@@ -413,9 +413,9 @@ class Keycloak
         if ($user != null) {
             $result = [];
             $result["email"] = $user->email;
-            $result["firstname"] = $user->firstName;
-            $result["lastname"] = $user->lastName;
-            $result["userEnabled"] = $user->enabled;
+            $result["firstname"] = $user->first_name;
+            $result["lastname"] = $user->last_name;
+            $result["userEnabled"] = ($user->state === "ACTIVE");
             return $result;
         } else {
             return [];
@@ -461,7 +461,9 @@ class Keycloak
     public function getAdminAuthzToken()
     {
         Log::info("Calling getAdminAuthzToken");
-        $access_token = KeycloakUtil::getAPIAccessToken($this->openid_connect_discovery_url, $this->realm, $this->admin_username, $this->admin_password, $this->verify_peer, $this->cafile_path);
+        $access_token = KeycloakUtil::getAPIAccessToken($this->openid_connect_discovery_url, $this->custos_credentials_uri,
+            $this->admin_username, $this->admin_password, $this->verify_peer, $this->cafile_path,
+            $this->client_id, $this->client_secret);
         $authzToken = new \Airavata\Model\Security\AuthzToken();
         $authzToken->accessToken = $access_token;
         $authzToken->claimsMap['gatewayID'] = $this->gateway_id;
@@ -481,36 +483,6 @@ class Keycloak
         } else {
             throw new Exception("No user found with username $username");
         }
-    }
-
-
-    private function getAuthCredentials()
-    {
-
-        $post_files = "?client_id=" . urlencode($this->client_id);
-        $url = $this->custos_credentials_uri . $post_files;
-
-        // TODO: cache the result of the request
-        $r = curl_init($url);
-
-        curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
-        ));
-
-
-        curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
-        // Decode compressed responses.
-        curl_setopt($r, CURLOPT_ENCODING, 1);
-
-        $result = curl_exec($r);
-        if ($result == false) {
-            die("curl_exec() failed. Error: " . curl_error($r));
-        }
-
-        $json = json_decode($result);
-
-        // Log::debug("openid connect discovery configuration", array($json));
-        return $json;
     }
 
 
