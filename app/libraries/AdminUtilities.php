@@ -39,8 +39,16 @@ class AdminUtilities
         $gateway->requesterUsername = Session::get('username');
         $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
 
+
+
+         $logoutURI = $gateway->gatewayURL;
+         $redirectURI = $logoutURI."auth/callback*";
+         $gateway->redirectURLs = array($logoutURI,$redirectURI);
+         $gateway->scope = "openid profile email org.cilogon.userinfo" ;
+
         try {
-            TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
+            Log::info("Gateway #####".$gateway);
+           // TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
             return 1;
         }
         catch (Exception $ex) {
@@ -71,13 +79,15 @@ class AdminUtilities
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
         $gateway->requesterUsername = Session::get('username');
 
-        try {
-            TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
+
+        Log::info("Check request #####".$gateway);
+       // try {
+         //   TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
             return 1;
-        }
-        catch (Exception $ex) {
-            return -1;
-        }
+       // }
+       // catch (Exception $ex) {
+        //    return -1;
+       // }
     }
 
     public static function request_gateway( $inputs)
@@ -105,7 +115,18 @@ class AdminUtilities
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
         $gateway->requesterUsername = Session::get('username');
 
-        return TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
+
+        $logoutURI = $gateway->gatewayURL;
+        $redirectURI = $logoutURI."auth/callback*";
+        $gateway->redirectURLs = array($logoutURI,$redirectURI);
+        $gateway->scope = "openid profile email org.cilogon.userinfo" ;
+
+
+        Log::info ("Request_Gateway ".$gateway);
+
+        return 1;
+
+        // return TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
     }
 
     public static function get_gateway_approval_statuses()
@@ -129,14 +150,17 @@ class AdminUtilities
         $gateway->gatewayURL = $gatewayData["gateway-url"];
         $gateway->reviewProposalDescription = $gatewayData["project-details"];
         $gateway->gatewayPublicAbstract = $gatewayData["public-project-description"];
-        if( TenantProfileService::updateGateway( Session::get('authz-token'), $gateway) ){
+
+        Log::info("user_update_gateway ".$gateway);
+
+      //  if( TenantProfileService::updateGateway( Session::get('authz-token'), $gateway) ){
             return 1;
-        }
-        else{
+     //   }
+      //  else{
             //Need to find a better way for this.
             // retun echo "Tenant Name is already in use";
-            return -1;
-        }
+       //     return -1;
+     //   }
     }
 
     public static function update_gateway( $gatewayId, $gatewayData){
@@ -166,7 +190,7 @@ class AdminUtilities
                     return -1;
                 }
             }
-            $gateway = IamAdminServices::setUpGateway( Session::get('authz-token'), $gateway);
+          //  $gateway = IamAdminServices::setUpGateway( Session::get('authz-token'), $gateway);
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CREATED;
         }
         elseif( isset( $gatewayData["approveRequest"])){
@@ -217,14 +241,15 @@ class AdminUtilities
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::DEACTIVATED;
         }
 
-        if( TenantProfileService::updateGateway( Session::get('authz-token'), $gateway) ){
+        Log.info("Calling update gateway".$gateway);
+       // if( TenantProfileService::updateGateway( Session::get('authz-token'), $gateway) ){
             return 1;
-        }
-        else{
-            //Need to find a better way for this.
-           // retun echo "Tenant Name is already in use";
-            return -1;
-        }
+//        }
+//        else{
+//            //Need to find a better way for this.
+//           // retun echo "Tenant Name is already in use";
+//            return -1;
+//        }
     }
 
     public static function add_tenant( $gateway){
