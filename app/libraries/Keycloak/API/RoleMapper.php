@@ -57,7 +57,7 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
 
         // get access token for admin API
         $access_token = $this->getAPIAccessToken();
-        $url = $this->base_endpoint_url . 'user-management/v1.0.0/users/roles';
+        $url = $this->base_endpoint_url . '/user-management/v1.0.0/users/roles';
         $r = curl_init($url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
@@ -91,7 +91,12 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
 
         $response = curl_exec($r);
 
-        if ($response == false || ! ($response->status)) {
+        if ($response == false) {
+            Log::error("Failed to add realm role mappings for user");
+            die("curl_exec() failed. Error: " . curl_error($r));
+        }
+        $result = json_decode($response);
+        if ($result->status == false) {
             Log::error("Failed to add realm role mappings for user");
             die("curl_exec() failed. Error: " . curl_error($r));
         }
@@ -106,7 +111,7 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
 
         // get access token for admin API
         $access_token = $this->getAPIAccessToken();
-        $url = $this->base_endpoint_url . 'user-management/v1.0.0/user/roles';
+        $url = $this->base_endpoint_url . '/user-management/v1.0.0/user/roles';
         // Log::debug("deleteRealmRoleMappingsToUser", array($url, $role_representations));
         $r = curl_init($url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
@@ -137,8 +142,13 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
 
         $response = curl_exec($r);
 
-        if ($response == false || ! ($response->status)) {
-            Log::error("Failed to add realm role mappings for user");
+        if ($response == false) {
+            Log::error("Failed to delete realm role mappings for user");
+            die("curl_exec() failed. Error: " . curl_error($r));
+        }
+        $result = json_decode($response);
+        if ($result->status == false) {
+            Log::error("Failed to delete realm role mappings for user");
             die("curl_exec() failed. Error: " . curl_error($r));
         }
         return;
