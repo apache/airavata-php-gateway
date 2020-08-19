@@ -218,7 +218,7 @@ class AdminUtilities
             $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
             $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
             if (!empty($gatewayData["gatewayAdminPassword"])) {
-                Log::info("Gateway password ".gatewayData["gatewayAdminPassword"]);
+
                 $token = AdminUtilities::create_pwd_token([
                     "username" => $gatewayData["identityServerUserName"],
                     "password" => $gatewayData["gatewayAdminPassword"],
@@ -380,7 +380,7 @@ class AdminUtilities
         $username = $inputs['username'];
         $password = $inputs['password'];
         $description = $inputs['description'];
-        Log::info(array($username, $password, $description));
+       
         return $newToken = Airavata::registerPwdCredential( Session::get('authz-token'),
             $username, $password, $description);
 
