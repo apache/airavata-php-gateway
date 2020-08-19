@@ -41,7 +41,7 @@ class GatewayRequestUpdateController extends BaseController
             return Redirect::back()->withErrors($validator);
         }
         else {
-            $returnVal = AdminUtilities::user_update_gateway(Input::get("internal-gateway-id"), Input::all());
+            $returnVal = AdminUtilities::user_update_gateway(Input::get("gateway-id"), Input::all());
 
             if ($returnVal == 1) {
                 $email = Config::get('pga_config.portal')['admin-emails'];
