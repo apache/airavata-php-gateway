@@ -17,8 +17,9 @@ class Roles extends BaseKeycloakAPIEndpoint {
     public function getRoles($realm){
 
         // get access token for admin API
-        $access_token = $this->getAPIAccessToken($realm);
-        $r = curl_init($this->base_endpoint_url . '/admin/realms/' . rawurlencode($realm) . '/roles');
+        $url = $this->base_endpoint_url . '/tenant-management/v1.0.0/roles';
+        $url = $url;
+        $r = curl_init($url);
         curl_setopt($r, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($r, CURLOPT_ENCODING, 1);
         curl_setopt($r, CURLOPT_SSL_VERIFYPEER, $this->verify_peer);
@@ -26,7 +27,7 @@ class Roles extends BaseKeycloakAPIEndpoint {
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Bearer " . $access_token
+            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
         ));
 
         $response = curl_exec($r);
@@ -35,6 +36,6 @@ class Roles extends BaseKeycloakAPIEndpoint {
         }
         $result = json_decode($response);
         // Log::debug("getRealmRoleMappingsForUser result", array($result));
-        return $result;
+        return $result->roles;
     }
 }

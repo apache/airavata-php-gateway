@@ -19,12 +19,8 @@ class GrouperUtilities
      */
     public static function shareResourceWithUsers($resourceId, $userPermissionMap)
     {
-        $newUserPermissionsMap = [];
-        foreach($userPermissionMap as $key=> $value){
-            $key = $key . "@" . Config::get('pga_config.airavata')['gateway-id'];
-            $newUserPermissionsMap[$key] = $value;
-        }
-        Airavata::shareResourceWithUsers(Session::get('authz-token'), $resourceId, $newUserPermissionsMap);
+
+        Airavata::shareResourceWithUsers(Session::get('authz-token'), $resourceId, $userPermissionMap);
     }
 
     /**
@@ -33,12 +29,8 @@ class GrouperUtilities
      */
     public static function revokeSharingOfResourceFromUsers($resourceId, $userPermissionMap)
     {
-        $newUserPermissionsMap = [];
-        foreach($userPermissionMap as $key=> $value){
-            $key = $key . "@" . Config::get('pga_config.airavata')['gateway-id'];
-            $newUserPermissionsMap[$key] = $value;
-        }
-        Airavata::revokeSharingOfResourceFromUsers(Session::get('authz-token'), $resourceId, $newUserPermissionsMap);
+
+        Airavata::revokeSharingOfResourceFromUsers(Session::get('authz-token'), $resourceId, $userPermissionMap);
     }
 
     /**
@@ -65,7 +57,7 @@ class GrouperUtilities
      * @param $group            Airavata/Model/Group/GrouoModel
      */
     public static function createGroup($group){
-        $group->ownerId = $group->ownerId . "@" . Config::get('pga_config.airavata')['gateway-id'];
+
         Airavata::createGroup(Session::get('authz-token'),$group);
     }
 
@@ -74,7 +66,7 @@ class GrouperUtilities
      * @param $group            Airavata/Model/Group/GrouoModel
      */
     public static function updateGroup($group){
-        $group->ownerId = $group->ownerId . "@" . Config::get('pga_config.airavata')['gateway-id'];
+
         Airavata::updateGroup(Session::get('authz-token'),$group);
     }
 

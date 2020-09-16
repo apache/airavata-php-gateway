@@ -39,7 +39,16 @@ class AdminUtilities
         $gateway->requesterUsername = Session::get('username');
         $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
 
+         $logoutURI = $gateway->gatewayURL;
+         if(!(AdminUtilities::endsWith($logoutURI,"/"))) {
+             $logoutURI = $logoutURI."/";
+         }
+         $redirectURI = $logoutURI."auth/callback*";
+         $gateway->redirectURLs = array($logoutURI,$redirectURI);
+         $gateway->scope = "openid profile email org.cilogon.userinfo" ;
+
         try {
+
             TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
             return 1;
         }
@@ -74,8 +83,7 @@ class AdminUtilities
         try {
             TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
             return 1;
-        }
-        catch (Exception $ex) {
+        } catch (Exception $ex) {
             return -1;
         }
     }
@@ -105,6 +113,21 @@ class AdminUtilities
         $gateway->gatewayPublicAbstract = $inputs["public-project-description"];
         $gateway->requesterUsername = Session::get('username');
 
+
+        $logoutURI = $gateway->gatewayURL;
+        if(!(AdminUtilities::endsWith($logoutURI,"/"))) {
+            $logoutURI = $logoutURI."/";
+        }
+        $redirectURI = $logoutURI."auth/callback*";
+        $gateway->redirectURLs = array($logoutURI,$redirectURI);
+        $gateway->scope = "openid profile email org.cilogon.userinfo" ;
+
+        $logoutURI = $gateway->gatewayURL;
+        $redirectURI = $logoutURI."auth/callback*";
+        $gateway->redirectURLs = array($logoutURI,$redirectURI);
+        $gateway->scope = "openid profile email org.cilogon.userinfo" ;
+
+
         return TenantProfileService::addGateway(Session::get('authz-token'), $gateway);
     }
 
@@ -129,9 +152,19 @@ class AdminUtilities
         $gateway->gatewayURL = $gatewayData["gateway-url"];
         $gateway->reviewProposalDescription = $gatewayData["project-details"];
         $gateway->gatewayPublicAbstract = $gatewayData["public-project-description"];
+
+        $logoutURI = $gateway->gatewayURL;
+        if(!(AdminUtilities::endsWith($logoutURI,"/"))) {
+            $logoutURI = $logoutURI."/";
+        }
+        $redirectURI = $logoutURI."auth/callback*";
+        $gateway->redirectURLs = array($logoutURI,$redirectURI);
+        $gateway->scope = "openid profile email org.cilogon.userinfo" ;
+
+
         if( TenantProfileService::updateGateway( Session::get('authz-token'), $gateway) ){
             return 1;
-        }
+              }
         else{
             //Need to find a better way for this.
             // retun echo "Tenant Name is already in use";
@@ -166,6 +199,14 @@ class AdminUtilities
                     return -1;
                 }
             }
+            $logoutURI = $gateway->gatewayURL;
+            if(!(AdminUtilities::endsWith($logoutURI,"/"))) {
+                $logoutURI = $logoutURI."/";
+            }
+            $redirectURI = $logoutURI."auth/callback*";
+            $gateway->redirectURLs = array($logoutURI,$redirectURI);
+            $gateway->scope = "openid profile email org.cilogon.userinfo" ;
+
             $gateway = IamAdminServices::setUpGateway( Session::get('authz-token'), $gateway);
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::CREATED;
         }
@@ -177,6 +218,7 @@ class AdminUtilities
             $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
             $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
             if (!empty($gatewayData["gatewayAdminPassword"])) {
+
                 $token = AdminUtilities::create_pwd_token([
                     "username" => $gatewayData["identityServerUserName"],
                     "password" => $gatewayData["gatewayAdminPassword"],
@@ -187,6 +229,15 @@ class AdminUtilities
             $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
             $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
+
+            $logoutURI = $gateway->gatewayURL;
+            $logoutURI = $gateway->gatewayURL;
+            if(!(AdminUtilities::endsWith($logoutURI,"/"))) {
+                $logoutURI = $logoutURI."/";
+            }
+            $redirectURI = $logoutURI."auth/callback*";
+            $gateway->redirectURLs = array($logoutURI,$redirectURI);
+            $gateway->scope = "openid profile email org.cilogon.userinfo" ;
         }
         elseif( isset( $gatewayData["denyRequest"])){
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::DENIED;
@@ -209,6 +260,13 @@ class AdminUtilities
             $gateway->reviewProposalDescription = $gatewayData["reviewProposalDescription"];
             $gateway->gatewayPublicAbstract = $gatewayData["gatewayPublicAbstract"];
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::APPROVED;
+            $logoutURI = $gateway->gatewayURL;
+            if(!(AdminUtilities::endsWith($logoutURI,"/"))) {
+                $logoutURI = $logoutURI."/";
+            }
+            $redirectURI = $logoutURI."auth/callback*";
+            $gateway->redirectURLs = array($logoutURI,$redirectURI);
+            $gateway->scope = "openid profile email org.cilogon.userinfo" ;
         }
         elseif( isset( $gatewayData["deployGateway"])){
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::DEPLOYED;
@@ -216,6 +274,7 @@ class AdminUtilities
         elseif( isset( $gatewayData["deactivateGateway"])){
             $gateway->gatewayApprovalStatus = GatewayApprovalStatus::DEACTIVATED;
         }
+
 
         if( TenantProfileService::updateGateway( Session::get('authz-token'), $gateway) ){
             return 1;
@@ -321,6 +380,7 @@ class AdminUtilities
         $username = $inputs['username'];
         $password = $inputs['password'];
         $description = $inputs['description'];
+       
         return $newToken = Airavata::registerPwdCredential( Session::get('authz-token'),
             $username, $password, $description);
 
@@ -402,4 +462,10 @@ class AdminUtilities
 
         return true;
     }
+
+
+     public static  function endsWith($haystack, $needle) {
+        return substr_compare($haystack, $needle, -strlen($needle)) === 0;
+     }
+
 }
