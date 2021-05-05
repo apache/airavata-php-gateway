@@ -380,7 +380,7 @@ class AdminUtilities
         $username = $inputs['username'];
         $password = $inputs['password'];
         $description = $inputs['description'];
-       
+
         return $newToken = Airavata::registerPwdCredential( Session::get('authz-token'),
             $username, $password, $description);
 

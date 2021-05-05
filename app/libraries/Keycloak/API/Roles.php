@@ -27,7 +27,7 @@ class Roles extends BaseKeycloakAPIEndpoint {
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
+            "Authorization: Basic " . base64_encode(Session::get('authz-token')->access_token),
         ));
 
         $response = curl_exec($r);
@@ -35,7 +35,7 @@ class Roles extends BaseKeycloakAPIEndpoint {
             die("curl_exec() failed. Error: " . curl_error($r));
         }
         $result = json_decode($response);
-        // Log::debug("getRealmRoleMappingsForUser result", array($result));
+        //Log::debug("getRealmRoleMappingsForUser result", array($result));
         return $result->roles;
     }
 }
