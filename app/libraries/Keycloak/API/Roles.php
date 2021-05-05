@@ -27,7 +27,7 @@ class Roles extends BaseKeycloakAPIEndpoint {
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Basic " . base64_encode($access_token),
+            "Authorization: Bearer " . $access_token,
         ));
 
         $response = curl_exec($r);
