@@ -7,6 +7,7 @@ use Airavata\Model\Workspace\NotificationPriority;
 use Airavata\Model\Credential\Store\SummaryType;
 use Illuminate\Support\Facades\Log;
 
+
 class AdminUtilities
 {
 
@@ -28,6 +29,11 @@ class AdminUtilities
         $gateway->gatewayAdminEmail = $inputs["admin-email"];
         $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
         $gateway->identityServerUserName = $inputs["admin-username"];
+        if (!(IamAdminServicesUtilities::isUserExist($gateway->identityServerUserName))){
+            IamAdminServicesUtilities::registerUser($gateway->identityServerUserName,$gateway->gatewayAdminEmail,
+                $gateway->gatewayAdminFirstName,$gateway->gatewayAdminLastName,$inputs["admin-password"]);
+            IamAdminServicesUtilities::enableUser($gateway->identityServerUserName);
+        }
         $token = AdminUtilities::create_pwd_token([
             "username" => $inputs["admin-username"],
             "password" => $inputs["admin-password"],
@@ -103,6 +109,11 @@ class AdminUtilities
         $gateway->gatewayAdminFirstName = $inputs["admin-firstname"];
         $gateway->gatewayAdminLastName = $inputs["admin-lastname"];
         $gateway->identityServerUserName = $inputs["admin-username"];
+        if (!(IamAdminServicesUtilities::isUserExist($gateway->identityServerUserName))){
+            IamAdminServicesUtilities::registerUser($gateway->identityServerUserName,$gateway->gatewayAdminEmail,
+                $gateway->gatewayAdminFirstName,$gateway->gatewayAdminLastName,$inputs["admin-password"]);
+            IamAdminServicesUtilities::enableUser($gateway->identityServerUserName);
+        }
         $token = AdminUtilities::create_pwd_token([
             "username" => $inputs["admin-username"],
             "password" => $inputs["admin-password"],
@@ -218,6 +229,12 @@ class AdminUtilities
             $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
             $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
             if (!empty($gatewayData["gatewayAdminPassword"])) {
+                if (!(IamAdminServicesUtilities::isUserExist($gateway->identityServerUserName))){
+                    IamAdminServicesUtilities::registerUser($gateway->identityServerUserName,$gateway->gatewayAdminEmail,
+                        $gateway->gatewayAdminFirstName,$gateway->gatewayAdminLastName,$gatewayData["gatewayAdminPassword"]);
+                    IamAdminServicesUtilities::enableUser($gateway->identityServerUserName);
+                }
+
 
                 $token = AdminUtilities::create_pwd_token([
                     "username" => $gatewayData["identityServerUserName"],
@@ -250,6 +267,11 @@ class AdminUtilities
             $gateway->gatewayAdminEmail = $gatewayData["gatewayAdminEmail"];
             $gateway->identityServerUserName = $gatewayData["identityServerUserName"];
             if (!empty($gatewayData["gatewayAdminPassword"])) {
+                if (!(IamAdminServicesUtilities::isUserExist($gateway->identityServerUserName))){
+                    IamAdminServicesUtilities::registerUser($gateway->identityServerUserName,$gateway->gatewayAdminEmail,
+                        $gateway->gatewayAdminFirstName,$gateway->gatewayAdminLastName,$gatewayData["gatewayAdminPassword"]);
+                    IamAdminServicesUtilities::enableUser($gateway->identityServerUserName);
+                }
                 $token = AdminUtilities::create_pwd_token([
                     "username" => $gatewayData["identityServerUserName"],
                     "password" => $gatewayData["gatewayAdminPassword"],
