@@ -14,7 +14,7 @@ class Roles extends BaseKeycloakAPIEndpoint {
      * GET /admin/realms/{realm}/roles
      * Returns Array of RoleRepresentation
      */
-    public function getRoles($realm){
+    public function getRoles($realm,$access_token){
 
         // get access token for admin API
         $url = $this->base_endpoint_url . '/tenant-management/v1.0.0/roles';
@@ -27,7 +27,7 @@ class Roles extends BaseKeycloakAPIEndpoint {
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Basic " . base64_encode(Session::get('authz-token')->access_token),
+            "Authorization: Basic " . base64_encode($access_token),
         ));
 
         $response = curl_exec($r);

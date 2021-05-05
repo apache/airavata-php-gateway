@@ -314,11 +314,11 @@ class Keycloak
      *
      * @return roles list
      */
-    public function getAllRoles()
+    public function getAllRoles($access_token)
     {
         try {
 
-            $roles = $this->roles->getRoles($this->realm);
+            $roles = $this->roles->getRoles($this->realm,$access_token);
             $role_names = [];
             foreach ($roles as $role) {
                 $role_names[] = $role->name;
@@ -360,14 +360,14 @@ class Keycloak
      * which has a value of roles to be removed or added respectively
      * @return void
      */
-    public function updateUserRoles($username, $roles)
+    public function updateUserRoles($access_token, $username, $roles)
     {
         // Log::debug("updateUserRoles", array($user_id, $roles));
         try {
 
             // get userid from username
             // Get all of the roles into an array keyed by role name
-            $all_roles = $this->roles->getRoles($this->realm);
+            $all_roles = $this->roles->getRoles($this->realm, $access_token);
             $roles_by_name = [];
             foreach ($all_roles as $role) {
                 $roles_by_name[$role->name] = $role;
