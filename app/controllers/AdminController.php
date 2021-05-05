@@ -86,7 +86,7 @@ class AdminController extends BaseController {
 		else
 			$users =  Keycloak::listUsers();
 
-		$roles = Keycloak::getAllRoles(Session::get("authz-token")->access_token);
+		$roles = Keycloak::getAllRoles(Session::get("authz-token")->accessToken);
 		sort($roles);
 		Session::put("admin-nav", "manage-users");
 		return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
@@ -108,7 +108,7 @@ class AdminController extends BaseController {
 		if(!isset($users) || empty($users)){
 			$users = array();
 		}
-		$roles = Keycloak::getAllRoles(Session::get("authz-token")->access_token);
+		$roles = Keycloak::getAllRoles(Session::get("authz-token")->accessToken);
 		sort($roles);
 		Session::put("admin-nav", "manage-users");
 		return View::make("admin/manage-users", array("users" => $users, "roles" => $roles));
@@ -167,7 +167,7 @@ class AdminController extends BaseController {
 		//check if username exists
 		if(Keycloak::usernameExists( Input::get("username")) )
 		{
-            Keycloak::updateUserRoles(Session::get("authz-token")->access_token,Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );
+            Keycloak::updateUserRoles(Session::get("authz-token")->accessToken,Input::get("username"), array( "new"=>array( Config::get('wsis::admin-role-name')), "deleted"=>array() ) );
 			return Redirect::to("admin/dashboard/users?role=" . Config::get('wsis::admin-role-name'))->with("Gateway Admin has been added.");
 		}
 		else
@@ -236,7 +236,7 @@ class AdminController extends BaseController {
 	}
 
 	public function rolesView(){
-		$roles = Keycloak::getAllRoles(Session::get("authz-token")->access_token);
+		$roles = Keycloak::getAllRoles(Session::get("authz-token")->accessToken);
 		sort($roles);
 		Session::put("admin-nav", "manage-roles");
 		return View::make("admin/manage-roles", array("roles" => $roles));
@@ -281,7 +281,7 @@ class AdminController extends BaseController {
         }
 
         $username = Input::all()["username"];
-        Keycloak::updateUserRoles(Session::get("authz-token")->access_token, $username, $roles);
+        Keycloak::updateUserRoles(Session::get("authz-token")->accessToken, $username, $roles);
         $newCurrentRoles = Keycloak::getUserRoles($username);
         if(in_array(Config::get("pga_config.wsis")["admin-role-name"], $newCurrentRoles) || in_array(Config::get("pga_config.wsis")["read-only-admin-role-name"], $newCurrentRoles)
                 || in_array(Config::get("pga_config.wsis")["user-role-name"], $newCurrentRoles)){
@@ -299,12 +299,12 @@ class AdminController extends BaseController {
                 if(in_array($initialRoleName, $newCurrentRoles) && !in_array($initialRoleName, $roles["new"])) {
                     $userRoles["new"] = array();
                     $userRoles["deleted"] = $initialRoleName;
-                    Keycloak::updateUserRoles(Session::get("authz-token")->access_token, $username, $userRoles);
+                    Keycloak::updateUserRoles(Session::get("authz-token")->accessToken, $username, $userRoles);
                 } else if(in_array($initialRoleName, $newCurrentRoles) && in_array($initialRoleName, $roles["new"])) {
                     // When initial role added remove all roles except for initial role and Internal/everyone
                     $userRoles["new"] = array();
                     $userRoles["deleted"] = array_diff($newCurrentRoles, array($initialRoleName, "Internal/everyone"));
-                    Keycloak::updateUserRoles(Session::get("authz-token")->access_token, $username, $userRoles);
+                    Keycloak::updateUserRoles(Session::get("authz-token")->accessToken, $username, $userRoles);
                 }
             }
         }
@@ -332,7 +332,7 @@ class AdminController extends BaseController {
         $roles["deleted"] = array(Input::all()["roleName"]);
         $roles["new"] = array();
         $username = Input::all()["username"];
-        Keycloak::updateUserRoles(Session::get("authz-token")->access_token, $username, $roles);
+        Keycloak::updateUserRoles(Session::get("authz-token")->accessToken, $username, $roles);
         return Redirect::to("admin/dashboard/roles")->with( "message", "Role has been deleted.");
     }
 
