@@ -37,7 +37,7 @@ class RoleMapper extends BaseKeycloakAPIEndpoint {
             curl_setopt($r, CURLOPT_CAINFO, $this->cafile_path);
         }
         curl_setopt($r, CURLOPT_HTTPHEADER, array(
-            "Authorization: Basic " . base64_encode($this->client_id . ":" . $this->client_secret),
+            "Authorization: Bearer " . base64_encode($this->client_id . ":" . $this->client_secret),
         ));
         $response = curl_exec($r);
         if ($response == false) {
