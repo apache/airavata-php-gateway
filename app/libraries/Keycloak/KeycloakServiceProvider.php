@@ -46,7 +46,9 @@ class KeycloakServiceProvider extends ServiceProvider {
                 $identityServerConfig['service-url'],
                 $identityServerConfig['admin-username'],
                 $identityServerConfig['admin-password'],
-                $airavataConfig['gateway-id']
+                $airavataConfig['gateway-id'],
+                $identityServerConfig['custos-credentials-uri']
+
             );
         });
 
